@@ -573,6 +573,7 @@ class GalleryService extends Service
         DB::beginTransaction();
 
         try {
+            if(!isset($data['is_visible'])) $data['is_visible'] = 0;
             if(!isset($data['is_active'])) $data['is_active'] = 0;
 
             $tag = Tag::create($data);
@@ -600,6 +601,7 @@ class GalleryService extends Service
             // More specific validation
             if(Tag::where('name', $data['name'])->where('id', '!=', $tag->id)->exists()) throw new \Exception("The name has already been taken.");
 
+            if(!isset($data['is_visible'])) $data['is_visible'] = 0;
             if(!isset($data['is_active'])) $data['is_active'] = 0;
 
             $tag->update($data);

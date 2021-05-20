@@ -47,12 +47,20 @@
     <div class="borderhr mb-2">
         <p>
             <strong>
-            {!! isset($piece->timestamp) ? $piece->timestamp->format('F Y') : $piece->created_at->format('F Y') !!}
+                {!! isset($piece->timestamp) ? $piece->timestamp->format('F Y') : $piece->created_at->format('F Y') !!}
             </strong>
             ・
             Last updated {{ $piece->updated_at->toFormattedDateString() }}
             ・
             In {!! $piece->project->displayName !!}
+            @if($piece->tags()->visible()->count())
+                <br/>
+                <small>
+                    @foreach($piece->tags()->visible()->get() as $tag)
+                    {!! $tag->tag->getDisplayName(Request::get('source') ? Request::get('source') : null) !!}{{ !$loop->last ? ', ' : '' }}
+                    @endforeach
+                </small>
+            @endif
         </p>
     </div>
     {!! $piece->description !!}

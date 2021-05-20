@@ -433,7 +433,7 @@ class GalleryController extends Controller
     {
         $id ? $request->validate(Tag::$updateRules) : $request->validate(Tag::$createRules);
         $data = $request->only([
-            'name', 'description', 'is_active'
+            'name', 'description', 'is_active', 'is_visible'
         ]);
         if($id && $service->updateTag(Tag::find($id), $data, Auth::user())) {
             flash('Tag updated successfully.')->success();

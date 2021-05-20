@@ -16,6 +16,12 @@
                         @if(!isset($project) || !$project)
                             ・ In <abbr>{{ $piece->project->name }}</abbr>
                         @endif
+                        @if($piece->tags()->visible()->count())
+                            <br/>
+                            @foreach($piece->tags()->visible()->get() as $tag)
+                                {!! $tag->tag->name !!}{{ !$loop->last ? ', ' : '' }}
+                            @endforeach
+                        @endif
                     </p>
                 </div>
             </a>

@@ -16,15 +16,21 @@
 <div>
     {!! Form::open(['method' => 'GET', 'class' => '']) !!}
         <div class="form-inline justify-content-end">
-            <div class="form-group mr-3 mb-3">
+            <div class="form-group mb-3">
                 {!! Form::text('name', Request::get('name'), ['class' => 'form-control', 'placeholder' => 'Title']) !!}
             </div>
+        </div>
+        <div class="ml-auto w-50 justify-content-end form-group mb-3">
+            {!! Form::select('tags[]', $tags, Request::get('tags'), ['id' => 'tagList', 'class' => 'form-control', 'multiple', 'placeholder' => 'Tag(s)']) !!}
+        </div>
+        <div class="form-inline justify-content-end">
             <div class="form-group mr-3 mb-3">
                 {!! Form::select('sort', [
                     'newest'         => 'Newest First',
                     'oldest'         => 'Oldest First',
                     'alpha'          => 'Sort Alphabetically (A-Z)',
                     'alpha-reverse'  => 'Sort Alphabetically (Z-A)',
+                    'project'         => 'Sort by Project',
                 ], Request::get('sort') ? : 'category', ['class' => 'form-control']) !!}
             </div>
             <div class="form-group mb-3">
@@ -44,4 +50,11 @@
     <p>No pieces found!</p>
 @endif
 
+<script>
+    $(document).ready(function() {
+        $('#tagList').selectize({
+            maxItems: 10
+        });
+    });
+</script>
 @endsection

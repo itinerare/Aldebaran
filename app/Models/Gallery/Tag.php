@@ -12,7 +12,7 @@ class Tag extends Model
      * @var array
      */
     protected $fillable = [
-        'name', 'description', 'is_active', 'sort'
+        'name', 'description', 'is_active', 'sort', 'is_visible'
     ];
 
     /**
@@ -48,4 +48,47 @@ class Tag extends Model
         //
         'name' => 'required'
     ];
+
+    /**********************************************************************************************
+
+        SCOPES
+
+    **********************************************************************************************/
+
+    /**
+     * Scope a query to only include visible tags.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeVisible($query)
+    {
+        return $query->where('is_visible', 1);
+    }
+
+    /**********************************************************************************************
+
+        OTHER FUNCTIONS
+
+    **********************************************************************************************/
+
+    /**
+     * Get the piece's url.
+     *
+     * @return string
+     */
+    public function getUrl($source = null)
+    {
+        return url('/'.($source ? $source : 'gallery').'?tags[]='.$this->id);
+    }
+
+    /**
+     * Get the piece's display name.
+     *
+     * @return string
+     */
+    public function getDisplayName($source = null)
+    {
+        return '<a href="'.$this->getUrl($source).'">'.$this->name.'</a>';
+    }
 }

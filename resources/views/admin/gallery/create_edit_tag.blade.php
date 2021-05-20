@@ -23,9 +23,19 @@
     {!! Form::textarea('description', $tag->description, ['class' => 'form-control']) !!}
 </div>
 
-<div class="form-group">
-    {!! Form::checkbox('is_active', 1, $tag->id ? $tag->is_active : 1, ['class' => 'form-check-input', 'data-toggle' => 'toggle']) !!}
-    {!! Form::label('is_active', 'Show in Gallery', ['class' => 'form-check-label ml-3']) !!} {!! add_help('If this is turned off, pieces with this tag will not appear in the overall gallery. They may still, however, be displayed otherwise.') !!}
+<div class="row">
+    <div class="col-md">
+        <div class="form-group">
+            {!! Form::checkbox('is_visible', 1, $tag->id ? $tag->is_visible : 1, ['class' => 'form-check-input', 'data-toggle' => 'toggle']) !!}
+            {!! Form::label('is_visible', 'Is Visible', ['class' => 'form-check-label ml-3']) !!} {!! add_help('Whether or not the tag will be displayed on any pieces it is attached to.') !!}
+        </div>
+    </div>
+    <div class="col-md">
+        <div class="form-group">
+            {!! Form::checkbox('is_active', 1, $tag->id ? $tag->is_active : 1, ['class' => 'form-check-input', 'data-toggle' => 'toggle']) !!}
+            {!! Form::label('is_active', 'Show in Gallery', ['class' => 'form-check-label ml-3']) !!} {!! add_help('If this is turned off, pieces with this tag will not appear in the overall gallery. They may still, however, be displayed otherwise.') !!}
+        </div>
+    </div>
 </div>
 
 <div class="text-right">

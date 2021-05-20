@@ -51,4 +51,21 @@ class PieceTag extends Model
     {
         return $this->belongsTo('App\Models\Gallery\Tag', 'tag_id');
     }
+
+    /**********************************************************************************************
+
+        SCOPES
+
+    **********************************************************************************************/
+
+    /**
+     * Scope a query to only include visible tags.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeVisible($query)
+    {
+        return $query->whereIn('tag_id', Tag::where('is_visible', 1)->pluck('id')->toArray());
+    }
 }

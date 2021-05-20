@@ -33,11 +33,15 @@ class GalleryController extends Controller
     {
         $query = Piece::visible(Auth::check() ? Auth::user() : null)->gallery();
 
-        $data = $request->only(['project_id', 'name', 'sort']);
+        $data = $request->only(['project_id', 'name', 'tags', 'sort']);
         if(isset($data['project_id']) && $data['project_id'] != 'none')
             $query->where('project_id', $data['project_id']);
         if(isset($data['name']))
             $query->where('name', 'LIKE', '%'.$data['name'].'%');
+        if(isset($data['tags']))
+            foreach($data['tags'] as $tag)
+                $query->whereIn('id', PieceTag::visible()->where('tag_id', $tag)->pluck('piece_id')->toArray());
+
         if(isset($data['sort']))
         {
             switch($data['sort']) {
@@ -63,6 +67,7 @@ class GalleryController extends Controller
         return view('gallery.gallery', [
             'page' => TextPage::where('key', 'gallery')->first(),
             'pieces' => $query->paginate(20)->appends($request->query()),
+            'tags' => Tag::visible()->pluck('name', 'id'),
             'projects' => ['none' => 'Any Project'] + Project::whereIn('id', Piece::gallery()->pluck('project_id')->toArray())->orderBy('sort', 'DESC')->pluck('name', 'id')->toArray()
         ]);
     }
@@ -81,9 +86,12 @@ class GalleryController extends Controller
 
         $query = Piece::visible(Auth::check() ? Auth::user() : null)->where('project_id', $project->id);
 
-        $data = $request->only(['project_id', 'name', 'sort']);
+        $data = $request->only(['project_id', 'name', 'tags', 'sort']);
         if(isset($data['name']))
             $query->where('name', 'LIKE', '%'.$data['name'].'%');
+        if(isset($data['tags']))
+            foreach($data['tags'] as $tag)
+                $query->whereIn('id', PieceTag::visible()->where('tag_id', $tag)->pluck('piece_id')->toArray());
         if(isset($data['sort']))
         {
             switch($data['sort']) {
@@ -105,6 +113,7 @@ class GalleryController extends Controller
 
         return view('gallery.project', [
             'project' => $project,
+            'tags' => Tag::visible()->pluck('name', 'id'),
             'pieces' => $query->paginate(20)->appends($request->query())
         ]);
     }
