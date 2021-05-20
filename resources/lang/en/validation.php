@@ -133,6 +133,9 @@ return [
         'attribute-name' => [
             'rule-name' => 'custom-message',
         ],
+        'g-recaptcha-response' => [
+            'recaptchav3' => 'There was a captcha error! If you believe this to be a mistake, please contact me via an alternative method, such as email.',
+        ],
     ],
 
     /*
