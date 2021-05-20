@@ -13,10 +13,12 @@ return [
     */
 
     'art' => [
-
-    ],
-
-    'code' => [
-
+        // Any custom pages that should be created for this commission type
+        'pages' => [
+            'willwont' => [
+                'name' => 'Will and Won\'t Draw',
+                'text' => '<p>Will and Won\'t draw information goes here.</p>'
+            ],
+        ]
     ],
 ];
