@@ -115,30 +115,17 @@ class Commission extends Model
      * Scope a query to only include art commissions.
      *
      * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  string                                 $type
+     *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeArt($query)
+    public function scopeType($query, $type)
     {
         return $query->whereIn('commission_type',
             CommissionType::whereIn('category_id',
-            CommissionCategory::art()->pluck('id')->toArray()
+            CommissionCategory::type($type)->pluck('id')->toArray()
             )->pluck('id')->toArray()
         );
-    }
-
-    /**
-     * Scope a query to only include code commissions.
-     *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    public function scopeCode($query)
-    {
-        return $query->whereIn('commission_type',
-        CommissionType::whereIn('category_id',
-        CommissionCategory::code()->pluck('id')->toArray()
-        )->pluck('id')->toArray()
-    );
     }
 
     /**********************************************************************************************

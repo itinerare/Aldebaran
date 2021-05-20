@@ -81,25 +81,16 @@ class CommissionCategory extends Model
     }
 
     /**
-     * Scope a query to only include art commission categories.
+     * Scope a query to only include commission categories of a given type.
      *
      * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    public function scopeArt($query)
-    {
-        return $query->where('type', 'art');
-    }
-
-    /**
-     * Scope a query to only include code commission categories.
+     * @param  string                                 $type
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeCode($query)
+    public function scopeType($query, $type)
     {
-        return $query->where('type', 'code');
+        return $query->where('type', $type);
     }
 
     /**********************************************************************************************
