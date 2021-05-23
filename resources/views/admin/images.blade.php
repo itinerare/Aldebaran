@@ -7,7 +7,7 @@
 
 <h1>Site Images</h1>
 
-<p>Upload images to replace the current site images. The specifications for each image are noted in the descriptions for each image. (Maximum size of an image is {{ min(ini_get("upload_max_filesize"), ini_get("post_max_size")) }}B.)</p>
+<p>Upload images to add or replace the current site images. The specifications for each image are noted in the descriptions for each image. (Maximum size of an image is {{ min(ini_get("upload_max_filesize"), ini_get("post_max_size")) }}B.)</p>
 
 @foreach($images as $key=>$image)
     <div class="card mb-3">
@@ -29,5 +29,23 @@
         </div>
     </div>
 @endforeach
+
+<h1>Custom CSS</h1>
+
+<p>A custom CSS file can be uploaded here. This will be added to the page after the inclusion of other CSS files, and reuploading the file will replace the original.</p>
+
+<div class="card mb-3">
+    <div class="card-body">
+        <div>
+            <h3 class="card-heading">CSS @if(file_exists(public_path(). '/css/custom.css'))<a href="{{ asset('css/custom.css') }}" class="btn btn-info btn-sm float-right">View Current</a>@endif</h3>
+            {!! Form::open(['url' => 'admin/site-images/upload/css', 'files' => true]) !!}
+                <div class="d-flex">
+                    {!! Form::file('file', ['class' => 'form-control mr-2']) !!}
+                    {!! Form::submit('Upload', ['class' => 'btn btn-primary']) !!}
+                </div>
+            {!! Form::close() !!}
+        </div>
+    </div>
+</div>
 
 @endsection

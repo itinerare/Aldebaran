@@ -66,6 +66,10 @@
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <link href="{{ asset('css/itinerare.css') }}" rel="stylesheet">
 
+    @if(file_exists(public_path(). '/css/custom.css'))
+        <link href="{{ asset('css/custom.css') }}" rel="stylesheet">
+    @endif
+
     {{-- Font Awesome --}}
     <link href="{{ asset('css/all.min.css') }}" rel="stylesheet">
 

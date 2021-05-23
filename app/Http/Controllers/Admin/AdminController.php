@@ -121,4 +121,25 @@ class AdminController extends Controller
         }
         return redirect()->back();
     }
+
+    /**
+     * Uploads a custom site CSS file.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  App\Services\FileManager  $service
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function postUploadCss(Request $request, FileManager $service)
+    {
+        $request->validate(['file' => 'required|file']);
+        $file = $request->file('file');
+
+        if($service->uploadCss($file)) {
+            flash('File uploaded successfully.')->success();
+        }
+        else {
+            foreach($service->errors()->getMessages()['error'] as $error) flash($error)->error();
+        }
+        return redirect()->back();
+    }
 }

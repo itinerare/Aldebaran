@@ -103,6 +103,20 @@ class FileManager extends Service
     }
 
     /**
+     * Uploads a custom CSS file.
+     *
+     * @param  array  $file
+     * @return bool
+     */
+    public function uploadCss($file)
+    {
+        File::move($file, public_path() . '/css/custom.css');
+        chmod(public_path() . '/css/custom.css', 0755);
+
+        return true;
+    }
+
+    /**
      * Deletes a file.
      *
      * @param  string  $path

@@ -113,6 +113,7 @@ Route::post('site-settings/{key}', 'AdminController@postEditSetting');
 Route::group(['prefix' => 'site-images'], function() {
     Route::get('/', 'AdminController@getSiteImages');
     Route::post('upload', 'AdminController@postUploadImage');
+    Route::post('upload/css', 'AdminController@postUploadCss');
 });
 
 # ACCOUNT SETTINGS
