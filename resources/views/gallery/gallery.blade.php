@@ -9,7 +9,7 @@
     <h1>Gallery</h1>
 </div>
 
-<p>A full gallery of my artwork as exists on this site. Each piece is associated with a project-- the most relevant one if it qualifies for multiple-- which serves to categorize them. More information on each project can be found on its page. Likewise, more information on each piece can be found on <i>its</i> page.</p>
+{!! $page->text !!}
 
 <div>
     {!! Form::open(['method' => 'GET', 'class' => '']) !!}

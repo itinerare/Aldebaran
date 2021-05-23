@@ -61,6 +61,7 @@ class GalleryController extends Controller
         else $query->sort();
 
         return view('gallery.gallery', [
+            'page' => TextPage::where('key', 'gallery')->first(),
             'pieces' => $query->paginate(20)->appends($request->query()),
             'projects' => ['none' => 'Any Project'] + Project::whereIn('id', Piece::gallery()->pluck('project_id')->toArray())->orderBy('sort', 'DESC')->pluck('name', 'id')->toArray()
         ]);
