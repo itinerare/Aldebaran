@@ -293,7 +293,7 @@ class CommissionType extends Model
         if($cap == 0) return null;
 
         // Count all current commissions of the specified type
-        $commissionsCount = Commission::where('status', 'Accepted')->orWhere('status', 'In Progress')->$type()->count();
+        $commissionsCount = Commission::where('status', 'Accepted')->orWhere('status', 'In Progress')->type($type)->count();
 
         return $cap - $commissionsCount;
     }

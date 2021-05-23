@@ -4,6 +4,7 @@ use App\Services\Service;
 
 use DB;
 use Config;
+use Settings;
 use Image;
 
 use App\Models\Gallery\Project;
@@ -447,16 +448,16 @@ class GalleryService extends Service
                 // Set text based on form input
                 switch($data['text_watermark']) {
                     case 'generic':
-                        $watermarkText[] = 'itinerare.net - do not repost';
+                        $watermarkText[] = Settings::get('site_name').' - do not repost';
                         break;
                     case 'personal':
-                        $watermarkText = ['itinerare.net', 'Personal work - Do not repost'];
+                        $watermarkText = [Settings::get('site_name'), 'Personal work - Do not repost'];
                         break;
                     case 'gift':
-                        $watermarkText = ['itinerare.net', 'Gift work - Do not repost'];
+                        $watermarkText = [Settings::get('site_name'), 'Gift work - Do not repost'];
                         break;
                     case 'commission':
-                        $watermarkText = ['itinerare.net', 'Commissioned work - Do not repost'];
+                        $watermarkText = [Settings::get('site_name'), 'Commissioned work - Do not repost'];
                         break;
                 }
                 // Space out lines
