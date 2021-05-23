@@ -1,4 +1,4 @@
-<div class="row borderhr">
+<div class="row">
     <div class="col-md align-self-center mt-2">
         <div class="text-center">
             <h2>{{ $type->name }}</h2>
