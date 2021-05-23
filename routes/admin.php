@@ -21,9 +21,9 @@ Route::group(['prefix' => 'commissions'], function() {
 
     Route::get('new/{id}', 'CommissionController@getNewCommission');
     Route::post('new', 'CommissionController@postNewCommission');
-
-    Route::get('ledger', 'CommissionController@getLedger');
 });
+
+Route::get('ledger', 'CommissionController@getLedger');
 
 # DATA
 Route::group(['prefix' => 'data', 'namespace' => 'Data'], function() {

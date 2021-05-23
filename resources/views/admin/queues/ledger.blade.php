@@ -3,7 +3,7 @@
 @section('admin-title') Legder @endsection
 
 @section('admin-content')
-{!! breadcrumbs(['Admin Panel' => 'admin', 'Ledger' => 'admin/commissions/ledger']) !!}
+{!! breadcrumbs(['Admin Panel' => 'admin', 'Ledger' => 'admin/ledger']) !!}
 
 <h1>
     Ledger

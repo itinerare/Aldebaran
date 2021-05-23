@@ -23,7 +23,7 @@
                     @foreach(Config::get('itinerare.comm_types') as $type=>$values)
                         <a href="{{ url('admin/commissions/'.$type) }}">{{ ucfirst($type) }} Queue</a> ・
                     @endforeach
-                    <a href="{{ url('admin/commissions/ledger') }}">Ledger</a><br/>
+                    <a href="{{ url('admin/ledger') }}">Ledger</a><br/>
                     Gallery Data:
                     <a href="{{ url('admin/data/projects') }}">Projects</a> ・
                     <a href="{{ url('admin/data/pieces') }}">Pieces</a> ・

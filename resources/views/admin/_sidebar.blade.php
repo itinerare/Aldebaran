@@ -6,7 +6,7 @@
         @foreach(Config::get('itinerare.comm_types') as $type=>$values)
             <div class="sidebar-item"><a href="{{ url('admin/commissions/'.$type) }}" class="{{ set_active('admin/commissions/'.$type.'*') }}">{{ ucfirst($type) }} Queue</a></div>
         @endforeach
-        <div class="sidebar-item"><a href="{{ url('admin/commissions/ledger') }}" class="{{ set_active('admin/commissions/ledger*') }}">Ledger</a></div>
+        <div class="sidebar-item"><a href="{{ url('admin/ledger') }}" class="{{ set_active('admin/ledger*') }}">Ledger</a></div>
     </li>
 
     <li class="sidebar-section">
