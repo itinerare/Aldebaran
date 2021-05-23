@@ -46,7 +46,7 @@ class AddSiteSettings extends Command
                 [
                     'key'         => $key,
                     'value'       => $value,
-                    'description' => $description,
+                    'description' => $description
                 ],
             ]);
             $this->info( "Added:   ".$key." / Default: ".$value);
@@ -68,9 +68,10 @@ class AddSiteSettings extends Command
         $this->line("Adding site settings...existing entries will be skipped.\n");
 
         $this->addSiteSetting('site_name', 'itinerare', 'Display name used around the site.');
+        $this->addSiteSetting('site_desc', 'Personal art and commission site.', 'Description used for meta tag/link previews.');
 
         foreach(Config::get('itinerare.comm_types') as $type=>$values) {
-            $this->addSiteSetting($type.'_comms_open', 0, '0: '.ucfirst($type).' commissions closed, 1: '.ucfirst($type).' commissions open.');
+            $this->addSiteSetting($type.'_comms_open', 0, 'Whether or not commissions are open.');
             $this->addSiteSetting('overall_'.$type.'_slots', 0, 'Overall number of availabile commission slots. Set to 0 to disable limits.');
         }
 

@@ -95,15 +95,18 @@ function randomString($characters)
  */
 function screenshot($url)
 {
-    // Validate URL
-    if(!empty($url) && filter_var($url, FILTER_VALIDATE_URL)) {
-        // Set expiry five minutes in the future
-        $expires = Carbon\Carbon::now()->valueOf() + (1000 * 300);
-        // Hash key, expiry, and URL
-        $hash = md5(env('THUM_IO_KEY').$expires.$url);
+    // Check that relevant ENV values are set
+    if(env('THUM_IO_KEY', false) && env('THUM_IO_ID', false)) {
+        // Validate URL
+        if(!empty($url) && filter_var($url, FILTER_VALIDATE_URL)) {
+            // Set expiry five minutes in the future
+            $expires = Carbon\Carbon::now()->valueOf() + (1000 * 300);
+            // Hash key, expiry, and URL
+            $hash = md5(env('THUM_IO_KEY').$expires.$url);
 
-        // Return API call URL
-        return "https://image.thum.io/get/png/auth/".env('THUM_IO_ID').'-'.$expires.'-'.$hash."/".$url;
+            // Return API call URL
+            return "https://image.thum.io/get/png/auth/".env('THUM_IO_ID').'-'.$expires.'-'.$hash."/".$url;
+        }
     }
     else return false;
 }
