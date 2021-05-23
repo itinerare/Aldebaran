@@ -60,7 +60,7 @@ class AdminController extends Controller
     public function getSettings()
     {
         return view('admin.settings', [
-            'settings' => DB::table('site_settings')->orderBy('key')->paginate(20)
+            'settings' => DB::table('site_settings')->orderBy('key')->get()
         ]);
     }
 
@@ -73,7 +73,8 @@ class AdminController extends Controller
      */
     public function postEditSetting(Request $request, $key)
     {
-        if(DB::table('site_settings')->where('key', $key)->update(['value' => $request->get('value')])) {
+        if(!$request->get('value')) $value = 0;
+        if(DB::table('site_settings')->where('key', $key)->update(['value' => isset($value) ? $value : $request->get('value')])) {
             flash('Setting updated successfully.')->success();
         }
         else {
