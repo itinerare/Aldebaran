@@ -20,7 +20,7 @@
     @foreach($commissions as $commission)
         <div class="card card-body mb-4">
             <div class="borderhr">
-                <h3>{{ $loop->iteration }} ・ {!! $commission->type->displayName !!}</h3>
+                <h3>{{ $loop->iteration }} ・ {!! $commission->commType->displayName !!}</h3>
                 <p>
                     Progress: {{ $commission->progress }} ・
                     Submitted {!! $commission->created_at->toFormattedDateString() !!} ・

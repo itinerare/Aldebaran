@@ -84,7 +84,7 @@ class Commission extends Model
     /**
      * Get the type associated with this commission.
      */
-    public function type()
+    public function commType()
     {
         return $this->belongsTo('App\Models\Commission\CommissionType', 'commission_type');
     }

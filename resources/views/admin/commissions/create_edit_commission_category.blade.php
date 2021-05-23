@@ -20,7 +20,7 @@
 
 <div class="form-group">
     {!! Form::label('Type') !!}
-    {!! Form::select('type', ['art' => 'Art', 'code' => 'Code'], $category->type, ['class' => 'form-control', 'placeholder' => 'Select a Type']) !!}
+    {!! Form::select('type', $types, $category->type, ['class' => 'form-control', 'placeholder' => 'Select a Type']) !!}
 </div>
 
 <div class="form-group">

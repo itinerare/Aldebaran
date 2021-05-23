@@ -7,8 +7,8 @@
 
 <div class="row">
     @foreach(Config::get('itinerare.comm_types') as $type=>$values)
-        <div class="col-sm">
-            <div class="card mb-3">
+        <div class="col-sm mb-3">
+            <div class="card h-100">
                 <div class="card-body">
                     <h4 class="card-title">{{ ucfirst($type) }} Queues</h4>
                     <ul class="list-group list-group-flush">
