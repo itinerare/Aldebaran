@@ -173,7 +173,7 @@ class CommissionManager extends Service
                 // Overall slots filled
                 if($commission->type->getSlots($commission->type->category->type) == 0) {
                     $type = $commission->type->category->type;
-                    Commission::$type()->where('status', 'Pending')->update(['status' => 'Declined', 'comments' => '<p>Sorry, all slots have been filled! Thank you for your interest in commissioning me, and I hope you consider submitting a request when next I open commissions!</p>']);
+                    Commission::type($type)->where('status', 'Pending')->update(['status' => 'Declined', 'comments' => '<p>Sorry, all slots have been filled! Thank you for your interest in commissioning me, and I hope you consider submitting a request when next I open commissions!</p>']);
                 }
                 // Type slots filled
                 elseif($commission->type->availability > 0 && $commission->type->currentSlots == 0) {
