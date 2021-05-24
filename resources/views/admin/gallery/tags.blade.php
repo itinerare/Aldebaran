@@ -18,6 +18,7 @@
 
         <div class="row ml-md-2 mb-4">
           <div class="d-flex row flex-wrap col-12 pb-1 px-0 ubt-bottom">
+            <div class="col-md-1 font-weight-bold">Visible</div>
             <div class="col-md-2 font-weight-bold">Gallery</div>
             <div class="col-md font-weight-bold">Name</div>
             <div class="col-md font-weight-bold">Description</div>
@@ -25,6 +26,7 @@
           </div>
           @foreach($tags as $tag)
           <div class="d-flex row flex-wrap col-12 mt-1 pt-2 px-0 ubt-top">
+            <div class="col-md-1">{!! $tag->is_visible ? '<i class="text-success fas fa-check"></i>' : '' !!}</div>
             <div class="col-md-2">{!! $tag->is_active ? '<i class="text-success fas fa-check"></i>' : '' !!}</div>
             <div class="col-md"> {{ $tag->name }} </div>
             <div class="col-md"> {{ $tag->description }} </div>
