@@ -40,7 +40,7 @@ class GalleryController extends Controller
             $query->where('name', 'LIKE', '%'.$data['name'].'%');
         if(isset($data['tags']))
             foreach($data['tags'] as $tag)
-                $query->whereIn('id', PieceTag::visible()->where('tag_id', $tag)->pluck('piece_id')->toArray());
+                $query->whereIn('id', PieceTag::where('tag_id', $tag)->pluck('piece_id')->toArray());
 
         if(isset($data['sort']))
         {
@@ -67,7 +67,7 @@ class GalleryController extends Controller
         return view('gallery.gallery', [
             'page' => TextPage::where('key', 'gallery')->first(),
             'pieces' => $query->paginate(20)->appends($request->query()),
-            'tags' => Tag::visible()->pluck('name', 'id'),
+            'tags' => Tag::pluck('name', 'id'),
             'projects' => ['none' => 'Any Project'] + Project::whereIn('id', Piece::gallery()->pluck('project_id')->toArray())->orderBy('sort', 'DESC')->pluck('name', 'id')->toArray()
         ]);
     }
