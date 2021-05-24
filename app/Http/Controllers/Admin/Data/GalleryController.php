@@ -9,6 +9,7 @@ use App\Models\Gallery\Piece;
 use App\Models\Gallery\PieceImage;
 use App\Models\Gallery\Tag;
 use App\Models\Gallery\PieceTag;
+use App\Models\Gallery\Program;
 use App\Services\GalleryService;
 
 use Illuminate\Http\Request;
@@ -185,12 +186,13 @@ class GalleryController extends Controller
         return view('admin.gallery.create_edit_piece', [
             'piece' => new Piece,
             'projects' => Project::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
-            'tags' => Tag::orderBy('name')->pluck('name', 'id')->toArray()
+            'tags' => Tag::orderBy('name')->pluck('name', 'id')->toArray(),
+            'programs' => Program::orderBy('name')->pluck('name', 'id')->toArray()
         ]);
     }
 
     /**
-     * Shows the edit piecepage.
+     * Shows the edit piece page.
      *
      * @param  int  $id
      * @return \Illuminate\Contracts\Support\Renderable
@@ -202,7 +204,8 @@ class GalleryController extends Controller
         return view('admin.gallery.create_edit_piece', [
             'piece' => $piece,
             'projects' => Project::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
-            'tags' => Tag::orderBy('name')->pluck('name', 'id')->toArray()
+            'tags' => Tag::orderBy('name')->pluck('name', 'id')->toArray(),
+            'programs' => Program::orderBy('name')->get()->pluck('name', 'id')->toArray()
         ]);
     }
 
@@ -218,7 +221,7 @@ class GalleryController extends Controller
     {
         $request->validate(Piece::$rules);
         $data = $request->only([
-            'name', 'project_id', 'description', 'is_visible', 'timestamp', 'tags', 'good_example'
+            'name', 'project_id', 'description', 'is_visible', 'timestamp', 'tags', 'programs', 'good_example'
         ]);
         if($id && $service->updatePiece(Piece::find($id), $data, Auth::user())) {
             flash('Piece updated successfully.')->success();
@@ -485,6 +488,109 @@ class GalleryController extends Controller
             foreach($service->errors()->getMessages()['error'] as $error) flash($error)->error();
         }
         return redirect()->to('admin/data/tags');
+    }
+
+    /******************************************************************************
+        PROGRAMS
+    *******************************************************************************/
+
+    /**
+     * Shows the program index.
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getProgramIndex()
+    {
+        return view('admin.gallery.programs', [
+            'programs' => Program::orderBy('name', 'ASC')->paginate(20)
+        ]);
+    }
+
+    /**
+     * Shows the create program page.
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getCreateProgram()
+    {
+        return view('admin.gallery.create_edit_program', [
+            'program' => new Program
+        ]);
+    }
+
+    /**
+     * Shows the edit program page.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getEditProgram($id)
+    {
+        $program = Program::find($id);
+        if(!$program) abort(404);
+        return view('admin.gallery.create_edit_program', [
+            'program' => $program
+        ]);
+    }
+
+    /**
+     * Creates or edits a program.
+     *
+     * @param  \Illuminate\Http\Request     $request
+     * @param  App\Services\GalleryService  $service
+     * @param  int|null                     $id
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function postCreateEditProgram(Request $request, GalleryService $service, $id = null)
+    {
+        $id ? $request->validate(Program::$updateRules) : $request->validate(Program::$createRules);
+        $data = $request->only([
+            'name', 'image', 'is_visible'
+        ]);
+        if($id && $service->updateProgram(Program::find($id), $data, Auth::user())) {
+            flash('Program updated successfully.')->success();
+        }
+        else if (!$id && $program = $service->createProgram($data, Auth::user())) {
+            flash('Program created successfully.')->success();
+            return redirect()->to('admin/data/programs/edit/'.$program->id);
+        }
+        else {
+            foreach($service->errors()->getMessages()['error'] as $error) flash($error)->error();
+        }
+        return redirect()->back();
+    }
+
+    /**
+     * Gets the program deletion modal.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getDeleteProgram($id)
+    {
+        $program = Program::find($id);
+        return view('admin.gallery._delete_program', [
+            'program' => $program,
+        ]);
+    }
+
+    /**
+     * Deletes a program.
+     *
+     * @param  \Illuminate\Http\Request     $request
+     * @param  App\Services\GalleryService  $service
+     * @param  int                          $id
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function postDeleteProgram(Request $request, GalleryService $service, $id)
+    {
+        if($id && $service->deleteProgram(Program::find($id))) {
+            flash('Program deleted successfully.')->success();
+        }
+        else {
+            foreach($service->errors()->getMessages()['error'] as $error) flash($error)->error();
+        }
+        return redirect()->to('admin/data/programs');
     }
 
 }

@@ -43,8 +43,13 @@
 </div>
 
 <div class="form-group">
-    {!! Form::label('tags[]', 'Associated Tags (Optional)') !!} {!! add_help('You can select up to 10 tags at once. Works with these tag(s) will be used to populate the examples gallery for this commission type, if one is displayed.') !!}
+    {!! Form::label('tags[]', 'Associated Tags (Optional)') !!} {!! add_help('You can select up to 10 tags at once. Works with these tag(s) will be used to populate the examples gallery for this commission type, if one is displayed. Tags that are visible will also be displayed on the piece in the gallery and on the piece\'s page.') !!}
     {!! Form::select('tags[]', $tags, $piece->id ? $piece->tags->pluck('tag_id')->toArray() : null, ['id' => 'tagsList', 'class' => 'form-control', 'multiple']) !!}
+</div>
+
+<div class="form-group">
+    {!! Form::label('programs[]', 'Associated Programs (Optional)') !!} {!! add_help('You can select up to 10 programs at once.') !!}
+    {!! Form::select('programs[]', $programs, $piece->id ? $piece->programs->pluck('program_id')->toArray() : null, ['id' => 'programsList', 'class' => 'form-control', 'multiple']) !!}
 </div>
 
 <div class="form-group">
@@ -120,6 +125,9 @@ $( document ).ready(function() {
     $('.selectize').selectize();
 
     $('#tagsList').selectize({
+        maxItems: 10
+    });
+    $('#programsList').selectize({
         maxItems: 10
     });
 
