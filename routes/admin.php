@@ -64,7 +64,15 @@ Route::group(['prefix' => 'data', 'namespace' => 'Data'], function() {
     Route::post('tags/create', 'GalleryController@postCreateEditTag');
     Route::post('tags/edit/{id?}', 'GalleryController@postCreateEditTag');
     Route::post('tags/delete/{id}', 'GalleryController@postDeleteTag');
-    Route::post('tags/sort', 'GalleryController@postSortTag');
+
+    # PROGRAMS
+    Route::get('programs', 'GalleryController@getProgramIndex');
+    Route::get('programs/create', 'GalleryController@getCreateProgram');
+    Route::get('programs/edit/{id}', 'GalleryController@getEditProgram');
+    Route::get('programs/delete/{id}', 'GalleryController@getDeleteProgram');
+    Route::post('programs/create', 'GalleryController@postCreateEditProgram');
+    Route::post('programs/edit/{id?}', 'GalleryController@postCreateEditProgram');
+    Route::post('programs/delete/{id}', 'GalleryController@postDeleteProgram');
 
     # COMMISSION CATEGORIES
     Route::get('commission-categories', 'CommissionController@getIndex');

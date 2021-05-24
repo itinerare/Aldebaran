@@ -94,6 +94,14 @@ class Piece extends Model
         return $this->hasMany('App\Models\Gallery\PieceTag', 'piece_id');
     }
 
+    /**
+     * Get programs associated with this piece.
+     */
+    public function programs()
+    {
+        return $this->hasMany('App\Models\Gallery\PieceProgram', 'piece_id');
+    }
+
     /**********************************************************************************************
 
         SCOPES

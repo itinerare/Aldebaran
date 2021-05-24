@@ -14,6 +14,7 @@
         <div class="sidebar-item"><a href="{{ url('admin/data/projects') }}" class="{{ set_active('admin/data/projects*') }}">Projects</a></div>
         <div class="sidebar-item"><a href="{{ url('admin/data/pieces') }}" class="{{ set_active('admin/data/pieces*') }}">Pieces</a></div>
         <div class="sidebar-item"><a href="{{ url('admin/data/tags') }}" class="{{ set_active('admin/data/tags*') }}">Tags</a></div>
+        <div class="sidebar-item"><a href="{{ url('admin/data/programs') }}" class="{{ set_active('admin/data/programs*') }}">Programs</a></div>
     </li>
 
     <li class="sidebar-section">

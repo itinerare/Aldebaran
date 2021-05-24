@@ -61,8 +61,17 @@
                     @endforeach
                 </small>
             @endif
+            @if($piece->programs()->visible()->count())
+                <small class="float-right mb-2">
+                    @foreach($piece->programs()->visible()->get()->sortBy(function ($programs) {return $programs->program->name;}) as $program)
+                    <img class="mw-100" style="height:16px;" src="{{ $program->program->imageUrl }}"/> {!! $program->program->name !!}{{ !$loop->last ? ', ' : '' }}
+                    @endforeach
+                </small>
+            @endif
         </p>
     </div>
-    {!! $piece->description !!}
+    <div class="{{ $piece->programs()->visible()->count() ? '' : '' }}">
+        {!! $piece->description !!}
+    </div>
 </div>
 @endsection

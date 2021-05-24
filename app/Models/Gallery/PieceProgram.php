@@ -4,7 +4,7 @@ namespace App\Models\Gallery;
 
 use Illuminate\Database\Eloquent\Model;
 
-class PieceTag extends Model
+class PieceProgram extends Model
 {
     /**
      * The attributes that are mass assignable.
@@ -12,7 +12,7 @@ class PieceTag extends Model
      * @var array
      */
     protected $fillable = [
-        'piece_id', 'tag_id'
+        'piece_id', 'program_id'
     ];
 
     /**
@@ -20,7 +20,7 @@ class PieceTag extends Model
      *
      * @var string
      */
-    protected $table = 'piece_tags';
+    protected $table = 'piece_programs';
 
     /**
      * Whether the model contains timestamps to be saved and updated.
@@ -45,11 +45,11 @@ class PieceTag extends Model
     **********************************************************************************************/
 
     /**
-     * Get the tag associated with this piece tag.
+     * Get the program associated with this piece program.
      */
-    public function tag()
+    public function program()
     {
-        return $this->belongsTo('App\Models\Gallery\Tag', 'tag_id');
+        return $this->belongsTo('App\Models\Gallery\Program', 'program_id');
     }
 
     /**********************************************************************************************
@@ -66,6 +66,6 @@ class PieceTag extends Model
      */
     public function scopeVisible($query)
     {
-        return $query->whereIn('tag_id', Tag::visible()->pluck('id')->toArray());
+        return $query->whereIn('program_id', Program::visible()->pluck('id')->toArray());
     }
 }
