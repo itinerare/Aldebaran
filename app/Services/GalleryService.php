@@ -12,6 +12,8 @@ use App\Models\Gallery\Piece;
 use App\Models\Gallery\PieceImage;
 use App\Models\Gallery\Tag;
 use App\Models\Gallery\PieceTag;
+use App\Models\Gallery\Program;
+use App\Models\Gallery\PieceProgram;
 use\App\Models\Commission\CommissionPiece;
 
 class GalleryService extends Service
@@ -149,10 +151,11 @@ class GalleryService extends Service
             $piece = Piece::create($data);
 
             // If tags are selected, validate and create data for them
-            if(isset($data['tags']) && $piece->id) {
+            if(isset($data['tags']) && $piece->id)
                 $data = $this->processTags($data, $piece);
-                $piece->update($data);
-            }
+            // If programs are selected, validate and create data for them
+            if(isset($data['programs']) && $piece->id)
+                $data = $this->processPrograms($data, $piece);
 
             return $this->commitReturn($piece);
         } catch(\Exception $e) {
@@ -179,9 +182,12 @@ class GalleryService extends Service
 
             $data = $this->populateData($data);
             // If tags are selected, validate and create data for them
-            if(isset($data['tags']) && $piece->id) {
+            if(isset($data['tags']) && $piece->id)
                 $data = $this->processTags($data, $piece);
-            }
+            // If programs are selected, validate and create data for them
+            if(isset($data['programs']) && $piece->id)
+                $data = $this->processPrograms($data, $piece);
+
             $piece->update($data);
 
             return $this->commitReturn($piece);
@@ -235,6 +241,33 @@ class GalleryService extends Service
     }
 
     /**
+     * Processes program data.
+     *
+     * @param  array                    $data
+     * @param  \App\Models\piece\Piece  $piece
+     * @return array
+     */
+    private function processPrograms($data, $piece)
+    {
+        if($piece->id && $piece->programs->count()) {
+            // Collect old tags and delete them
+            $oldPrograms = $piece->programs();
+            PieceProgram::where('piece_id', $piece->id)->delete();
+        }
+
+        foreach($data['programs'] as $program) {
+            if(!Program::where('id', $program)->exists()) throw new \Exception("One or more of the selected programs is invalid.");
+
+            PieceProgram::create([
+                'piece_id' => $piece->id,
+                'program_id' => $program
+            ]);
+        }
+
+        return $data;
+    }
+
+    /**
      * Deletes a piece.
      *
      * @param  \App\Models\Gallery\Piece  $piece
@@ -247,9 +280,11 @@ class GalleryService extends Service
         try {
             if(CommissionPiece::where('piece_id', $piece->id)->exists()) throw new \Exception('A commission exists using this piece. Deleting it would potentially remove access to the final piece from the commissioner.');
 
-            // First delete all images and tags associated with a piece, then the piece itself
+            // First delete all images, tags, and programs associated with a piece,
+            // then the piece itself
             foreach($piece->images as $image) $this->deletePieceImage($image);
             PieceTag::where('piece_id', $piece->id)->delete();
+            PieceProgram::where('piece_id', $piece->id)->delete();
 
             $piece->delete();
 
@@ -629,6 +664,110 @@ class GalleryService extends Service
 
             PieceTag::where('tag_id', $tag->id)->delete();
             $tag->delete();
+
+            return $this->commitReturn(true);
+        } catch(\Exception $e) {
+            $this->setError('error', $e->getMessage());
+        }
+        return $this->rollbackReturn(false);
+    }
+
+    /******************************************************************************
+        PROGRAMS
+    *******************************************************************************/
+
+    /**
+     * Create a program.
+     *
+     * @param  array                 $data
+     * @param  \App\Models\User\User $user
+     * @return \App\Models\Gallery\Program|bool
+     */
+    public function createProgram($data, $user)
+    {
+        DB::beginTransaction();
+
+        try {
+            if(isset($data['image']) && $data['image']) {
+                $data['has_image'] = 1;
+                $image = $data['image'];
+                unset($data['image']);
+            }
+            else $data['has_image'] = 0;
+            if(!isset($data['is_visible'])) $data['is_visible'] = 0;
+
+            $program = Program::create($data);
+
+            if($image) $this->handleImage($image, $program->imageDirectory, $program->imageFileName);
+
+            return $this->commitReturn($program);
+        } catch(\Exception $e) {
+            $this->setError('error', $e->getMessage());
+        }
+        return $this->rollbackReturn(false);
+    }
+
+    /**
+     * Update a program.
+     *
+     * @param  \App\Models\Gallery\Program    $program
+     * @param  array                      $data
+     * @param  \App\Models\User\User      $user
+     * @return \App\Models\Gallery\Program|bool
+     */
+    public function updateProgram($program, $data, $user)
+    {
+        DB::beginTransaction();
+
+        try {
+            // More specific validation
+            if(Program::where('name', $data['name'])->where('id', '!=', $program->id)->exists()) throw new \Exception("The name has already been taken.");
+
+            if(isset($data['remove_image']) && !isset($data['image'])) {
+                if($program && $program->has_image && $data['remove_image'])
+                {
+                    $data['has_image'] = 0;
+                    $this->deleteImage($program->imagePath, $program->imageFileName);
+                }
+                unset($data['remove_image']);
+            }
+
+            $image = null;
+            if(isset($data['image']) && $data['image']) {
+                $data['has_image'] = 1;
+                $image = $data['image'];
+                unset($data['image']);
+            }
+            else $data['has_image'] = 0;
+            if(!isset($data['is_visible'])) $data['is_visible'] = 0;
+
+            $program->update($data);
+
+            if($image) $this->handleImage($image, $program->imageDirectory, $program->imageFileName);
+
+            return $this->commitReturn($program);
+        } catch(\Exception $e) {
+            $this->setError('error', $e->getMessage());
+        }
+        return $this->rollbackReturn(false);
+    }
+
+    /**
+     * Delete a program.
+     *
+     * @param  \App\Models\Gallery\Program  $program
+     * @return bool
+     */
+    public function deleteProgram($program)
+    {
+        DB::beginTransaction();
+
+        try {
+            // Check first if the program is currently in use
+            if(PieceProgram::where('program_id', $program->id)->exists()) throw new \Exception("A piece using this program exists. Please remove the program first.");
+
+            PieceProgram::where('program_id', $program->id)->delete();
+            $program->delete();
 
             return $this->commitReturn(true);
         } catch(\Exception $e) {

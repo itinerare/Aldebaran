@@ -12,7 +12,7 @@
 <div class="text-right mb-3"><a class="btn btn-primary" href="{{ url('admin/data/tags/create') }}"><i class="fas fa-plus"></i> Create New Tag</a></div>
 
 @if(!count($tags))
-    <p>No pieces found.</p>
+    <p>No tags found.</p>
 @else
     {!! $tags->render() !!}
 
