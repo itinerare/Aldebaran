@@ -14,15 +14,20 @@
 </div>
 
 <div>
-    {!! Form::open(['method' => 'GET', 'class' => 'form-inline justify-content-end']) !!}
-        <div class="form-group mr-3 mb-3">
-            {!! Form::text('name', Request::get('name'), ['class' => 'form-control', 'placeholder' => 'Name']) !!}
+    {!! Form::open(['method' => 'GET']) !!}
+        <div class="ml-auto w-50 justify-content-end form-group mb-3">
+            {!! Form::select('tags[]', $tags, Request::get('tags'), ['id' => 'tagList', 'class' => 'form-control', 'multiple', 'placeholder' => 'Tag(s)']) !!}
         </div>
-        <div class="form-group mr-3 mb-3">
-            {!! Form::select('project_id', $projects, Request::get('project_id'), ['class' => 'form-control']) !!}
-        </div>
-        <div class="form-group mb-3">
-            {!! Form::submit('Search', ['class' => 'btn btn-primary']) !!}
+        <div class="form-inline justify-content-end">
+            <div class="form-group mr-3 mb-3">
+                {!! Form::text('name', Request::get('name'), ['class' => 'form-control', 'placeholder' => 'Name']) !!}
+            </div>
+            <div class="form-group mr-3 mb-3">
+                {!! Form::select('project_id', $projects, Request::get('project_id'), ['class' => 'form-control']) !!}
+            </div>
+            <div class="form-group mb-3">
+                {!! Form::submit('Search', ['class' => 'btn btn-primary']) !!}
+            </div>
         </div>
     {!! Form::close() !!}
 </div>
@@ -58,4 +63,11 @@
     {!! $pieces->render() !!}
 @endif
 
+<script>
+    $(document).ready(function() {
+        $('#tagList').selectize({
+            maxItems: 10
+        });
+    });
+</script>
 @endsection

@@ -8,6 +8,7 @@ use App\Models\Gallery\Project;
 use App\Models\Gallery\Piece;
 use App\Models\Gallery\PieceImage;
 use App\Models\Gallery\Tag;
+use App\Models\Gallery\PieceTag;
 use App\Services\GalleryService;
 
 use Illuminate\Http\Request;
@@ -158,13 +159,18 @@ class GalleryController extends Controller
     public function getPieceIndex(Request $request)
     {
         $query = Piece::query();
-        $data = $request->only(['project_id', 'name']);
+        $data = $request->only(['project_id', 'name', 'tags']);
         if(isset($data['project_id']) && $data['project_id'] != 'none')
             $query->where('project_id', $data['project_id']);
         if(isset($data['name']))
             $query->where('name', 'LIKE', '%'.$data['name'].'%');
+        if(isset($data['tags']))
+            foreach($data['tags'] as $tag)
+                $query->whereIn('id', PieceTag::visible()->where('tag_id', $tag)->pluck('piece_id')->toArray());
+
         return view('admin.gallery.pieces', [
             'pieces' => $query->orderByRaw('ifnull(timestamp, created_at) DESC')->paginate(20)->appends($request->query()),
+            'tags' => Tag::visible()->pluck('name', 'id'),
             'projects' => ['none' => 'Any Project'] + Project::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray()
         ]);
     }
