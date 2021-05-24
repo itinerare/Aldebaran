@@ -18,7 +18,7 @@
                         @endif
                         @if($piece->tags()->visible()->count())
                             <br/>
-                            @foreach($piece->tags()->visible()->get() as $tag)
+                            @foreach($piece->tags()->visible()->get()->sortBy(function ($tags) {return $tags->tag->name;}) as $tag)
                                 {!! $tag->tag->name !!}{{ !$loop->last ? ', ' : '' }}
                             @endforeach
                         @endif

@@ -56,7 +56,7 @@
             @if($piece->tags()->visible()->count())
                 <br/>
                 <small>
-                    @foreach($piece->tags()->visible()->get() as $tag)
+                    @foreach($piece->tags()->visible()->get()->sortBy(function ($tags) {return $tags->tag->name;}) as $tag)
                     {!! $tag->tag->getDisplayName(Request::get('source') ? Request::get('source') : null) !!}{{ !$loop->last ? ', ' : '' }}
                     @endforeach
                 </small>
