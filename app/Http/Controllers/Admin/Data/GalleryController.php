@@ -166,11 +166,11 @@ class GalleryController extends Controller
             $query->where('name', 'LIKE', '%'.$data['name'].'%');
         if(isset($data['tags']))
             foreach($data['tags'] as $tag)
-                $query->whereIn('id', PieceTag::visible()->where('tag_id', $tag)->pluck('piece_id')->toArray());
+                $query->whereIn('id', PieceTag::where('tag_id', $tag)->pluck('piece_id')->toArray());
 
         return view('admin.gallery.pieces', [
             'pieces' => $query->orderByRaw('ifnull(timestamp, created_at) DESC')->paginate(20)->appends($request->query()),
-            'tags' => Tag::visible()->pluck('name', 'id'),
+            'tags' => Tag::pluck('name', 'id'),
             'projects' => ['none' => 'Any Project'] + Project::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray()
         ]);
     }
