@@ -627,7 +627,7 @@ class GalleryService extends Service
             // Check first if the tag is currently in use
             if(PieceTag::where('tag_id', $tag->id)->exists()) throw new \Exception("A piece with this tag exists. Please remove the tag first.");
 
-            $pieceTag->where('tag_id', $tag->id)->delete();
+            PieceTag::where('tag_id', $tag->id)->delete();
             $tag->delete();
 
             return $this->commitReturn(true);
