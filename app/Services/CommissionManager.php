@@ -4,6 +4,7 @@ use App\Services\Service;
 
 use DB;
 use Settings;
+use Config;
 
 use App\Models\Commission\CommissionType;
 use App\Models\Commission\Commission;
@@ -56,21 +57,28 @@ class CommissionManager extends Service
             else $commissioner = $this->processCommissioner($data, $manual ? false : true);
 
             // Collect and encode form responses related to the commission itself
-            foreach(['references', 'details', 'background'] as $field) {
-                if(isset($data[$field])) $data['description'][$field] = strip_tags($data[$field]);
-                else $data['description'][$field] = null;
-            }
-            foreach(['shading', 'style'] as $field) {
-                if(isset($data[$field])) $data['data'][$field] = strip_tags($data[$field]);
-                else $data['data'][$field] = null;
-            }
+            foreach([$type->category->name.'_'.$type->name, $type->category->name, 'basic'] as $section)
+                if(Config::get('itinerare.comm_types.'.$type->category->type.'.forms.'.$section) != null) {
+                    foreach(Config::get('itinerare.comm_types.'.$type->category->type.'.forms.'.$section) as $key=>$field) {
+                        if($key != 'includes') {
+                            if(isset($data[$key])) $data['data'][$key] = strip_tags($data[$key]);
+                            else $data['data'][$field] = null;
+                        }
+                        elseif($key == 'includes') {
+                            foreach(Config::get('itinerare.comm_types.'.$type.'.forms.'.$include) as $key=>$field) {
+                                if(isset($data[$key])) $data['data'][$key] = strip_tags($data[$field]);
+                                else $data['data'][$key] = null;
+                            }
+                        }
+                    }
+                break;
+                }
 
             $commission = Commission::create([
                 'commissioner_id' => $commissioner->id,
                 'commission_type' => $type->id,
                 'status' => 'Pending',
-                'data' => json_encode($data['data']),
-                'description' => json_encode($data['description'])
+                'data' => json_encode($data['data'])
             ]);
 
             // Now that the commission has an ID, assign it a key incorporating it
