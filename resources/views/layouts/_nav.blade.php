@@ -42,9 +42,11 @@
 
                     <div class="dropdown-menu" aria-labelledby="commDropdown">
                         @foreach(Config::get('itinerare.comm_types') as $type=>$values)
-                            <span class="dropdown-item">
-                                {{ ucfirst($type) }} Commissions
-                            </span>
+                            @if($loop->count > 1)
+                                <span class="dropdown-item">
+                                    {{ ucfirst($type) }} Commissions
+                                </span>
+                            @endif
                             <a class="dropdown-item" href="{{ url('commissions/'.$type) }}">
                                 Info
                             </a>
