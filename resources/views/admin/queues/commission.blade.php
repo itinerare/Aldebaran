@@ -73,7 +73,7 @@
     <div class="borderhr">
         <h2>Commission-related Info</h2>
 
-        @include('commissions._info_builder', ['type' => $commission->commType->category->type, 'categoryName' => str_replace(' ', '_', strtolower($commission->commType->category->name)), 'typeName' => str_replace(' ', '_', strtolower($commission->commType->name))])
+        @include('commissions._form_builder', ['type' => $commission->commType->category->type, 'categoryName' => str_replace(' ', '_', strtolower($commission->commType->category->name)), 'typeName' => str_replace(' ', '_', strtolower($commission->commType->name)), 'form' => false])
 
         <div class="form-group">
             {!! Form::label('Link') !!} {!! add_help('The URL of this page, as mentioned above!') !!}

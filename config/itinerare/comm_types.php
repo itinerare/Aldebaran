@@ -13,6 +13,22 @@ return [
     */
 
     'art' => [
+        'forms' => [
+            'basic' => [
+                'references' => [
+                    'name' => 'Reference(s)',
+                    'label' => 'Reference(s)',
+                    'type' => 'textarea',
+                    'help' => 'Please provide the URL(s) of clear reference(s) for each character.'
+                ],
+                'details' => [
+                    'name' => 'Details',
+                    'label' => 'Desired pose(s), attitude(s)/Expression(s), and the like',
+                    'type' => 'textarea',
+                    'help' => 'Consult the information for the commission type you\'ve selected for more details.'
+                ],
+            ],
+        ],
         // Any custom pages that should be created for this commission type
         'pages' => [
             'willwont' => [

@@ -192,14 +192,35 @@ class CommissionController extends Controller
      */
     public function postNewCommission(Request $request, CommissionManager $service, $id = null)
     {
-        // Set code_check if absent.
-        if(CommissionType::find($request['type'])->category->type == 'code' && !isset($request['code_check']))
-            $request['code_check'] = 0;
-        $request->validate(Commission::$createRules);
+        $type = CommissionType::find($request->get('type'));
+
+        // Form an array of possible answers based on configured fields,
+        // Set any un-set toggles (since Laravel does not pass anything on for them),
+        // and collect any custom validation rules for the configured fields
+        $answerArray = []; $validationRules = Commission::$createRules;
+        foreach([$type->category->name.'_'.$type->name, $type->category->name, 'basic'] as $section)
+            if(Config::get('itinerare.comm_types.'.$type->category->type.'.forms.'.$section) != null) {
+                foreach(Config::get('itinerare.comm_types.'.$type->category->type.'.forms.'.$section) as $key=>$field) {
+                    if($key != 'includes') {
+                        $answerArray[$key] = null;
+                        if(isset($field['validation_rules'])) $validationRules[$key] = $field['validation_rules'];
+                        if($field['type'] == 'checkbox' && !isset($request[$key])) $request[$key] = 0;
+                    }
+                    elseif($key == 'includes')
+                        foreach(Config::get('itinerare.comm_types.'.$type.'.forms.'.$include) as $key=>$field) {
+                            $answerArray[$key] = null;
+                            if(isset($field['validation_rules'])) $validationRules[$key] = $field['validation_rules'];
+                            if($field['type'] == 'checkbox' && !isset($request[$key])) $request[$key] = 0;
+                        }
+                }
+            break;
+            }
+
+        $request->validate($validationRules);
+
         $data = $request->only([
             'name', 'email', 'contact', 'paypal', 'type', 'key',
-            'references', 'details', 'shading', 'style', 'background'
-        ]);
+        ] + $answerArray);
         $data['ip'] = $request->ip();
 
         if (!$id && $commission = $service->createCommission($data)) {
