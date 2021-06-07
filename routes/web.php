@@ -41,8 +41,8 @@ Route::group(['prefix' => 'commissions'], function() {
 
     Route::get('types/{key}', 'CommissionController@getType');
     Route::get('types/{key}/gallery', 'CommissionController@getTypeGallery');
-    Route::get('new', 'CommissionController@getNewCommission');
-    Route::post('new', 'CommissionController@postNewCommission');
+    Route::get('{type}/new', 'CommissionController@getNewCommission');
+    Route::post('{type}/new', 'CommissionController@postNewCommission');
     Route::get('view/{key}', 'CommissionController@getViewCommission');
 
     Route::get('{type}/willwont', 'CommissionController@getWillWont');

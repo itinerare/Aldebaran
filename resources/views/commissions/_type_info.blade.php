@@ -14,7 +14,7 @@
                 @if($type->availability > 0)
                     <h5>Available Slots: {{ $type->displaySlots }}</h5>
                 @endif
-                <a class="btn btn-success" href="{{ url('/commissions/new?type='.$type->id.(isset($source) && $source == $type->key ? '&key='.$type->key : '')) }}">Request a Commission</a>
+                <a class="btn btn-success" href="{{ url('/commissions/'.$type->category->type.'/new?type='.$type->id.(isset($source) && $source == $type->key ? '&key='.$type->key : '')) }}">Request a Commission</a>
             @else
                 <p>
                     {{ Settings::get($category->type.'_comms_open') ? 'This commission type is currently unavailable!' : 'Commissions are currently closed!' }}
