@@ -126,7 +126,7 @@ class CommissionType extends Model
     public function getDisplayNameAttribute()
     {
         if(!$this->is_visible) return $this->category->name.': '.$this->name;
-        else return '<a href="'.url('commissions/'.$this->category->type.'#'.$this->category->name).'">'.$this->category->name.': '.$this->name.'</a>';
+        else return '<a href="'.url('commissions/'.$this->category->class->slug.'#'.$this->category->name).'">'.$this->category->name.': '.$this->name.'</a>';
     }
 
     /**
@@ -184,7 +184,7 @@ class CommissionType extends Model
      */
     public function getCanCommissionAttribute()
     {
-        if(!Settings::get($this->category->type.'_comms_open') || !$this->is_active || !$this->category->is_active) return 0;
+        if(!Settings::get($this->category->class->slug.'_comms_open') || !$this->is_active || !$this->category->is_active) return 0;
         if($this->availability > 0 || $this->slots != null)
             if($this->currentSlots < $this->slots) return 1;
         else return 1;
@@ -197,7 +197,7 @@ class CommissionType extends Model
      */
     public function getSlotsAttribute()
     {
-        if($this->availability == 0 && $this->getSlots($this->category->type) == null) return null;
+        if($this->availability == 0 && $this->getSlots($this->category->class->slug) == null) return null;
         if($this->getSlots($this->category->name == 'Code' ? 'code' : 'art') != null)
             return min($this->getSlots($this->category->name == 'Code' ? 'code' : 'art'), $this->availability);
         else return $this->availability;
@@ -210,7 +210,7 @@ class CommissionType extends Model
      */
     public function getCurrentSlotsAttribute()
     {
-        if($this->availability == 0 && $this->getSlots($this->category->type) == null) return null;
+        if($this->availability == 0 && $this->getSlots($this->category->class->slug) == null) return null;
         return ($this->slots - $this->commissions->where('status', 'Accepted')->count());
     }
 

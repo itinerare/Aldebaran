@@ -2,11 +2,16 @@
 
 namespace App\Providers;
 
+use View;
+use Auth;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
+
+use App\Models\Gallery\Project;
+use App\Models\Commission\CommissionClass;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -30,6 +35,9 @@ class AppServiceProvider extends ServiceProvider
         //
         Schema::defaultStringLength(191);
         Paginator::useBootstrap();
+
+        View::share('visibleProjects', Project::visible()->orderBy('sort', 'DESC')->get());
+        View::share('commissionClasses', CommissionClass::active(Auth::check() ? Auth::user() : null)->orderBy('sort', 'DESC')->get());
 
         /**
          * Paginate a standard Laravel Collection.

@@ -3,7 +3,7 @@
 @section('title') Commission (#{{ $commission->id }}) @endsection
 
 @section('content')
-{!! breadcrumbs([$commission->commType->category->type.' Commissions' => 'commissions/'.$commission->commType->category->type, $commission->commType->name.' Commission' => 'commissions/view/'.$commission->key]) !!}
+{!! breadcrumbs([$commission->type->category->class->name.' Commissions' => 'commissions/'.$commission->type->category->class->slug, $commission->type->name.' Commission' => 'commissions/view/'.$commission->key]) !!}
 
 <div class="borderhr mb-4">
     <h1>
@@ -37,7 +37,7 @@
             <h2>Basic Info</h2>
             <div class="row">
                 <div class="col-md-4"><h5>Commission Type</h5></div>
-                <div class="col-md">{!! $commission->commType->displayName !!}</div>
+                <div class="col-md">{!! $commission->type->displayName !!}</div>
             </div>
             <div class="row">
                 <div class="col-md-4"><h5>Paid Status</h5></div>
@@ -64,7 +64,7 @@
         <h2>Commission-related Info</h2>
         <p>This is the information you provided when filling out the commission request form!</p>
 
-        @include('commissions._form_builder', ['type' => $commission->commType->category->type, 'categoryName' => str_replace(' ', '_', strtolower($commission->commType->category->name)), 'typeName' => str_replace(' ', '_', strtolower($commission->commType->name)), 'form' => false])
+        @include('commissions._form_builder', ['type' => $commission->type->category->type, 'categoryName' => str_replace(' ', '_', strtolower($commission->type->category->name)), 'typeName' => str_replace(' ', '_', strtolower($commission->type->name)), 'form' => false])
 
         <div class="form-group">
             {!! Form::label('Link') !!} {!! add_help('The URL of this page, as mentioned above!') !!}
