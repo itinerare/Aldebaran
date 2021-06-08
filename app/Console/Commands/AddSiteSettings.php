@@ -70,11 +70,6 @@ class AddSiteSettings extends Command
         $this->addSiteSetting('site_name', 'itinerare', 'Display name used around the site.');
         $this->addSiteSetting('site_desc', 'Personal art and commission site.', 'Description used for meta tag/link previews.');
 
-        foreach(Config::get('itinerare.comm_types') as $type=>$values) {
-            $this->addSiteSetting($type.'_comms_open', 0, 'Whether or not commissions are open.');
-            $this->addSiteSetting('overall_'.$type.'_slots', 0, 'Overall number of availabile commission slots. Set to 0 to disable limits.');
-        }
-
         $this->line("\nSite settings up to date!");
 
     }

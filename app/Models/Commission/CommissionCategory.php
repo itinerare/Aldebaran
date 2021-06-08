@@ -12,7 +12,7 @@ class CommissionCategory extends Model
      * @var array
      */
     protected $fillable = [
-        'name', 'type', 'is_active', 'sort'
+        'name', 'is_active', 'sort', 'class_id'
     ];
 
     /**
@@ -56,6 +56,14 @@ class CommissionCategory extends Model
     **********************************************************************************************/
 
     /**
+     * Get the class this commission category belongs to.
+     */
+    public function class()
+    {
+        return $this->belongsTo('App\Models\Commission\CommissionClass', 'class_id');
+    }
+
+    /**
      * Get the types associated with this commission category.
      */
     public function types()
@@ -81,16 +89,16 @@ class CommissionCategory extends Model
     }
 
     /**
-     * Scope a query to only include commission categories of a given type.
+     * Scope a query to only include commission categories of a given class.
      *
      * @param  \Illuminate\Database\Eloquent\Builder  $query
      * @param  string                                 $type
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeType($query, $type)
+    public function scopeByClass($query, $class)
     {
-        return $query->where('type', $type);
+        return $query->where('class_id', $class);
     }
 
     /**********************************************************************************************
@@ -106,7 +114,7 @@ class CommissionCategory extends Model
      */
     public function getFullNameAttribute()
     {
-        return ucfirst($this->type).' ・ '.$this->name;
+        return ucfirst($this->class->name).' ・ '.$this->name;
     }
 
 }

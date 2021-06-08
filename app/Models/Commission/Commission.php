@@ -52,7 +52,7 @@ class Commission extends Model
 
         // Other
         'terms' => 'accepted',
-        'g-recaptcha-response' => 'required|recaptchav3:submit,0.5'
+        //'g-recaptcha-response' => 'required|recaptchav3:submit,0.5'
     ];
 
     /**
@@ -84,7 +84,7 @@ class Commission extends Model
     /**
      * Get the type associated with this commission.
      */
-    public function commType()
+    public function type()
     {
         return $this->belongsTo('App\Models\Commission\CommissionType', 'commission_type');
     }
@@ -112,19 +112,17 @@ class Commission extends Model
     **********************************************************************************************/
 
     /**
-     * Scope a query to only include art commissions.
+     * Scope a query to only include commissions of a given class.
      *
      * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  string                                 $type
+     * @param  int                                 $class
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeType($query, $type)
+    public function scopeClass($query, $class)
     {
         return $query->whereIn('commission_type',
-            CommissionType::whereIn('category_id',
-            CommissionCategory::type($type)->pluck('id')->toArray()
-            )->pluck('id')->toArray()
+            CommissionType::whereIn('category_id', CommissionCategory::byClass($class)->pluck('id')->toArray())->pluck('id')->toArray()
         );
     }
 

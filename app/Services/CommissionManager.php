@@ -42,7 +42,7 @@ class CommissionManager extends Service
             if(!$type) throw new \Exception("The selected commission type is invalid.");
             if(!$manual) {
                 // Check that commissions are open for this type and for the global type
-                if(!Settings::get($type->category->type.'_comms_open')) throw new \Exception('Commissions are not open.');
+                if(!Settings::get($type->category->class->slug.'_comms_open')) throw new \Exception('Commissions are not open.');
                 if(!$type->category->is_active) throw new \Exception('Commissions are not open for this category.');
                 if(!$type->is_active) throw new \Exception('Commissions are not open for this type.');
                 // If the commission type is currently hidden, check for the presence of
@@ -164,9 +164,9 @@ class CommissionManager extends Service
             $commission = Commission::where('id', $id)->where('status', 'Pending')->first();
             if(!$commission) throw new \Exception('Invalid commission selected.');
             // Check that this commission will not be in excess of any slot limitations
-            if(Settings::get('overall_'.$commission->commType->category->type.'_slots') > 0 || $commission->commType->slots != null) {
-                if($commission->commType->getSlots($commission->commType->category->type) == 0) throw new \Exception('There are no overall slots of this commission type remaining.');
-                if($commission->commType->availability > 0 && $commission->commType->currentSlots == 0) throw new \Exception('This commission  type\'s slots are full.');
+            if(Settings::get('overall_'.$commission->type->category->class->slug.'_slots') > 0 || $commission->type->slots != null) {
+                if($commission->type->getSlots($commission->type->category->class->slug) == 0) throw new \Exception('There are no overall slots of this commission type remaining.');
+                if($commission->type->availability > 0 && $commission->type->currentSlots == 0) throw new \Exception('This commission  type\'s slots are full.');
             }
 
             // Update the commission status and comments
@@ -177,16 +177,15 @@ class CommissionManager extends Service
 
             // If this is the last available commission slot overall or for this type,
             // automatically decline any remaining pending requests
-            if(Settings::get('overall_'.$commission->commType->category->type.'_slots') > 0 || $commission->commType->slots != null) {
+            if(Settings::get('overall_'.$commission->type->category->class->slug.'_slots') > 0 || $commission->type->slots != null) {
                 // Overall slots filled
-                if($commission->commType->getSlots($commission->commType->category->type) == 0) {
-                    $type = $commission->commType->category->type;
-                    Commission::type($type)->where('status', 'Pending')->update(['status' => 'Declined', 'comments' => '<p>Sorry, all slots have been filled! Thank you for your interest in commissioning me, and I hope you consider submitting a request when next I open commissions!</p>']);
+                if($commission->type->getSlots($commission->type->category->class->slug) == 0) {
+                    Commission::class($commission->type->category->class->id)->where('status', 'Pending')->update(['status' => 'Declined', 'comments' => '<p>Sorry, all slots have been filled! Thank you for your interest in commissioning me, and I hope you consider submitting a request when next I open commissions!</p>']);
                 }
                 // Type slots filled
-                elseif($commission->commType->availability > 0 && $commission->commType->currentSlots == 0) {
-                    dd($commission->commType->currentSlots);
-                    Commission::where('commission_type', $commission->commType)->where('status', 'Pending')->update(['status' => 'Declined', 'comments' => '<p>Sorry, all slots for this commission type have been filled! Thank you for your interest in commissioning me, and I hope you consider submitting a request when next I open commissions!</p>']);
+                elseif($commission->type->availability > 0 && $commission->type->currentSlots == 0) {
+                    dd($commission->type->currentSlots);
+                    Commission::where('commission_type', $commission->type)->where('status', 'Pending')->update(['status' => 'Declined', 'comments' => '<p>Sorry, all slots for this commission type have been filled! Thank you for your interest in commissioning me, and I hope you consider submitting a request when next I open commissions!</p>']);
                 }
             }
 

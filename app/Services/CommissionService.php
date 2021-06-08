@@ -4,9 +4,13 @@ use App\Services\Service;
 
 use DB;
 use Config;
+use Settings;
+use Carbon\Carbon;
 
+use App\Models\Commission\CommissionClass;
 use App\Models\Commission\CommissionCategory;
 use App\Models\Commission\CommissionType;
+use App\Models\TextPage;
 
 class CommissionService extends Service
 {
@@ -15,9 +19,245 @@ class CommissionService extends Service
     | Commission Service
     |--------------------------------------------------------------------------
     |
-    | Handles the creation and editing of commission categories and types.
+    | Handles the creation and editing of commission classes, categories, and types.
     |
     */
+
+    /******************************************************************************
+        COMMISSION CLASSES
+    *******************************************************************************/
+
+    /**
+     * Create a class.
+     *
+     * @param  array                 $data
+     * @param  \App\Models\User\User $user
+     * @return \App\Models\Commission\CommissionClass|bool
+     */
+    public function createCommissionClass($data, $user)
+    {
+        DB::beginTransaction();
+
+        try {
+            if(!isset($data['is_active'])) $data['is_active'] = 0;
+            $data['name'] = strip_tags($data['name']);
+            $data['slug'] = strtolower(str_replace(' ', '_', $data['name']));
+
+            $class = CommissionClass::create($data);
+
+            $this->processClassSettings($class, $data);
+
+            return $this->commitReturn($class);
+        } catch(\Exception $e) {
+            $this->setError('error', $e->getMessage());
+        }
+        return $this->rollbackReturn(false);
+    }
+
+    /**
+     * Update a class.
+     *
+     * @param  \App\Models\Commission\CommissionClass  $class
+     * @param  array                          $data
+     * @param  \App\Models\User\User          $user
+     * @return \App\Models\Commission\CommissionClass|bool
+     */
+    public function updateCommissionClass($class, $data, $user)
+    {
+        DB::beginTransaction();
+
+        try {
+            $data['name'] = strip_tags($data['name']);
+
+            // More specific validation
+            if(CommissionClass::where('name', $data['name'])->where('id', '!=', $class->id)->exists()) throw new \Exception("The name has already been taken.");
+
+            if(!isset($data['is_active'])) $data['is_active'] = 0;
+            $data['slug'] = strtolower(str_replace(' ', '_', $data['name']));
+
+            if($data['slug'] != $class->slug) $data['slug_old'] = $class->slug;
+            if(isset($class->data['pages'])) $data['pages_old'] = $class->data['pages'];
+
+            $class->update($data);
+
+            $data = $this->processClassSettings($class, $data);
+            if(isset($data['data'])) $class->data = json_encode($data['data']);
+            else $class->data = null;
+            $class->save();
+
+            return $this->commitReturn($class);
+        } catch(\Exception $e) {
+            $this->setError('error', $e->getMessage());
+        }
+        return $this->rollbackReturn(false);
+    }
+
+    /**
+     * Processes site settings and pages for a commission class.
+     *
+     * @param  \App\Models\Commission\CommissionClass    $class
+     * @param  array                                     $data
+     * @return bool
+     */
+    private function processClassSettings($class, $data)
+    {
+        // Add and/or modify site settings
+        // If the slug has been changed, check for existing settings and save their values
+        if(isset($data['slug_old']))
+            foreach([$data['slug_old'].'_comms_open', 'overall_'.$data['slug_old'].'_slots'] as $setting)
+                if(DB::table('site_settings')->where('key', $setting)->exists()) {
+                    $data['settings'][$setting] = Settings::get($setting);
+                    DB::table('site_settings')->where('key', $setting)->delete();
+                }
+
+        // Create settings if necessary
+        if(!DB::table('site_settings')->where('key', $class->slug.'_comms_open')->exists()) {
+            DB::table('site_settings')->insert([
+                [
+                    'key'         => $class->slug.'_comms_open',
+                    'value'       => isset($data['slug_old']) && isset($data['settings'][$data['slug_old'].'_comms_open']) ? $data['settings'][$data['slug_old'].'_comms_open'] : 0,
+                    'description' => 'Whether or not commissions are open.'
+                ],
+            ]);
+        }
+
+        if(!DB::table('site_settings')->where('key', 'overall_'.$class->slug.'_slots')->exists()) {
+            DB::table('site_settings')->insert([
+                [
+                    'key'         => 'overall_'.$class->slug.'_slots',
+                    'value'       => isset($data['slug_old']) && isset($data['settings']['overall_'.$data['slug_old'].'_slots']) ? $data['settings']['overall_'.$data['slug_old'].'_slots'] : 0,
+                    'description' => 'Overall number of availabile commission slots. Set to 0 to disable limits.'
+                ],
+            ]);
+        }
+
+        // Add and/or modify text pages
+        $pages = [
+            $class->slug.'tos' => [
+                'name' => $class->name.' Commission Terms of Service',
+                'text' => '<p>'.$class->name.' commssion terms of service go here.</p>',
+                'flag' => 'tos'
+            ],
+            $class->slug.'info' => [
+                'name' => $class->name.' Commission Info',
+                'text' => '<p>'.$class->name.' commssion info goes here.</p>',
+                'flag' => 'info'
+            ]
+        ];
+
+        if(isset($data['page_key'])) foreach($data['page_key'] as $key=>$pageKey) {
+            if($data['page_id'][$key] == null) $pages = $pages + [$pageKey => [
+                'name' => $data['page_title'][$key],
+                'text' => '<p>'.$class->name.' commssion info goes here.</p>',
+                'flag' => 'custom'
+            ]];
+        }
+
+        // If the slug has been changed, check for existing pages and save their content
+        if(isset($data['slug_old']))
+            foreach($pages as $pageInfo) {
+                $page = TextPage::where('key', $data['slug_old'].$pageInfo['flag'])->first();
+                if($page) {
+                    $data['pages'][$pageInfo['flag']] = $page->text;
+                    $page->delete();
+                }
+            }
+
+        // Update and/or remove old pages
+        if(isset($data['pages_old'])) foreach($data['pages_old'] as $id=>$oldPage) {
+            $page = TextPage::find($id);
+            // Check to see if the page is still among the results/should still exist
+            if(isset($data['page_id'])) foreach($data['page_id'] as $pageId)
+                if($pageId == $id) $pageExists[$page->id] = true;
+
+            // If so, update it if necessary
+            if(isset($pageExists[$page->id]) && $pageExists[$id]) {
+                foreach($data['page_id'] as $key=>$id) {
+                    if($id == $page->id) {
+                        if(isset($data['page_key'][$key]) && $data['page_key'][$key] != $page->key)
+                        $page->key = $data['page_key'][$key];
+                        if(isset($data['page_title'][$key]) && $data['page_title'][$key] != $page->key)
+                        $page->name = $data['page_title'][$key];
+                        $page->save();
+                    }
+                }
+            }
+            else $page->delete();
+        }
+
+        // Create pages if necessary
+        foreach($pages as $key=>$page)
+            if(!DB::table('text_pages')->where('key', $key)->exists()) {
+                DB::table('text_pages')->insert([
+                    [
+                        'key' => $key,
+                        'name' => $page['name'],
+                        'text' => isset($data['slug_old']) && isset($data['pages'][$page['flag']]) ? $data['pages'][$page['flag']] : $page['text'],
+                        'created_at' => Carbon::now(),
+                        'updated_at' => Carbon::now(),
+                    ]
+
+                ]);
+            }
+
+        if(isset($data['page_key']))
+            foreach($data['page_key'] as $key=>$pageKey) {
+                $data['data']['pages'][TextPage::where('key', $pageKey)->first()->id] = [
+                    'key' => $data['page_key'][$key],
+                    'title' => $data['page_title'][$key],
+                ];
+            }
+
+        return $data;
+    }
+
+    /**
+     * Delete a class.
+     *
+     * @param  \App\Models\Commission\CommissionClass  $class
+     * @return bool
+     */
+    public function deleteCommissionClass($class)
+    {
+        DB::beginTransaction();
+
+        try {
+            // Check first if the class is currently in use
+            if(CommissionCategory::where('class_id', $class->id)->exists()) throw new \Exception("A commission category with this class exists. Please change its class first.");
+
+            $class->delete();
+
+            return $this->commitReturn(true);
+        } catch(\Exception $e) {
+            $this->setError('error', $e->getMessage());
+        }
+        return $this->rollbackReturn(false);
+    }
+
+    /**
+     * Sorts class order.
+     *
+     * @param  array  $data
+     * @return bool
+     */
+    public function sortCommissionClass($data)
+    {
+        DB::beginTransaction();
+
+        try {
+            // explode the sort array and reverse it since the order is inverted
+            $sort = array_reverse(explode(',', $data));
+
+            foreach($sort as $key => $s) {
+                CommissionClass::where('id', $s)->update(['sort' => $key]);
+            }
+
+            return $this->commitReturn(true);
+        } catch(\Exception $e) {
+            $this->setError('error', $e->getMessage());
+        }
+        return $this->rollbackReturn(false);
+    }
 
     /******************************************************************************
         COMMISSION CATEGORIES

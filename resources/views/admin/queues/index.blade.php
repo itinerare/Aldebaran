@@ -3,28 +3,28 @@
 @section('admin-title') Commission Queue @endsection
 
 @section('admin-content')
-{!! breadcrumbs(['Admin Panel' => 'admin', ucfirst($type).' Commission Queue' => 'admin/commissions/'.$type.'/pending']) !!}
+{!! breadcrumbs(['Admin Panel' => 'admin', $class->name.' Commission Queue' => 'admin/commissions/'.$class->slug.'/pending']) !!}
 
 <h1>
-    {{ ucfirst($type) }} Queue
+    {{ $class->name }} Queue
 </h1>
 
-@if(Settings::get('overall_'.$type.'_slots') > 0)
-    <p>There {{ max($count->getSlots($type), Settings::get('overall_'.$type.'_slots')) == 1 ? 'is' : 'are' }} currently {{ $count->getSlots($type).'/'.Settings::get('overall_'.$type.'_slots') }} slot{{ Settings::get('overall_'.$type.'_slots') == 1 ? '' : 's' }} available for {{ $type }} commissions.</p>
+@if(Settings::get('overall_'.$class->slug.'_slots') > 0)
+    <p>There {{ max($count->getSlots($class->slug), Settings::get('overall_'.$class->slug.'_slots')) == 1 ? 'is' : 'are' }} currently {{ $count->getSlots($class->slug).'/'.Settings::get('overall_'.$class->slug.'_slots') }} slot{{ Settings::get('overall_'.$class->slug.'_slots') == 1 ? '' : 's' }} available for {{ strtolower($class->name) }} commissions.</p>
 @endif
 
 <ul class="nav nav-tabs mb-3">
     <li class="nav-item">
-      <a class="nav-link {{ set_active('admin/commissions/'.$type.'/pending*') }} {{ set_active('admin/commissions/'.$type) }}" href="{{ url('admin/commissions/'.$type.'/pending') }}">Pending</a>
+      <a class="nav-link {{ set_active('admin/commissions/'.$class->slug.'/pending*') }} {{ set_active('admin/commissions/'.$class->slug) }}" href="{{ url('admin/commissions/'.$class->slug.'/pending') }}">Pending</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link {{ set_active('admin/commissions/'.$type.'/accepted*') }}" href="{{ url('admin/commissions/'.$type.'/accepted') }}">Accepted</a>
+      <a class="nav-link {{ set_active('admin/commissions/'.$class->slug.'/accepted*') }}" href="{{ url('admin/commissions/'.$class->slug.'/accepted') }}">Accepted</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link {{ set_active('admin/commissions/'.$type.'/complete*') }}" href="{{ url('admin/commissions/'.$type.'/complete') }}">Complete</a>
+        <a class="nav-link {{ set_active('admin/commissions/'.$class->slug.'/complete*') }}" href="{{ url('admin/commissions/'.$class->slug.'/complete') }}">Complete</a>
       </li>
     <li class="nav-item">
-      <a class="nav-link {{ set_active('admin/commissions/'.$type.'/declined*') }}" href="{{ url('admin/commissions/'.$type.'/declined') }}">Declined</a>
+      <a class="nav-link {{ set_active('admin/commissions/'.$class->slug.'/declined*') }}" href="{{ url('admin/commissions/'.$class->slug.'/declined') }}">Declined</a>
     </li>
   </ul>
 
@@ -60,7 +60,7 @@
 
     @foreach($commissions as $commission)
       <div class="d-flex row flex-wrap col-12 mt-1 pt-1 px-0 ubt-top">
-        <div class="col-12 col-md-2">{!! $commission->commType->displayName !!}</div>
+        <div class="col-12 col-md-2">{!! $commission->type->displayName !!}</div>
         <div class="col-6 col-md-3">{!! $commission->commissioner->fullName !!}</div>
         <div class="col-6 col-md-2">{!! pretty_date($commission->created_at) !!}</div>
         <div class="col-3 col-md-2">{{ $commission->progress }}</div>

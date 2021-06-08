@@ -10,20 +10,10 @@ use View;
 
 use App\Models\TextPage;
 use App\Models\Changelog;
-use App\Models\Gallery\Project;
 
 class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
-
-    /**
-     * Creates a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct() {
-        View::share('visibleProjects', Project::visible()->orderBy('sort', 'DESC')->get());
-    }
 
     /**
      * Show the index page.

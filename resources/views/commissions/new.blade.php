@@ -3,13 +3,13 @@
 @section('title') New Commission @endsection
 
 @section('content')
-{!! breadcrumbs([$type->category->type.' Commissions' => 'commissions/'.$type->category->type, 'New Commission' => 'commissions/new']) !!}
+{!! breadcrumbs([$type->category->class->name.' Commissions' => 'commissions/'.$type->category->class->slug, 'New Commission' => 'commissions/new']) !!}
 
 <div class="borderhr mb-4">
 <h1>
     New Commmission Request
     <div class="float-right ml-2">
-        <a class="btn btn-secondary" href="{{ url('commissions/'.$type->category->type) }}">Back to Commission Info</a>
+        <a class="btn btn-secondary" href="{{ url('commissions/'.$type->category->class->slug) }}">Back to Commission Info</a>
     </div>
 </h1>
 </div>
@@ -85,7 +85,7 @@
 
 <label class="form-check-label">
     {!! Form::checkbox('terms', 1, 0, ['class' => 'form-check-input', 'data-toggle' => 'toggle', 'data-on' => 'Yes', 'data-off' => 'No']) !!}
-    I have read and agree to the <a href="{{ url('/commissions/'.$type->category->type.'/tos') }}">Terms of Service</a> and <a href="{{ url('privacy') }}">Privacy Policy</a>.
+    I have read and agree to the <a href="{{ url('/commissions/'.$type->category->class->slug.'/tos') }}">Terms of Service</a> and <a href="{{ url('privacy') }}">Privacy Policy</a>.
 </label>
 
 {!! RecaptchaV3::field('submit') !!}

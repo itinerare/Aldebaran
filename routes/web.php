@@ -35,17 +35,17 @@ Route::group(['prefix' => 'projects'], function() {
 
 # COMMISSIONS
 Route::group(['prefix' => 'commissions'], function() {
-    Route::get('{type}', 'CommissionController@getInfo');
-    Route::get('{type}/tos', 'CommissionController@getTos');
-    Route::get('{type}/queue', 'CommissionController@getQueue');
+    Route::get('{class}', 'CommissionController@getInfo');
+    Route::get('{class}/tos', 'CommissionController@getTos');
+    Route::get('{class}/queue', 'CommissionController@getQueue');
 
     Route::get('types/{key}', 'CommissionController@getType');
     Route::get('types/{key}/gallery', 'CommissionController@getTypeGallery');
-    Route::get('{type}/new', 'CommissionController@getNewCommission');
+    Route::get('{class}/new', 'CommissionController@getNewCommission');
     Route::post('new', 'CommissionController@postNewCommission');
     Route::get('view/{key}', 'CommissionController@getViewCommission');
 
-    Route::get('{type}/willwont', 'CommissionController@getWillWont');
+    Route::get('{class}/{key}', 'CommissionController@getClassPage');
 });
 
 

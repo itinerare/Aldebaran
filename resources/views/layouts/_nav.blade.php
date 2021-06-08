@@ -35,31 +35,33 @@
                     </div>
                 </li>
 
+                @if(isset($commissionClasses) && $commissionClasses->count())
                 <li class="nav-item dropdown">
                     <a id="commDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                         Commissions
                     </a>
 
                     <div class="dropdown-menu" aria-labelledby="commDropdown">
-                        @foreach(Config::get('itinerare.comm_types') as $type=>$values)
+                        @foreach($commissionClasses as $class)
                             @if($loop->count > 1)
                                 <span class="dropdown-item">
-                                    {{ ucfirst($type) }} Commissions
+                                    {{ ucfirst($class->name) }} Commissions
                                 </span>
                             @endif
-                            <a class="dropdown-item" href="{{ url('commissions/'.$type) }}">
+                            <a class="dropdown-item" href="{{ url('commissions/'.$class->slug) }}">
                                 Info
                             </a>
-                            <a class="dropdown-item" href="{{ url('commissions/'.$type.'/tos') }}">
+                            <a class="dropdown-item" href="{{ url('commissions/'.$class->slug.'/tos') }}">
                                 Terms of Service
                             </a>
-                            <a class="dropdown-item" href="{{ url('commissions/'.$type.'/queue') }}">
+                            <a class="dropdown-item" href="{{ url('commissions/'.$class->slug.'/queue') }}">
                                 Queue Status
                             </a>
                             {!! !$loop->last ? '<div class="dropdown-divider"></div>' : '' !!}
                         @endforeach
                     </div>
                 </li>
+                @endif
             </ul>
 
             <!-- Right Side Of Navbar -->
