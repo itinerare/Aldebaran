@@ -42,10 +42,7 @@ class AdminController extends Controller
      */
     public function getIndex()
     {
-        return view('admin.index', [
-            'pendingComms' => Commission::where('status', 'Pending'),
-            'acceptedComms' => Commission::where('status', 'Accepted'),
-        ]);
+        return view('admin.index');
     }
 
     /******************************************************************************

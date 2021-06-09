@@ -76,25 +76,5 @@ class AddTextPages extends Command
         // Add text pages from config
         foreach($pages as $key => $page)
             $this->addTextPage($key, $page);
-
-        $this->line("Adding commission text pages...existing entries will be skipped.\n");
-
-        // Add text pages for each commission type
-        foreach(Config::get('itinerare.comm_types') as $type=>$values) {
-            // Add ToS and info pages
-            $this->addTextPage($type.'tos', [
-                'name' => ucfirst($type).' Commission Terms of Service',
-                'text' => '<p>'.ucfirst($type).' commssion terms of service go here.</p>',
-            ]);
-            $this->addTextPage($type.'info', [
-                'name' => ucfirst($type).' Commission Info',
-                'text' => '<p>'.ucfirst($type).' commssion info goes here.</p>',
-            ]);
-
-            // Add any custom pages for the type
-            if(isset($values['pages']))
-                foreach($values['pages'] as $key=>$page)
-                    $this->addTextPage($key, $page);
-        }
     }
 }
