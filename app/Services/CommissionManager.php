@@ -56,23 +56,15 @@ class CommissionManager extends Service
             }
             else $commissioner = $this->processCommissioner($data, $manual ? false : true);
 
-            // Collect and encode form responses related to the commission itself
-            foreach([$type->category->name.'_'.$type->name, $type->category->name, 'basic'] as $section)
-                if(Config::get('itinerare.comm_types.'.$type->category->type.'.forms.'.$section) != null) {
-                    foreach(Config::get('itinerare.comm_types.'.$type->category->type.'.forms.'.$section) as $key=>$field) {
-                        if($key != 'includes') {
-                            if(isset($data[$key])) $data['data'][$key] = strip_tags($data[$key]);
-                            else $data['data'][$field] = null;
-                        }
-                        elseif($key == 'includes') {
-                            foreach(Config::get('itinerare.comm_types.'.$type.'.forms.'.$include) as $key=>$field) {
-                                if(isset($data[$key])) $data['data'][$key] = strip_tags($data[$field]);
-                                else $data['data'][$key] = null;
-                            }
-                        }
-                    }
-                break;
+            // Collect and form responses related to the commission itself
+            foreach($type->formFields as $key=>$field)
+                if(isset($data[$key])) {
+                    if($field['type'] != 'multiple')
+                        $data['data'][$key] = strip_tags($data[$key]);
+                    elseif($field['type'] == 'multiple')
+                        $data['data'][$key] = $data[$key];
                 }
+            dd($data);
 
             $commission = Commission::create([
                 'commissioner_id' => $commissioner->id,

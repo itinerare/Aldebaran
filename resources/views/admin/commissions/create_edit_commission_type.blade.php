@@ -119,6 +119,36 @@
         {!! Form::label('Link') !!} {!! add_help('URL to link directly to the commission type\'s information. Can be used to link when the type is active but not visible.') !!}
         {!! Form::text('link', $type->url, ['class' => 'form-control', 'disabled']) !!}
     </div>
+
+    <h2>Form Fields</h2>
+
+    <div class="row">
+        <div class="col-md">
+            <div class="form-group">
+                {!! Form::checkbox('include_class', 1, isset($type->data['include']['class']) ? $type->data['include']['class'] : 0, ['class' => 'form-check-input', 'data-toggle' => 'toggle']) !!}
+                {!! Form::label('include_class', 'Include Class Form Fields', ['class' => 'form-check-label ml-3']) !!} {!! add_help('If this is on, the form fields from this type\'s class will be included in this type\'s forms.') !!}
+            </div>
+        </div>
+        <div class="col-md">
+            <div class="form-group">
+                {!! Form::checkbox('include_category', 1, isset($type->data['include']['category']) ? $type->data['include']['category'] : 0, ['class' => 'form-check-input', 'data-toggle' => 'toggle']) !!}
+                {!! Form::label('include_category', 'Include Category Form Fields', ['class' => 'form-check-label ml-3']) !!} {!! add_help('If this is on, the form fields from this type\'s category will be included in this type\'s forms.') !!}
+            </div>
+        </div>
+    </div>
+
+    <p>These fields will be used to populate the commission request form for this category if a type has no set fields, or if they are optionally included in a type's form.</p>
+
+    <div class="text-right mb-3">
+        <a href="#" class="btn btn-outline-info" id="add-field">Add Field</a>
+    </div>
+    <div id="fieldList">
+        @if(isset($type->data['fields']))
+            @foreach($type->data['fields'] as $key=>$field)
+                @include('admin.commissions._field_builder_entry', ['key' => $key, 'field' => $field])
+            @endforeach
+        @endif
+    </div>
 @endif
 
 <div class="text-right">
@@ -127,10 +157,15 @@
 
 {!! Form::close() !!}
 
+<div class="field-row hide mb-2">
+    @include('admin.commissions._field_builder_row')
+</div>
+
 @endsection
 
 @section('scripts')
 @parent
+@include('admin.commissions._field_builder_js')
 <script>
 $( document ).ready(function() {
     $('.selectize').selectize();

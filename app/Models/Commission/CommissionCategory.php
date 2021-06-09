@@ -12,7 +12,7 @@ class CommissionCategory extends Model
      * @var array
      */
     protected $fillable = [
-        'name', 'is_active', 'sort', 'class_id'
+        'name', 'is_active', 'sort', 'class_id', 'data'
     ];
 
     /**
@@ -115,6 +115,16 @@ class CommissionCategory extends Model
     public function getFullNameAttribute()
     {
         return ucfirst($this->class->name).' ・ '.$this->name;
+    }
+
+    /**
+     * Get the data attribute as an associative array.
+     *
+     * @return array
+     */
+    public function getDataAttribute()
+    {
+        return json_decode($this->attributes['data'], true);
     }
 
 }

@@ -52,7 +52,7 @@ class Commission extends Model
 
         // Other
         'terms' => 'accepted',
-        //'g-recaptcha-response' => 'required|recaptchav3:submit,0.5'
+        'g-recaptcha-response' => 'required|recaptchav3:submit,0.5'
     ];
 
     /**

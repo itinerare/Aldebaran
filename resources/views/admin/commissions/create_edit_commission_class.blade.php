@@ -32,7 +32,7 @@
 
 <div class="form-group">
     {!! Form::checkbox('is_active', 1, $class->id ? $class->is_active : 1, ['class' => 'form-check-input', 'data-toggle' => 'toggle']) !!}
-    {!! Form::label('is_active', 'Is Active', ['class' => 'form-check-label ml-3']) !!} {!! add_help('If this is turned off, visitors will not be able to see this class.') !!}
+    {!! Form::label('is_active', 'Is Active', ['class' => 'form-check-label ml-3']) !!} {!! add_help('If this is turned off, visitors will not be able to see this class. It will remain visible to you, however, including its queue etc. However, simply closing commissions for this class is recommended instead.') !!}
 </div>
 
 @if($class->id)
@@ -42,7 +42,6 @@
     <div class="text-right mb-3">
         <a href="#" class="btn btn-outline-info" id="add-page">Add Page</a>
     </div>
-
     <div id="pageList">
         @if(isset($class->data['pages']))
             @foreach($class->data['pages'] as $key=>$page)
@@ -72,6 +71,20 @@
                         </div>
                     </div>
                 </div>
+            @endforeach
+        @endif
+    </div>
+
+    <h2>Form Fields</h2>
+    <p>These fields will be used to populate the commission request form for this class if the category or type have no set fields, or if they are optionally included in either's form.</p>
+
+    <div class="text-right mb-3">
+        <a href="#" class="btn btn-outline-info" id="add-field">Add Field</a>
+    </div>
+    <div id="fieldList">
+        @if(isset($class->data['fields']))
+            @foreach($class->data['fields'] as $key=>$field)
+                @include('admin.commissions._field_builder_entry', ['key' => $key, 'field' => $field])
             @endforeach
         @endif
     </div>
@@ -105,14 +118,17 @@
         </div>
     </div>
 </div>
-<div class="form-row hide mb-2">
-    wah
+<div class="field-row hide mb-2">
+    @include('admin.commissions._field_builder_row')
 </div>
 
 @endsection
 
 @section('scripts')
 @parent
+
+@include('admin.commissions._field_builder_js')
+
 <script>
 $( document ).ready(function() {
     $('.delete-class-button').on('click', function(e) {
@@ -136,32 +152,8 @@ $( document ).ready(function() {
             e.preventDefault();
             removePageRow($(this));
         })
-        $clone.find('.page-select').selectize();
     }
     function removePageRow($trigger) {
-        $trigger.parent().parent().remove();
-    }
-
-    $('.original.field-select').selectize();
-    $('#add-field').on('click', function(e) {
-        e.preventDefault();
-        addFieldRow();
-    });
-    $('.remove-field').on('click', function(e) {
-        e.preventDefault();
-        removeFieldRow($(this));
-    })
-    function addFieldRow() {
-        var $clone = $('.field-row').clone();
-        $('#fieldList').append($clone);
-        $clone.removeClass('hide field-row');
-        $clone.find('.remove-field').on('click', function(e) {
-            e.preventDefault();
-            removeFieldRow($(this));
-        })
-        $clone.find('.field-select').selectize();
-    }
-    function removeFieldRow($trigger) {
         $trigger.parent().parent().remove();
     }
 });

@@ -49,7 +49,12 @@ class CommissionClass extends Model
     public static $updateRules = [
         //
         'name' => 'required',
-        'page_key.*' => 'nullable|unique:text_pages,key'
+        'page_key.*' => 'nullable|required_with:page_title.*|between:3,25|alpha_dash',
+        'page_title.*' => 'nullable|required_with:page_key.*|between:3,100',
+        'field_key.*' => 'nullable|between:3,25|alpha_dash',
+        'field_type.*' => 'nullable|required_with:field_key.*',
+        'field_label.*' => 'nullable|required_with:field_key.*',
+        'field_choices.*' => 'nullable|required_if:field_type.*,choice,multiple'
     ];
 
     /**********************************************************************************************
@@ -68,8 +73,8 @@ class CommissionClass extends Model
      */
     public function scopeActive($query, $user = null)
     {
-        if($user) return $query;
-        return $query->where('is_active', 1);
+        if($user) return $query->whereNotNull('id');
+        else return $query->where('is_active', 1);
     }
 
     /**********************************************************************************************
