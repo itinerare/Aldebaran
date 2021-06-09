@@ -3,7 +3,7 @@
 @section('title') {{ $type->name }} @endsection
 
 @section('content')
-{!! breadcrumbs([$type->category->type.' Commissions' => 'commissions/'.$type->category->type,$type->name.' Commissions' => 'commissions/types/'.$type->key]) !!}
+{!! breadcrumbs([$type->category->class->name.' Commissions' => 'commissions/'.$type->category->class->slug, $type->name.' Commissions' => 'commissions/types/'.$type->key]) !!}
 
 <div class="borderhr mb-4">
 <h1>{{ $type->name }} Commmissions</h1>

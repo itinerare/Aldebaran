@@ -3,7 +3,7 @@
 @section('admin-title') Commission (#{{ $commission->id }}) @endsection
 
 @section('admin-content')
-{!! breadcrumbs(['Admin Panel' => 'admin', ucfirst($commission->commType->category->type).' Commission Queue' => 'admin/commissions/'.$commission->commType->category->type.'/pending', 'Commission (#'.$commission->id.')' => 'admin/commissions/edit/'.$commission->id]) !!}
+{!! breadcrumbs(['Admin Panel' => 'admin', ucfirst($commission->type->category->class->slug).' Commission Queue' => 'admin/commissions/'.$commission->type->category->class->slug.'/pending', 'Commission (#'.$commission->id.')' => 'admin/commissions/edit/'.$commission->id]) !!}
 
 <div class="borderhr mb-4">
     <h1>
@@ -43,9 +43,9 @@
             <h2>Basic Info</h2>
             <div class="row">
                 <div class="col-md"><h5>Commission Type</h5></div>
-                <div class="col-md">{!! $commission->commType->displayName !!}
-                    @if($commission->status == 'Pending' && isset($commission->commType->availability) && $commission->commType->availability > 0)
-                    ({{ $commission->commType->currentSlots.'/'.$commission->commType->slots }} Slot{{ $commission->commType->slots == 1 ? '' : 's' }} Available)
+                <div class="col-md">{!! $commission->type->displayName !!}
+                    @if($commission->status == 'Pending' && isset($commission->type->availability) && $commission->type->availability > 0)
+                    ({{ $commission->type->currentSlots.'/'.$commission->type->slots }} Slot{{ $commission->type->slots == 1 ? '' : 's' }} Available)
                     @endif
                 </div>
             </div>
@@ -73,7 +73,7 @@
     <div class="borderhr">
         <h2>Commission-related Info</h2>
 
-        @include('commissions._info_builder', ['type' => $commission->commType->category->type, 'categoryName' => str_replace(' ', '_', strtolower($commission->commType->category->name)), 'typeName' => str_replace(' ', '_', strtolower($commission->commType->name))])
+        @include('commissions._form_builder', ['type' => $commission->type, 'form' => false])
 
         <div class="form-group">
             {!! Form::label('Link') !!} {!! add_help('The URL of this page, as mentioned above!') !!}
