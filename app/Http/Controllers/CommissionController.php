@@ -223,23 +223,11 @@ class CommissionController extends Controller
         // Set any un-set toggles (since Laravel does not pass anything on for them),
         // and collect any custom validation rules for the configured fields
         $answerArray = []; $validationRules = Commission::$createRules;
-        foreach([$type->category->name.'_'.$type->name, $type->category->name, 'basic'] as $section)
-            if(Config::get('itinerare.comm_types.'.$type->category->type.'.forms.'.$section) != null) {
-                foreach(Config::get('itinerare.comm_types.'.$type->category->type.'.forms.'.$section) as $key=>$field) {
-                    if($key != 'includes') {
-                        $answerArray[$key] = null;
-                        if(isset($field['validation_rules'])) $validationRules[$key] = $field['validation_rules'];
-                        if($field['type'] == 'checkbox' && !isset($request[$key])) $request[$key] = 0;
-                    }
-                    elseif($key == 'includes')
-                        foreach(Config::get('itinerare.comm_types.'.$type.'.forms.'.$include) as $key=>$field) {
-                            $answerArray[$key] = null;
-                            if(isset($field['validation_rules'])) $validationRules[$key] = $field['validation_rules'];
-                            if($field['type'] == 'checkbox' && !isset($request[$key])) $request[$key] = 0;
-                        }
-                }
-            break;
-            }
+        foreach($type->formFields as $key=>$field) {
+            $answerArray[$key] = null;
+            if(isset($field['rules'])) $validationRules[$key] = $field['rules'];
+            if($field['type'] == 'checkbox' && !isset($request[$key])) $request[$key] = 0;
+        }
 
         $request->validate($validationRules);
 

@@ -40,6 +40,8 @@ class CommissionService extends Service
 
         try {
             if(!isset($data['is_active'])) $data['is_active'] = 0;
+
+            // Strip any tags from the provided name for safety and generate slug
             $data['name'] = strip_tags($data['name']);
             $data['slug'] = strtolower(str_replace(' ', '_', $data['name']));
 
@@ -67,20 +69,27 @@ class CommissionService extends Service
         DB::beginTransaction();
 
         try {
+            // Strip any tags from the provided name for safety
             $data['name'] = strip_tags($data['name']);
 
             // More specific validation
             if(CommissionClass::where('name', $data['name'])->where('id', '!=', $class->id)->exists()) throw new \Exception("The name has already been taken.");
 
+            // Set toggle and generate slug
             if(!isset($data['is_active'])) $data['is_active'] = 0;
             $data['slug'] = strtolower(str_replace(' ', '_', $data['name']));
 
+            // Save old information if change has occurred
             if($data['slug'] != $class->slug) $data['slug_old'] = $class->slug;
             if(isset($class->data['pages'])) $data['pages_old'] = $class->data['pages'];
 
             $class->update($data);
 
+            // Process fields, site settings, and pages
+            if(isset($data['field_key'])) $data = $this->processFormFields($data);
             $data = $this->processClassSettings($class, $data);
+
+            // Encode and save data
             if(isset($data['data'])) $class->data = json_encode($data['data']);
             else $class->data = null;
             $class->save();
@@ -97,7 +106,7 @@ class CommissionService extends Service
      *
      * @param  \App\Models\Commission\CommissionClass    $class
      * @param  array                                     $data
-     * @return bool
+     * @return array
      */
     private function processClassSettings($class, $data)
     {
@@ -144,6 +153,10 @@ class CommissionService extends Service
                 'flag' => 'info'
             ]
         ];
+
+        // Check that entered page keys do not already have associated pages
+        if(isset($data['page_key'])) foreach($data['page_key'] as $key=>$pageKey)
+            if(TextPage::where('key', $pageKey)->exists() && $data['page_id'][$key] == null) throw new \Exception("One or more page keys have already been taken.");
 
         if(isset($data['page_key'])) foreach($data['page_key'] as $key=>$pageKey) {
             if($data['page_id'][$key] == null) $pages = $pages + [$pageKey => [
@@ -259,6 +272,31 @@ class CommissionService extends Service
         return $this->rollbackReturn(false);
     }
 
+    /**
+     * Processes form field information.
+     *
+     * @param  array              $data
+     * @return array
+     */
+    private function processFormFields($data)
+    {
+        foreach($data['field_key'] as $key=>$fieldKey) {
+            if(isset($data['field_choices'][$key]))
+                $data['field_choices'][$key] = explode(',', $data['field_choices'][$key]);
+
+            $data['data']['fields'][$fieldKey] = [
+                'label' => $data['field_label'][$key],
+                'type' => $data['field_type'][$key],
+                'rules' => isset($data['field_rules'][$key]) ? $data['field_rules'][$key] : null,
+                'choices' => isset($data['field_choices'][$key]) ? $data['field_choices'][$key] : null,
+                'value' => isset($data['field_value'][$key]) ? $data['field_value'][$key] : null,
+                'help' => isset($data['field_help'][$key]) ? $data['field_help'][$key] : null
+            ];
+        }
+
+        return $data;
+    }
+
     /******************************************************************************
         COMMISSION CATEGORIES
     *******************************************************************************/
@@ -303,6 +341,13 @@ class CommissionService extends Service
             if(CommissionCategory::where('name', $data['name'])->where('id', '!=', $category->id)->exists()) throw new \Exception("The name has already been taken.");
 
             if(!isset($data['is_active'])) $data['is_active'] = 0;
+
+            if(isset($data['field_key'])) $data = $this->processFormFields($data);
+            if(!isset($data['include_class'])) $data['data']['include']['class'] = 0;
+            else $data['data']['include']['class'] = 1;
+
+            if(isset($data['data'])) $data['data'] = json_encode($data['data']);
+            else $data['data'] = null;
 
             $category->update($data);
 
@@ -405,7 +450,10 @@ class CommissionService extends Service
             if(CommissionType::where('name', $data['name'])->where('id', '!=', $type->id)->where('category_id', $data['category_id'])->exists()) throw new \Exception("The name has already been taken.");
             if((isset($data['category_id']) && $data['category_id']) && !CommissionCategory::where('id', $data['category_id'])->exists()) throw new \Exception("The selected commission category is invalid.");
 
+            if(isset($data['field_key'])) $data = $this->processFormFields($data);
             $data = $this->populateData($data, $type);
+            $data['data'] = json_encode($data['data']);
+
             $type->update($data);
 
             return $this->commitReturn($type);
@@ -431,6 +479,12 @@ class CommissionService extends Service
         if(!isset($data['availability'])) $data['availability'] = 0;
         if(!isset($data['regenerate_key'])) $data['regenerate_key'] = 0;
 
+        // Check form include toggles
+        if(!isset($data['include_class'])) $data['data']['include']['class'] = 0;
+            else $data['data']['include']['class'] = 1;
+        if(!isset($data['include_category'])) $data['data']['include']['category'] = 0;
+            else $data['data']['include']['category'] = 1;
+
         // Assemble and encode data
         $data['pricing']['type'] = $data['price_type'];
         switch($data['price_type']) {
@@ -451,13 +505,10 @@ class CommissionService extends Service
                 break;
         }
 
-        $data['data'] = [
-            'pricing' => $data['pricing'],
-            'extras' => isset($data['extras']) ? $data['extras'] : null,
-            'show_examples' => $data['show_examples'],
-            'tags' => isset($data['tags']) ? $data['tags'] : null
-        ];
-        $data['data'] = json_encode($data['data']);
+        $data['data']['pricing'] = $data['pricing'];
+        $data['data']['extras'] = isset($data['extras']) ? $data['extras'] : null;
+        $data['data']['show_examples'] = $data['show_examples'];
+        $data['data']['tags'] = isset($data['tags']) ? $data['tags'] : null;
 
         // Generate a key if the type is being created or if
         // it's set to be regenerated

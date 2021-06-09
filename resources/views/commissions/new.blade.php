@@ -76,7 +76,7 @@
     {!! Form::hidden('key', Request::get('key'), ['class' => 'form-control']) !!}
 @endif
 
-@include('commissions._form_builder', ['type' => $type->category->type, 'categoryName' => str_replace(' ', '_', strtolower($type->category->name)), 'typeName' => str_replace(' ', '_', strtolower($type->name)), 'form' => true])
+@include('commissions._form_builder', ['type' => $type, 'form' => true])
 
 <div class="form-group">
     {!! Form::label('Anything Else? (Optional)') !!}

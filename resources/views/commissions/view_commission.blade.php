@@ -64,7 +64,7 @@
         <h2>Commission-related Info</h2>
         <p>This is the information you provided when filling out the commission request form!</p>
 
-        @include('commissions._form_builder', ['type' => $commission->type->category->type, 'categoryName' => str_replace(' ', '_', strtolower($commission->type->category->name)), 'typeName' => str_replace(' ', '_', strtolower($commission->type->name)), 'form' => false])
+        @include('commissions._form_builder', ['type' => $commission->type, 'form' => false])
 
         <div class="form-group">
             {!! Form::label('Link') !!} {!! add_help('The URL of this page, as mentioned above!') !!}
