@@ -49,7 +49,14 @@ class CommissionType extends Model
         'cost_max' => 'exclude_unless:price_type,range|required|gt:cost_min',
         'minimum_cost' => 'required_if:price_type,min',
         'rate' => 'required_if:price_type,rate',
-        'extras' => 'max:255'
+        'extras' => 'max:255',
+        'field_key.*' => 'nullable|between:3,25|alpha_dash',
+        'field_type.*' => 'nullable|required_with:field_key.*',
+        'field_label.*' => 'nullable|string|required_with:field_key.*',
+        'field_choices.*' => 'nullable|string|required_if:field_type.*,choice,multiple',
+        'field_rules.*' => 'nullable|string|max:255',
+        'field_value.*' => 'nullable|string|max:255',
+        'field_help.*' => 'nullable|string|max:255'
     ];
 
     /**********************************************************************************************
@@ -185,11 +192,11 @@ class CommissionType extends Model
     public function getCanCommissionAttribute()
     {
         if(!Settings::get($this->category->class->slug.'_comms_open') || !$this->is_active || !$this->category->is_active) return 0;
-        elseif($this->availability > 0 || $this->slots != null) {
-            if($this->currentSlots != null && $this->currentSlots < $this->slots) return 1;
-            elseif($this->slots > 0) return 1;
+        elseif($this->availability > 0 || is_int($this->slots)) {
+            if($this->currentSlots != null && $this->currentSlots > 0) return 1;
             else return 0;
         }
+        elseif($this->currentSlots == 0) return 0;
         else return 1;
     }
 
@@ -200,10 +207,11 @@ class CommissionType extends Model
      */
     public function getSlotsAttribute()
     {
-        if($this->availability == 0 && $this->getSlots($this->category->class) == null) return null;
-        if($this->getSlots($this->category->class) != null)
-            if($this->availability > 0) return min($this->getSlots($this->category->class), $this->availability);
+        if($this->availability == 0 && null == $this->getSlots($this->category->class)) return null;
+        if(null !== $this->getSlots($this->category->class)) {
+            if($this->availability > 0) return min(Settings::get('overall_'.$this->category->class->slug.'_slots'), $this->availability);
             else return $this->getSlots($this->category->class);
+        }
         else return $this->availability;
     }
 
@@ -214,7 +222,7 @@ class CommissionType extends Model
      */
     public function getCurrentSlotsAttribute()
     {
-        if($this->availability == 0 && $this->getSlots($this->category->class) == null) return null;
+        if($this->availability == 0 && !is_int($this->getSlots($this->category->class))) return null;
         return ($this->slots - $this->commissions->where('status', 'Accepted')->count());
     }
 
