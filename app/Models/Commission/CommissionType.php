@@ -192,11 +192,12 @@ class CommissionType extends Model
     public function getCanCommissionAttribute()
     {
         if(!Settings::get($this->category->class->slug.'_comms_open') || !$this->is_active || !$this->category->is_active) return 0;
+        elseif(is_int($this->getSlots($this->category->class)) && $this->getSlots($this->category->class) == 0) return 0;
         elseif($this->availability > 0 || is_int($this->slots)) {
-            if($this->currentSlots != null && $this->currentSlots > 0) return 1;
+            if(is_numeric($this->currentSlots) && $this->currentSlots > 0) return 1;
             else return 0;
         }
-        elseif($this->currentSlots == 0) return 0;
+        elseif(is_numeric($this->currentSlots) && $this->currentSlots == 0) return 0;
         else return 1;
     }
 
@@ -207,7 +208,7 @@ class CommissionType extends Model
      */
     public function getSlotsAttribute()
     {
-        if($this->availability == 0 && null == $this->getSlots($this->category->class)) return null;
+        if($this->availability == 0 && !is_int($this->getSlots($this->category->class))) return null;
         if(null !== $this->getSlots($this->category->class)) {
             if($this->availability > 0) return min(Settings::get('overall_'.$this->category->class->slug.'_slots'), $this->availability);
             else return $this->getSlots($this->category->class);
@@ -223,6 +224,7 @@ class CommissionType extends Model
     public function getCurrentSlotsAttribute()
     {
         if($this->availability == 0 && !is_int($this->getSlots($this->category->class))) return null;
+        if(is_numeric($this->slots) && $this->slots == 0) return 0;
         return ($this->slots - $this->commissions->where('status', 'Accepted')->count());
     }
 
@@ -233,7 +235,7 @@ class CommissionType extends Model
      */
     public function getDisplaySlotsAttribute()
     {
-        if($this->slots == null) return null;
+        if(!is_numeric($this->slots)) return null;
         return $this->currentSlots.'/'.$this->slots;
     }
 
@@ -335,7 +337,7 @@ class CommissionType extends Model
         // Count all current commissions of the specified type
         $commissionsCount = Commission::where('status', 'Accepted')->orWhere('status', 'In Progress')->class($class->id)->count();
 
-        return $cap - $commissionsCount;
+        return max(0, $cap - $commissionsCount);
     }
 
 }
