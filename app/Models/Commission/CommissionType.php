@@ -185,8 +185,11 @@ class CommissionType extends Model
     public function getCanCommissionAttribute()
     {
         if(!Settings::get($this->category->class->slug.'_comms_open') || !$this->is_active || !$this->category->is_active) return 0;
-        if($this->availability > 0 || $this->slots != null)
-            if($this->currentSlots < $this->slots) return 1;
+        elseif($this->availability > 0 || $this->slots != null) {
+            if($this->currentSlots != null && $this->currentSlots < $this->slots) return 1;
+            elseif($this->slots > 0) return 1;
+            else return 0;
+        }
         else return 1;
     }
 
@@ -197,9 +200,10 @@ class CommissionType extends Model
      */
     public function getSlotsAttribute()
     {
-        if($this->availability == 0 && $this->getSlots($this->category->class->slug) == null) return null;
-        if($this->getSlots($this->category->name == 'Code' ? 'code' : 'art') != null)
-            return min($this->getSlots($this->category->name == 'Code' ? 'code' : 'art'), $this->availability);
+        if($this->availability == 0 && $this->getSlots($this->category->class) == null) return null;
+        if($this->getSlots($this->category->class) != null)
+            if($this->availability > 0) return min($this->getSlots($this->category->class), $this->availability);
+            else return $this->getSlots($this->category->class);
         else return $this->availability;
     }
 
@@ -210,7 +214,7 @@ class CommissionType extends Model
      */
     public function getCurrentSlotsAttribute()
     {
-        if($this->availability == 0 && $this->getSlots($this->category->class->slug) == null) return null;
+        if($this->availability == 0 && $this->getSlots($this->category->class) == null) return null;
         return ($this->slots - $this->commissions->where('status', 'Accepted')->count());
     }
 
@@ -312,16 +316,16 @@ class CommissionType extends Model
     /**
      * Gets the current total commission slots.
      *
-     * @param  string   $type
+     * @param  \App\Models\Commission\CommissionClass   $class
      * @return int
      */
-    public function getSlots($type = 'art')
+    public function getSlots($class)
     {
-        $cap = Settings::get('overall_'.$type.'_slots');
+        $cap = Settings::get('overall_'.$class->slug.'_slots');
         if($cap == 0) return null;
 
         // Count all current commissions of the specified type
-        $commissionsCount = Commission::where('status', 'Accepted')->orWhere('status', 'In Progress')->type($type)->count();
+        $commissionsCount = Commission::where('status', 'Accepted')->orWhere('status', 'In Progress')->class($class->id)->count();
 
         return $cap - $commissionsCount;
     }

@@ -14,7 +14,7 @@
 @if(Settings::get($class->slug.'_comms_open') && Settings::get('overall_'.$class->slug.'_slots') > 0)
     <div class="text-center">
         <h4>
-            Slots are currently limited. {{ $count->getSlots().'/'.Settings::get('overall_'.$class->slug.'_slots') }} commission slot{{ Settings::get('overall_'.$class->slug.'_slots') == 1 ? ' is' : 's are'}} available.<br/>
+            Slots are currently limited. {{ $count->getSlots($class).'/'.Settings::get('overall_'.$class->slug.'_slots') }} commission slot{{ Settings::get('overall_'.$class->slug.'_slots') == 1 ? ' is' : 's are'}} available.<br/>
         </h4>
         <p>
             Some commission types may also have limited slots; these types will display to the best of their ability how many slots are available accounting for both commissions of the type as well as commissions of other types.
