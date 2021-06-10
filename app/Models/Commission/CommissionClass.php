@@ -53,8 +53,11 @@ class CommissionClass extends Model
         'page_title.*' => 'nullable|required_with:page_key.*|between:3,100',
         'field_key.*' => 'nullable|between:3,25|alpha_dash',
         'field_type.*' => 'nullable|required_with:field_key.*',
-        'field_label.*' => 'nullable|required_with:field_key.*',
-        'field_choices.*' => 'nullable|required_if:field_type.*,choice,multiple'
+        'field_label.*' => 'nullable|string|required_with:field_key.*',
+        'field_choices.*' => 'nullable|string|required_if:field_type.*,choice,multiple',
+        'field_rules.*' => 'nullable|string|max:255',
+        'field_value.*' => 'nullable|string|max:255',
+        'field_help.*' => 'nullable|string|max:255'
     ];
 
     /**********************************************************************************************

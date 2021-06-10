@@ -87,11 +87,19 @@ class CommissionController extends Controller
             'name', 'is_active', 'page_id', 'page_title', 'page_key',
             'field_key', 'field_type', 'field_label', 'field_rules', 'field_choices', 'field_value', 'field_help'
         ]);
-        // Fancy validation for field choices
-        if($id) foreach($data['field_choices'] as $choices) if($choices != null) {
+        // Fancy validation for field choices and rules
+        if($id) {
+            foreach($data['field_choices'] as $choices) if($choices != null) {
             $validator = Validator::make(['choices' => $choices], ['choices' => (new Delimited('string'))->separatedBy(',')->min(2)->max(5)]);
             if($validator->fails()) {
                 flash($validator->errors()->first())->error(); return redirect()->back();
+                }
+            }
+            foreach($data['field_rules'] as $rules) if($rules != null) {
+                $validator = Validator::make(['rules' => $rules], ['rules' => (new Delimited('string'))->separatedBy('|')]);
+                if($validator->fails()) {
+                    flash($validator->errors()->first())->error(); return redirect()->back();
+                }
             }
         }
 
@@ -221,6 +229,22 @@ class CommissionController extends Controller
             'name', 'class_id', 'is_active',
             'field_key', 'field_type', 'field_label', 'field_rules', 'field_choices', 'field_value', 'field_help', 'include_class'
         ]);
+        // Fancy validation for field choices and rules
+        if($id) {
+            foreach($data['field_choices'] as $choices) if($choices != null) {
+            $validator = Validator::make(['choices' => $choices], ['choices' => (new Delimited('string'))->separatedBy(',')->min(2)->max(5)]);
+            if($validator->fails()) {
+                flash($validator->errors()->first())->error(); return redirect()->back();
+                }
+            }
+            foreach($data['field_rules'] as $rules) if($rules != null) {
+                $validator = Validator::make(['rules' => $rules], ['rules' => (new Delimited('string'))->separatedBy('|')]);
+                if($validator->fails()) {
+                    flash($validator->errors()->first())->error(); return redirect()->back();
+                }
+            }
+        }
+
         if($id && $service->updateCommissionCategory(CommissionCategory::find($id), $data, Auth::user())) {
             flash('Category updated successfully.')->success();
         }
@@ -358,6 +382,22 @@ class CommissionController extends Controller
             'extras', 'tags', 'show_examples', 'regenerate_key',
             'field_key', 'field_type', 'field_label', 'field_rules', 'field_choices', 'field_value', 'field_help', 'include_class', 'include_category'
         ]);
+        // Fancy validation for field choices and rules
+        if($id) {
+            foreach($data['field_choices'] as $choices) if($choices != null) {
+            $validator = Validator::make(['choices' => $choices], ['choices' => (new Delimited('string'))->separatedBy(',')->min(2)->max(5)]);
+            if($validator->fails()) {
+                flash($validator->errors()->first())->error(); return redirect()->back();
+                }
+            }
+            foreach($data['field_rules'] as $rules) if($rules != null) {
+                $validator = Validator::make(['rules' => $rules], ['rules' => (new Delimited('string'))->separatedBy('|')]);
+                if($validator->fails()) {
+                    flash($validator->errors()->first())->error(); return redirect()->back();
+                }
+            }
+        }
+
         if($id && $service->updateCommissionType(CommissionType::find($id), $data, Auth::user())) {
             flash('Commission type updated successfully.')->success();
         }
