@@ -89,13 +89,13 @@ class CommissionController extends Controller
         ]);
         // Fancy validation for field choices and rules
         if($id) {
-            foreach($data['field_choices'] as $choices) if($choices != null) {
+            if(isset($data['field_choices'])) foreach($data['field_choices'] as $choices) if($choices != null) {
             $validator = Validator::make(['choices' => $choices], ['choices' => (new Delimited('string'))->separatedBy(',')->min(2)->max(5)]);
             if($validator->fails()) {
                 flash($validator->errors()->first())->error(); return redirect()->back();
                 }
             }
-            foreach($data['field_rules'] as $rules) if($rules != null) {
+            if(isset($data['field_rules'])) foreach($data['field_rules'] as $rules) if($rules != null) {
                 $validator = Validator::make(['rules' => $rules], ['rules' => (new Delimited('string'))->separatedBy('|')]);
                 if($validator->fails()) {
                     flash($validator->errors()->first())->error(); return redirect()->back();
@@ -231,13 +231,13 @@ class CommissionController extends Controller
         ]);
         // Fancy validation for field choices and rules
         if($id) {
-            foreach($data['field_choices'] as $choices) if($choices != null) {
+            if(isset($data['field_choices'])) foreach($data['field_choices'] as $choices) if($choices != null) {
             $validator = Validator::make(['choices' => $choices], ['choices' => (new Delimited('string'))->separatedBy(',')->min(2)->max(5)]);
             if($validator->fails()) {
                 flash($validator->errors()->first())->error(); return redirect()->back();
                 }
             }
-            foreach($data['field_rules'] as $rules) if($rules != null) {
+            if(isset($data['field_rules'])) foreach($data['field_rules'] as $rules) if($rules != null) {
                 $validator = Validator::make(['rules' => $rules], ['rules' => (new Delimited('string'))->separatedBy('|')]);
                 if($validator->fails()) {
                     flash($validator->errors()->first())->error(); return redirect()->back();
@@ -384,13 +384,13 @@ class CommissionController extends Controller
         ]);
         // Fancy validation for field choices and rules
         if($id) {
-            foreach($data['field_choices'] as $choices) if($choices != null) {
+            if(isset($data['field_choices'])) foreach($data['field_choices'] as $choices) if($choices != null) {
             $validator = Validator::make(['choices' => $choices], ['choices' => (new Delimited('string'))->separatedBy(',')->min(2)->max(5)]);
             if($validator->fails()) {
                 flash($validator->errors()->first())->error(); return redirect()->back();
                 }
             }
-            foreach($data['field_rules'] as $rules) if($rules != null) {
+            if(isset($data['field_rules'])) foreach($data['field_rules'] as $rules) if($rules != null) {
                 $validator = Validator::make(['rules' => $rules], ['rules' => (new Delimited('string'))->separatedBy('|')]);
                 if($validator->fails()) {
                     flash($validator->errors()->first())->error(); return redirect()->back();
