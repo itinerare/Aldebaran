@@ -10,7 +10,7 @@
 </h1>
 
 @if(Settings::get('overall_'.$class->slug.'_slots') > 0)
-    <p>There {{ max($count->getSlots($class->slug), Settings::get('overall_'.$class->slug.'_slots')) == 1 ? 'is' : 'are' }} currently {{ $count->getSlots($class->slug).'/'.Settings::get('overall_'.$class->slug.'_slots') }} slot{{ Settings::get('overall_'.$class->slug.'_slots') == 1 ? '' : 's' }} available for {{ strtolower($class->name) }} commissions.</p>
+    <p>There {{ max($count->getSlots($class), Settings::get('overall_'.$class->slug.'_slots')) == 1 ? 'is' : 'are' }} currently {{ $count->getSlots($class).'/'.Settings::get('overall_'.$class->slug.'_slots') }} slot{{ Settings::get('overall_'.$class->slug.'_slots') == 1 ? '' : 's' }} available for {{ strtolower($class->name) }} commissions.</p>
 @endif
 
 <ul class="nav nav-tabs mb-3">
