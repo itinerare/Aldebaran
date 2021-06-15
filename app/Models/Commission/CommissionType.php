@@ -248,7 +248,7 @@ class CommissionType extends Model
     {
         $fields = [];
 
-        if(isset($this->data['include']) || isset($this->data['fields'])) {
+        if((isset($this->data['include']) && ((isset($this->data['include']['class']) && $this->data['include']['class']) || (isset($this->data['include']['category']) && $this->data['include']['category']))) || isset($this->data['fields'])) {
             // Collect fields for the commission type
             if(isset($this->data['include']['class']) && $this->data['include']['class']) $fields = $fields + $this->category->class->data['fields'];
             if(isset($this->data['include']['category']) && $this->data['include']['category']) $fields = $fields + $this->category->data['fields'];
