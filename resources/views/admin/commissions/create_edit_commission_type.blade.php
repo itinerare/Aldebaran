@@ -122,6 +122,8 @@
 
     <h2>Form Fields</h2>
 
+    <p>This section is optional; if no fields are provided and the toggles are left off, the corresponding settings from this type's category will be used instead. If the category's settings are also empty, the settings from that category's class will be used instead.  It's recommended to make smart use of this to minimize redundancy!</p>
+
     <div class="row">
         <div class="col-md">
             <div class="form-group">
@@ -137,7 +139,7 @@
         </div>
     </div>
 
-    <p>These fields will be used to populate the commission request form for this category if a type has no set fields, or if they are optionally included in a type's form.</p>
+    <p>These fields will be used to populate the commission request form for this type.</p>
 
     <div class="text-right mb-3">
         <a href="#" class="btn btn-outline-info" id="add-field">Add Field</a>
