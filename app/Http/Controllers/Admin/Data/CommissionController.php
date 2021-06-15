@@ -51,7 +51,8 @@ class CommissionController extends Controller
     public function getCreateCommissionClass()
     {
         return view('admin.commissions.create_edit_commission_class', [
-            'class' => new CommissionClass
+            'class' => new CommissionClass,
+            'fieldTypes' => ['text' => 'Text', 'textarea' => 'Textbox', 'number' => 'Number', 'checkbox' => 'Checkbox/Toggle', 'choice' => 'Choose One', 'multiple' => 'Choose Multiple']
         ]);
     }
 
@@ -192,7 +193,8 @@ class CommissionController extends Controller
     {
         return view('admin.commissions.create_edit_commission_category', [
             'category' => new CommissionCategory,
-            'classes' => CommissionClass::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray()
+            'classes' => CommissionClass::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
+            'fieldTypes' => ['text' => 'Text', 'textarea' => 'Textbox', 'number' => 'Number', 'checkbox' => 'Checkbox/Toggle', 'choice' => 'Choose One', 'multiple' => 'Choose Multiple']
         ]);
     }
 
@@ -343,7 +345,8 @@ class CommissionController extends Controller
         return view('admin.commissions.create_edit_commission_type', [
             'type' => new CommissionType,
             'categories' => CommissionCategory::orderBy('sort', 'DESC')->get()->pluck('fullName', 'id')->toArray(),
-            'tags' => Tag::orderBy('name')->pluck('name', 'id')->toArray()
+            'tags' => Tag::orderBy('name')->pluck('name', 'id')->toArray(),
+            'fieldTypes' => ['text' => 'Text', 'textarea' => 'Textbox', 'number' => 'Number', 'checkbox' => 'Checkbox/Toggle', 'choice' => 'Choose One', 'multiple' => 'Choose Multiple']
         ]);
     }
 
