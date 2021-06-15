@@ -31,6 +31,8 @@
 @if($category->id)
     <h2>Form Fields</h2>
 
+    <p>This section is optional; if no fields are provided and the toggles are left off, the corresponding settings from this category's class will be used instead. It's recommended to make smart use of this to minimize redundancy!</p>
+
     <div class="form-group">
         {!! Form::checkbox('include_class', 1, isset($category->data['include']['class']) ? $category->data['include']['class'] : 0, ['class' => 'form-check-input', 'data-toggle' => 'toggle']) !!}
         {!! Form::label('include_class', 'Include Class Form Fields', ['class' => 'form-check-label ml-3']) !!} {!! add_help('If this is on, the form fields from this category\'s class will be included in this category\'s forms.') !!}
