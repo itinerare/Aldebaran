@@ -67,7 +67,7 @@ class GalleryController extends Controller
         return view('gallery.gallery', [
             'page' => TextPage::where('key', 'gallery')->first(),
             'pieces' => $query->paginate(20)->appends($request->query()),
-            'tags' => Tag::visible()->pluck('name', 'id'),
+            'tags' => Tag::visible()->where('is_active', 1)->pluck('name', 'id'),
             'projects' => ['none' => 'Any Project'] + Project::whereIn('id', Piece::gallery()->pluck('project_id')->toArray())->orderBy('sort', 'DESC')->pluck('name', 'id')->toArray()
         ]);
     }
