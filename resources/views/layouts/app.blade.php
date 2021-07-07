@@ -156,15 +156,6 @@
                     e.preventDefault();
                     $sidebar.toggleClass('active');
                 });
-
-                $('.inventory-log-stack').on('click', function(e) {
-                    e.preventDefault();
-                    loadModal("{{ url('items') }}/" + $(this).data('id') + "?read_only=1", $(this).data('name'));
-                });
-
-                $('.spoiler-text').hide();
-                    $('.spoiler-toggle').click(function(){
-                        $(this).next().toggle();
                     });
                 });
         </script>
