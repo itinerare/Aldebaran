@@ -96,11 +96,18 @@ class CommissionController extends Controller
      */
     public function postNewCommission(Request $request, CommissionManager $service, $id = null)
     {
-        $request->validate(Commission::$manualCreateRules);
+        $answerArray = []; $validationRules = Commission::$manualCreateRules;
+        foreach($type->formFields as $key=>$field) {
+            $answerArray[$key] = null;
+            if(isset($field['rules'])) $validationRules[$key] = $field['rules'];
+            if($field['type'] == 'checkbox' && !isset($request[$key])) $request[$key] = 0;
+        }
+
+        $request->validate($validationRules);
+
         $data = $request->only([
-            'commissioner_id', 'name', 'email', 'contact', 'paypal', 'type',
-            'references', 'details', 'shading', 'style', 'background'
-        ]);
+            'commissioner_id', 'name', 'email', 'contact', 'paypal', 'type'
+        ] + $answerArray);
         if (!$id && $commission = $service->createCommission($data, true)) {
             flash('Commission submitted successfully.')->success();
             return redirect()->to('admin/commissions/edit/'.$commission->id);
