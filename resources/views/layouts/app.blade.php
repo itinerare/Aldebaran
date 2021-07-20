@@ -147,7 +147,6 @@
                         '{{ asset('css/app.css') }}',
                         '{{ asset('css/itinerare.css') }}'
                     ],
-                    spoiler_caption: 'Toggle Spoiler',
                     target_list: false
                 });
                 var $mobileMenuButton = $('#mobileMenuButton');
