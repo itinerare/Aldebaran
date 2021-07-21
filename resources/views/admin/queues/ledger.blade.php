@@ -14,7 +14,7 @@
     <h3>{{ $month }}</h3>
         @foreach($commissions as $commission)
             <div class="borderhr pb-2 mb-3">
-                <h5>{!! $commission->commType->displayName !!} for
+                <h5>{!! $commission->type->displayName !!} for
                     {!! $commission->commissioner->displayName !!} ・
                     <a href="{{ url('admin/commissions/edit/'.$commission->id) }}">View</a>
                     <span class="float-right">
