@@ -2,9 +2,11 @@
 
 namespace App\Models\Commission;
 
+use Settings;
+
 use Illuminate\Database\Eloquent\Model;
 
-class CommissionCategory extends Model
+class CommissionClass extends Model
 {
     /**
      * The attributes that are mass assignable.
@@ -12,7 +14,7 @@ class CommissionCategory extends Model
      * @var array
      */
     protected $fillable = [
-        'name', 'is_active', 'sort', 'class_id', 'data'
+        'name', 'slug', 'is_active', 'sort', 'data'
     ];
 
     /**
@@ -20,7 +22,7 @@ class CommissionCategory extends Model
      *
      * @var string
      */
-    protected $table = 'commission_categories';
+    protected $table = 'commission_classes';
 
     /**
      * Whether the model contains timestamps to be saved and updated.
@@ -30,23 +32,25 @@ class CommissionCategory extends Model
     public $timestamps = false;
 
     /**
-     * Validation rules for category creation.
+     * Validation rules for class creation.
      *
      * @var array
      */
     public static $createRules = [
         //
-        'name' => 'required|unique:commission_categories'
+        'name' => 'required|unique:commission_classes'
     ];
 
     /**
-     * Validation rules for category editing.
+     * Validation rules for class editing.
      *
      * @var array
      */
     public static $updateRules = [
         //
         'name' => 'required',
+        'page_key.*' => 'nullable|required_with:page_title.*|between:3,25|alpha_dash',
+        'page_title.*' => 'nullable|required_with:page_key.*|between:3,100',
         'field_key.*' => 'nullable|between:3,25|alpha_dash',
         'field_type.*' => 'nullable|required_with:field_key.*',
         'field_label.*' => 'nullable|string|required_with:field_key.*',
@@ -58,54 +62,22 @@ class CommissionCategory extends Model
 
     /**********************************************************************************************
 
-        RELATIONS
-
-    **********************************************************************************************/
-
-    /**
-     * Get the class this commission category belongs to.
-     */
-    public function class()
-    {
-        return $this->belongsTo('App\Models\Commission\CommissionClass', 'class_id');
-    }
-
-    /**
-     * Get the types associated with this commission category.
-     */
-    public function types()
-    {
-        return $this->hasMany('App\Models\Commission\CommissionType', 'category_id')->orderBy('sort', 'DESC');
-    }
-
-    /**********************************************************************************************
-
         SCOPES
 
     **********************************************************************************************/
 
     /**
-     * Scope a query to only include active commission categories.
+     * Scope a query to only include active commission types.
      *
      * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    public function scopeActive($query)
-    {
-        return $query->where('is_active', 1);
-    }
-
-    /**
-     * Scope a query to only include commission categories of a given class.
-     *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  string                                 $type
+     * @param  \App\Models\User                       $user
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeByClass($query, $class)
+    public function scopeActive($query, $user = null)
     {
-        return $query->where('class_id', $class);
+        if($user) return $query->whereNotNull('id');
+        else return $query->where('is_active', 1);
     }
 
     /**********************************************************************************************
@@ -113,16 +85,6 @@ class CommissionCategory extends Model
         ACCESSORS
 
     **********************************************************************************************/
-
-    /**
-     * Get the commission category's full name.
-     *
-     * @return string
-     */
-    public function getFullNameAttribute()
-    {
-        return ucfirst($this->class->name).' ・ '.$this->name;
-    }
 
     /**
      * Get the data attribute as an associative array.
