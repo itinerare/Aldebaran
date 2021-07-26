@@ -1,38 +1,36 @@
 @extends('admin.layout')
 
-@section('admin-title') Commission Categories @endsection
+@section('admin-title') Commission Classes @endsection
 
 @section('admin-content')
-{!! breadcrumbs(['Admin Panel' => 'admin', 'Commission Categories' => 'admin/data/commission-categories']) !!}
+{!! breadcrumbs(['Admin Panel' => 'admin', 'Commission Classes' => 'admin/data/commission-classes']) !!}
 
-<h1>Commission Categories</h1>
+<h1>Commission Classes</h1>
 
-<p>This is a list of commission categories that will be used to sort commission types. Creating commission categories is required, as commission types must be assigned to a category.</p>
+<p>This is a list of overarching commission classes used on this site. They will be used to sort commission classes, and from there commission types. Creating commission classes is required, as commission classes must be assigned to a class.</p>
 
-<div class="text-right mb-3"><a class="btn btn-primary" href="{{ url('admin/data/commission-categories/create') }}"><i class="fas fa-plus"></i> Create New Category</a></div>
-@if(!count($categories))
-    <p>No commission categories found.</p>
+<div class="text-right mb-3"><a class="btn btn-primary" href="{{ url('admin/data/commission-classes/create') }}"><i class="fas fa-plus"></i> Create New Class</a></div>
+@if(!count($classes))
+    <p>No commission classes found.</p>
 @else
-    <table class="table table-sm category-table">
+    <table class="table table-sm class-table">
         <thead>
             <tr>
                 <th>Name</th>
-                <th>Class</th>
                 <th>Active</th>
                 <th></th>
             </tr>
         </thead>
         <tbody id="sortable" class="sortable">
-            @foreach($categories as $category)
-                <tr class="sort-item" data-id="{{ $category->id }}">
+            @foreach($classes as $class)
+                <tr class="sort-item" data-id="{{ $class->id }}">
                     <td>
                         <a class="fas fa-arrows-alt-v handle mr-3" href="#"></a>
-                        {!! $category->name !!}
+                        {!! $class->name !!}
                     </td>
-                    <td>{{ $category->class->name }}</td>
-                    <td>{!! $category->is_active ? '<i class="text-success fas fa-check"></i>' : '-' !!} </td>
+                    <td>{!! $class->is_active ? '<i class="text-success fas fa-check"></i>' : '-' !!} </td>
                     <td class="text-right">
-                        <a href="{{ url('admin/data/commission-categories/edit/'.$category->id) }}" class="btn btn-primary">Edit</a>
+                        <a href="{{ url('admin/data/commission-classes/edit/'.$class->id) }}" class="btn btn-primary">Edit</a>
                     </td>
                 </tr>
             @endforeach
@@ -40,7 +38,7 @@
 
     </table>
     <div class="mb-4">
-        {!! Form::open(['url' => 'admin/data/commission-categories/sort']) !!}
+        {!! Form::open(['url' => 'admin/data/commission-classes/sort']) !!}
         {!! Form::hidden('sort', '', ['id' => 'sortableOrder']) !!}
         {!! Form::submit('Save Order', ['class' => 'btn btn-primary']) !!}
         {!! Form::close() !!}

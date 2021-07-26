@@ -17,7 +17,7 @@ class CommissionType extends Model
      */
     protected $fillable = [
         'category_id', 'name', 'availability', 'description', 'data', 'key',
-        'is_active', 'is_visible', 'sort'
+        'is_active', 'is_visible', 'sort', 'data'
     ];
 
     /**
@@ -49,7 +49,14 @@ class CommissionType extends Model
         'cost_max' => 'exclude_unless:price_type,range|required|gt:cost_min',
         'minimum_cost' => 'required_if:price_type,min',
         'rate' => 'required_if:price_type,rate',
-        'extras' => 'max:255'
+        'extras' => 'max:255',
+        'field_key.*' => 'nullable|between:3,25|alpha_dash',
+        'field_type.*' => 'nullable|required_with:field_key.*',
+        'field_label.*' => 'nullable|string|required_with:field_key.*',
+        'field_choices.*' => 'nullable|string|required_if:field_type.*,choice,multiple',
+        'field_rules.*' => 'nullable|string|max:255',
+        'field_value.*' => 'nullable|string|max:255',
+        'field_help.*' => 'nullable|string|max:255'
     ];
 
     /**********************************************************************************************
@@ -126,7 +133,7 @@ class CommissionType extends Model
     public function getDisplayNameAttribute()
     {
         if(!$this->is_visible) return $this->category->name.': '.$this->name;
-        else return '<a href="'.url('commissions/'.$this->category->type.'#'.$this->category->name).'">'.$this->category->name.': '.$this->name.'</a>';
+        else return '<a href="'.url('commissions/'.$this->category->class->slug.'#'.$this->category->name).'">'.$this->category->name.': '.$this->name.'</a>';
     }
 
     /**
@@ -184,9 +191,13 @@ class CommissionType extends Model
      */
     public function getCanCommissionAttribute()
     {
-        if(!Settings::get($this->category->type.'_comms_open') || !$this->is_active || !$this->category->is_active) return 0;
-        if($this->availability > 0 || $this->slots != null)
-            if($this->currentSlots < $this->slots) return 1;
+        if(!Settings::get($this->category->class->slug.'_comms_open') || !$this->is_active || !$this->category->is_active) return 0;
+        elseif(is_int($this->getSlots($this->category->class)) && $this->getSlots($this->category->class) == 0) return 0;
+        elseif($this->availability > 0 || is_int($this->slots)) {
+            if(is_numeric($this->currentSlots) && $this->currentSlots > 0) return 1;
+            else return 0;
+        }
+        elseif(is_numeric($this->currentSlots) && $this->currentSlots == 0) return 0;
         else return 1;
     }
 
@@ -197,9 +208,11 @@ class CommissionType extends Model
      */
     public function getSlotsAttribute()
     {
-        if($this->availability == 0 && $this->getSlots($this->category->type) == null) return null;
-        if($this->getSlots($this->category->name == 'Code' ? 'code' : 'art') != null)
-            return min($this->getSlots($this->category->name == 'Code' ? 'code' : 'art'), $this->availability);
+        if($this->availability == 0 && !is_int($this->getSlots($this->category->class))) return null;
+        if(null !== $this->getSlots($this->category->class)) {
+            if($this->availability > 0) return min(Settings::get('overall_'.$this->category->class->slug.'_slots'), $this->availability);
+            else return $this->getSlots($this->category->class);
+        }
         else return $this->availability;
     }
 
@@ -210,7 +223,8 @@ class CommissionType extends Model
      */
     public function getCurrentSlotsAttribute()
     {
-        if($this->availability == 0 && $this->getSlots($this->category->type) == null) return null;
+        if($this->availability == 0 && !is_int($this->getSlots($this->category->class))) return null;
+        if(is_numeric($this->slots) && $this->slots == 0) return 0;
         return ($this->slots - $this->commissions->where('status', 'Accepted')->count());
     }
 
@@ -221,8 +235,36 @@ class CommissionType extends Model
      */
     public function getDisplaySlotsAttribute()
     {
-        if($this->slots == null) return null;
+        if(!is_numeric($this->slots)) return null;
         return $this->currentSlots.'/'.$this->slots;
+    }
+
+    /**
+     * Assemble the commission type's custom form fields.
+     *
+     * @return array
+     */
+    public function getFormFieldsAttribute()
+    {
+        $fields = [];
+
+        if((isset($this->data['include']) && ((isset($this->data['include']['class']) && $this->data['include']['class']) || (isset($this->data['include']['category']) && $this->data['include']['category']))) || isset($this->data['fields'])) {
+            // Collect fields for the commission type
+            if(isset($this->data['include']['class']) && $this->data['include']['class']) $fields = $fields + $this->category->class->data['fields'];
+            if(isset($this->data['include']['category']) && $this->data['include']['category']) $fields = $fields + $this->category->data['fields'];
+            if(isset($this->data['fields'])) $fields = $fields + $this->data['fields'];
+        }
+        elseif((isset($this->category->data['include']['class']) && $this->category->data['include']['class']) || isset($this->category->data['fields'])) {
+            // Failing that, collect fields from the commission category
+            if(isset($this->category->data['include']['class']) && $this->category->data['include']['class']) $fields = $fields + $this->category->class->data['fields'];
+            if(isset($this->category->data['fields'])) $fields = $fields + $this->category->data['fields'];
+        }
+        elseif(isset($this->category->class->data['fields'])) {
+            // Failing that, collect fields from the commission class
+            $fields = $fields + $this->category->class->data['fields'];
+        }
+
+        return $fields;
     }
 
     /**********************************************************************************************
@@ -284,18 +326,18 @@ class CommissionType extends Model
     /**
      * Gets the current total commission slots.
      *
-     * @param  string   $type
+     * @param  \App\Models\Commission\CommissionClass   $class
      * @return int
      */
-    public function getSlots($type = 'art')
+    public function getSlots($class)
     {
-        $cap = Settings::get('overall_'.$type.'_slots');
+        $cap = Settings::get('overall_'.$class->slug.'_slots');
         if($cap == 0) return null;
 
         // Count all current commissions of the specified type
-        $commissionsCount = Commission::where('status', 'Accepted')->orWhere('status', 'In Progress')->type($type)->count();
+        $commissionsCount = Commission::where('status', 'Accepted')->orWhere('status', 'In Progress')->class($class->id)->count();
 
-        return $cap - $commissionsCount;
+        return max(0, $cap - $commissionsCount);
     }
 
 }

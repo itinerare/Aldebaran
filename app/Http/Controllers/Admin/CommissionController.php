@@ -6,6 +6,7 @@ use Auth;
 use Config;
 use Carbon\Carbon;
 
+use App\Models\Commission\CommissionClass;
 use App\Models\Commission\CommissionType;
 use App\Models\Commission\Commission;
 use App\Models\Commission\Commissioner;
@@ -35,11 +36,12 @@ class CommissionController extends Controller
      * @param  string                    $status
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getCommissionIndex(Request $request, $type, $status = null)
+    public function getCommissionIndex(Request $request, $class, $status = null)
     {
-        if(!isset(Config::get('itinerare.comm_types')[$type])) abort(404);
+        $class = CommissionClass::where('slug', $class)->first();
+        if(!$class) abort(404);
 
-        $commissions = Commission::type($type)->where('status', $status ? ucfirst($status) : 'Pending');
+        $commissions = Commission::class($class->id)->where('status', $status ? ucfirst($status) : 'Pending');
         $data = $request->only(['commission_type', 'sort']);
         if(isset($data['commission_type']) && $data['commission_type'] != 'none')
             $commissions->where('commission_type', $data['commission_type']);
@@ -58,7 +60,7 @@ class CommissionController extends Controller
         return view('admin.queues.index', [
             'commissions' => $commissions->paginate(30)->appends($request->query()),
             'types' => ['none' => 'Any Type'] + CommissionType::orderBy('name', 'DESC')->pluck('name', 'id')->toArray(),
-            'type' => $type,
+            'class' => $class,
             'count' => new CommissionType
         ]);
     }
@@ -94,11 +96,18 @@ class CommissionController extends Controller
      */
     public function postNewCommission(Request $request, CommissionManager $service, $id = null)
     {
-        $request->validate(Commission::$manualCreateRules);
+        $answerArray = []; $validationRules = Commission::$manualCreateRules;
+        foreach($type->formFields as $key=>$field) {
+            $answerArray[$key] = null;
+            if(isset($field['rules'])) $validationRules[$key] = $field['rules'];
+            if($field['type'] == 'checkbox' && !isset($request[$key])) $request[$key] = 0;
+        }
+
+        $request->validate($validationRules);
+
         $data = $request->only([
-            'commissioner_id', 'name', 'email', 'contact', 'paypal', 'type',
-            'references', 'details', 'shading', 'style', 'background'
-        ]);
+            'commissioner_id', 'name', 'email', 'contact', 'paypal', 'type'
+        ] + $answerArray);
         if (!$id && $commission = $service->createCommission($data, true)) {
             flash('Commission submitted successfully.')->success();
             return redirect()->to('admin/commissions/edit/'.$commission->id);
