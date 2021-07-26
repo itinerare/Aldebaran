@@ -139,15 +139,14 @@
                     convert_urls: false,
                     plugins: [
                         'advlist autolink lists link image charmap print preview anchor',
-                        'searchreplace visualblocks code fullscreen spoiler',
+                        'searchreplace visualblocks code fullscreen',
                         'insertdatetime media table paste code help wordcount'
                     ],
-                    toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | spoiler-add spoiler-remove | removeformat | code',
+                    toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | removeformat | code',
                     content_css: [
                         '{{ asset('css/app.css') }}',
                         '{{ asset('css/itinerare.css') }}'
                     ],
-                    spoiler_caption: 'Toggle Spoiler',
                     target_list: false
                 });
                 var $mobileMenuButton = $('#mobileMenuButton');
@@ -156,15 +155,6 @@
                     e.preventDefault();
                     $sidebar.toggleClass('active');
                 });
-
-                $('.inventory-log-stack').on('click', function(e) {
-                    e.preventDefault();
-                    loadModal("{{ url('items') }}/" + $(this).data('id') + "?read_only=1", $(this).data('name'));
-                });
-
-                $('.spoiler-text').hide();
-                    $('.spoiler-toggle').click(function(){
-                        $(this).next().toggle();
                     });
                 });
         </script>

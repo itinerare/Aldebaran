@@ -19,10 +19,12 @@
             <div class="card-body inventory-body collapse" id="mobileNav">
                 <h5>
                     <a href="{{ url('admin') }}">Admin Home</a><br/>
-                    Queues:
-                    @foreach(Config::get('itinerare.comm_types') as $type=>$values)
-                        <a href="{{ url('admin/commissions/'.$type) }}">{{ ucfirst($type) }} Queue</a> ・
-                    @endforeach
+                    @if(isset($commissionClasses) && $commissionClasses->count())
+                        Queues:
+                        @foreach($commissionClasses as $class)
+                            <a href="{{ url('admin/commissions/'.$class->slug) }}">{{ $class->name }} Queue</a> ・
+                        @endforeach
+                    @endif
                     <a href="{{ url('admin/ledger') }}">Ledger</a><br/>
                     Gallery Data:
                     <a href="{{ url('admin/data/projects') }}">Projects</a> ・
