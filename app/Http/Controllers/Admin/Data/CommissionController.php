@@ -4,7 +4,10 @@ namespace App\Http\Controllers\Admin\Data;
 
 use Auth;
 use Config;
+use Validator;
+use Spatie\ValidationRules\Rules\Delimited;
 
+use App\Models\Commission\CommissionClass;
 use App\Models\Commission\CommissionCategory;
 use App\Models\Commission\CommissionType;
 use App\Models\Gallery\Tag;
@@ -20,9 +23,150 @@ class CommissionController extends Controller
     | Admin / Commission Data Controller
     |--------------------------------------------------------------------------
     |
-    | Handles creation/editing of commission data (categories and types).
+    | Handles creation/editing of commission data (classes, categories, and types).
     |
     */
+
+    /******************************************************************************
+        COMMISSION CLASSES
+    *******************************************************************************/
+
+    /**
+     * Shows the commission class index.
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getCommissionClassIndex()
+    {
+        return view('admin.commissions.commission_classes', [
+            'classes' => CommissionClass::orderBy('sort', 'DESC')->get()
+        ]);
+    }
+
+    /**
+     * Shows the create commission class page.
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getCreateCommissionClass()
+    {
+        return view('admin.commissions.create_edit_commission_class', [
+            'class' => new CommissionClass,
+            'fieldTypes' => ['text' => 'Text', 'textarea' => 'Textbox', 'number' => 'Number', 'checkbox' => 'Checkbox/Toggle', 'choice' => 'Choose One', 'multiple' => 'Choose Multiple']
+        ]);
+    }
+
+    /**
+     * Shows the edit commission class page.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getEditCommissionClass($id)
+    {
+        $class = CommissionClass::find($id);
+        if(!$class) abort(404);
+
+        return view('admin.commissions.create_edit_commission_class', [
+            'class' => $class,
+            'fieldTypes' => ['text' => 'Text', 'textarea' => 'Textbox', 'number' => 'Number', 'checkbox' => 'Checkbox/Toggle', 'choice' => 'Choose One', 'multiple' => 'Choose Multiple']
+        ]);
+    }
+
+    /**
+     * Creates or edits an commission class.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  App\Services\CommissionService  $service
+     * @param  int|null                  $id
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function postCreateEditCommissionClass(Request $request, CommissionService $service, $id = null)
+    {
+        $id ? $request->validate(CommissionClass::$updateRules) : $request->validate(CommissionClass::$createRules);
+        $data = $request->only([
+            'name', 'is_active', 'page_id', 'page_title', 'page_key',
+            'field_key', 'field_type', 'field_label', 'field_rules', 'field_choices', 'field_value', 'field_help'
+        ]);
+        // Fancy validation for field choices and rules
+        if($id) {
+            if(isset($data['field_choices'])) foreach($data['field_choices'] as $choices) if($choices != null) {
+            $validator = Validator::make(['choices' => $choices], ['choices' => (new Delimited('string'))->separatedBy(',')->min(2)->max(5)]);
+            if($validator->fails()) {
+                flash($validator->errors()->first())->error(); return redirect()->back();
+                }
+            }
+            if(isset($data['field_rules'])) foreach($data['field_rules'] as $rules) if($rules != null) {
+                $validator = Validator::make(['rules' => $rules], ['rules' => (new Delimited('string'))->separatedBy('|')]);
+                if($validator->fails()) {
+                    flash($validator->errors()->first())->error(); return redirect()->back();
+                }
+            }
+        }
+
+        if($id && $service->updateCommissionClass(CommissionClass::find($id), $data, Auth::user())) {
+            flash('Class updated successfully.')->success();
+        }
+        else if (!$id && $class = $service->createCommissionClass($data, Auth::user())) {
+            flash('Class created successfully.')->success();
+            return redirect()->to('admin/data/commission-classes/edit/'.$class->id);
+        }
+        else {
+            foreach($service->errors()->getMessages()['error'] as $error) flash($error)->error();
+        }
+        return redirect()->back();
+    }
+
+    /**
+     * Gets the commission class deletion modal.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getDeleteCommissionClass($id)
+    {
+        $class = CommissionClass::find($id);
+        return view('admin.commissions._delete_commission_class', [
+            'class' => $class,
+        ]);
+    }
+
+    /**
+     * Deletes an commission class.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  App\Services\CommissionService  $service
+     * @param  int                       $id
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function postDeleteCommissionClass(Request $request, CommissionService $service, $id)
+    {
+        if($id && $service->deleteCommissionClass(CommissionClass::find($id))) {
+            flash('Class deleted successfully.')->success();
+        }
+        else {
+            foreach($service->errors()->getMessages()['error'] as $error) flash($error)->error();
+        }
+        return redirect()->to('admin/data/commission-classes');
+    }
+
+    /**
+     * Sorts commission classes.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  App\Services\CommissionService  $service
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function postSortCommissionClass(Request $request, CommissionService $service)
+    {
+        if($service->sortCommissionClass($request->get('sort'))) {
+            flash('Class order updated successfully.')->success();
+        }
+        else {
+            foreach($service->errors()->getMessages()['error'] as $error) flash($error)->error();
+        }
+        return redirect()->back();
+    }
 
     /******************************************************************************
         COMMISSION CATEGORIES
@@ -47,13 +191,10 @@ class CommissionController extends Controller
      */
     public function getCreateCommissionCategory()
     {
-        // Fetch types from config and format for dropdown
-        $types = Config::get('itinerare.comm_types');
-        foreach($types as $key=>$type) $types[$key] = ucfirst($key);
-
         return view('admin.commissions.create_edit_commission_category', [
             'category' => new CommissionCategory,
-            'types' => $types
+            'classes' => CommissionClass::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
+            'fieldTypes' => ['text' => 'Text', 'textarea' => 'Textbox', 'number' => 'Number', 'checkbox' => 'Checkbox/Toggle', 'choice' => 'Choose One', 'multiple' => 'Choose Multiple']
         ]);
     }
 
@@ -68,13 +209,10 @@ class CommissionController extends Controller
         $category = CommissionCategory::find($id);
         if(!$category) abort(404);
 
-        // Fetch types from config and format for dropdown
-        $types = Config::get('itinerare.comm_types');
-        foreach($types as $key=>$type) $types[$key] = ucfirst($key);
-
         return view('admin.commissions.create_edit_commission_category', [
             'category' => $category,
-            'types' => $types
+            'classes' => CommissionClass::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
+            'fieldTypes' => ['text' => 'Text', 'textarea' => 'Textbox', 'number' => 'Number', 'checkbox' => 'Checkbox/Toggle', 'choice' => 'Choose One', 'multiple' => 'Choose Multiple']
         ]);
     }
 
@@ -90,8 +228,25 @@ class CommissionController extends Controller
     {
         $id ? $request->validate(CommissionCategory::$updateRules) : $request->validate(CommissionCategory::$createRules);
         $data = $request->only([
-            'name', 'type', 'is_active'
+            'name', 'class_id', 'is_active',
+            'field_key', 'field_type', 'field_label', 'field_rules', 'field_choices', 'field_value', 'field_help', 'include_class'
         ]);
+        // Fancy validation for field choices and rules
+        if($id) {
+            if(isset($data['field_choices'])) foreach($data['field_choices'] as $choices) if($choices != null) {
+            $validator = Validator::make(['choices' => $choices], ['choices' => (new Delimited('string'))->separatedBy(',')->min(2)->max(5)]);
+            if($validator->fails()) {
+                flash($validator->errors()->first())->error(); return redirect()->back();
+                }
+            }
+            if(isset($data['field_rules'])) foreach($data['field_rules'] as $rules) if($rules != null) {
+                $validator = Validator::make(['rules' => $rules], ['rules' => (new Delimited('string'))->separatedBy('|')]);
+                if($validator->fails()) {
+                    flash($validator->errors()->first())->error(); return redirect()->back();
+                }
+            }
+        }
+
         if($id && $service->updateCommissionCategory(CommissionCategory::find($id), $data, Auth::user())) {
             flash('Category updated successfully.')->success();
         }
@@ -190,7 +345,8 @@ class CommissionController extends Controller
         return view('admin.commissions.create_edit_commission_type', [
             'type' => new CommissionType,
             'categories' => CommissionCategory::orderBy('sort', 'DESC')->get()->pluck('fullName', 'id')->toArray(),
-            'tags' => Tag::orderBy('name')->pluck('name', 'id')->toArray()
+            'tags' => Tag::orderBy('name')->pluck('name', 'id')->toArray(),
+            'fieldTypes' => ['text' => 'Text', 'textarea' => 'Textbox', 'number' => 'Number', 'checkbox' => 'Checkbox/Toggle', 'choice' => 'Choose One', 'multiple' => 'Choose Multiple']
         ]);
     }
 
@@ -207,7 +363,8 @@ class CommissionController extends Controller
         return view('admin.commissions.create_edit_commission_type', [
             'type' => $commissionType,
             'categories' => CommissionCategory::orderBy('sort', 'DESC')->get()->pluck('fullName', 'id')->toArray(),
-            'tags' => Tag::orderBy('name')->pluck('name', 'id')->toArray()
+            'tags' => Tag::orderBy('name')->pluck('name', 'id')->toArray(),
+            'fieldTypes' => ['text' => 'Text', 'textarea' => 'Textbox', 'number' => 'Number', 'checkbox' => 'Checkbox/Toggle', 'choice' => 'Choose One', 'multiple' => 'Choose Multiple']
         ]);
     }
 
@@ -225,8 +382,25 @@ class CommissionController extends Controller
         $data = $request->only([
             'category_id', 'name', 'description', 'is_active', 'is_visible', 'availability',
             'price_type', 'flat_cost', 'cost_min', 'cost_max', 'minimum_cost', 'rate',
-            'extras', 'tags', 'show_examples', 'regenerate_key'
+            'extras', 'tags', 'show_examples', 'regenerate_key',
+            'field_key', 'field_type', 'field_label', 'field_rules', 'field_choices', 'field_value', 'field_help', 'include_class', 'include_category'
         ]);
+        // Fancy validation for field choices and rules
+        if($id) {
+            if(isset($data['field_choices'])) foreach($data['field_choices'] as $choices) if($choices != null) {
+            $validator = Validator::make(['choices' => $choices], ['choices' => (new Delimited('string'))->separatedBy(',')->min(2)->max(5)]);
+            if($validator->fails()) {
+                flash($validator->errors()->first())->error(); return redirect()->back();
+                }
+            }
+            if(isset($data['field_rules'])) foreach($data['field_rules'] as $rules) if($rules != null) {
+                $validator = Validator::make(['rules' => $rules], ['rules' => (new Delimited('string'))->separatedBy('|')]);
+                if($validator->fails()) {
+                    flash($validator->errors()->first())->error(); return redirect()->back();
+                }
+            }
+        }
+
         if($id && $service->updateCommissionType(CommissionType::find($id), $data, Auth::user())) {
             flash('Commission type updated successfully.')->success();
         }

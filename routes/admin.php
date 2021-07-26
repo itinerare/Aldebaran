@@ -13,8 +13,8 @@ Route::get('/', 'AdminController@getIndex');
 
 # QUEUES
 Route::group(['prefix' => 'commissions'], function() {
-    Route::get('/{type}', 'CommissionController@getCommissionIndex');
-    Route::get('/{type}/{status}', 'CommissionController@getCommissionIndex')->where('status', 'pending|accepted|complete|declined');
+    Route::get('/{class}', 'CommissionController@getCommissionIndex');
+    Route::get('/{class}/{status}', 'CommissionController@getCommissionIndex')->where('status', 'pending|accepted|complete|declined');
     Route::get('edit/{id}', 'CommissionController@getCommission');
     Route::post('edit/{id}', 'CommissionController@postCommission');
     Route::post('edit/{id}/{action}', 'CommissionController@postCommission')->where('action', 'accept|update|complete|decline|ban');
@@ -27,7 +27,6 @@ Route::get('ledger', 'CommissionController@getLedger');
 
 # DATA
 Route::group(['prefix' => 'data', 'namespace' => 'Data'], function() {
-
     # PROJECTS
     Route::get('projects', 'GalleryController@getProjectIndex');
     Route::get('projects/create', 'GalleryController@getCreateProject');
@@ -73,6 +72,16 @@ Route::group(['prefix' => 'data', 'namespace' => 'Data'], function() {
     Route::post('programs/create', 'GalleryController@postCreateEditProgram');
     Route::post('programs/edit/{id?}', 'GalleryController@postCreateEditProgram');
     Route::post('programs/delete/{id}', 'GalleryController@postDeleteProgram');
+
+    # COMMISSION CLASSES
+    Route::get('commission-classes', 'CommissionController@getCommissionClassIndex');
+    Route::get('commission-classes/create', 'CommissionController@getCreateCommissionClass');
+    Route::get('commission-classes/edit/{id}', 'CommissionController@getEditCommissionClass');
+    Route::get('commission-classes/delete/{id}', 'CommissionController@getDeleteCommissionClass');
+    Route::post('commission-classes/create', 'CommissionController@postCreateEditCommissionClass');
+    Route::post('commission-classes/edit/{id?}', 'CommissionController@postCreateEditCommissionClass');
+    Route::post('commission-classes/delete/{id}', 'CommissionController@postDeleteCommissionClass');
+    Route::post('commission-classes/sort', 'CommissionController@postSortCommissionClass');
 
     # COMMISSION CATEGORIES
     Route::get('commission-categories', 'CommissionController@getIndex');
