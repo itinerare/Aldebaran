@@ -1,20 +1,20 @@
 @extends('layouts.app')
 
-@section('title') {{ ucfirst($type) }} Commissions @endsection
+@section('title') {{ $class->name }} Commissions @endsection
 
 @section('content')
-{!! breadcrumbs([ucfirst($type).' Commissions' => 'commissions/'.$type]) !!}
+{!! breadcrumbs([$class->name.' Commissions' => 'commissions/'.$class->slug]) !!}
 
 <div class="borderhr mb-4">
-<h1>{{ ucfirst($type) }} Commissions</h1>
+<h1>{{ $class->name }} Commissions</h1>
 </div>
 
 {!! $page->text !!}
 
-@if(Settings::get($type.'_comms_open') && Settings::get('overall_'.$type.'_slots') > 0)
+@if(Settings::get($class->slug.'_comms_open') && Settings::get('overall_'.$class->slug.'_slots') > 0)
     <div class="text-center">
         <h4>
-            Slots are currently limited. {{ $count->getSlots().'/'.Settings::get('overall_'.$type.'_slots') }} commission slot{{ Settings::get('overall_'.$type.'_slots') == 1 ? ' is' : 's are'}} available.<br/>
+            Slots are currently limited. {{ $count->getSlots($class).'/'.Settings::get('overall_'.$class->slug.'_slots') }} commission slot{{ Settings::get('overall_'.$class->slug.'_slots') == 1 ? ' is' : 's are'}} available.<br/>
         </h4>
         <p>
             Some commission types may also have limited slots; these types will display to the best of their ability how many slots are available accounting for both commissions of the type as well as commissions of other types.

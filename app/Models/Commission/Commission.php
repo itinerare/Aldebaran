@@ -42,14 +42,6 @@ class Commission extends Model
         'contact' => 'required|string|min:3|max:191',
         'paypal' => 'email|nullable|min:3|max:191',
 
-        // Commission-type specific fields
-        'references' => 'sometimes|required|string|min:3|max:500',
-        'details' => 'sometimes|required|string|min:3|max:500',
-        'shading' => 'sometimes|boolean',
-        'style' => 'sometimes|required|in:regular,heraldic',
-        'background' => 'sometimes|required|string|min:3|max:500',
-        'code_check' => 'sometimes|required|accepted',
-
         // Other
         'terms' => 'accepted',
         'g-recaptcha-response' => 'required|recaptchav3:submit,0.5'
@@ -65,14 +57,7 @@ class Commission extends Model
         'name' => 'string|nullable|min:3|max:191',
         'email' => 'email|required_without:commissioner_id|min:3|max:191|nullable',
         'contact' => 'required_without:commissioner_id|string|min:3|max:191|nullable',
-        'paypal' => 'email|nullable|min:3|max:191',
-
-        // Commission-type specific fields
-        'references' => 'sometimes|required|string|min:3|max:500',
-        'details' => 'sometimes|required|string|min:3|max:500',
-        'shading' => 'sometimes|boolean',
-        'style' => 'sometimes|required|in:regular,heraldic',
-        'background' => 'sometimes|required|string|min:3|max:500',
+        'paypal' => 'email|nullable|min:3|max:191'
     ];
 
     /**********************************************************************************************
@@ -84,7 +69,7 @@ class Commission extends Model
     /**
      * Get the type associated with this commission.
      */
-    public function commType()
+    public function type()
     {
         return $this->belongsTo('App\Models\Commission\CommissionType', 'commission_type');
     }
@@ -112,19 +97,17 @@ class Commission extends Model
     **********************************************************************************************/
 
     /**
-     * Scope a query to only include art commissions.
+     * Scope a query to only include commissions of a given class.
      *
      * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  string                                 $type
+     * @param  int                                 $class
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeType($query, $type)
+    public function scopeClass($query, $class)
     {
         return $query->whereIn('commission_type',
-            CommissionType::whereIn('category_id',
-            CommissionCategory::type($type)->pluck('id')->toArray()
-            )->pluck('id')->toArray()
+            CommissionType::whereIn('category_id', CommissionCategory::byClass($class)->pluck('id')->toArray())->pluck('id')->toArray()
         );
     }
 
