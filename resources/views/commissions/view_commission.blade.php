@@ -139,7 +139,7 @@
 
 <div class="card card-body mb-4">
     <div class="borderhr">
-        <h3>Artist Comments</h3>
+        <h3>Comments</h3>
         {!! isset($commission->comments) ? $commission->comments : '<p><i>No comment provided.</i></p>' !!}
     </div>
 </div>
