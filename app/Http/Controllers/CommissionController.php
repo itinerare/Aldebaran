@@ -232,7 +232,7 @@ class CommissionController extends Controller
         $request->validate($validationRules);
 
         $data = $request->only([
-            'name', 'email', 'contact', 'paypal', 'type', 'key',
+            'name', 'email', 'contact', 'paypal', 'type', 'key', 'additional_information'
             ] + $answerArray);
         $data['ip'] = $request->ip();
 

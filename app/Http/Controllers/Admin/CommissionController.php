@@ -108,7 +108,7 @@ class CommissionController extends Controller
         $request->validate($validationRules);
 
         $data = $request->only([
-            'commissioner_id', 'name', 'email', 'contact', 'paypal', 'type'
+            'commissioner_id', 'name', 'email', 'contact', 'paypal', 'type', 'additional_information'
         ] + $answerArray);
         if (!$id && $commission = $service->createCommission($data, true)) {
             flash('Commission submitted successfully.')->success();

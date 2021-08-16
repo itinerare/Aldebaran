@@ -75,6 +75,13 @@
 
         @include('commissions._form_builder', ['type' => $commission->type, 'form' => false])
 
+        <div class="row mb-2">
+            <div class="col-md-4"><h5>Additional Information</h5></div>
+            <div class="col-md">
+                {!! isset($commission->data['additional_information']) ? nl2br(htmlentities($commission->data['additional_information'])) : '-' !!}
+            </div>
+        </div>
+
         <div class="form-group">
             {!! Form::label('Link') !!} {!! add_help('The URL of this page, as mentioned above!') !!}
             {!! Form::text('link', $commission->url, ['class' => 'form-control', 'disabled']) !!}
