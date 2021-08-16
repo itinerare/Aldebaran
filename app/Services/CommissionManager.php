@@ -54,6 +54,7 @@ class CommissionManager extends Service
                 $commissioner = Commissioner::where('id', $data['commissioner_id'])->first();
                 if(!$commissioner) throw new \Exception('Invalid commissioner selected.');
             }
+
             else $commissioner = $this->processCommissioner($data, $manual ? false : true);
 
             // Collect and form responses related to the commission itself
