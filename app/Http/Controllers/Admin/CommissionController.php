@@ -76,8 +76,7 @@ class CommissionController extends Controller
         $type = CommissionType::where('id', $id)->first();
         if(!$type) abort(404);
 
-        $commissioners = Commissioner::where('is_banned', 0)->get()->pluck('fullName', 'id')->toArray();
-        sort($commissioners);
+        $commissioners = Commissioner::where('is_banned', 0)->get()->pluck('fullName', 'id')->sort()->toArray();
 
         return view('admin.queues.new',
         [
@@ -96,6 +95,9 @@ class CommissionController extends Controller
      */
     public function postNewCommission(Request $request, CommissionManager $service, $id = null)
     {
+        $type = CommissionType::where('id', $request->get('type'))->first();
+        if(!$type) abort(404);
+
         $answerArray = []; $validationRules = Commission::$manualCreateRules;
         foreach($type->formFields as $key=>$field) {
             $answerArray[$key] = null;
