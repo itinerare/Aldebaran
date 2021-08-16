@@ -116,25 +116,25 @@
             @endforeach
         </div>
     @endif
+
+    <h2>General Information</h2>
+
+    <p>Payment Status</p>
+    <div class="row mb-2">
+        <div class="col-md form-group">
+            {!! Form::number('cost', $commission->cost, ['class' => 'form-control', 'placeholder' => 'Enter Cost (USD)']) !!}
+        </div>
+        <div class="col-md form-group">
+            {!! Form::checkbox('paid_status', 1, $commission->paid_status, ['class' => 'form-check-input', 'data-toggle' => 'toggle', 'data-on' => 'Yes', 'data-off' => 'No']) !!}
+            {!! Form::label('paid_status', 'Is Paid', ['class' => 'form-check-label ml-3']) !!}
+        </div>
+    </div>
+
+    <div class="form-group">
+        {!! Form::label('Progress') !!}
+        {!! Form::select('progress', ['Not Started' => 'Not Started', 'Working On' => 'Working On', 'Sketch' => 'Sketch', 'Lines' => 'Lines', 'Color' => 'Color', 'Shading' => 'Shading', 'Finalizing' => 'Finalizing', 'Pending Approval' => 'Pending Approval', 'Finished' => 'Finished'], $commission->progress, ['class' => 'form-control']) !!}
+    </div>
 @endif
-
-<h2>General Information</h2>
-
-<p>Payment Status</p>
-<div class="row mb-2">
-    <div class="col-md form-group">
-        {!! Form::number('cost', $commission->cost, ['class' => 'form-control', 'placeholder' => 'Enter Cost (USD)']) !!}
-    </div>
-    <div class="col-md form-group">
-        {!! Form::checkbox('paid_status', 1, $commission->paid_status, ['class' => 'form-check-input', 'data-toggle' => 'toggle', 'data-on' => 'Yes', 'data-off' => 'No']) !!}
-        {!! Form::label('paid_status', 'Is Paid', ['class' => 'form-check-label ml-3']) !!}
-    </div>
-</div>
-
-<div class="form-group">
-    {!! Form::label('Progress') !!}
-    {!! Form::select('progress', ['Not Started' => 'Not Started', 'Working On' => 'Working On', 'Sketch' => 'Sketch', 'Lines' => 'Lines', 'Color' => 'Color', 'Shading' => 'Shading', 'Finalizing' => 'Finalizing', 'Pending Approval' => 'Pending Approval', 'Finished' => 'Finished'], $commission->progress, ['class' => 'form-control']) !!}
-</div>
 
 <div class="form-group">
     {!! Form::label('comments', 'Comments (Optional)') !!}
