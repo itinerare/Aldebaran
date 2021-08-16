@@ -24,8 +24,11 @@
     </div>
     @if($type->data['show_examples'] && $type->getExamples(Auth::check() ? Auth::user() : null) && $type->getExamples(Auth::check() ? Auth::user() : null)->count())
         <div class="col-md-7 align-self-center borderleft my-4">
-            <div class="d-flex justify-content-center align-content-around flex-wrap mb-4">
+            <div class="mobile-hide d-flex justify-content-center align-content-around flex-wrap mb-4">
                 @include('gallery._flex_columns', ['pieces' => $type->getExamples(Auth::check() ? Auth::user() : null), 'source' => (isset($source) && $source == $type->key ? '/commissions/types/'.$type->key : 'commissions/'.$type->category->class->slug), 'split' => 2])
+            </div>
+            <div class="mobile-show d-flex justify-content-center align-content-around flex-wrap mb-4">
+                @include('gallery._flex_columns', ['pieces' => $type->getExamples(Auth::check() ? Auth::user() : null), 'source' => (isset($source) && $source == $type->key ? '/commissions/types/'.$type->key : 'commissions/'.$type->category->class->slug), 'split' => 1])
             </div>
             @if($type->getExamples(Auth::check() ? Auth::user() : null, true)->count() > 4)
                 <div class="text-center mt-auto">
