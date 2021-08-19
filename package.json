@@ -16,7 +16,7 @@
         "laravel-mix": "^6.0.28",
         "lodash": "^4.17.21",
         "popper.js": "^1.12",
-        "sass": "^1.37.5",
+        "sass": "^1.38.0",
         "sass-loader": "^12.1.0",
         "vue": "^2.6.14",
         "vue-template-compiler": "^2.6.14"
