@@ -56,7 +56,8 @@ class CommissionController extends Controller
                     break;
             }
         }
-        else $commissions->orderBy('created_at', 'DESC');
+        else $commissions->orderBy('created_at');
+
         return view('admin.queues.index', [
             'commissions' => $commissions->paginate(30)->appends($request->query()),
             'types' => ['none' => 'Any Type'] + CommissionType::orderBy('name', 'DESC')->pluck('name', 'id')->toArray(),
