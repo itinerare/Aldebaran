@@ -107,9 +107,13 @@
                 <div class="text-center mb-2">
                     <div class="row">
                         <div class="col-md-4">
-                            <a href="{{ url('admin/data/pieces/edit/'.$piece->piece_id) }}">
-                                <img class="image img-thumbnail" style="max-width:100%;" src="{{ $piece->piece->primaryImages->count() ? $piece->piece->primaryImages->random()->thumbnailUrl : $piece->piece->images->first()->thumbnailUrl }}" />
-                            </a>
+                            @if($piece->piece->images->count())
+                                <a href="{{ url('admin/data/pieces/edit/'.$piece->piece_id) }}">
+                                    <img class="image img-thumbnail" style="max-width:100%;" src="{{ $piece->piece->primaryImages->count() ? $piece->piece->primaryImages->random()->thumbnailUrl : $piece->piece->images->first()->thumbnailUrl }}" />
+                                </a>
+                            @else
+                                <i>No image(s) provided.</i>
+                            @endif
                         </div>
                         <div class="col-md align-self-center">
                             <h4>{{ $piece->piece->name }}</h4>
