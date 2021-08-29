@@ -225,6 +225,10 @@ class CommissionManager extends Service
                         'piece_id' => $piece->id
                     ]);
             }
+            elseif($commission->pieces->count()) {
+                // Clear old pieces
+                CommissionPiece::where('commission_id', $commission->id)->delete();
+            }
 
             if(!isset($data['paid_status'])) $data['paid_status'] = 0;
 
