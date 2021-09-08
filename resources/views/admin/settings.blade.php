@@ -61,6 +61,17 @@
                     </div>
                 {!! Form::close() !!}
             </div>
+            <div class="col-md-12 mb-2">
+                {!! Form::open(['url' => 'admin/site-settings/'.$class->slug.'_status']) !!}
+                    <div class="form-group h-100">
+                        <strong>{!! Form::label('Status Message') !!}:</strong> {{ $settings->where('key', $class->slug.'_status')->first()->description }}
+                        {!! Form::text('value', $settings->where('key', $class->slug.'_status')->first()->value, ['class' => 'form-control']) !!}
+                    </div>
+                    <div class="form-group text-right mb-3">
+                        {!! Form::submit('Edit', ['class' => 'btn btn-primary']) !!}
+                    </div>
+                {!! Form::close() !!}
+            </div>
         </div>
     @endforeach
 @endif

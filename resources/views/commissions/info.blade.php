@@ -11,6 +11,12 @@
 
 {!! $page->text !!}
 
+@if(Settings::get($class->slug.'_status'))
+    <div class="text-center">
+        <h3>Commission Status: {{ Settings::get($class->slug.'_status') }}</h3>
+    </div>
+@endif
+
 @if(Settings::get($class->slug.'_comms_open') && Settings::get('overall_'.$class->slug.'_slots') > 0)
     <div class="text-center">
         <h4>
