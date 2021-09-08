@@ -48,6 +48,7 @@ Route::group(['prefix' => 'commissions'], function() {
     Route::get('{class}/{key}', 'CommissionController@getClassPage');
 });
 
+Route::get('/feeds', 'Controller@getFeeds');
 Route::feeds('feeds');
 
 

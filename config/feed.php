@@ -18,7 +18,7 @@ return [
              */
             'url' => '/gallery',
 
-            'title' => env('APP_NAME', 'Laravel').' Gallery',
+            'title' => env('APP_NAME', 'Laravel').' ・ Gallery',
             'description' => 'Pieces from the main gallery.',
             'language' => 'en-US',
 
@@ -49,7 +49,7 @@ return [
              */
             'url' => '/changelog',
 
-            'title' => env('APP_NAME', 'Laravel').' Changelog',
+            'title' => env('APP_NAME', 'Laravel').' ・ Changelog',
             'description' => 'Changelog entries.',
             'language' => 'en-US',
 
