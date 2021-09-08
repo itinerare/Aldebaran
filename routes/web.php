@@ -48,6 +48,8 @@ Route::group(['prefix' => 'commissions'], function() {
     Route::get('{class}/{key}', 'CommissionController@getClassPage');
 });
 
+Route::feeds('feeds');
+
 
 /***************************************************
     Routes that require login
