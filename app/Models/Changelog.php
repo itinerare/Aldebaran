@@ -2,9 +2,12 @@
 
 namespace App\Models;
 
+use Settings;
+use Spatie\Feed\Feedable;
+use Spatie\Feed\FeedItem;
 use Illuminate\Database\Eloquent\Model;
 
-class Changelog extends Model
+class Changelog extends Model implements Feedable
 {
     /**
      * The attributes that are mass assignable.
@@ -64,5 +67,37 @@ class Changelog extends Model
     public function scopeVisible($query)
     {
         return $query->where('is_visible', 1);
+    }
+
+    /**********************************************************************************************
+
+        OTHER FUNCTIONS
+
+    **********************************************************************************************/
+
+    /**
+     * Returns all feed items.
+     *
+     */
+    public static function getFeedItems()
+    {
+        return Changelog::visible()->get();
+    }
+
+    /**
+     * Generates feed item information.
+     *
+     * @return /Spatie/Feed/FeedItem;
+     */
+    public function toFeedItem(): FeedItem
+    {
+        return FeedItem::create([
+            'id' => '/changelog/'.$this->id,
+            'title' => $this->name ? $this->name : $this->created_at->toFormattedDateString(),
+            'summary' => $this->text,
+            'updated' => $this->created_at,
+            'link' => '/changelog',
+            'author' => Settings::get('site_name')
+        ]);
     }
 }
