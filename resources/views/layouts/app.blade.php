@@ -86,6 +86,8 @@
     <link href="{{ asset('css/selectize.bootstrap4.css') }}" rel="stylesheet">
 
     {!! RecaptchaV3::initJs() !!}
+
+    @include('feed::links')
 </head>
 <body>
     <div id="app">

@@ -2,10 +2,14 @@
 
 namespace App\Models\Gallery;
 
+use Settings;
+
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Feed\Feedable;
+use Spatie\Feed\FeedItem;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Piece extends Model
+class Piece extends Model implements Feedable
 {
     use SoftDeletes;
 
@@ -193,6 +197,44 @@ class Piece extends Model
         // Check if the piece should be included in the gallery or not
         if($this->tags->whereIn('tag_id', Tag::where('is_active', 0)->pluck('id')->toArray())->first()) return 0;
         else return 1;
+    }
+
+    /**********************************************************************************************
+
+        OTHER FUNCTIONS
+
+    **********************************************************************************************/
+
+    /**
+     * Returns all feed items.
+     *
+     */
+    public static function getFeedItems($gallery = true, $project = null)
+    {
+        $pieces = Piece::visible();
+        if($gallery) return $pieces->gallery()->get();
+        elseif(isset($project) && $project) return $pieces->where('project_id', $project)->get();
+        return $pieces->get();
+    }
+
+    /**
+     * Generates feed item information.
+     *
+     * @return /Spatie/Feed/FeedItem;
+     */
+    public function toFeedItem(): FeedItem
+    {
+        $summary = '<a href="'.$this->url.'"><img src="'.$this->thumbnailUrl.'"/></a><br/>This piece contains '.$this->images->count().' image'.($this->images->count() > 1 ? 's' : '').'. Click the thumbnail to view in full.<hr/>'.
+        $this->description;
+
+        return FeedItem::create([
+            'id' => '/gallery/pieces/'.$this->id,
+            'title' => $this->name,
+            'summary' => $summary,
+            'updated' => isset($this->timestamp) ? $this->timestamp : $this->created_at,
+            'link' => $this->url,
+            'author' => Settings::get('site_name')
+        ]);
     }
 
 }
