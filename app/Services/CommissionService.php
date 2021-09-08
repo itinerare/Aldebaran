@@ -140,6 +140,16 @@ class CommissionService extends Service
             ]);
         }
 
+        if(!DB::table('site_settings')->where('key', $class->slug.'_status')->exists()) {
+            DB::table('site_settings')->insert([
+                [
+                    'key'         => $class->slug.'_status',
+                    'value'       => isset($data['slug_old']) && isset($data['settings'][$data['slug_old'].'_status']) ? $data['settings'][$data['slug_old'].'_status'] : 0,
+                    'description' => 'Optional; a short message about commission status. Set to 0 to unset/leave blank.'
+                ],
+            ]);
+        }
+
         // Add and/or modify text pages
         $pages = [
             $class->slug.'tos' => [
