@@ -70,6 +70,16 @@ class Controller extends BaseController
     }
 
     /**
+     * Show the feed index page.
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getFeeds()
+    {
+        return view('feed_index');
+    }
+
+    /**
      * Show the placeholder page.
      *
      * @return \Illuminate\Contracts\Support\Renderable
