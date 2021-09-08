@@ -8,6 +8,9 @@
 <div class="card mb-4">
     <div class="card-header">
         <h2>{{ ucfirst($class->name) }} Commissions ・ @if(Settings::get($class->slug.'_comms_open') == 1) <span class="text-success">Open!</span> @else Closed @endif</h2>
+        @if(Settings::get($class->slug.'_status'))
+            <h6>{{ Settings::get($class->slug.'_status') }}</h6>
+        @endif
     </div>
     <div class="card-body text-center">
        <div class="row">
