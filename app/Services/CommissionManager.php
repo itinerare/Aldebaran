@@ -5,12 +5,17 @@ use App\Services\Service;
 use DB;
 use Settings;
 use Config;
+use Mail;
+
+use App\Models\User;
 
 use App\Models\Commission\CommissionType;
 use App\Models\Commission\Commission;
 use App\Models\Commission\CommissionPiece;
 use App\Models\Commission\Commissioner;
 use App\Models\Commission\CommissionerIp;
+
+use App\Mail\CommissionRequested;
 
 use App\Models\Gallery\Piece;
 
@@ -76,6 +81,12 @@ class CommissionManager extends Service
             // This ensures that even in the very odd case of a duplicate key,
             // conflicts should not arise
             $commission->update(['key' => $commission->id.'_'.randomString(15)]);
+
+            // If desired, send an email notification to the admin account
+            // that a commission request was submitted
+            if(Settings::get('notif_emails') && !$manual && (env('MAIL_USERNAME', false) && env('MAIL_PASSWORD', false))) {
+                Mail::to(User::find(1))->send(new CommissionRequested($commission));
+            }
 
             return $this->commitReturn($commission);
         } catch(\Exception $e) {
