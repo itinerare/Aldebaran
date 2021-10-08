@@ -124,7 +124,7 @@ class Commission extends Model
      */
     public function getUrlAttribute()
     {
-        return url('commissions/view/'.$this->key);
+        return url('commissions/view/'.$this->commission_key);
     }
 
     /**
