@@ -79,7 +79,7 @@ class CommissionManager extends Service
             // Now that the commission has an ID, assign it a key incorporating it
             // This ensures that even in the very odd case of a duplicate key,
             // conflicts should not arise
-            $commission->update(['key' => $commission->id.'_'.randomString(15)]);
+            $commission->update(['commission_key' => $commission->id.'_'.randomString(15)]);
 
             return $this->commitReturn($commission);
         } catch(\Exception $e) {

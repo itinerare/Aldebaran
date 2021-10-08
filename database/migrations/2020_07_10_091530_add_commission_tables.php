@@ -28,7 +28,7 @@ class AddCommissionTables extends Migration
             $table->engine = 'InnoDB';
             $table->increments('id');
 
-            $table->string('key');
+            $table->string('commission_key');
             $table->integer('commissioner_id')->unsigned();
             $table->integer('comm_type')->unsigned();
             $table->string('status');

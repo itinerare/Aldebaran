@@ -22,7 +22,7 @@ class CleanUpCommissionTables extends Migration
 
         Schema::table('commissions', function (Blueprint $table) {
             //
-            $table->string('key')->nullable()->default(null)->change();
+            $table->string('commission_key')->nullable()->default(null)->change();
         });
     }
 
@@ -42,7 +42,7 @@ class CleanUpCommissionTables extends Migration
 
         Schema::table('commissions', function (Blueprint $table) {
             //
-            $table->string('key')->change();
+            $table->string('commission_key')->change();
         });
     }
 }
