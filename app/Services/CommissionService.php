@@ -524,6 +524,9 @@ class CommissionService extends Service
         // it's set to be regenerated
         if(!$type || $data['regenerate_key']) $data['key'] = randomString(10);
 
+        // Encode data
+        $data['data'] = json_encode($data['data']);
+
         return $data;
     }
 

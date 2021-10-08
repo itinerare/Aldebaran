@@ -56,7 +56,8 @@ class CommissionController extends Controller
                     break;
             }
         }
-        else $commissions->orderBy('created_at', 'DESC');
+        else $commissions->orderBy('created_at');
+
         return view('admin.queues.index', [
             'commissions' => $commissions->paginate(30)->appends($request->query()),
             'types' => ['none' => 'Any Type'] + CommissionType::orderBy('name', 'DESC')->pluck('name', 'id')->toArray(),
@@ -76,8 +77,7 @@ class CommissionController extends Controller
         $type = CommissionType::where('id', $id)->first();
         if(!$type) abort(404);
 
-        $commissioners = Commissioner::where('is_banned', 0)->get()->pluck('fullName', 'id')->toArray();
-        sort($commissioners);
+        $commissioners = Commissioner::where('is_banned', 0)->get()->pluck('fullName', 'id')->sort()->toArray();
 
         return view('admin.queues.new',
         [
@@ -96,6 +96,9 @@ class CommissionController extends Controller
      */
     public function postNewCommission(Request $request, CommissionManager $service, $id = null)
     {
+        $type = CommissionType::where('id', $request->get('type'))->first();
+        if(!$type) abort(404);
+
         $answerArray = []; $validationRules = Commission::$manualCreateRules;
         foreach($type->formFields as $key=>$field) {
             $answerArray[$key] = null;
@@ -106,7 +109,7 @@ class CommissionController extends Controller
         $request->validate($validationRules);
 
         $data = $request->only([
-            'commissioner_id', 'name', 'email', 'contact', 'paypal', 'type'
+            'commissioner_id', 'name', 'email', 'contact', 'paypal', 'type', 'additional_information'
         ] + $answerArray);
         if (!$id && $commission = $service->createCommission($data, true)) {
             flash('Commission submitted successfully.')->success();

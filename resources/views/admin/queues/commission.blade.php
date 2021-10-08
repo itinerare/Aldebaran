@@ -75,6 +75,13 @@
 
         @include('commissions._form_builder', ['type' => $commission->type, 'form' => false])
 
+        <div class="row mb-2">
+            <div class="col-md-4"><h5>Additional Information</h5></div>
+            <div class="col-md">
+                {!! isset($commission->data['additional_information']) ? nl2br(htmlentities($commission->data['additional_information'])) : '-' !!}
+            </div>
+        </div>
+
         <div class="form-group">
             {!! Form::label('Link') !!} {!! add_help('The URL of this page, as mentioned above!') !!}
             {!! Form::text('link', $commission->url, ['class' => 'form-control', 'disabled']) !!}
@@ -100,9 +107,13 @@
                 <div class="text-center mb-2">
                     <div class="row">
                         <div class="col-md-4">
-                            <a href="{{ url('admin/data/pieces/edit/'.$piece->piece_id) }}">
-                                <img class="image img-thumbnail" style="max-width:100%;" src="{{ $piece->piece->primaryImages->count() ? $piece->piece->primaryImages->random()->thumbnailUrl : $piece->piece->images->first()->thumbnailUrl }}" />
-                            </a>
+                            @if($piece->piece->images->count())
+                                <a href="{{ url('admin/data/pieces/edit/'.$piece->piece_id) }}">
+                                    <img class="image img-thumbnail" style="max-width:100%;" src="{{ $piece->piece->primaryImages->count() ? $piece->piece->primaryImages->random()->thumbnailUrl : $piece->piece->images->first()->thumbnailUrl }}" />
+                                </a>
+                            @else
+                                <i>No image(s) provided.</i>
+                            @endif
                         </div>
                         <div class="col-md align-self-center">
                             <h4>{{ $piece->piece->name }}</h4>
@@ -116,25 +127,25 @@
             @endforeach
         </div>
     @endif
+
+    <h2>General Information</h2>
+
+    <p>Payment Status</p>
+    <div class="row mb-2">
+        <div class="col-md form-group">
+            {!! Form::number('cost', $commission->cost, ['class' => 'form-control', 'placeholder' => 'Enter Cost (USD)']) !!}
+        </div>
+        <div class="col-md form-group">
+            {!! Form::checkbox('paid_status', 1, $commission->paid_status, ['class' => 'form-check-input', 'data-toggle' => 'toggle', 'data-on' => 'Yes', 'data-off' => 'No']) !!}
+            {!! Form::label('paid_status', 'Is Paid', ['class' => 'form-check-label ml-3']) !!}
+        </div>
+    </div>
+
+    <div class="form-group">
+        {!! Form::label('Progress') !!}
+        {!! Form::select('progress', ['Not Started' => 'Not Started', 'Working On' => 'Working On', 'Sketch' => 'Sketch', 'Lines' => 'Lines', 'Color' => 'Color', 'Shading' => 'Shading', 'Finalizing' => 'Finalizing', 'Pending Approval' => 'Pending Approval', 'Finished' => 'Finished'], $commission->progress, ['class' => 'form-control']) !!}
+    </div>
 @endif
-
-<h2>General Information</h2>
-
-<p>Payment Status</p>
-<div class="row mb-2">
-    <div class="col-md form-group">
-        {!! Form::number('cost', $commission->cost, ['class' => 'form-control', 'placeholder' => 'Enter Cost (USD)']) !!}
-    </div>
-    <div class="col-md form-group">
-        {!! Form::checkbox('paid_status', 1, $commission->paid_status, ['class' => 'form-check-input', 'data-toggle' => 'toggle', 'data-on' => 'Yes', 'data-off' => 'No']) !!}
-        {!! Form::label('paid_status', 'Is Paid', ['class' => 'form-check-label ml-3']) !!}
-    </div>
-</div>
-
-<div class="form-group">
-    {!! Form::label('Progress') !!}
-    {!! Form::select('progress', ['Not Started' => 'Not Started', 'Working On' => 'Working On', 'Sketch' => 'Sketch', 'Lines' => 'Lines', 'Color' => 'Color', 'Shading' => 'Shading', 'Finalizing' => 'Finalizing', 'Pending Approval' => 'Pending Approval', 'Finished' => 'Finished'], $commission->progress, ['class' => 'form-control']) !!}
-</div>
 
 <div class="form-group">
     {!! Form::label('comments', 'Comments (Optional)') !!}

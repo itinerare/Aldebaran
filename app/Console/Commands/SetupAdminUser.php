@@ -62,7 +62,6 @@ class SetupAdminUser extends Command
                 $service->createUser([
                     'name' => $name,
                     'email' => $email,
-                    'rank_id' => $adminRank->id,
                     'password' => $password
                 ]);
 

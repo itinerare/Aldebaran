@@ -12,7 +12,7 @@ class Commission extends Model
      * @var array
      */
     protected $fillable = [
-        'key', 'commissioner_id', 'commission_type', 'paid_status', 'progress',
+        'commission_key', 'commissioner_id', 'commission_type', 'paid_status', 'progress',
         'status', 'description', 'data', 'comments', 'cost'
     ];
 
@@ -124,7 +124,7 @@ class Commission extends Model
      */
     public function getUrlAttribute()
     {
-        return url('commissions/view/'.$this->key);
+        return url('commissions/view/'.$this->commission_key);
     }
 
     /**
