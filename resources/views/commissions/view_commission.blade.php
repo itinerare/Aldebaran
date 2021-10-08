@@ -3,7 +3,7 @@
 @section('title') Commission (#{{ $commission->id }}) @endsection
 
 @section('content')
-{!! breadcrumbs([$commission->type->category->class->name.' Commissions' => 'commissions/'.$commission->type->category->class->slug, $commission->type->name.' Commission' => 'commissions/view/'.$commission->key]) !!}
+{!! breadcrumbs([$commission->type->category->class->name.' Commissions' => 'commissions/'.$commission->type->category->class->slug, $commission->type->name.' Commission' => 'commissions/view/'.$commission->commission_key]) !!}
 
 <div class="borderhr mb-4">
     <h1>
