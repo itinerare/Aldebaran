@@ -36,12 +36,14 @@ class AppServiceProvider extends ServiceProvider
         Schema::defaultStringLength(191);
         Paginator::useBootstrap();
 
-        View::share('visibleProjects', Project::visible()->orderBy('sort', 'DESC')->get());
-        view()->composer('*', function ($view) {
-            $commissionClasses = CommissionClass::active(Auth::check() ? Auth::user() : null)->orderBy('sort', 'DESC')->get();
+        if(Schema::hasTable('projects')) {
+            View::share('visibleProjects', Project::visible()->orderBy('sort', 'DESC')->get());
+            view()->composer('*', function ($view) {
+                $commissionClasses = CommissionClass::active(Auth::check() ? Auth::user() : null)->orderBy('sort', 'DESC')->get();
 
-            $view->with('commissionClasses', $commissionClasses);
-        });
+                $view->with('commissionClasses', $commissionClasses);
+            });
+        }
 
         /**
          * Paginate a standard Laravel Collection.

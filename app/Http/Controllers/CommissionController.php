@@ -232,13 +232,13 @@ class CommissionController extends Controller
         $request->validate($validationRules);
 
         $data = $request->only([
-            'name', 'email', 'contact', 'paypal', 'type', 'key',
+            'name', 'email', 'contact', 'paypal', 'type', 'key', 'additional_information'
             ] + $answerArray);
         $data['ip'] = $request->ip();
 
         if (!$id && $commission = $service->createCommission($data)) {
             flash('Commission request submitted successfully.')->success();
-            return redirect()->to('commissions/view/'.$commission->key);
+            return redirect()->to('commissions/view/'.$commission->commission_key);
         }
         else {
             foreach($service->errors()->getMessages()['error'] as $error) flash($error)->error();
@@ -254,7 +254,7 @@ class CommissionController extends Controller
      */
     public function getViewCommission($key)
     {
-        $commission = Commission::where('key', $key)->first();
+        $commission = Commission::where('commission_key', $key)->first();
         if(!$commission) abort(404);
 
         return view('commissions.view_commission',

@@ -59,6 +59,7 @@ class CommissionManager extends Service
                 $commissioner = Commissioner::where('id', $data['commissioner_id'])->first();
                 if(!$commissioner) throw new \Exception('Invalid commissioner selected.');
             }
+
             else $commissioner = $this->processCommissioner($data, $manual ? false : true);
 
             // Collect and form responses related to the commission itself
@@ -70,6 +71,9 @@ class CommissionManager extends Service
                         $data['data'][$key] = $data[$key];
                 }
 
+            if(isset($data['additional_information']))
+                $data['data']['additional_information'] = $data['additional_information'];
+
             $commission = Commission::create([
                 'commissioner_id' => $commissioner->id,
                 'commission_type' => $type->id,
@@ -80,7 +84,7 @@ class CommissionManager extends Service
             // Now that the commission has an ID, assign it a key incorporating it
             // This ensures that even in the very odd case of a duplicate key,
             // conflicts should not arise
-            $commission->update(['key' => $commission->id.'_'.randomString(15)]);
+            $commission->update(['commission_key' => $commission->id.'_'.randomString(15)]);
 
             // If desired, send an email notification to the admin account
             // that a commission request was submitted
@@ -231,6 +235,10 @@ class CommissionManager extends Service
                         'commission_id' => $commission->id,
                         'piece_id' => $piece->id
                     ]);
+            }
+            elseif($commission->pieces->count()) {
+                // Clear old pieces
+                CommissionPiece::where('commission_id', $commission->id)->delete();
             }
 
             if(!isset($data['paid_status'])) $data['paid_status'] = 0;

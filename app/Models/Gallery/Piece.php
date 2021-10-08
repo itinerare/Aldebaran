@@ -163,7 +163,18 @@ class Piece extends Model implements Feedable
      */
     public function getUrlAttribute()
     {
-        return url('/gallery/pieces/'.$this->id.'.'.str_replace(' ', '-', str_replace('?', '', $this->name)));
+        return url('/gallery/pieces/'.$this->id.'.'.$this->slug);
+    }
+
+    /**
+     * Get the piece's slug.
+     *
+     * @return string
+     */
+    public function getSlugAttribute()
+    {
+        $string = str_replace(' ', '-', $this->name);
+        return preg_replace('/[^A-Za-z0-9\-]/', '', $string);
     }
 
     /**
