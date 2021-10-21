@@ -69,6 +69,8 @@ class CommissionManager extends Service
             if(isset($data['additional_information']))
                 $data['data']['additional_information'] = $data['additional_information'];
 
+            if(!isset($data['data'])) $data['data'] = null;
+
             $commission = Commission::create([
                 'commissioner_id' => $commissioner->id,
                 'commission_type' => $type->id,
