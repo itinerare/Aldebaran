@@ -18,13 +18,13 @@
                     {!! $commission->commissioner->displayName !!} ・
                     <a href="{{ url('admin/commissions/edit/'.$commission->id) }}">View</a>
                     <span class="float-right">
-                        ${{ $commission->cost }} {{ !$commission->paid_status ? '(Unpaid)' : ($commission->status != 'Complete' ? '(Uncompleted)' : '')}}
+                        ${{ $commission->cost }}{{ $commission->tip ? ' + $'.$commission->tip.' Tip' : '' }} {{ !$commission->paid_status ? '(Unpaid)' : ($commission->status != 'Complete' ? '(Uncompleted)' : '')}}
                     </span>
                 </h5>
             </div>
         @endforeach
         <div class="text-right">
-            <h5><abbr data-toggle="tooltip" title="(Before Fees)">Total</abbr>: ${{ $commissions->pluck('cost')->sum() }}</h5>
+            <h5><abbr data-toggle="tooltip" title="(Before Fees)">Total</abbr>: ${{ $commissions->pluck('cost')->sum() + $commissions->pluck('tip')->sum() }}</h5>
         </div>
     </div>
 @endforeach
