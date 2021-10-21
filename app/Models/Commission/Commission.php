@@ -138,6 +138,28 @@ class Commission extends Model
     }
 
     /**
+     * Get tip.
+     *
+     * @return string
+     */
+    public function getTipAttribute()
+    {
+        if(isset($this->data['tip'])) return $this->data['tip'];
+        return null;
+    }
+
+    /**
+     * Get total cost, including tip.
+     *
+     * @return string
+     */
+    public function getCostWithTipAttribute()
+    {
+        if(isset($this->data['tip'])) return $this->cost + $this->data['tip'];
+        return $this->cost;
+    }
+
+    /**
      * Get the data attribute as an associative array.
      *
      * @return array
