@@ -243,8 +243,12 @@ class CommissionManager extends Service
                 CommissionPiece::where('commission_id', $commission->id)->delete();
             }
 
-            if(!isset($data['paid_status'])) $data['paid_status'] = 0;
+            // Fetch existing data, process
+            $data['data'] = $commission->data;
             if(isset($data['tip'])) $data['data']['tip'] = $data['tip'];
+            $data['data'] = json_encode($data['data']);
+
+            if(!isset($data['paid_status'])) $data['paid_status'] = 0;
 
             // Update the commission
             $commission->update($data);
