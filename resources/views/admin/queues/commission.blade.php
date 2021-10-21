@@ -51,7 +51,7 @@
             </div>
             <div class="row">
                 <div class="col-md"><h5>Paid Status</h5></div>
-                <div class="col-md">{!! $commission->isPaid !!} ({{ isset($commission->cost) ? '$'.$commission->cost : '-' }})</div>
+                <div class="col-md">{!! $commission->isPaid !!} ({{ isset($commission->cost) ? '$'.$commission->cost : '-' }}{{ $commission->tip ? ' + $'.$commission->tip.' Tip' : '' }})</div>
             </div>
             <div class="row">
                 <div class="col-md"><h5>Progress</h5></div>
@@ -132,12 +132,25 @@
 
     <p>Payment Status</p>
     <div class="row mb-2">
-        <div class="col-md form-group">
-            {!! Form::number('cost', $commission->cost, ['class' => 'form-control', 'placeholder' => 'Enter Cost (USD)']) !!}
+        <div class="col-md-8 form-group">
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="cost-group">Cost (USD)</span>
+                </div>
+                {!! Form::number('cost', $commission->cost, ['class' => 'form-control', 'aria-describedby' => 'cost-group']) !!}
+            </div>
         </div>
         <div class="col-md form-group">
             {!! Form::checkbox('paid_status', 1, $commission->paid_status, ['class' => 'form-check-input', 'data-toggle' => 'toggle', 'data-on' => 'Yes', 'data-off' => 'No']) !!}
             {!! Form::label('paid_status', 'Is Paid', ['class' => 'form-check-label ml-3']) !!}
+        </div>
+        <div class="col-md-12 form-group">
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="tip-group">Tip (USD)</span>
+                </div>
+                {!! Form::number('tip', $commission->tip, ['class' => 'form-control', 'aria-describedby' => 'tip-group']) !!}
+            </div>
         </div>
     </div>
 

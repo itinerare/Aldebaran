@@ -242,6 +242,7 @@ class CommissionManager extends Service
             }
 
             if(!isset($data['paid_status'])) $data['paid_status'] = 0;
+            if(isset($data['tip'])) $data['data']['tip'] = $data['tip'];
 
             // Update the commission
             $commission->update($data);
