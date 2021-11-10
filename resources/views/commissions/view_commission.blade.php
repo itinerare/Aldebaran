@@ -55,6 +55,12 @@
                 <div class="col-md-4"><h5>Last Updated</h5></div>
                 <div class="col-md">{!! pretty_date($commission->updated_at) !!}</div>
             </div>
+            @if($commission->status == 'Accepted')
+                <div class="row">
+                    <div class="col-md-4"><h5>Position in Queue</h5></div>
+                    <div class="col-md">{{ $commission->queuePosition }}</div>
+                </div>
+            @endif
         </div>
     </div>
 </div>
