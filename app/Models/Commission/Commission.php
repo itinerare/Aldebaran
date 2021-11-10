@@ -179,4 +179,25 @@ class Commission extends Model
         return json_decode($this->attributes['description'], true);
     }
 
+    /**
+     * Get the position of the commission in the queue.
+     *
+     * @return int
+     */
+    public function getQueuePositionAttribute()
+    {
+        // Take the ID of this commission for ease of access
+        $id = $this->id;
+
+        // Get all accepted commissions of the current commission's class,
+        // and filter by this commission's ID; this should return only it,
+        // preserving its key/position in the queue
+        // Then strip the collection down to just the key
+        $commissions = $this->class($this->type->category->class->id)->where('status', 'Accepted')->orderBy('created_at')->get()->filter(function($commission) use ($id) {
+            return $commission->id == $id;
+        })->keys();
+
+        // Return key plus one, since array keys start at 0
+        return $commissions->first() + 1;
+    }
 }
