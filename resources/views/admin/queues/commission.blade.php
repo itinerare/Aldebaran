@@ -38,6 +38,12 @@
                 <div class="col-md"><h5>Commissioned</h5></div>
                 <div class="col-md">{!! $commission->commissioner->commissions->whereIn('status', ['Accepted', 'Complete'])->count() !!} Time{!! $commission->commissioner->commissions->whereIn('status', ['Accepted', 'Complete'])->count() == 1 ? '' : 's' !!}</div>
             </div>
+            @if($commission->status == 'Accepted')
+                <div class="row">
+                    <div class="col-md"><h5>Position in Queue</h5></div>
+                    <div class="col-md">{{ $commission->queuePosition }}</div>
+                </div>
+            @endif
         </div>
         <div class="col-md">
             <h2>Basic Info</h2>
