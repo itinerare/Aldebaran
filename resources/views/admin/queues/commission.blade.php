@@ -152,6 +152,10 @@
                             {!! Form::checkbox('paid['.$key.']', 1, $payment['paid'], ['aria-label' => 'Whether or not this invoice has been paid']) !!}
                             <span class="ml-1">Is Paid</span>
                         </div>
+                        <div class="input-group-text">
+                            {!! Form::checkbox('intl['.$key.']', 1, $payment['intl'], ['aria-label' => 'Whether or not this commissioner is international']) !!}
+                            <span class="ml-1">Intl.</span>
+                        </div>
                         <span class="input-group-text">After Fees: ${{ $commission->paymentWithFees($payment) }}</span>
                         <button class="remove-payment btn btn-outline-danger" type="button" id="button-addon2">X</button>
                     </div>
@@ -202,6 +206,10 @@
             <div class="input-group-text">
                 {!! Form::checkbox('paid[]', 1, 0, ['aria-label' => 'Whether or not this invoice has been paid', 'disabled']) !!}
                 <span class="ml-1">Is Paid</span>
+            </div>
+            <div class="input-group-text bg-secondary silver">
+                {!! Form::checkbox('intl[]', 1, 0, ['aria-label' => 'Whether or not this invoice has been paid', 'disabled']) !!}
+                <span class="ml-1">Intl.</span>
             </div>
             <button class="remove-payment btn btn-outline-danger" type="button" id="button-addon2">X</button>
         </div>

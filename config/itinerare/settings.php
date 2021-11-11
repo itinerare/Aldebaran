@@ -23,6 +23,9 @@ return [
     'display_image_size' => 2000,
 
     // Fee information. Current for PayPal as of Aug 10 2021
-    'base_fee' => .49,
-    'percent_fee' => 3.49,
+    'fee' => [
+        'base' => .49,
+        'percent' => 3.49,
+        'percent_intl' => 4.99
+    ],
 ];

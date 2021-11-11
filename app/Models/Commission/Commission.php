@@ -284,7 +284,7 @@ class Commission extends Model
 
         // Calculate fee and round
         $fee =
-            ($total * (Config::get('itinerare.settings.percent_fee') / 100)) + Config::get('itinerare.settings.base_fee');
+            ($total * ((isset($payment['intl']) && $payment['intl'] ? Config::get('itinerare.settings.fee.percent_intl') : Config::get('itinerare.settings.fee.percent')) / 100)) + Config::get('itinerare.settings.fee.base');
         $fee = round($fee, 2);
 
         return $total - $fee;

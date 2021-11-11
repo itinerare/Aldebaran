@@ -249,7 +249,8 @@ class CommissionManager extends Service
                     $data['cost_data'][$key] = [
                         'cost' => $cost,
                         'tip' => isset($data['tip'][$key]) ? $data['tip'][$key] : null,
-                        'paid' => isset($data['paid'][$key]) ? $data['paid'][$key] : 0
+                        'paid' => isset($data['paid'][$key]) ? $data['paid'][$key] : 0,
+                        'intl' => isset($data['intl'][$key]) ? $data['intl'][$key] : 0
                     ];
                 }
 
