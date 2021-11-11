@@ -243,12 +243,18 @@ class CommissionManager extends Service
                 CommissionPiece::where('commission_id', $commission->id)->delete();
             }
 
-            // Fetch existing data, process
-            $data['data'] = $commission->data;
-            if(isset($data['tip'])) $data['data']['tip'] = $data['tip'];
-            $data['data'] = json_encode($data['data']);
+            // Process payment data
+            if(isset($data['cost'])) {
+                foreach($data['cost'] as $key=>$cost) {
+                    $data['cost_data'][$key] = [
+                        'cost' => $cost,
+                        'tip' => isset($data['tip'][$key]) ? $data['tip'][$key] : null,
+                        'paid' => isset($data['paid'][$key]) ? $data['paid'][$key] : 0
+                    ];
+                }
 
-            if(!isset($data['paid_status'])) $data['paid_status'] = 0;
+                $data['cost_data'] = json_encode($data['cost_data']);
+            }
 
             // Update the commission
             $commission->update($data);
