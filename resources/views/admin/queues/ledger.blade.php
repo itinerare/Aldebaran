@@ -1,6 +1,6 @@
 @extends('admin.layout')
 
-@section('admin-title') Legder @endsection
+@section('admin-title') Ledger @endsection
 
 @section('admin-content')
 {!! breadcrumbs(['Admin Panel' => 'admin', 'Ledger' => 'admin/ledger']) !!}
