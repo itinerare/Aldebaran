@@ -21,4 +21,8 @@ return [
     'thumbnail_width' => 250,
     'thumbnail_height' => 200,
     'display_image_size' => 2000,
+
+    // Fee information. Current for PayPal as of Aug 10 2021
+    'base_fee' => .49,
+    'percent_fee' => 3.49,
 ];

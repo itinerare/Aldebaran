@@ -202,7 +202,8 @@ class CommissionController extends Controller
      */
     private function postUpdateCommission($id, Request $request, CommissionManager $service)
     {
-        $data = $request->only(['pieces', 'cost', 'paid_status', 'progress', 'comments', 'tip']);
+        $request->validate(Commission::$updateRules);
+        $data = $request->only(['pieces', 'paid_status', 'progress', 'comments', 'cost', 'tip', 'paid']);
         if($service->updateCommission($id, $data, Auth::user())) {
             flash('Commission updated successfully.')->success();
         }
@@ -278,7 +279,7 @@ class CommissionController extends Controller
     {
         return view('admin.queues.ledger',
         [
-            'months' => Commission::whereIn('status', ['Accepted', 'Complete'])->whereNotNull('cost')->orderBy('created_at', 'DESC')->get()->groupBy(function($date) {
+            'months' => Commission::whereIn('status', ['Accepted', 'Complete'])->whereNotNull('cost_data')->orderBy('created_at', 'DESC')->get()->groupBy(function($date) {
                 return Carbon::parse($date->created_at)->format('F Y');
             })->paginate(12)
         ]);
