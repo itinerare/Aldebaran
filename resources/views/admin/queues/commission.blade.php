@@ -57,7 +57,7 @@
             </div>
             <div class="row">
                 <div class="col-md"><h5>Paid Status</h5></div>
-                <div class="col-md">{!! $commission->isPaid !!} ({{ isset($commission->cost) ? '$'.$commission->cost : '-' }}{{ $commission->tip ? ' + $'.$commission->tip.' Tip' : '' }})</div>
+                <div class="col-md">{!! $commission->isPaid !!} ({{ isset($commission->cost) ? '$'.$commission->cost : '-' }}{{ $commission->tip ? ' + $'.$commission->tip.' Tip' : '' }}/${{ $commission->totalWithFees }})</div>
             </div>
             <div class="row">
                 <div class="col-md"><h5>Progress</h5></div>
@@ -137,26 +137,29 @@
     <h2>General Information</h2>
 
     <p>Payment Status</p>
-    <div class="row mb-2">
-        <div class="col-md-8 form-group">
-            <div class="input-group mb-3">
-                <div class="input-group-prepend">
-                    <span class="input-group-text" id="cost-group">Cost (USD)</span>
+
+    <div class="form-group">
+        <div id="paymentList">
+            @foreach($commission->costData as $key=>$payment)
+                <div class="input-group mb-2">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Cost & Tip (USD)</span>
+                    </div>
+                    {!! Form::number('cost['.$key.']', $payment['cost'], ['class' => 'form-control', 'aria-label' => 'Cost', 'placeholder' => 'Cost']) !!}
+                    {!! Form::number('tip['.$key.']', $payment['tip'], ['class' => 'form-control', 'aria-label' => 'Tip', 'placeholder' => 'Tip']) !!}
+                    <div class="input-group-append">
+                        <div class="input-group-text">
+                            {!! Form::checkbox('paid['.$key.']', 1, $payment['paid'], ['aria-label' => 'Whether or not this invoice has been paid']) !!}
+                            <span class="ml-1">Is Paid</span>
+                        </div>
+                        <span class="input-group-text">After Fees: ${{ $commission->paymentWithFees($payment) }}</span>
+                        <button class="remove-payment btn btn-outline-danger" type="button" id="button-addon2">X</button>
+                    </div>
                 </div>
-                {!! Form::number('cost', $commission->cost, ['class' => 'form-control', 'aria-describedby' => 'cost-group']) !!}
-            </div>
+            @endforeach
         </div>
-        <div class="col-md form-group">
-            {!! Form::checkbox('paid_status', 1, $commission->paid_status, ['class' => 'form-check-input', 'data-toggle' => 'toggle', 'data-on' => 'Yes', 'data-off' => 'No']) !!}
-            {!! Form::label('paid_status', 'Is Paid', ['class' => 'form-check-label ml-3']) !!}
-        </div>
-        <div class="col-md-12 form-group">
-            <div class="input-group mb-3">
-                <div class="input-group-prepend">
-                    <span class="input-group-text" id="tip-group">Tip (USD)</span>
-                </div>
-                {!! Form::number('tip', $commission->tip, ['class' => 'form-control', 'aria-describedby' => 'tip-group']) !!}
-            </div>
+        <div class="mt-2 text-right">
+            <a href="#" class="btn btn-primary" id="add-payment">Add Payment</a>
         </div>
     </div>
 
@@ -187,6 +190,23 @@
 @endif
 
 {!! Form::close() !!}
+
+<div class="payment-row hide mb-2">
+    <div class="input-group mb-2">
+        <div class="input-group-prepend">
+            <span class="input-group-text">Cost & Tip (USD)</span>
+        </div>
+        {!! Form::number('cost[]', null, ['class' => 'form-control', 'aria-label' => 'Cost', 'placeholder' => 'Cost']) !!}
+        {!! Form::number('tip[]', null, ['class' => 'form-control', 'aria-label' => 'Tip', 'placeholder' => 'Tip']) !!}
+        <div class="input-group-append">
+            <div class="input-group-text">
+                {!! Form::checkbox('paid[]', 1, 0, ['aria-label' => 'Whether or not this invoice has been paid', 'disabled']) !!}
+                <span class="ml-1">Is Paid</span>
+            </div>
+            <button class="remove-payment btn btn-outline-danger" type="button" id="button-addon2">X</button>
+        </div>
+    </div>
+</div>
 
 <div class="modal fade" id="confirmationModal" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
@@ -303,6 +323,27 @@
             $('#piecesList').selectize({
                 maxItems: 10
             });
+
+            $('#add-payment').on('click', function(e) {
+                e.preventDefault();
+                addPaymentRow();
+            });
+            $('.remove-payment').on('click', function(e) {
+                e.preventDefault();
+                removePaymentRow($(this));
+            })
+            function addPaymentRow() {
+                var $clone = $('.payment-row').clone();
+                $('#paymentList').append($clone);
+                $clone.removeClass('hide payment-row');
+                $clone.find('.remove-payment').on('click', function(e) {
+                    e.preventDefault();
+                    removePaymentRow($(this));
+                })
+            }
+            function removePaymentRow($trigger) {
+                $trigger.parent().parent().remove();
+            }
 
             var $confirmationModal = $('#confirmationModal');
             var $submissionForm = $('#commissionForm');
