@@ -42,7 +42,8 @@ class MigrateCostData extends Command
             $cost[$commission->id][0] = [
                 'cost' => $commission->getRawOriginal('cost_data'),
                 'tip' => isset($commission->data['tip']) ? $commission->data['tip'] : null,
-                'paid' => $commission->getRawOriginal('paid_status')
+                'paid' => $commission->getRawOriginal('paid_status'),
+                'intl' => 0
             ];
 
             // Update the commission with the new data

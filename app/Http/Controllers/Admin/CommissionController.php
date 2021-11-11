@@ -203,7 +203,7 @@ class CommissionController extends Controller
     private function postUpdateCommission($id, Request $request, CommissionManager $service)
     {
         $request->validate(Commission::$updateRules);
-        $data = $request->only(['pieces', 'paid_status', 'progress', 'comments', 'cost', 'tip', 'paid']);
+        $data = $request->only(['pieces', 'paid_status', 'progress', 'comments', 'cost', 'tip', 'paid', 'intl']);
         if($service->updateCommission($id, $data, Auth::user())) {
             flash('Commission updated successfully.')->success();
         }
