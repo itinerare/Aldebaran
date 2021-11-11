@@ -2,6 +2,8 @@
 
 namespace App\Models\Commission;
 
+use Config;
+
 use Illuminate\Database\Eloquent\Model;
 
 class Commission extends Model
@@ -13,7 +15,7 @@ class Commission extends Model
      */
     protected $fillable = [
         'commission_key', 'commissioner_id', 'commission_type', 'paid_status', 'progress',
-        'status', 'description', 'data', 'comments', 'cost'
+        'status', 'description', 'data', 'comments', 'cost_data'
     ];
 
     /**
@@ -58,6 +60,15 @@ class Commission extends Model
         'email' => 'email|required_without:commissioner_id|min:3|max:191|nullable',
         'contact' => 'required_without:commissioner_id|string|min:3|max:191|nullable',
         'paypal' => 'email|nullable|min:3|max:191'
+    ];
+
+    /**
+     * Validation rules for commission updating.
+     *
+     * @var array
+     */
+    public static $updateRules = [
+        'cost.*' => 'nullable|filled|required_with:tip.*'
     ];
 
     /**********************************************************************************************
@@ -130,22 +141,63 @@ class Commission extends Model
     /**
      * Get formatted paid status.
      *
+     * @return bool
+     */
+    public function getPaidStatusAttribute()
+    {
+        if(!isset($this->costData)) return 0;
+        foreach($this->costData as $payment)
+            if($payment['paid'] == 0) return 0;
+        return 1;
+    }
+
+    /**
+     * Get formatted paid status.
+     *
      * @return string
      */
     public function getIsPaidAttribute()
     {
-        return $this->attributes['paid_status'] ? '<span class="text-success">Paid</span>' : ($this->status == 'Accepted' ? '<span class="text-danger"><strong>Unpaid</strong></span>' : '<s>Unpaid</s>');
+        if(!isset($this->costData)) return '-';
+        return $this->paidStatus ?
+            '<span class="text-success">Paid</span>' :
+            ($this->status == 'Accepted' ? '<span class="text-danger"><strong>Unpaid</strong></span>' : '<s>Unpaid</s>');
     }
 
     /**
-     * Get tip.
+     * Get the data attribute as an associative array.
      *
-     * @return string
+     * @return array
+     */
+    public function getCostDataAttribute()
+    {
+        return json_decode($this->attributes['cost_data'], true);
+    }
+
+    /**
+     * Get overall cost.
+     *
+     * @return int
+     */
+    public function getCostAttribute()
+    {
+        $total = 0;
+        foreach($this->costData as $payment)
+            $total += $payment['cost'];
+        return $total;
+    }
+
+    /**
+     * Get overall tip.
+     *
+     * @return int
      */
     public function getTipAttribute()
     {
-        if(isset($this->data['tip'])) return $this->data['tip'];
-        return null;
+        $total = 0;
+        foreach($this->costData as $payment)
+            $total += (isset($payment['tip']) ? $payment['tip'] : 0);
+        return $total;
     }
 
     /**
@@ -155,8 +207,21 @@ class Commission extends Model
      */
     public function getCostWithTipAttribute()
     {
-        if(isset($this->data['tip'])) return $this->cost + $this->data['tip'];
-        return $this->cost;
+        return $this->cost + $this->tip;
+    }
+
+    /**
+     * Get overall cost with fees.
+     *
+     * @return int
+     */
+    public function getTotalWithFeesAttribute()
+    {
+        $total = 0;
+        // Cycle through payments, getting their total with fees
+        foreach($this->costData as $payment)
+            $total += $this->paymentWithFees($payment);
+        return $total;
     }
 
     /**
@@ -199,5 +264,29 @@ class Commission extends Model
 
         // Return key plus one, since array keys start at 0
         return $commissions->first() + 1;
+    }
+
+    /**********************************************************************************************
+
+        OTHER FUNCTIONS
+
+    **********************************************************************************************/
+
+    /**
+     * Calculate the total for a payment after fees.
+     *
+     * @param  array              $payment
+     * @return int
+     */
+    public function paymentWithFees($payment)
+    {
+        $total = $payment['cost'] + (isset($payment['tip']) && $payment['tip'] ? $payment['tip'] : 0);
+
+        // Calculate fee and round
+        $fee =
+            ($total * (Config::get('itinerare.settings.percent_fee') / 100)) + Config::get('itinerare.settings.base_fee');
+        $fee = round($fee, 2);
+
+        return $total - $fee;
     }
 }
