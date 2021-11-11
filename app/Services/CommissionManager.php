@@ -256,6 +256,7 @@ class CommissionManager extends Service
 
                 $data['cost_data'] = json_encode($data['cost_data']);
             }
+            else $data['cost_data'] = null;
 
             // Update the commission
             $commission->update($data);

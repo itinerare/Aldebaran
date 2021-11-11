@@ -140,27 +140,29 @@
 
     <div class="form-group">
         <div id="paymentList">
-            @foreach($commission->costData as $key=>$payment)
-                <div class="input-group mb-2">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">Cost & Tip (USD)</span>
-                    </div>
-                    {!! Form::number('cost['.$key.']', $payment['cost'], ['class' => 'form-control', 'aria-label' => 'Cost', 'placeholder' => 'Cost']) !!}
-                    {!! Form::number('tip['.$key.']', $payment['tip'], ['class' => 'form-control', 'aria-label' => 'Tip', 'placeholder' => 'Tip']) !!}
-                    <div class="input-group-append">
-                        <div class="input-group-text">
-                            {!! Form::checkbox('paid['.$key.']', 1, $payment['paid'], ['aria-label' => 'Whether or not this invoice has been paid']) !!}
-                            <span class="ml-1">Is Paid</span>
+            @if(isset($commission->costData))
+                @foreach($commission->costData as $key=>$payment)
+                    <div class="input-group mb-2">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Cost & Tip (USD)</span>
                         </div>
-                        <div class="input-group-text">
-                            {!! Form::checkbox('intl['.$key.']', 1, $payment['intl'], ['aria-label' => 'Whether or not this commissioner is international']) !!}
-                            <span class="ml-1">Intl.</span>
+                        {!! Form::number('cost['.$key.']', $payment['cost'], ['class' => 'form-control', 'aria-label' => 'Cost', 'placeholder' => 'Cost']) !!}
+                        {!! Form::number('tip['.$key.']', $payment['tip'], ['class' => 'form-control', 'aria-label' => 'Tip', 'placeholder' => 'Tip']) !!}
+                        <div class="input-group-append">
+                            <div class="input-group-text">
+                                {!! Form::checkbox('paid['.$key.']', 1, $payment['paid'], ['aria-label' => 'Whether or not this invoice has been paid']) !!}
+                                <span class="ml-1">Is Paid</span>
+                            </div>
+                            <div class="input-group-text">
+                                {!! Form::checkbox('intl['.$key.']', 1, $payment['intl'], ['aria-label' => 'Whether or not this commissioner is international']) !!}
+                                <span class="ml-1">Intl.</span>
+                            </div>
+                            <span class="input-group-text">After Fees: ${{ $commission->paymentWithFees($payment) }}</span>
+                            <button class="remove-payment btn btn-outline-danger" type="button" id="button-addon2">X</button>
                         </div>
-                        <span class="input-group-text">After Fees: ${{ $commission->paymentWithFees($payment) }}</span>
-                        <button class="remove-payment btn btn-outline-danger" type="button" id="button-addon2">X</button>
                     </div>
-                </div>
-            @endforeach
+                @endforeach
+            @endif
         </div>
         <div class="mt-2 text-right">
             <a href="#" class="btn btn-primary" id="add-payment">Add Payment</a>
