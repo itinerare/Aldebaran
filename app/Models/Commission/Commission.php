@@ -182,7 +182,7 @@ class Commission extends Model
     public function getCostAttribute()
     {
         $total = 0;
-        foreach($this->costData as $payment)
+        if(isset($this->costData)) foreach($this->costData as $payment)
             $total += $payment['cost'];
         return $total;
     }
@@ -195,7 +195,7 @@ class Commission extends Model
     public function getTipAttribute()
     {
         $total = 0;
-        foreach($this->costData as $payment)
+        if(isset($this->costData)) foreach($this->costData as $payment)
             $total += (isset($payment['tip']) ? $payment['tip'] : 0);
         return $total;
     }
@@ -219,7 +219,7 @@ class Commission extends Model
     {
         $total = 0;
         // Cycle through payments, getting their total with fees
-        foreach($this->costData as $payment)
+        if(isset($this->costData)) foreach($this->costData as $payment)
             $total += $this->paymentWithFees($payment);
         return $total;
     }
