@@ -207,7 +207,7 @@
                 {!! Form::checkbox('paid[]', 1, 0, ['aria-label' => 'Whether or not this invoice has been paid', 'disabled']) !!}
                 <span class="ml-1">Is Paid</span>
             </div>
-            <div class="input-group-text bg-secondary silver">
+            <div class="input-group-text">
                 {!! Form::checkbox('intl[]', 1, 0, ['aria-label' => 'Whether or not this invoice has been paid', 'disabled']) !!}
                 <span class="ml-1">Intl.</span>
             </div>
