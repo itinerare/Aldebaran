@@ -31,13 +31,8 @@
         @endforeach
         <div class="text-right">
             <h5>
-                Total:
-                <abbr data-toggle="tooltip" title="(Before Fees)">
-                    ${{ $commissions->pluck('cost')->sum() + $commissions->pluck('tip')->sum() }}
-                </abbr>
-                / <abbr data-toggle="tooltip" title="(After Fees)">
-                    ${{ $commissions->pluck('totalWithFees')->sum() }}
-                </abbr>
+                Total: ${{ $commissions->pluck('cost')->sum() + $commissions->pluck('tip')->sum() }}<br/>
+                After Fees: ${{ $commissions->pluck('totalWithFees')->sum() }}
             </h5>
         </div>
     </div>
