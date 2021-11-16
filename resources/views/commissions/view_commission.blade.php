@@ -41,7 +41,7 @@
             </div>
             <div class="row">
                 <div class="col-md-4"><h5>Paid Status</h5></div>
-                <div class="col-md">{!! $commission->isPaid !!}{{ $commission->status == 'Accepted' ? (!$commission->paid_status ? ' - You will be notified and sent an invoice when I am ready to begin work. Please pay promptly!' : '') : ' - Payment is only collected for accepted commissions.' }}</div>
+                <div class="col-md">{!! $commission->isPaid !!}{{ $commission->status == 'Accepted' ? (!$commission->paid_status ? ' - You will be notified and sent an invoice. Please pay promptly!' : '') : ' - Payment is only collected for accepted commissions.' }}</div>
             </div>
             <div class="row">
                 <div class="col-md-4"><h5>Progress</h5></div>
