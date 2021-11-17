@@ -31,6 +31,11 @@ return [
         'text' => '<p>The text here will be displayed on the gallery page.</p>'
     ],
 
+    'new_commission' => [
+        'name' => 'New Commission Page Text',
+        'text' => '<p>The text here will be displayed on the commission request form.</p>'
+    ],
+
     'privacy' => [
         'name' => 'Privacy Policy',
         'text' => 'text'
