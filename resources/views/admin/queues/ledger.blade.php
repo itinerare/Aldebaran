@@ -9,6 +9,8 @@
     Ledger
 </h1>
 
+{!! $months->render() !!}
+
 @foreach($months as $month=>$commissions)
     <div class="card card-body mb-4">
     <h3>{{ $month }}</h3>
@@ -28,5 +30,7 @@
         </div>
     </div>
 @endforeach
+
+{!! $months->render() !!}
 
 @endsection
