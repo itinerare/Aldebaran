@@ -14,16 +14,7 @@
 </h1>
 </div>
 
-<p>
-    <strong>Only fill out this form if serious about commissioning me!</strong> Slots allowing, I will contact you to confirm and with any questions or comments upon receiving your request, after which (if all is in order) I will accept it and send you an invoice via paypal. Upon submitting this form, you will be taken to a page detailing the current status of your commission, which you can check at any time using the provided link.<br/>
-    Note that this form is for one (1) commission of this type.
-</p>
-<p>
-    If you have a question or want to request a quote, please contact me via email at <strong>commissions [at] itinerare.net</strong>.
-</p>
-<p>
-    Thank you for your interest in commissioning me!
-</p>
+{!! $page->text !!}
 
 <div class="card card-body mb-4">
     <h2>Selected Commission Type: {{ $type->name }}</h2>

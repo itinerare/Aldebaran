@@ -273,15 +273,16 @@ class CommissionController extends Controller
     /**
      * Show the ledger.
      *
+     * @param  \Illuminate\Http\Request        $request
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getLedger()
+    public function getLedger(Request $request)
     {
         return view('admin.queues.ledger',
         [
             'months' => Commission::whereIn('status', ['Accepted', 'Complete'])->whereNotNull('cost_data')->orderBy('created_at', 'DESC')->get()->groupBy(function($date) {
                 return Carbon::parse($date->created_at)->format('F Y');
-            })->paginate(12)
+            })->paginate(12)->appends($request->query())
         ]);
     }
 

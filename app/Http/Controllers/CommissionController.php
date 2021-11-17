@@ -203,6 +203,7 @@ class CommissionController extends Controller
 
         return view('commissions.new',
         [
+            'page' => TextPage::where('key', 'new_commission')->first(),
             'type' => $type
         ]);
     }
