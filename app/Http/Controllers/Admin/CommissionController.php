@@ -278,11 +278,21 @@ class CommissionController extends Controller
      */
     public function getLedger(Request $request)
     {
+        $yearCommissions = Commission::whereIn('status', ['Accepted', 'Complete'])->whereNotNull('cost_data')->orderBy('created_at', 'DESC')->get()->groupBy(function($date) {
+            return Carbon::parse($date->created_at)->format('Y');
+        });
+
+        $groupedCommissions = $yearCommissions->map(function($year) {
+            return $year->groupBy(function($commission) {
+                return Carbon::parse($commission->created_at)->format('F Y');
+            });
+        });
+
         return view('admin.queues.ledger',
         [
-            'months' => Commission::whereIn('status', ['Accepted', 'Complete'])->whereNotNull('cost_data')->orderBy('created_at', 'DESC')->get()->groupBy(function($date) {
-                return Carbon::parse($date->created_at)->format('F Y');
-            })->paginate(12)->appends($request->query())
+            'years' => $groupedCommissions->paginate(1)->appends($request->query()),
+            'yearCommissions' => $yearCommissions,
+            'year' => $groupedCommissions->keys()->skip(($request->get('page') ? $request->get('page') : 1) - 1)->first(),
         ]);
     }
 
