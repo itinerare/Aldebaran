@@ -106,14 +106,14 @@ Route::group(['prefix' => 'data', 'namespace' => 'Data'], function() {
 
 # TEXT PAGES
 Route::group(['prefix' => 'pages'], function() {
-    Route::get('/', 'PageController@getIndex');
+    Route::get('/', 'PageController@getPagesIndex');
     Route::get('edit/{id}', 'PageController@getEditPage');
     Route::post('edit/{id?}', 'PageController@postEditPage');
 });
 
 # CHANGELOG
 Route::group(['prefix' => 'changelog'], function() {
-    Route::get('/', 'ChangelogController@getIndex');
+    Route::get('/', 'ChangelogController@getChangelogIndex');
     Route::get('create', 'ChangelogController@getCreateLog');
     Route::get('edit/{id}', 'ChangelogController@getEditLog');
     Route::get('delete/{id}', 'ChangelogController@getDeleteLog');

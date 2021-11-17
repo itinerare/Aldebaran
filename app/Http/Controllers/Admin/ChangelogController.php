@@ -24,12 +24,13 @@ class ChangelogController extends Controller
     /**
      * Shows the changelog index.
      *
+     * @param  \Illuminate\Http\Request        $request
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getIndex()
+    public function getChangelogIndex(Request $request)
     {
         return view('admin.changelog.index', [
-            'logs' => Changelog::orderBy('created_at', 'DESC')->paginate(20)
+            'logs' => Changelog::orderBy('created_at', 'DESC')->paginate(20)->appends($request->query())
         ]);
     }
 
