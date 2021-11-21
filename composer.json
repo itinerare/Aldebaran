@@ -24,7 +24,7 @@
         "josiasmontag/laravel-recaptchav3": "^0.6.0",
         "laracasts/flash": "^3.0",
         "laravel/fortify": "^1.7",
-        "laravel/framework": "8.69.0",
+        "laravel/framework": "8.70.2",
         "laravel/helpers": "^1.4",
         "laravel/tinker": "^2.0",
         "laravelcollective/html": "^6.0",
