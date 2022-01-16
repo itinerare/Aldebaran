@@ -12,7 +12,7 @@ class CommissionCategory extends Model
      * @var array
      */
     protected $fillable = [
-        'name', 'type', 'is_active', 'sort'
+        'name', 'is_active', 'sort', 'class_id', 'data'
     ];
 
     /**
@@ -46,7 +46,14 @@ class CommissionCategory extends Model
      */
     public static $updateRules = [
         //
-        'name' => 'required'
+        'name' => 'required',
+        'field_key.*' => 'nullable|between:3,25|alpha_dash',
+        'field_type.*' => 'nullable|required_with:field_key.*',
+        'field_label.*' => 'nullable|string|required_with:field_key.*',
+        'field_choices.*' => 'nullable|string|required_if:field_type.*,choice,multiple',
+        'field_rules.*' => 'nullable|string|max:255',
+        'field_value.*' => 'nullable|string|max:255',
+        'field_help.*' => 'nullable|string|max:255'
     ];
 
     /**********************************************************************************************
@@ -54,6 +61,14 @@ class CommissionCategory extends Model
         RELATIONS
 
     **********************************************************************************************/
+
+    /**
+     * Get the class this commission category belongs to.
+     */
+    public function class()
+    {
+        return $this->belongsTo('App\Models\Commission\CommissionClass', 'class_id');
+    }
 
     /**
      * Get the types associated with this commission category.
@@ -81,16 +96,16 @@ class CommissionCategory extends Model
     }
 
     /**
-     * Scope a query to only include commission categories of a given type.
+     * Scope a query to only include commission categories of a given class.
      *
      * @param  \Illuminate\Database\Eloquent\Builder  $query
      * @param  string                                 $type
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeType($query, $type)
+    public function scopeByClass($query, $class)
     {
-        return $query->where('type', $type);
+        return $query->where('class_id', $class);
     }
 
     /**********************************************************************************************
@@ -106,7 +121,17 @@ class CommissionCategory extends Model
      */
     public function getFullNameAttribute()
     {
-        return ucfirst($this->type).' ・ '.$this->name;
+        return ucfirst($this->class->name).' ・ '.$this->name;
+    }
+
+    /**
+     * Get the data attribute as an associative array.
+     *
+     * @return array
+     */
+    public function getDataAttribute()
+    {
+        return json_decode($this->attributes['data'], true);
     }
 
 }

@@ -394,12 +394,13 @@ class GalleryController extends Controller
     /**
      * Shows the tag index.
      *
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getTagIndex()
+    public function getTagIndex(Request $request)
     {
         return view('admin.gallery.tags', [
-            'tags' => Tag::orderBy('name', 'ASC')->paginate(20)
+            'tags' => Tag::orderBy('name', 'ASC')->paginate(20)->appends($request->query())
         ]);
     }
 
@@ -497,12 +498,13 @@ class GalleryController extends Controller
     /**
      * Shows the program index.
      *
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getProgramIndex()
+    public function getProgramIndex(Request $request)
     {
         return view('admin.gallery.programs', [
-            'programs' => Program::orderBy('name', 'ASC')->paginate(20)
+            'programs' => Program::orderBy('name', 'ASC')->paginate(20)->appends($request->query())
         ]);
     }
 

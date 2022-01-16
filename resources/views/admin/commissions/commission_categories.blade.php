@@ -17,7 +17,7 @@
         <thead>
             <tr>
                 <th>Name</th>
-                <th>Type</th>
+                <th>Class</th>
                 <th>Active</th>
                 <th></th>
             </tr>
@@ -29,7 +29,7 @@
                         <a class="fas fa-arrows-alt-v handle mr-3" href="#"></a>
                         {!! $category->name !!}
                     </td>
-                    <td>{{ ucfirst($category->type) }}</td>
+                    <td>{{ $category->class->name }}</td>
                     <td>{!! $category->is_active ? '<i class="text-success fas fa-check"></i>' : '-' !!} </td>
                     <td class="text-right">
                         <a href="{{ url('admin/data/commission-categories/edit/'.$category->id) }}" class="btn btn-primary">Edit</a>

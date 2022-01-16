@@ -4,12 +4,18 @@ use App\Services\Service;
 
 use DB;
 use Settings;
+use Config;
+use Mail;
+
+use App\Models\User;
 
 use App\Models\Commission\CommissionType;
 use App\Models\Commission\Commission;
 use App\Models\Commission\CommissionPiece;
 use App\Models\Commission\Commissioner;
 use App\Models\Commission\CommissionerIp;
+
+use App\Mail\CommissionRequested;
 
 use App\Models\Gallery\Piece;
 
@@ -41,7 +47,7 @@ class CommissionManager extends Service
             if(!$type) throw new \Exception("The selected commission type is invalid.");
             if(!$manual) {
                 // Check that commissions are open for this type and for the global type
-                if(!Settings::get($type->category->type.'_comms_open')) throw new \Exception('Commissions are not open.');
+                if(!Settings::get($type->category->class->slug.'_comms_open')) throw new \Exception('Commissions are not open.');
                 if(!$type->category->is_active) throw new \Exception('Commissions are not open for this category.');
                 if(!$type->is_active) throw new \Exception('Commissions are not open for this type.');
                 // If the commission type is currently hidden, check for the presence of
@@ -53,30 +59,40 @@ class CommissionManager extends Service
                 $commissioner = Commissioner::where('id', $data['commissioner_id'])->first();
                 if(!$commissioner) throw new \Exception('Invalid commissioner selected.');
             }
+
             else $commissioner = $this->processCommissioner($data, $manual ? false : true);
 
-            // Collect and encode form responses related to the commission itself
-            foreach(['references', 'details', 'background'] as $field) {
-                if(isset($data[$field])) $data['description'][$field] = strip_tags($data[$field]);
-                else $data['description'][$field] = null;
-            }
-            foreach(['shading', 'style'] as $field) {
-                if(isset($data[$field])) $data['data'][$field] = strip_tags($data[$field]);
-                else $data['data'][$field] = null;
-            }
+            // Collect and form responses related to the commission itself
+            foreach($type->formFields as $key=>$field)
+                if(isset($data[$key])) {
+                    if($field['type'] != 'multiple')
+                        $data['data'][$key] = strip_tags($data[$key]);
+                    elseif($field['type'] == 'multiple')
+                        $data['data'][$key] = $data[$key];
+                }
+
+            if(isset($data['additional_information']))
+                $data['data']['additional_information'] = $data['additional_information'];
+
+            if(!isset($data['data'])) $data['data'] = null;
 
             $commission = Commission::create([
                 'commissioner_id' => $commissioner->id,
                 'commission_type' => $type->id,
                 'status' => 'Pending',
-                'data' => json_encode($data['data']),
-                'description' => json_encode($data['description'])
+                'data' => json_encode($data['data'])
             ]);
 
             // Now that the commission has an ID, assign it a key incorporating it
             // This ensures that even in the very odd case of a duplicate key,
             // conflicts should not arise
-            $commission->update(['key' => $commission->id.'_'.randomString(15)]);
+            $commission->update(['commission_key' => $commission->id.'_'.randomString(15)]);
+
+            // If desired, send an email notification to the admin account
+            // that a commission request was submitted
+            if(Settings::get('notif_emails') && !$manual && (env('MAIL_USERNAME', false) && env('MAIL_PASSWORD', false))) {
+                Mail::to(User::find(1))->send(new CommissionRequested($commission));
+            }
 
             return $this->commitReturn($commission);
         } catch(\Exception $e) {
@@ -156,9 +172,9 @@ class CommissionManager extends Service
             $commission = Commission::where('id', $id)->where('status', 'Pending')->first();
             if(!$commission) throw new \Exception('Invalid commission selected.');
             // Check that this commission will not be in excess of any slot limitations
-            if(Settings::get('overall_'.$commission->commType->category->type.'_slots') > 0 || $commission->commType->slots != null) {
-                if($commission->commType->getSlots($commission->commType->category->type) == 0) throw new \Exception('There are no overall slots of this commission type remaining.');
-                if($commission->commType->availability > 0 && $commission->commType->currentSlots == 0) throw new \Exception('This commission  type\'s slots are full.');
+            if(Settings::get('overall_'.$commission->type->category->class->slug.'_slots') > 0 || $commission->type->slots != null) {
+                if(is_int($commission->type->getSlots($commission->type->category->class)) && $commission->type->getSlots($commission->type->category->class) == 0) throw new \Exception('There are no overall slots of this commission type remaining.');
+                if($commission->type->availability > 0 && $commission->type->currentSlots == 0) throw new \Exception('This commission  type\'s slots are full.');
             }
 
             // Update the commission status and comments
@@ -169,16 +185,14 @@ class CommissionManager extends Service
 
             // If this is the last available commission slot overall or for this type,
             // automatically decline any remaining pending requests
-            if(Settings::get('overall_'.$commission->commType->category->type.'_slots') > 0 || $commission->commType->slots != null) {
+            if(Settings::get('overall_'.$commission->type->category->class->slug.'_slots') > 0 || $commission->type->slots != null) {
                 // Overall slots filled
-                if($commission->commType->getSlots($commission->commType->category->type) == 0) {
-                    $type = $commission->commType->category->type;
-                    Commission::type($type)->where('status', 'Pending')->update(['status' => 'Declined', 'comments' => '<p>Sorry, all slots have been filled! Thank you for your interest in commissioning me, and I hope you consider submitting a request when next I open commissions!</p>']);
+                if(is_int($commission->type->getSlots($commission->type->category->class)) && $commission->type->getSlots($commission->type->category->class) == 0) {
+                    Commission::class($commission->type->category->class->id)->where('status', 'Pending')->update(['status' => 'Declined', 'comments' => '<p>Sorry, all slots have been filled! Thank you for your interest in commissioning me, and I hope you consider submitting a request when next I open commissions!</p>']);
                 }
                 // Type slots filled
-                elseif($commission->commType->availability > 0 && $commission->commType->currentSlots == 0) {
-                    dd($commission->commType->currentSlots);
-                    Commission::where('commission_type', $commission->commType)->where('status', 'Pending')->update(['status' => 'Declined', 'comments' => '<p>Sorry, all slots for this commission type have been filled! Thank you for your interest in commissioning me, and I hope you consider submitting a request when next I open commissions!</p>']);
+                elseif($commission->type->availability > 0 && ($commission->type->currentSlots-1) <= 0) {
+                    Commission::where('commission_type', $commission->type->id)->where('status', 'Pending')->update(['status' => 'Declined', 'comments' => '<p>Sorry, all slots for this commission type have been filled! Thank you for your interest in commissioning me, and I hope you consider submitting a request when next I open commissions!</p>']);
                 }
             }
 
@@ -224,8 +238,25 @@ class CommissionManager extends Service
                         'piece_id' => $piece->id
                     ]);
             }
+            elseif($commission->pieces->count()) {
+                // Clear old pieces
+                CommissionPiece::where('commission_id', $commission->id)->delete();
+            }
 
-            if(!isset($data['paid_status'])) $data['paid_status'] = 0;
+            // Process payment data
+            if(isset($data['cost'])) {
+                foreach($data['cost'] as $key=>$cost) {
+                    $data['cost_data'][$key] = [
+                        'cost' => $cost,
+                        'tip' => isset($data['tip'][$key]) ? $data['tip'][$key] : null,
+                        'paid' => isset($data['paid'][$key]) ? $data['paid'][$key] : 0,
+                        'intl' => isset($data['intl'][$key]) ? $data['intl'][$key] : 0
+                    ];
+                }
+
+                $data['cost_data'] = json_encode($data['cost_data']);
+            }
+            else $data['cost_data'] = null;
 
             // Update the commission
             $commission->update($data);

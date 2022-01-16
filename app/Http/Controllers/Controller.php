@@ -7,23 +7,14 @@ use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
 use View;
+use Illuminate\Http\Request;
 
 use App\Models\TextPage;
 use App\Models\Changelog;
-use App\Models\Gallery\Project;
 
 class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
-
-    /**
-     * Creates a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct() {
-        View::share('visibleProjects', Project::visible()->orderBy('sort', 'DESC')->get());
-    }
 
     /**
      * Show the index page.
@@ -70,13 +61,24 @@ class Controller extends BaseController
     /**
      * Show the changelog page.
      *
+     * @param  \Illuminate\Http\Request        $request
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getChangelog()
+    public function getChangelog(Request $request)
     {
         return view('changelog', [
-            'changelogs' => Changelog::visible()->orderBy('created_at', 'DESC')->paginate(20)
+            'changelogs' => Changelog::visible()->orderBy('created_at', 'DESC')->paginate(20)->appends($request->query())
         ]);
+    }
+
+    /**
+     * Show the feed index page.
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getFeeds()
+    {
+        return view('feed_index');
     }
 
     /**

@@ -2,6 +2,8 @@
 
 namespace App\Models\Commission;
 
+use Config;
+
 use Illuminate\Database\Eloquent\Model;
 
 class Commission extends Model
@@ -12,8 +14,8 @@ class Commission extends Model
      * @var array
      */
     protected $fillable = [
-        'key', 'commissioner_id', 'commission_type', 'paid_status', 'progress',
-        'status', 'description', 'data', 'comments', 'cost'
+        'commission_key', 'commissioner_id', 'commission_type', 'paid_status', 'progress',
+        'status', 'description', 'data', 'comments', 'cost_data'
     ];
 
     /**
@@ -42,14 +44,6 @@ class Commission extends Model
         'contact' => 'required|string|min:3|max:191',
         'paypal' => 'email|nullable|min:3|max:191',
 
-        // Commission-type specific fields
-        'references' => 'sometimes|required|string|min:3|max:500',
-        'details' => 'sometimes|required|string|min:3|max:500',
-        'shading' => 'sometimes|boolean',
-        'style' => 'sometimes|required|in:regular,heraldic',
-        'background' => 'sometimes|required|string|min:3|max:500',
-        'code_check' => 'sometimes|required|accepted',
-
         // Other
         'terms' => 'accepted',
         'g-recaptcha-response' => 'required|recaptchav3:submit,0.5'
@@ -65,14 +59,16 @@ class Commission extends Model
         'name' => 'string|nullable|min:3|max:191',
         'email' => 'email|required_without:commissioner_id|min:3|max:191|nullable',
         'contact' => 'required_without:commissioner_id|string|min:3|max:191|nullable',
-        'paypal' => 'email|nullable|min:3|max:191',
+        'paypal' => 'email|nullable|min:3|max:191'
+    ];
 
-        // Commission-type specific fields
-        'references' => 'sometimes|required|string|min:3|max:500',
-        'details' => 'sometimes|required|string|min:3|max:500',
-        'shading' => 'sometimes|boolean',
-        'style' => 'sometimes|required|in:regular,heraldic',
-        'background' => 'sometimes|required|string|min:3|max:500',
+    /**
+     * Validation rules for commission updating.
+     *
+     * @var array
+     */
+    public static $updateRules = [
+        'cost.*' => 'nullable|filled|required_with:tip.*'
     ];
 
     /**********************************************************************************************
@@ -84,7 +80,7 @@ class Commission extends Model
     /**
      * Get the type associated with this commission.
      */
-    public function commType()
+    public function type()
     {
         return $this->belongsTo('App\Models\Commission\CommissionType', 'commission_type');
     }
@@ -112,19 +108,17 @@ class Commission extends Model
     **********************************************************************************************/
 
     /**
-     * Scope a query to only include art commissions.
+     * Scope a query to only include commissions of a given class.
      *
      * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  string                                 $type
+     * @param  int                                 $class
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeType($query, $type)
+    public function scopeClass($query, $class)
     {
         return $query->whereIn('commission_type',
-            CommissionType::whereIn('category_id',
-            CommissionCategory::type($type)->pluck('id')->toArray()
-            )->pluck('id')->toArray()
+            CommissionType::whereIn('category_id', CommissionCategory::byClass($class)->pluck('id')->toArray())->pluck('id')->toArray()
         );
     }
 
@@ -141,7 +135,20 @@ class Commission extends Model
      */
     public function getUrlAttribute()
     {
-        return url('commissions/view/'.$this->key);
+        return url('commissions/view/'.$this->commission_key);
+    }
+
+    /**
+     * Get formatted paid status.
+     *
+     * @return bool
+     */
+    public function getPaidStatusAttribute()
+    {
+        if(!isset($this->costData)) return 0;
+        foreach($this->costData as $payment)
+            if($payment['paid'] == 0) return 0;
+        return 1;
     }
 
     /**
@@ -151,7 +158,70 @@ class Commission extends Model
      */
     public function getIsPaidAttribute()
     {
-        return $this->attributes['paid_status'] ? '<span class="text-success">Paid</span>' : ($this->status == 'Accepted' ? '<span class="text-danger"><strong>Unpaid</strong></span>' : '<s>Unpaid</s>');
+        if(!isset($this->costData)) return '-';
+        return $this->paidStatus ?
+            '<span class="text-success">Paid</span>' :
+            ($this->status == 'Accepted' ? '<span class="text-danger"><strong>Unpaid</strong></span>' : '<s>Unpaid</s>');
+    }
+
+    /**
+     * Get the data attribute as an associative array.
+     *
+     * @return array
+     */
+    public function getCostDataAttribute()
+    {
+        return json_decode($this->attributes['cost_data'], true);
+    }
+
+    /**
+     * Get overall cost.
+     *
+     * @return int
+     */
+    public function getCostAttribute()
+    {
+        $total = 0;
+        if(isset($this->costData)) foreach($this->costData as $payment)
+            $total += $payment['cost'];
+        return $total;
+    }
+
+    /**
+     * Get overall tip.
+     *
+     * @return int
+     */
+    public function getTipAttribute()
+    {
+        $total = 0;
+        if(isset($this->costData)) foreach($this->costData as $payment)
+            $total += (isset($payment['tip']) ? $payment['tip'] : 0);
+        return $total;
+    }
+
+    /**
+     * Get total cost, including tip.
+     *
+     * @return string
+     */
+    public function getCostWithTipAttribute()
+    {
+        return $this->cost + $this->tip;
+    }
+
+    /**
+     * Get overall cost with fees.
+     *
+     * @return int
+     */
+    public function getTotalWithFeesAttribute()
+    {
+        $total = 0;
+        // Cycle through payments, getting their total with fees
+        if(isset($this->costData)) foreach($this->costData as $payment)
+            $total += $this->paymentWithFees($payment);
+        return $total;
     }
 
     /**
@@ -174,4 +244,49 @@ class Commission extends Model
         return json_decode($this->attributes['description'], true);
     }
 
+    /**
+     * Get the position of the commission in the queue.
+     *
+     * @return int
+     */
+    public function getQueuePositionAttribute()
+    {
+        // Take the ID of this commission for ease of access
+        $id = $this->id;
+
+        // Get all accepted commissions of the current commission's class,
+        // and filter by this commission's ID; this should return only it,
+        // preserving its key/position in the queue
+        // Then strip the collection down to just the key
+        $commissions = $this->class($this->type->category->class->id)->where('status', 'Accepted')->orderBy('created_at')->get()->filter(function($commission) use ($id) {
+            return $commission->id == $id;
+        })->keys();
+
+        // Return key plus one, since array keys start at 0
+        return $commissions->first() + 1;
+    }
+
+    /**********************************************************************************************
+
+        OTHER FUNCTIONS
+
+    **********************************************************************************************/
+
+    /**
+     * Calculate the total for a payment after fees.
+     *
+     * @param  array              $payment
+     * @return int
+     */
+    public function paymentWithFees($payment)
+    {
+        $total = $payment['cost'] + (isset($payment['tip']) && $payment['tip'] ? $payment['tip'] : 0);
+
+        // Calculate fee and round
+        $fee =
+            ($total * ((isset($payment['intl']) && $payment['intl'] ? Config::get('itinerare.settings.fee.percent_intl') : Config::get('itinerare.settings.fee.percent')) / 100)) + Config::get('itinerare.settings.fee.base');
+        $fee = round($fee, 2);
+
+        return $total - $fee;
+    }
 }
