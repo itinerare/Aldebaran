@@ -3,7 +3,7 @@
 @section('admin-title') Commission (#{{ $commission->id }}) @endsection
 
 @section('admin-content')
-{!! breadcrumbs(['Admin Panel' => 'admin', ucfirst($commission->commType->category->type).' Commission Queue' => 'admin/commissions/'.$commission->commType->category->type.'/pending', 'Commission (#'.$commission->id.')' => 'admin/commissions/edit/'.$commission->id]) !!}
+{!! breadcrumbs(['Admin Panel' => 'admin', ucfirst($commission->type->category->class->slug).' Commission Queue' => 'admin/commissions/'.$commission->type->category->class->slug.'/pending', 'Commission (#'.$commission->id.')' => 'admin/commissions/edit/'.$commission->id]) !!}
 
 <div class="borderhr mb-4">
     <h1>
@@ -38,20 +38,26 @@
                 <div class="col-md"><h5>Commissioned</h5></div>
                 <div class="col-md">{!! $commission->commissioner->commissions->whereIn('status', ['Accepted', 'Complete'])->count() !!} Time{!! $commission->commissioner->commissions->whereIn('status', ['Accepted', 'Complete'])->count() == 1 ? '' : 's' !!}</div>
             </div>
+            @if($commission->status == 'Accepted')
+                <div class="row">
+                    <div class="col-md"><h5>Position in Queue</h5></div>
+                    <div class="col-md">{{ $commission->queuePosition }}</div>
+                </div>
+            @endif
         </div>
         <div class="col-md">
             <h2>Basic Info</h2>
             <div class="row">
                 <div class="col-md"><h5>Commission Type</h5></div>
-                <div class="col-md">{!! $commission->commType->displayName !!}
-                    @if($commission->status == 'Pending' && isset($commission->commType->availability) && $commission->commType->availability > 0)
-                    ({{ $commission->commType->currentSlots.'/'.$commission->commType->slots }} Slot{{ $commission->commType->slots == 1 ? '' : 's' }} Available)
+                <div class="col-md">{!! $commission->type->displayName !!}
+                    @if($commission->status == 'Pending' && isset($commission->type->availability) && $commission->type->availability > 0)
+                    ({{ $commission->type->currentSlots.'/'.$commission->type->slots }} Slot{{ $commission->type->slots == 1 ? '' : 's' }} Available)
                     @endif
                 </div>
             </div>
             <div class="row">
                 <div class="col-md"><h5>Paid Status</h5></div>
-                <div class="col-md">{!! $commission->isPaid !!} ({{ isset($commission->cost) ? '$'.$commission->cost : '-' }})</div>
+                <div class="col-md">{!! $commission->isPaid !!} ({{ isset($commission->cost) ? '$'.$commission->cost : '-' }}{{ $commission->tip ? ' + $'.$commission->tip.' Tip' : '' }}/${{ $commission->totalWithFees }})</div>
             </div>
             <div class="row">
                 <div class="col-md"><h5>Progress</h5></div>
@@ -73,7 +79,14 @@
     <div class="borderhr">
         <h2>Commission-related Info</h2>
 
-        @include('commissions._info_builder', ['type' => $commission->commType->category->type, 'categoryName' => str_replace(' ', '_', strtolower($commission->commType->category->name)), 'typeName' => str_replace(' ', '_', strtolower($commission->commType->name))])
+        @include('commissions._form_builder', ['type' => $commission->type, 'form' => false])
+
+        <div class="row mb-2">
+            <div class="col-md-4"><h5>Additional Information</h5></div>
+            <div class="col-md">
+                {!! isset($commission->data['additional_information']) ? nl2br(htmlentities($commission->data['additional_information'])) : '-' !!}
+            </div>
+        </div>
 
         <div class="form-group">
             {!! Form::label('Link') !!} {!! add_help('The URL of this page, as mentioned above!') !!}
@@ -100,9 +113,13 @@
                 <div class="text-center mb-2">
                     <div class="row">
                         <div class="col-md-4">
-                            <a href="{{ url('admin/data/pieces/edit/'.$piece->piece_id) }}">
-                                <img class="image img-thumbnail" style="max-width:100%;" src="{{ $piece->piece->primaryImages->count() ? $piece->piece->primaryImages->random()->thumbnailUrl : $piece->piece->images->first()->thumbnailUrl }}" />
-                            </a>
+                            @if($piece->piece->images->count())
+                                <a href="{{ url('admin/data/pieces/edit/'.$piece->piece_id) }}">
+                                    <img class="image img-thumbnail" style="max-width:100%;" src="{{ $piece->piece->primaryImages->count() ? $piece->piece->primaryImages->random()->thumbnailUrl : $piece->piece->images->first()->thumbnailUrl }}" />
+                                </a>
+                            @else
+                                <i>No image(s) provided.</i>
+                            @endif
                         </div>
                         <div class="col-md align-self-center">
                             <h4>{{ $piece->piece->name }}</h4>
@@ -116,25 +133,47 @@
             @endforeach
         </div>
     @endif
+
+    <h2>General Information</h2>
+
+    <p>Payment Status</p>
+
+    <div class="form-group">
+        <div id="paymentList">
+            @if(isset($commission->costData))
+                @foreach($commission->costData as $key=>$payment)
+                    <div class="input-group mb-2">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Cost & Tip (USD)</span>
+                        </div>
+                        {!! Form::number('cost['.$key.']', $payment['cost'], ['class' => 'form-control', 'aria-label' => 'Cost', 'placeholder' => 'Cost']) !!}
+                        {!! Form::number('tip['.$key.']', $payment['tip'], ['class' => 'form-control', 'aria-label' => 'Tip', 'placeholder' => 'Tip']) !!}
+                        <div class="input-group-append">
+                            <div class="input-group-text">
+                                {!! Form::checkbox('paid['.$key.']', 1, $payment['paid'], ['aria-label' => 'Whether or not this invoice has been paid']) !!}
+                                <span class="ml-1">Is Paid</span>
+                            </div>
+                            <div class="input-group-text">
+                                {!! Form::checkbox('intl['.$key.']', 1, $payment['intl'], ['aria-label' => 'Whether or not this commissioner is international']) !!}
+                                <span class="ml-1">Intl.</span>
+                            </div>
+                            <span class="input-group-text">After Fees: ${{ $commission->paymentWithFees($payment) }}</span>
+                            <button class="remove-payment btn btn-outline-danger" type="button" id="button-addon2">X</button>
+                        </div>
+                    </div>
+                @endforeach
+            @endif
+        </div>
+        <div class="mt-2 text-right">
+            <a href="#" class="btn btn-primary" id="add-payment">Add Payment</a>
+        </div>
+    </div>
+
+    <div class="form-group">
+        {!! Form::label('Progress') !!}
+        {!! Form::select('progress', ['Not Started' => 'Not Started', 'Working On' => 'Working On', 'Sketch' => 'Sketch', 'Lines' => 'Lines', 'Color' => 'Color', 'Shading' => 'Shading', 'Finalizing' => 'Finalizing', 'Pending Approval' => 'Pending Approval', 'Finished' => 'Finished'], $commission->progress, ['class' => 'form-control']) !!}
+    </div>
 @endif
-
-<h2>General Information</h2>
-
-<p>Payment Status</p>
-<div class="row mb-2">
-    <div class="col-md form-group">
-        {!! Form::number('cost', $commission->cost, ['class' => 'form-control', 'placeholder' => 'Enter Cost (USD)']) !!}
-    </div>
-    <div class="col-md form-group">
-        {!! Form::checkbox('paid_status', 1, $commission->paid_status, ['class' => 'form-check-input', 'data-toggle' => 'toggle', 'data-on' => 'Yes', 'data-off' => 'No']) !!}
-        {!! Form::label('paid_status', 'Is Paid', ['class' => 'form-check-label ml-3']) !!}
-    </div>
-</div>
-
-<div class="form-group">
-    {!! Form::label('Progress') !!}
-    {!! Form::select('progress', ['Not Started' => 'Not Started', 'Working On' => 'Working On', 'Sketch' => 'Sketch', 'Lines' => 'Lines', 'Color' => 'Color', 'Shading' => 'Shading', 'Finalizing' => 'Finalizing', 'Pending Approval' => 'Pending Approval', 'Finished' => 'Finished'], $commission->progress, ['class' => 'form-control']) !!}
-</div>
 
 <div class="form-group">
     {!! Form::label('comments', 'Comments (Optional)') !!}
@@ -157,6 +196,27 @@
 @endif
 
 {!! Form::close() !!}
+
+<div class="payment-row hide mb-2">
+    <div class="input-group mb-2">
+        <div class="input-group-prepend">
+            <span class="input-group-text">Cost & Tip (USD)</span>
+        </div>
+        {!! Form::number('cost[]', null, ['class' => 'form-control', 'aria-label' => 'Cost', 'placeholder' => 'Cost']) !!}
+        {!! Form::number('tip[]', null, ['class' => 'form-control', 'aria-label' => 'Tip', 'placeholder' => 'Tip']) !!}
+        <div class="input-group-append">
+            <div class="input-group-text">
+                {!! Form::checkbox('paid[]', 1, 0, ['aria-label' => 'Whether or not this invoice has been paid', 'disabled']) !!}
+                <span class="ml-1">Is Paid</span>
+            </div>
+            <div class="input-group-text">
+                {!! Form::checkbox('intl[]', 1, 0, ['aria-label' => 'Whether or not this invoice has been paid', 'disabled']) !!}
+                <span class="ml-1">Intl.</span>
+            </div>
+            <button class="remove-payment btn btn-outline-danger" type="button" id="button-addon2">X</button>
+        </div>
+    </div>
+</div>
 
 <div class="modal fade" id="confirmationModal" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
@@ -273,6 +333,27 @@
             $('#piecesList').selectize({
                 maxItems: 10
             });
+
+            $('#add-payment').on('click', function(e) {
+                e.preventDefault();
+                addPaymentRow();
+            });
+            $('.remove-payment').on('click', function(e) {
+                e.preventDefault();
+                removePaymentRow($(this));
+            })
+            function addPaymentRow() {
+                var $clone = $('.payment-row').clone();
+                $('#paymentList').append($clone);
+                $clone.removeClass('hide payment-row');
+                $clone.find('.remove-payment').on('click', function(e) {
+                    e.preventDefault();
+                    removePaymentRow($(this));
+                })
+            }
+            function removePaymentRow($trigger) {
+                $trigger.parent().parent().remove();
+            }
 
             var $confirmationModal = $('#confirmationModal');
             var $submissionForm = $('#commissionForm');

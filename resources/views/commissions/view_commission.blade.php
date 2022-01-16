@@ -3,7 +3,7 @@
 @section('title') Commission (#{{ $commission->id }}) @endsection
 
 @section('content')
-{!! breadcrumbs([$commission->commType->category->type.' Commissions' => 'commissions/'.$commission->commType->category->type, $commission->commType->name.' Commission' => 'commissions/view/'.$commission->key]) !!}
+{!! breadcrumbs([$commission->type->category->class->name.' Commissions' => 'commissions/'.$commission->type->category->class->slug, $commission->type->name.' Commission' => 'commissions/view/'.$commission->commission_key]) !!}
 
 <div class="borderhr mb-4">
     <h1>
@@ -37,11 +37,11 @@
             <h2>Basic Info</h2>
             <div class="row">
                 <div class="col-md-4"><h5>Commission Type</h5></div>
-                <div class="col-md">{!! $commission->commType->displayName !!}</div>
+                <div class="col-md">{!! $commission->type->displayName !!}</div>
             </div>
             <div class="row">
                 <div class="col-md-4"><h5>Paid Status</h5></div>
-                <div class="col-md">{!! $commission->isPaid !!}{{ $commission->status == 'Accepted' ? (!$commission->paid_status ? ' - You will be notified and sent an invoice when I am ready to begin work. Please pay promptly!' : '') : ' - Payment is only collected for accepted commissions.' }}</div>
+                <div class="col-md">{!! $commission->isPaid !!}{{ isset($commission->costData) && $commission->costData ? ($commission->status == 'Accepted' ? (!$commission->paid_status ? ' - You will be notified and sent an invoice. Please pay promptly!' : '') : ($commission->status != 'Complete' ? ' - Payment is only collected for accepted commissions.' : '')) : '' }}</div>
             </div>
             <div class="row">
                 <div class="col-md-4"><h5>Progress</h5></div>
@@ -55,6 +55,12 @@
                 <div class="col-md-4"><h5>Last Updated</h5></div>
                 <div class="col-md">{!! pretty_date($commission->updated_at) !!}</div>
             </div>
+            @if($commission->status == 'Accepted')
+                <div class="row">
+                    <div class="col-md-4"><h5>Position in Queue</h5></div>
+                    <div class="col-md">{{ $commission->queuePosition }}</div>
+                </div>
+            @endif
         </div>
     </div>
 </div>
@@ -64,7 +70,14 @@
         <h2>Commission-related Info</h2>
         <p>This is the information you provided when filling out the commission request form!</p>
 
-        @include('commissions._info_builder', ['type' => $commission->commType->category->type, 'categoryName' => str_replace(' ', '_', strtolower($commission->commType->category->name)), 'typeName' => str_replace(' ', '_', strtolower($commission->commType->name))])
+        @include('commissions._form_builder', ['type' => $commission->type, 'form' => false])
+
+        <div class="row mb-2">
+            <div class="col-md-4"><h5>Additional Information</h5></div>
+            <div class="col-md">
+                {!! isset($commission->data['additional_information']) ? nl2br(htmlentities($commission->data['additional_information'])) : '-' !!}
+            </div>
+        </div>
 
         <div class="form-group">
             {!! Form::label('Link') !!} {!! add_help('The URL of this page, as mentioned above!') !!}
@@ -83,27 +96,31 @@
                 <div class="mb-4">
                     <div class="row">
                         <div class="col-md-4 text-center">
-                            <div class="row">
-                                @foreach($piece->piece->primaryImages as $image)
-                                    <div class="col-md text-center align-self-center mb-2">
-                                        <a href="{{ $image->fullsizeUrl }}"">
-                                            <img class="img-thumbnail p-2" src="{{ $image->thumbnailUrl }}" style="max-width:100%; max-height:60vh;" />
-                                        </a>
-                                    </div>
-                                    {!! $loop->odd ? '<div class="w-100"></div>' : '' !!}
-                                @endforeach
-                            </div>
+                            @if($piece->piece->images->count())
+                                <div class="row">
+                                    @foreach($piece->piece->primaryImages as $image)
+                                        <div class="col-md text-center align-self-center mb-2">
+                                            <a href="{{ $image->fullsizeUrl }}"">
+                                                <img class="img-thumbnail p-2" src="{{ $image->thumbnailUrl }}" style="max-width:100%; max-height:60vh;" />
+                                            </a>
+                                        </div>
+                                        {!! $loop->odd ? '<div class="w-100"></div>' : '' !!}
+                                    @endforeach
+                                </div>
 
-                            <div class="row mb-2">
-                                @foreach($piece->piece->otherImages as $image)
-                                    <div class="col-sm text-center align-self-center mb-2">
-                                        <a href="{{ $image->fullsizeUrl }}">
-                                            <img class="img-thumbnail p-2" src="{{ $image->thumbnailUrl }}" style="max-width:100%; max-height:60vh;" />
-                                        </a>
-                                    </div>
-                                    {!! $loop->even ? '<div class="w-100"></div>' : '' !!}
-                                @endforeach
-                            </div>
+                                <div class="row mb-2">
+                                    @foreach($piece->piece->otherImages as $image)
+                                        <div class="col-sm text-center align-self-center mb-2">
+                                            <a href="{{ $image->fullsizeUrl }}">
+                                                <img class="img-thumbnail p-2" src="{{ $image->thumbnailUrl }}" style="max-width:100%; max-height:60vh;" />
+                                            </a>
+                                        </div>
+                                        {!! $loop->even ? '<div class="w-100"></div>' : '' !!}
+                                    @endforeach
+                                </div>
+                            @else
+                                <i>No image(s) provided.</i>
+                            @endif
                         </div>
                         <div class="col-md">
                             <div class="card card-body">
@@ -132,7 +149,7 @@
 
 <div class="card card-body mb-4">
     <div class="borderhr">
-        <h3>Artist Comments</h3>
+        <h3>Comments</h3>
         {!! isset($commission->comments) ? $commission->comments : '<p><i>No comment provided.</i></p>' !!}
     </div>
 </div>

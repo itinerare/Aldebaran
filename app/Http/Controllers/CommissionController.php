@@ -6,6 +6,7 @@ use Auth;
 use Config;
 use Settings;
 
+use App\Models\Commission\CommissionClass;
 use App\Models\Commission\CommissionCategory;
 use App\Models\Commission\CommissionType;
 use App\Models\Commission\Commission;
@@ -31,18 +32,19 @@ class CommissionController extends Controller
     /**
      * Show commission information.
      *
-     * @param  string    $type
+     * @param  string    $class
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getInfo($type)
+    public function getInfo($class)
     {
-        if(!isset(Config::get('itinerare.comm_types')[$type])) abort(404);
+        $class = CommissionClass::active()->where('slug', $class)->first();
+        if(!$class) abort(404);
 
         return view('commissions.info',
         [
-            'type' => $type,
-            'page' => TextPage::where('key', $type.'info')->first(),
-            'categories' => CommissionCategory::type($type)->active()->orderBy('sort', 'DESC')->whereIn('id', CommissionType::visible()->pluck('category_id')->toArray())->get(),
+            'class' => $class,
+            'page' => TextPage::where('key', $class->slug.'info')->first(),
+            'categories' => CommissionCategory::byClass($class->id)->active()->orderBy('sort', 'DESC')->whereIn('id', CommissionType::visible()->pluck('category_id')->toArray())->get(),
             'count' => new CommissionType,
         ]);
     }
@@ -50,34 +52,57 @@ class CommissionController extends Controller
     /**
      * Show commission ToS.
      *
-     * @param  string    $type
+     * @param  string    $class
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getTos($type)
+    public function getTos($class)
     {
-        if(!isset(Config::get('itinerare.comm_types')[$type])) abort(404);
+        $class = CommissionClass::active()->where('slug', $class)->first();
+        if(!$class) abort(404);
 
-        return view('commissions.tos',
+        return view('commissions.text_page',
         [
-            'type' => $type,
-            'page' => TextPage::where('key', $type.'tos')->first()
+            'class' => $class,
+            'page' => TextPage::where('key', $class->slug.'tos')->first()
+        ]);
+    }
+
+    /**
+     * Show art commission information.
+     *
+     * @param string       $class
+     * @param string       $key
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getClassPage($class, $key)
+    {
+        $class = CommissionClass::active()->where('slug', $class)->first();
+        $page = TextPage::where('key', $key)->first();
+
+        if(!$class || !$page || !isset($class->data['pages'][$page->id])) abort(404);
+
+        return view('commissions.text_page',
+        [
+            'class' => $class,
+            'page' => $page
         ]);
     }
 
     /**
      * Show commission queue.
      *
-     * @param  string    $type
+     * @param  string    $class
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getQueue($type)
+    public function getQueue($class)
     {
-        if(!isset(Config::get('itinerare.comm_types')[$type])) abort(404);
+        $class = CommissionClass::active()->where('slug', $class)->first();
+        if(!$class) abort(404);
 
         return view('commissions.queue',
         [
-            'type' => $type,
-            'commissions' => Commission::type($type)->where('status', 'Accepted')->orderBy('created_at', 'ASC')->get()
+            'class' => $class,
+            'commissions' => Commission::class($class->id)->where('status', 'Accepted')->orderBy('created_at', 'ASC')->get()
         ]);
     }
 
@@ -172,12 +197,13 @@ class CommissionController extends Controller
         $type = CommissionType::active()->find($data['type']);
         if(!$type) abort(404);
         // check that the type is active and commissions of the global type are open,
-        if(!Settings::get($type->category->type.'_comms_open')) abort(404);
+        if(!Settings::get($type->category->class->slug.'_comms_open')) abort(404);
         // and, if relevant, that the key is good.
         if(!$type->is_visible && (!isset($data['key']) || $type->key != $data['key'])) abort(404);
 
         return view('commissions.new',
         [
+            'page' => TextPage::where('key', 'new_commission')->first(),
             'type' => $type
         ]);
     }
@@ -192,19 +218,28 @@ class CommissionController extends Controller
      */
     public function postNewCommission(Request $request, CommissionManager $service, $id = null)
     {
-        // Set code_check if absent.
-        if(CommissionType::find($request['type'])->category->type == 'code' && !isset($request['code_check']))
-            $request['code_check'] = 0;
-        $request->validate(Commission::$createRules);
+        $type = CommissionType::find($request->get('type'));
+
+        // Form an array of possible answers based on configured fields,
+        // Set any un-set toggles (since Laravel does not pass anything on for them),
+        // and collect any custom validation rules for the configured fields
+        $answerArray = []; $validationRules = Commission::$createRules;
+        foreach($type->formFields as $key=>$field) {
+            $answerArray[$key] = null;
+            if(isset($field['rules'])) $validationRules[$key] = $field['rules'];
+            if($field['type'] == 'checkbox' && !isset($request[$key])) $request[$key] = 0;
+        }
+
+        $request->validate($validationRules);
+
         $data = $request->only([
-            'name', 'email', 'contact', 'paypal', 'type', 'key',
-            'references', 'details', 'shading', 'style', 'background'
-        ]);
+            'name', 'email', 'contact', 'paypal', 'type', 'key', 'additional_information'
+            ] + $answerArray);
         $data['ip'] = $request->ip();
 
         if (!$id && $commission = $service->createCommission($data)) {
             flash('Commission request submitted successfully.')->success();
-            return redirect()->to('commissions/view/'.$commission->key);
+            return redirect()->to('commissions/view/'.$commission->commission_key);
         }
         else {
             foreach($service->errors()->getMessages()['error'] as $error) flash($error)->error();
@@ -220,29 +255,12 @@ class CommissionController extends Controller
      */
     public function getViewCommission($key)
     {
-        $commission = Commission::where('key', $key)->first();
+        $commission = Commission::where('commission_key', $key)->first();
         if(!$commission) abort(404);
 
         return view('commissions.view_commission',
         [
             'commission' => $commission
-        ]);
-    }
-
-    /******************************************************************************
-        ART COMMS
-    *******************************************************************************/
-
-    /**
-     * Show art commission information.
-     *
-     * @return \Illuminate\Contracts\Support\Renderable
-     */
-    public function getWillWont()
-    {
-        return view('commissions.willwont',
-        [
-            'page' => TextPage::where('key', 'willwont')->first()
         ]);
     }
 
