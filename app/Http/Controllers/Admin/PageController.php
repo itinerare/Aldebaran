@@ -24,12 +24,13 @@ class PageController extends Controller
     /**
      * Shows the text page index.
      *
+     * @param  \Illuminate\Http\Request        $request
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getIndex()
+    public function getPagesIndex(Request $request)
     {
         return view('admin.pages.index', [
-            'pages' => TextPage::orderBy('key')->paginate(20)
+            'pages' => TextPage::orderBy('key')->paginate(20)->appends($request->query())
         ]);
     }
 

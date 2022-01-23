@@ -6,6 +6,7 @@ use Auth;
 use Config;
 use Carbon\Carbon;
 
+use App\Models\Commission\CommissionClass;
 use App\Models\Commission\CommissionType;
 use App\Models\Commission\Commission;
 use App\Models\Commission\Commissioner;
@@ -35,11 +36,12 @@ class CommissionController extends Controller
      * @param  string                    $status
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getCommissionIndex(Request $request, $type, $status = null)
+    public function getCommissionIndex(Request $request, $class, $status = null)
     {
-        if(!isset(Config::get('itinerare.comm_types')[$type])) abort(404);
+        $class = CommissionClass::where('slug', $class)->first();
+        if(!$class) abort(404);
 
-        $commissions = Commission::type($type)->where('status', $status ? ucfirst($status) : 'Pending');
+        $commissions = Commission::class($class->id)->where('status', $status ? ucfirst($status) : 'Pending');
         $data = $request->only(['commission_type', 'sort']);
         if(isset($data['commission_type']) && $data['commission_type'] != 'none')
             $commissions->where('commission_type', $data['commission_type']);
@@ -54,11 +56,12 @@ class CommissionController extends Controller
                     break;
             }
         }
-        else $commissions->orderBy('created_at', 'DESC');
+        else $commissions->orderBy('created_at');
+
         return view('admin.queues.index', [
             'commissions' => $commissions->paginate(30)->appends($request->query()),
             'types' => ['none' => 'Any Type'] + CommissionType::orderBy('name', 'DESC')->pluck('name', 'id')->toArray(),
-            'type' => $type,
+            'class' => $class,
             'count' => new CommissionType
         ]);
     }
@@ -74,8 +77,7 @@ class CommissionController extends Controller
         $type = CommissionType::where('id', $id)->first();
         if(!$type) abort(404);
 
-        $commissioners = Commissioner::where('is_banned', 0)->get()->pluck('fullName', 'id')->toArray();
-        sort($commissioners);
+        $commissioners = Commissioner::where('is_banned', 0)->get()->pluck('fullName', 'id')->sort()->toArray();
 
         return view('admin.queues.new',
         [
@@ -94,11 +96,21 @@ class CommissionController extends Controller
      */
     public function postNewCommission(Request $request, CommissionManager $service, $id = null)
     {
-        $request->validate(Commission::$manualCreateRules);
+        $type = CommissionType::where('id', $request->get('type'))->first();
+        if(!$type) abort(404);
+
+        $answerArray = []; $validationRules = Commission::$manualCreateRules;
+        foreach($type->formFields as $key=>$field) {
+            $answerArray[$key] = null;
+            if(isset($field['rules'])) $validationRules[$key] = $field['rules'];
+            if($field['type'] == 'checkbox' && !isset($request[$key])) $request[$key] = 0;
+        }
+
+        $request->validate($validationRules);
+
         $data = $request->only([
-            'commissioner_id', 'name', 'email', 'contact', 'paypal', 'type',
-            'references', 'details', 'shading', 'style', 'background'
-        ]);
+            'commissioner_id', 'name', 'email', 'contact', 'paypal', 'type', 'additional_information'
+        ] + $answerArray);
         if (!$id && $commission = $service->createCommission($data, true)) {
             flash('Commission submitted successfully.')->success();
             return redirect()->to('admin/commissions/edit/'.$commission->id);
@@ -190,7 +202,8 @@ class CommissionController extends Controller
      */
     private function postUpdateCommission($id, Request $request, CommissionManager $service)
     {
-        $data = $request->only(['pieces', 'cost', 'paid_status', 'progress', 'comments']);
+        $request->validate(Commission::$updateRules);
+        $data = $request->only(['pieces', 'paid_status', 'progress', 'comments', 'cost', 'tip', 'paid', 'intl']);
         if($service->updateCommission($id, $data, Auth::user())) {
             flash('Commission updated successfully.')->success();
         }
@@ -260,15 +273,26 @@ class CommissionController extends Controller
     /**
      * Show the ledger.
      *
+     * @param  \Illuminate\Http\Request        $request
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getLedger()
+    public function getLedger(Request $request)
     {
+        $yearCommissions = Commission::whereIn('status', ['Accepted', 'Complete'])->whereNotNull('cost_data')->orderBy('created_at', 'DESC')->get()->groupBy(function($date) {
+            return Carbon::parse($date->created_at)->format('Y');
+        });
+
+        $groupedCommissions = $yearCommissions->map(function($year) {
+            return $year->groupBy(function($commission) {
+                return Carbon::parse($commission->created_at)->format('F Y');
+            });
+        });
+
         return view('admin.queues.ledger',
         [
-            'months' => Commission::whereIn('status', ['Accepted', 'Complete'])->whereNotNull('cost')->orderBy('created_at', 'DESC')->get()->groupBy(function($date) {
-                return Carbon::parse($date->created_at)->format('F Y');
-            })->paginate(12)
+            'years' => $groupedCommissions->paginate(1)->appends($request->query()),
+            'yearCommissions' => $yearCommissions,
+            'year' => $groupedCommissions->keys()->skip(($request->get('page') ? $request->get('page') : 1) - 1)->first(),
         ]);
     }
 

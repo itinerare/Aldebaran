@@ -63,7 +63,7 @@ body {
 }
 
 .mobile-show {
-    display:none;
+    display:none !important;
 }
 
 a {-webkit-transition: all .3s ease-in-out; -o-transition: all .3s ease-in-out; transition: all .3s ease-in-out;}
@@ -297,11 +297,11 @@ main > .row {
     }
 
     .sidebar, .mobile-hide {
-        display: none;
+        display: none !important;
     }
 
     .mobile-show {
-        display: block;
+        display: block !important;
     }
 
 	/*fix for screen being over-wide on mobile*/
@@ -316,6 +316,11 @@ main > .row {
 	.site-footer .navbar .navbar-nav {
 		flex-wrap: wrap; justify-content: center;
 	}
+
+    .borderleft {
+        border-left:0 !important;
+        border-top:2px dotted #000;
+    }
 }
 
 /* Footer */
