@@ -12,7 +12,7 @@ class Program extends Model
      * @var array
      */
     protected $fillable = [
-        'name', 'has_image', 'is_visible'
+        'name', 'has_image', 'is_visible',
     ];
 
     /**
@@ -36,7 +36,7 @@ class Program extends Model
      */
     public static $createRules = [
         //
-        'name' => 'required|unique:programs'
+        'name' => 'required|unique:programs',
     ];
 
     /**
@@ -46,7 +46,7 @@ class Program extends Model
      */
     public static $updateRules = [
         //
-        'name' => 'required'
+        'name' => 'required',
     ];
 
     /**********************************************************************************************
@@ -58,7 +58,8 @@ class Program extends Model
     /**
      * Scope a query to only include visible tags.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     *
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeVisible($query)
@@ -109,8 +110,10 @@ class Program extends Model
      */
     public function getImageUrlAttribute()
     {
-        if(!$this->has_image) return null;
-        return asset($this->imageDirectory .'/'. $this->imageFileName);
-    }
+        if (!$this->has_image) {
+            return null;
+        }
 
+        return asset($this->imageDirectory.'/'.$this->imageFileName);
+    }
 }

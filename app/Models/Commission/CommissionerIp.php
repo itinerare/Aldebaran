@@ -12,7 +12,7 @@ class CommissionerIp extends Model
      * @var array
      */
     protected $fillable = [
-        'commissioner_id', 'ip'
+        'commissioner_id', 'ip',
     ];
 
     /**

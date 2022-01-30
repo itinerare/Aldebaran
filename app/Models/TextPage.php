@@ -12,7 +12,7 @@ class TextPage extends Model
      * @var array
      */
     protected $fillable = [
-        'key', 'name', 'text'
+        'key', 'name', 'text',
     ];
 
     /**
@@ -35,7 +35,7 @@ class TextPage extends Model
      * @var array
      */
     public static $createRules = [
-        'text' => 'required'
+        'text' => 'required',
     ];
 
     /**
@@ -44,6 +44,6 @@ class TextPage extends Model
      * @var array
      */
     public static $updateRules = [
-        'text' => 'required'
+        'text' => 'required',
     ];
 }

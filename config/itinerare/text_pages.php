@@ -18,27 +18,27 @@ return [
 
     'index' => [
         'name' => 'Homepage Text',
-        'text' => '<p>The text here will be displayed on the home page of the site.</p>'
+        'text' => '<p>The text here will be displayed on the home page of the site.</p>',
     ],
 
     'about' => [
         'name' => 'About',
-        'text' => '<p>The text here will be displayed on the about page.</p>'
+        'text' => '<p>The text here will be displayed on the about page.</p>',
     ],
 
     'gallery' => [
         'name' => 'Gallery Text',
-        'text' => '<p>The text here will be displayed on the gallery page.</p>'
+        'text' => '<p>The text here will be displayed on the gallery page.</p>',
     ],
 
     'new_commission' => [
         'name' => 'New Commission Page Text',
-        'text' => '<p>The text here will be displayed on the commission request form.</p>'
+        'text' => '<p>The text here will be displayed on the commission request form.</p>',
     ],
 
     'privacy' => [
         'name' => 'Privacy Policy',
-        'text' => 'text'
-    ]
+        'text' => 'text',
+    ],
 
 ];

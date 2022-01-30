@@ -2,10 +2,8 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
 use App\Models\Commission\Commissioner;
-
-use DB;
+use Illuminate\Console\Command;
 
 class AddDummyCommissioner extends Command
 {
@@ -25,8 +23,6 @@ class AddDummyCommissioner extends Command
 
     /**
      * Create a new command instance.
-     *
-     * @return void
      */
     public function __construct()
     {
@@ -40,16 +36,16 @@ class AddDummyCommissioner extends Command
      */
     public function handle()
     {
-        if(!Commissioner::where('email', 'client@itinerare.net')->first()) {
+        if (!Commissioner::where('email', 'client@itinerare.net')->first()) {
             Commissioner::create([
-                'name' => 'A Client',
-                'email' => 'client@itinerare.net',
+                'name'    => 'A Client',
+                'email'   => 'client@itinerare.net',
                 'contact' => 'Varies',
-                'paypal' => 'client@itinerare.net'
+                'paypal'  => 'client@itinerare.net',
             ]);
             $this->line('Dummy commissioner data created!');
+        } else {
+            $this->line('Dummy commissioner data already exists!');
         }
-        else $this->line('Dummy commissioner data already exists!');
-
     }
 }

@@ -1,11 +1,9 @@
-<?php namespace App\Services;
+<?php
 
-use App\Services\Service;
-
-use DB;
-use Carbon\Carbon;
+namespace App\Services;
 
 use App\Models\User;
+use DB;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Fortify\Contracts\TwoFactorAuthenticationProvider;
 
@@ -23,14 +21,15 @@ class UserService extends Service
     /**
      * Create a user.
      *
-     * @param  array  $data
+     * @param array $data
+     *
      * @return \App\Models\User
      */
     public function createUser($data)
     {
         $user = User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
+            'name'     => $data['name'],
+            'email'    => $data['email'],
             'password' => Hash::make($data['password']),
         ]);
 
@@ -40,14 +39,19 @@ class UserService extends Service
     /**
      * Updates a user. Used in modifying the admin user on the command line.
      *
-     * @param  array  $data
+     * @param array $data
+     *
      * @return \App\Models\User
      */
     public function updateUser($data)
     {
         $user = User::find($data['id']);
-        if(isset($data['password'])) $data['password'] = Hash::make($data['password']);
-        if($user) $user->update($data);
+        if (isset($data['password'])) {
+            $data['password'] = Hash::make($data['password']);
+        }
+        if ($user) {
+            $user->update($data);
+        }
 
         return $user;
     }
@@ -55,34 +59,40 @@ class UserService extends Service
     /**
      * Updates the user's password.
      *
-     * @param  array                  $data
-     * @param  \App\Models\User       $user
+     * @param array            $data
+     * @param \App\Models\User $user
+     *
      * @return bool
      */
     public function updatePassword($data, $user)
     {
-
         DB::beginTransaction();
 
         try {
-            if(!Hash::check($data['old_password'], $user->password)) throw new \Exception("Please enter your old password.");
-            if(Hash::make($data['new_password']) == $user->password) throw new \Exception("Please enter a different password.");
+            if (!Hash::check($data['old_password'], $user->password)) {
+                throw new \Exception('Please enter your old password.');
+            }
+            if (Hash::make($data['new_password']) == $user->password) {
+                throw new \Exception('Please enter a different password.');
+            }
 
             $user->password = Hash::make($data['new_password']);
             $user->save();
 
             return $this->commitReturn(true);
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
+
         return $this->rollbackReturn(false);
     }
 
     /**
      * Updates the user's email and resends a verification email.
      *
-     * @param  array                  $data
-     * @param  \App\Models\User       $user
+     * @param array            $data
+     * @param \App\Models\User $user
+     *
      * @return bool
      */
     public function updateEmail($data, $user)
@@ -96,9 +106,10 @@ class UserService extends Service
     /**
      * Confirms a user's two-factor auth.
      *
-     * @param  string                 $code
-     * @param  array                  $data
-     * @param  \App\Models\User       $user
+     * @param string           $code
+     * @param array            $data
+     * @param \App\Models\User $user
+     *
      * @return bool
      */
     public function confirmTwoFactor($code, $data, $user)
@@ -106,27 +117,29 @@ class UserService extends Service
         DB::beginTransaction();
 
         try {
-            if(app(TwoFactorAuthenticationProvider::class)->verify(decrypt($data['two_factor_secret']), $code['code'])) {
+            if (app(TwoFactorAuthenticationProvider::class)->verify(decrypt($data['two_factor_secret']), $code['code'])) {
                 $user->forceFill([
-                    'two_factor_secret' => $data['two_factor_secret'],
+                    'two_factor_secret'         => $data['two_factor_secret'],
                     'two_factor_recovery_codes' => $data['two_factor_recovery_codes'],
                 ])->save();
+            } else {
+                throw new \Exception('Provided code was invalid.');
             }
-            else throw new \Exception('Provided code was invalid.');
 
             return $this->commitReturn(true);
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
-        return $this->rollbackReturn(false);
 
+        return $this->rollbackReturn(false);
     }
 
     /**
      * Disables a user's two-factor auth.
      *
-     * @param  string                 $code
-     * @param  \App\Models\User       $user
+     * @param string           $code
+     * @param \App\Models\User $user
+     *
      * @return bool
      */
     public function disableTwoFactor($code, $user)
@@ -134,19 +147,20 @@ class UserService extends Service
         DB::beginTransaction();
 
         try {
-            if(app(TwoFactorAuthenticationProvider::class)->verify(decrypt($user->two_factor_secret), $code['code'])) {
+            if (app(TwoFactorAuthenticationProvider::class)->verify(decrypt($user->two_factor_secret), $code['code'])) {
                 $user->forceFill([
-                    'two_factor_secret' => null,
+                    'two_factor_secret'         => null,
                     'two_factor_recovery_codes' => null,
                 ])->save();
+            } else {
+                throw new \Exception('Provided code was invalid.');
             }
-            else throw new \Exception('Provided code was invalid.');
 
             return $this->commitReturn(true);
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
-        return $this->rollbackReturn(false);
 
+        return $this->rollbackReturn(false);
     }
 }

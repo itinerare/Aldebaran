@@ -18,9 +18,9 @@ return [
              */
             'url' => '/gallery',
 
-            'title' => env('APP_NAME', 'Laravel').' ・ Gallery',
+            'title'       => env('APP_NAME', 'Laravel').' ・ Gallery',
             'description' => 'Pieces from the main gallery.',
-            'language' => 'en-US',
+            'language'    => 'en-US',
 
             /*
              * The view that will render the feed.
@@ -49,9 +49,9 @@ return [
              */
             'url' => '/all',
 
-            'title' => env('APP_NAME', 'Laravel').' ・ All',
+            'title'       => env('APP_NAME', 'Laravel').' ・ All',
             'description' => 'All pieces, regardless of their appearance in the main gallery.',
-            'language' => 'en-US',
+            'language'    => 'en-US',
 
             /*
              * The view that will render the feed.
@@ -80,9 +80,9 @@ return [
              */
             'url' => '/changelog',
 
-            'title' => env('APP_NAME', 'Laravel').' ・ Changelog',
+            'title'       => env('APP_NAME', 'Laravel').' ・ Changelog',
             'description' => 'Changelog entries.',
-            'language' => 'en-US',
+            'language'    => 'en-US',
 
             /*
              * The view that will render the feed.

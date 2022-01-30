@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
 use App\Models\Commission\Commission;
+use Illuminate\Console\Command;
 
 class MigrateCostData extends Command
 {
@@ -23,8 +23,6 @@ class MigrateCostData extends Command
 
     /**
      * Create a new command instance.
-     *
-     * @return void
      */
     public function __construct()
     {
@@ -41,14 +39,14 @@ class MigrateCostData extends Command
         $commissions = $this->withProgressBar(Commission::all(), function ($commission) {
             $cost[$commission->id][0] = [
                 'cost' => $commission->getRawOriginal('cost_data'),
-                'tip' => isset($commission->data['tip']) ? $commission->data['tip'] : null,
+                'tip'  => isset($commission->data['tip']) ? $commission->data['tip'] : null,
                 'paid' => $commission->getRawOriginal('paid_status'),
-                'intl' => 0
+                'intl' => 0,
             ];
 
             // Update the commission with the new data
             $commission->update([
-                'cost_data' => json_encode($cost[$commission->id])
+                'cost_data' => json_encode($cost[$commission->id]),
             ]);
         });
     }

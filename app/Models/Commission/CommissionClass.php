@@ -2,8 +2,6 @@
 
 namespace App\Models\Commission;
 
-use Settings;
-
 use Illuminate\Database\Eloquent\Model;
 
 class CommissionClass extends Model
@@ -14,7 +12,7 @@ class CommissionClass extends Model
      * @var array
      */
     protected $fillable = [
-        'name', 'slug', 'is_active', 'sort', 'data'
+        'name', 'slug', 'is_active', 'sort', 'data',
     ];
 
     /**
@@ -38,7 +36,7 @@ class CommissionClass extends Model
      */
     public static $createRules = [
         //
-        'name' => 'required|unique:commission_classes'
+        'name' => 'required|unique:commission_classes',
     ];
 
     /**
@@ -48,16 +46,16 @@ class CommissionClass extends Model
      */
     public static $updateRules = [
         //
-        'name' => 'required',
-        'page_key.*' => 'nullable|required_with:page_title.*|between:3,25|alpha_dash',
-        'page_title.*' => 'nullable|required_with:page_key.*|between:3,100',
-        'field_key.*' => 'nullable|between:3,25|alpha_dash',
-        'field_type.*' => 'nullable|required_with:field_key.*',
-        'field_label.*' => 'nullable|string|required_with:field_key.*',
+        'name'            => 'required',
+        'page_key.*'      => 'nullable|required_with:page_title.*|between:3,25|alpha_dash',
+        'page_title.*'    => 'nullable|required_with:page_key.*|between:3,100',
+        'field_key.*'     => 'nullable|between:3,25|alpha_dash',
+        'field_type.*'    => 'nullable|required_with:field_key.*',
+        'field_label.*'   => 'nullable|string|required_with:field_key.*',
         'field_choices.*' => 'nullable|string|required_if:field_type.*,choice,multiple',
-        'field_rules.*' => 'nullable|string|max:255',
-        'field_value.*' => 'nullable|string|max:255',
-        'field_help.*' => 'nullable|string|max:255'
+        'field_rules.*'   => 'nullable|string|max:255',
+        'field_value.*'   => 'nullable|string|max:255',
+        'field_help.*'    => 'nullable|string|max:255',
     ];
 
     /**********************************************************************************************
@@ -69,15 +67,18 @@ class CommissionClass extends Model
     /**
      * Scope a query to only include active commission types.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  \App\Models\User                       $user
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param \App\Models\User                      $user
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeActive($query, $user = null)
     {
-        if($user) return $query->whereNotNull('id');
-        else return $query->where('is_active', 1);
+        if ($user) {
+            return $query->whereNotNull('id');
+        } else {
+            return $query->where('is_active', 1);
+        }
     }
 
     /**********************************************************************************************
@@ -95,5 +96,4 @@ class CommissionClass extends Model
     {
         return json_decode($this->attributes['data'], true);
     }
-
 }

@@ -13,20 +13,20 @@ return [
     */
 
     'avatar' => [
-        'name' => 'Avatar',
+        'name'        => 'Avatar',
         'description' => 'Personal avatar, displayed on the main page.',
-        'filename' => 'avatar.png'
+        'filename'    => 'avatar.png',
     ],
 
     'watermark' => [
-        'name' => 'Watermark',
+        'name'        => 'Watermark',
         'description' => 'Personal watermark, used to automatically watermark images. Should be opaque (opacity will be adjusted in processing).',
-        'filename' => 'watermark.png'
+        'filename'    => 'watermark.png',
     ],
 
     'sidebar_bg' => [
-        'name' => 'Sidebar Background',
+        'name'        => 'Sidebar Background',
         'description' => 'Background used for the sidebar.',
-        'filename' => 'sidebar_bg.png'
+        'filename'    => 'sidebar_bg.png',
     ],
 ];

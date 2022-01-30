@@ -12,7 +12,7 @@ class CommissionCategory extends Model
      * @var array
      */
     protected $fillable = [
-        'name', 'is_active', 'sort', 'class_id', 'data'
+        'name', 'is_active', 'sort', 'class_id', 'data',
     ];
 
     /**
@@ -36,7 +36,7 @@ class CommissionCategory extends Model
      */
     public static $createRules = [
         //
-        'name' => 'required|unique:commission_categories'
+        'name' => 'required|unique:commission_categories',
     ];
 
     /**
@@ -46,14 +46,14 @@ class CommissionCategory extends Model
      */
     public static $updateRules = [
         //
-        'name' => 'required',
-        'field_key.*' => 'nullable|between:3,25|alpha_dash',
-        'field_type.*' => 'nullable|required_with:field_key.*',
-        'field_label.*' => 'nullable|string|required_with:field_key.*',
+        'name'            => 'required',
+        'field_key.*'     => 'nullable|between:3,25|alpha_dash',
+        'field_type.*'    => 'nullable|required_with:field_key.*',
+        'field_label.*'   => 'nullable|string|required_with:field_key.*',
         'field_choices.*' => 'nullable|string|required_if:field_type.*,choice,multiple',
-        'field_rules.*' => 'nullable|string|max:255',
-        'field_value.*' => 'nullable|string|max:255',
-        'field_help.*' => 'nullable|string|max:255'
+        'field_rules.*'   => 'nullable|string|max:255',
+        'field_value.*'   => 'nullable|string|max:255',
+        'field_help.*'    => 'nullable|string|max:255',
     ];
 
     /**********************************************************************************************
@@ -87,7 +87,8 @@ class CommissionCategory extends Model
     /**
      * Scope a query to only include active commission categories.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     *
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeActive($query)
@@ -98,8 +99,8 @@ class CommissionCategory extends Model
     /**
      * Scope a query to only include commission categories of a given class.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  string                                 $type
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param mixed                                 $class
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
@@ -133,5 +134,4 @@ class CommissionCategory extends Model
     {
         return json_decode($this->attributes['data'], true);
     }
-
 }
