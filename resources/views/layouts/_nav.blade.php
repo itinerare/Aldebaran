@@ -19,21 +19,21 @@
                     <a class="nav-link" href="{{ url('gallery') }}">Gallery</a>
                 </li>
 
-                <li class="nav-item dropdown">
-                    <a id="projectDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                        Projects
-                    </a>
+                @if(isset($visibleProjects) && $visibleProjects->count())
+                    <li class="nav-item dropdown">
+                        <a id="projectDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                            Projects
+                        </a>
 
-                    <div class="dropdown-menu" aria-labelledby="projectDropdown">
-                        @if(isset($visibleProjects) && $visibleProjects->count())
+                        <div class="dropdown-menu" aria-labelledby="projectDropdown">
                             @foreach($visibleProjects as $project)
                                 <a class="dropdown-item" href="{{ $project->url }}">
                                     {{ $project->name }}
                                 </a>
                             @endforeach
-                        @endif
-                    </div>
-                </li>
+                        </div>
+                    </li>
+                @endif
 
                 @if(isset($commissionClasses) && $commissionClasses->count())
                 <li class="nav-item dropdown">
