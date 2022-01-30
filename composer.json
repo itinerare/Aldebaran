@@ -1,64 +1,51 @@
 {
-    "name": "laravel/laravel",
+    "name": "itinerare/ars-errabunda",
     "type": "project",
-    "description": "The Laravel Framework.",
-    "keywords": [
-        "framework",
-        "laravel"
-    ],
-    "license": "MIT",
+    "description": "A personal gallery and commission site framework.",
+    "license": "closed",
     "require": {
         "php": "^7.4",
         "benjamincrozat/laravel-dropbox-driver": "^3.0",
-        "boxconnect/deviant-php": "dev-master",
-        "doctrine/dbal": "2.2",
         "ezyang/htmlpurifier": "^4.10",
-        "fideloper/proxy": "^4.0",
+        "doctrine/dbal": "2.2",
+        "fideloper/proxy": "^4.4",
+        "fruitcake/laravel-cors": "^2.0",
+        "guzzlehttp/guzzle": "^7.0.1",
         "illuminate/database": "^5.6|^6.0|^7.0|^8.0",
         "illuminate/http": "^5.6|^6.0|^7.0|^8.0",
         "illuminate/pagination": "^5.6|^6.0|^7.0|^8.0",
         "illuminate/queue": "^5.6|^6.0|^7.0|^8.0",
         "illuminate/routing": "^5.6|^6.0|^7.0|^8.0",
         "illuminate/support": "^5.6|^6.0|^7.0|^8.0",
-        "intervention/image": "^2.4",
-        "josiasmontag/laravel-recaptchav3": "^0.6.0",
-        "laracasts/flash": "^3.0",
+        "intervention/image": "^2.5",
+        "laracasts/flash": "^3.2",
         "laravel/fortify": "^1.7",
-        "laravel/framework": "8.80.0",
+        "laravel/framework": "^8.40",
         "laravel/helpers": "^1.4",
-        "laravel/tinker": "^2.0",
+        "laravel/tinker": "^2.5",
         "laravelcollective/html": "^6.0",
         "spatie/laravel-backup": "^6.16",
+        "josiasmontag/laravel-recaptchav3": "^0.6.0",
         "spatie/laravel-feed": "^3.2",
         "spatie/laravel-honeypot": "^3.0",
         "spatie/laravel-validation-rules": "^3.0"
     },
     "require-dev": {
-        "beyondcode/laravel-dump-server": "^1.0",
-        "filp/whoops": "^2.0",
+        "facade/ignition": "^2.5",
+        "fakerphp/faker": "^1.9.1",
         "friendsofphp/php-cs-fixer": "^3.5",
-        "mockery/mockery": "^1.0",
+        "laravel/sail": "^1.0.1",
+        "marcocesarato/php-conventional-changelog": "^1.10",
+        "mockery/mockery": "^1.4.2",
         "nunomaduro/collision": "^5.0",
-        "phpunit/phpunit": "^9.0"
-    },
-    "config": {
-        "optimize-autoloader": true,
-        "preferred-install": "dist",
-        "sort-packages": true
-    },
-    "extra": {
-        "laravel": {
-            "dont-discover": []
-        }
+        "phpunit/phpunit": "^9.3.3"
     },
     "autoload": {
         "psr-4": {
-            "App\\": "app/"
+            "App\\": "app/",
+            "Database\\Factories\\": "database/factories/",
+            "Database\\Seeders\\": "database/seeders/"
         },
-        "classmap": [
-            "database/seeds",
-            "database/factories"
-        ],
         "files": [
             "app/Helpers/Helpers.php"
         ]
@@ -68,8 +55,6 @@
             "Tests\\": "tests/"
         }
     },
-    "minimum-stability": "dev",
-    "prefer-stable": true,
     "scripts": {
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
@@ -87,5 +72,18 @@
         "lint": [
             "./vendor/bin/php-cs-fixer fix -vvv --show-progress=dots"
         ]
-    }
+    },
+    "extra": {
+        "laravel": {
+            "dont-discover": []
+        }
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "version": "2.0.0"
 }
