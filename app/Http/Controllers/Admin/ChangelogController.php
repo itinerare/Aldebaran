@@ -2,13 +2,11 @@
 
 namespace App\Http\Controllers\Admin;
 
-use Auth;
-
+use App\Http\Controllers\Controller;
 use App\Models\Changelog;
 use App\Services\ChangelogService;
-
+use Auth;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 
 class ChangelogController extends Controller
 {
@@ -24,13 +22,12 @@ class ChangelogController extends Controller
     /**
      * Shows the changelog index.
      *
-     * @param  \Illuminate\Http\Request        $request
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function getChangelogIndex(Request $request)
     {
         return view('admin.changelog.index', [
-            'logs' => Changelog::orderBy('created_at', 'DESC')->paginate(20)->appends($request->query())
+            'logs' => Changelog::orderBy('created_at', 'DESC')->paginate(20)->appends($request->query()),
         ]);
     }
 
@@ -42,61 +39,69 @@ class ChangelogController extends Controller
     public function getCreateLog()
     {
         return view('admin.changelog.create_edit_log', [
-            'log' => new Changelog
+            'log' => new Changelog,
         ]);
     }
 
     /**
      * Shows the edit changelog page.
      *
-     * @param  int  $id
+     * @param int $id
+     *
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function getEditLog($id)
     {
         $log = Changelog::find($id);
-        if(!$log) abort(404);
+        if (!$log) {
+            abort(404);
+        }
+
         return view('admin.changelog.create_edit_log', [
-            'log' => $log
+            'log' => $log,
         ]);
     }
 
     /**
      * Creates or edits a changelog.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  App\Services\ChangelogService  $service
-     * @param  int|null                  $id
+     * @param App\Services\ChangelogService $service
+     * @param int|null                      $id
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function postCreateEditLog(Request $request, ChangelogService $service, $id = null)
     {
         $id ? $request->validate(Changelog::$updateRules) : $request->validate(Changelog::$createRules);
         $data = $request->only([
-            'name', 'text', 'is_visible'
+            'name', 'text', 'is_visible',
         ]);
-        if($id && $service->updateLog(Changelog::find($id), $data, Auth::user())) {
+        if ($id && $service->updateLog(Changelog::find($id), $data, Auth::user())) {
             flash('Entry updated successfully.')->success();
-        }
-        else if (!$id && $log = $service->createLog($data, Auth::user())) {
+        } elseif (!$id && $log = $service->createLog($data, Auth::user())) {
             flash('Entry created successfully.')->success();
+
             return redirect()->to('admin/changelog/edit/'.$log->id);
+        } else {
+            foreach ($service->errors()->getMessages()['error'] as $error) {
+                flash($error)->error();
+            }
         }
-        else {
-            foreach($service->errors()->getMessages()['error'] as $error) flash($error)->error();
-        }
+
         return redirect()->back();
     }
 
     /**
      * Gets the changelog deletion modal.
      *
-     * @param  int  $id
+     * @param int $id
+     *
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function getDeleteLog($id)
     {
         $log = Changelog::find($id);
+
         return view('admin.changelog._delete_log', [
             'log' => $log,
         ]);
@@ -105,19 +110,21 @@ class ChangelogController extends Controller
     /**
      * Deletes a changelog.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  App\Services\PageService  $service
-     * @param  int                       $id
+     * @param App\Services\PageService $service
+     * @param int                      $id
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function postDeleteLog(Request $request, ChangelogService $service, $id)
     {
-        if($id && $service->deleteLog(Changelog::find($id))) {
+        if ($id && $service->deleteLog(Changelog::find($id))) {
             flash('Entry deleted successfully.')->success();
+        } else {
+            foreach ($service->errors()->getMessages()['error'] as $error) {
+                flash($error)->error();
+            }
         }
-        else {
-            foreach($service->errors()->getMessages()['error'] as $error) flash($error)->error();
-        }
+
         return redirect()->to('admin/changelog');
     }
 }

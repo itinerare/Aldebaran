@@ -2,10 +2,8 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
-
 use DB;
-use Config;
+use Illuminate\Console\Command;
 
 class AddSiteSettings extends Command
 {
@@ -25,33 +23,10 @@ class AddSiteSettings extends Command
 
     /**
      * Create a new command instance.
-     *
-     * @return void
      */
     public function __construct()
     {
         parent::__construct();
-    }
-
-    /**
-     * Add a site setting.
-     *
-     * @param  string  $key
-     * @param  int     $value
-     * @param  string  $description
-     */
-    private function addSiteSetting($key, $value, $description) {
-        if(!DB::table('site_settings')->where('key', $key)->exists()) {
-            DB::table('site_settings')->insert([
-                [
-                    'key'         => $key,
-                    'value'       => $value,
-                    'description' => $description
-                ],
-            ]);
-            $this->info( "Added:   ".$key." / Default: ".$value);
-        }
-        else $this->line("Skipped: ".$key);
     }
 
     /**
@@ -73,6 +48,28 @@ class AddSiteSettings extends Command
         $this->addSiteSetting('notif_emails', 0, 'Whether or not you wish to receive a notification email when a commission request is submitted. Note: requires mail to be configured!');
 
         $this->line("\nSite settings up to date!");
+    }
 
+    /**
+     * Add a site setting.
+     *
+     * @param string $key
+     * @param int    $value
+     * @param string $description
+     */
+    private function addSiteSetting($key, $value, $description)
+    {
+        if (!DB::table('site_settings')->where('key', $key)->exists()) {
+            DB::table('site_settings')->insert([
+                [
+                    'key'         => $key,
+                    'value'       => $value,
+                    'description' => $description,
+                ],
+            ]);
+            $this->info('Added:   '.$key.' / Default: '.$value);
+        } else {
+            $this->line('Skipped: '.$key);
+        }
     }
 }

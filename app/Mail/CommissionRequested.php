@@ -3,9 +3,7 @@
 namespace App\Mail;
 
 use App\Models\Commission\Commission;
-
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
@@ -22,9 +20,6 @@ class CommissionRequested extends Mailable
 
     /**
      * Create a new message instance.
-     *
-     * @param  \App\Models\Commission\Commission  $commission
-     * @return                                    void
      */
     public function __construct(Commission $commission)
     {

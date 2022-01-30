@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Model;
 use Settings;
 use Spatie\Feed\Feedable;
 use Spatie\Feed\FeedItem;
-use Illuminate\Database\Eloquent\Model;
 
 class Changelog extends Model implements Feedable
 {
@@ -15,7 +15,7 @@ class Changelog extends Model implements Feedable
      * @var array
      */
     protected $fillable = [
-        'name', 'text', 'is_visible'
+        'name', 'text', 'is_visible',
     ];
 
     /**
@@ -39,7 +39,7 @@ class Changelog extends Model implements Feedable
      */
     public static $createRules = [
         //
-        'text' => 'required'
+        'text' => 'required',
     ];
 
     /**
@@ -49,7 +49,7 @@ class Changelog extends Model implements Feedable
      */
     public static $updateRules = [
         //
-        'text' => 'required'
+        'text' => 'required',
     ];
 
     /**********************************************************************************************
@@ -61,7 +61,8 @@ class Changelog extends Model implements Feedable
     /**
      * Scope a query to only include visible entries.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     *
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeVisible($query)
@@ -77,11 +78,10 @@ class Changelog extends Model implements Feedable
 
     /**
      * Returns all feed items.
-     *
      */
     public static function getFeedItems()
     {
-        return Changelog::visible()->get();
+        return self::visible()->get();
     }
 
     /**
@@ -92,12 +92,12 @@ class Changelog extends Model implements Feedable
     public function toFeedItem(): FeedItem
     {
         return FeedItem::create([
-            'id' => '/changelog/'.$this->id,
-            'title' => $this->name ? $this->name : $this->created_at->toFormattedDateString(),
+            'id'      => '/changelog/'.$this->id,
+            'title'   => $this->name ? $this->name : $this->created_at->toFormattedDateString(),
             'summary' => $this->text,
             'updated' => $this->created_at,
-            'link' => '/changelog',
-            'author' => Settings::get('site_name')
+            'link'    => '/changelog',
+            'author'  => Settings::get('site_name'),
         ]);
     }
 }

@@ -1,10 +1,9 @@
-<?php namespace App\Services;
+<?php
 
-use App\Services\Service;
-
-use DB;
+namespace App\Services;
 
 use App\Models\Changelog;
+use DB;
 
 class ChangelogService extends Service
 {
@@ -20,54 +19,63 @@ class ChangelogService extends Service
     /**
      * Creates a changelog entry.
      *
-     * @param  array                  $data
-     * @param  \App\Models\User\User  $user
-     * @return bool|\App\Models\Changelog
+     * @param array                 $data
+     * @param \App\Models\User\User $user
+     *
+     * @return \App\Models\Changelog|bool
      */
     public function createLog($data, $user)
     {
         DB::beginTransaction();
 
         try {
-            if(!isset($data['is_visible'])) $data['is_visible'] = 0;
+            if (!isset($data['is_visible'])) {
+                $data['is_visible'] = 0;
+            }
 
             $log = Changelog::create($data);
 
             return $this->commitReturn($log);
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
+
         return $this->rollbackReturn(false);
     }
 
     /**
      * Updates a changelog entry.
      *
-     * @param  \App\Models\Changelog  $log
-     * @param  array                  $data
-     * @param  \App\Models\User\User  $user
-     * @return bool|\App\Models\Changelog
+     * @param \App\Models\Changelog $log
+     * @param array                 $data
+     * @param \App\Models\User\User $user
+     *
+     * @return \App\Models\Changelog|bool
      */
     public function updateLog($log, $data, $user)
     {
         DB::beginTransaction();
 
         try {
-            if(!isset($data['is_visible'])) $data['is_visible'] = 0;
+            if (!isset($data['is_visible'])) {
+                $data['is_visible'] = 0;
+            }
 
             $log->update($data);
 
             return $this->commitReturn($log);
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
+
         return $this->rollbackReturn(false);
     }
 
     /**
      * Deletes a changelog entry.
      *
-     * @param  \App\Models\Changelog  $log
+     * @param \App\Models\Changelog $log
+     *
      * @return bool
      */
     public function deleteLog($log)
@@ -78,9 +86,10 @@ class ChangelogService extends Service
             $log->delete();
 
             return $this->commitReturn(true);
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
+
         return $this->rollbackReturn(false);
     }
 }

@@ -12,7 +12,7 @@ class PieceProgram extends Model
      * @var array
      */
     protected $fillable = [
-        'piece_id', 'program_id'
+        'piece_id', 'program_id',
     ];
 
     /**
@@ -61,7 +61,8 @@ class PieceProgram extends Model
     /**
      * Scope a query to only include visible tags.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     *
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeVisible($query)

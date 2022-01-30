@@ -2,15 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Changelog;
+use App\Models\TextPage;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
-use Illuminate\Routing\Controller as BaseController;
-use View;
 use Illuminate\Http\Request;
-
-use App\Models\TextPage;
-use App\Models\Changelog;
+use Illuminate\Routing\Controller as BaseController;
 
 class Controller extends BaseController
 {
@@ -24,9 +22,12 @@ class Controller extends BaseController
     public function getIndex()
     {
         $page = TextPage::where('key', 'index')->first();
-        if(!$page) abort(404);
+        if (!$page) {
+            abort(404);
+        }
+
         return view('index', [
-            'page' => $page
+            'page' => $page,
         ]);
     }
 
@@ -38,9 +39,12 @@ class Controller extends BaseController
     public function getAbout()
     {
         $page = TextPage::where('key', 'about')->first();
-        if(!$page) abort(404);
+        if (!$page) {
+            abort(404);
+        }
+
         return view('text_page', [
-            'page' => $page
+            'page' => $page,
         ]);
     }
 
@@ -52,22 +56,24 @@ class Controller extends BaseController
     public function getPrivacyPolicy()
     {
         $page = TextPage::where('key', 'privacy')->first();
-        if(!$page) abort(404);
+        if (!$page) {
+            abort(404);
+        }
+
         return view('text_page', [
-            'page' => $page
+            'page' => $page,
         ]);
     }
 
     /**
      * Show the changelog page.
      *
-     * @param  \Illuminate\Http\Request        $request
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function getChangelog(Request $request)
     {
         return view('changelog', [
-            'changelogs' => Changelog::visible()->orderBy('created_at', 'DESC')->paginate(20)->appends($request->query())
+            'changelogs' => Changelog::visible()->orderBy('created_at', 'DESC')->paginate(20)->appends($request->query()),
         ]);
     }
 

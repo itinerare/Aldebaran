@@ -12,7 +12,7 @@ class CommissionPiece extends Model
      * @var array
      */
     protected $fillable = [
-        'commission_id', 'piece_id'
+        'commission_id', 'piece_id',
     ];
 
     /**

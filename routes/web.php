@@ -22,19 +22,19 @@ Route::get('/about', 'Controller@getAbout');
 Route::get('/privacy', 'Controller@getPrivacyPolicy');
 Route::get('/changelog', 'Controller@getChangelog');
 
-# GALLERY
-Route::group(['prefix' => 'gallery'], function() {
+// GALLERY
+Route::group(['prefix' => 'gallery'], function () {
     Route::get('/', 'GalleryController@getGallery');
     Route::get('pieces/{id}.', 'GalleryController@getPiece');
     Route::get('pieces/{id}.{slug?}', 'GalleryController@getPiece');
 });
 
-Route::group(['prefix' => 'projects'], function() {
+Route::group(['prefix' => 'projects'], function () {
     Route::get('{name}', 'GalleryController@getProject');
 });
 
-# COMMISSIONS
-Route::group(['prefix' => 'commissions'], function() {
+// COMMISSIONS
+Route::group(['prefix' => 'commissions'], function () {
     Route::get('{class}', 'CommissionController@getInfo');
     Route::get('{class}/tos', 'CommissionController@getTos');
     Route::get('{class}/queue', 'CommissionController@getQueue');
@@ -51,11 +51,10 @@ Route::group(['prefix' => 'commissions'], function() {
 Route::get('/feeds', 'Controller@getFeeds');
 Route::feeds('feeds');
 
-
 /***************************************************
     Routes that require login
 ****************************************************/
 
-Route::group(['prefix' => 'admin', 'namespace' => 'Admin', 'middleware' => ['auth', 'verified']], function() {
+Route::group(['prefix' => 'admin', 'namespace' => 'Admin', 'middleware' => ['auth', 'verified']], function () {
     require_once __DIR__.'/admin.php';
 });

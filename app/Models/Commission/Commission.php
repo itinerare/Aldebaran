@@ -3,7 +3,6 @@
 namespace App\Models\Commission;
 
 use Config;
-
 use Illuminate\Database\Eloquent\Model;
 
 class Commission extends Model
@@ -15,7 +14,7 @@ class Commission extends Model
      */
     protected $fillable = [
         'commission_key', 'commissioner_id', 'commission_type', 'paid_status', 'progress',
-        'status', 'description', 'data', 'comments', 'cost_data'
+        'status', 'description', 'data', 'comments', 'cost_data',
     ];
 
     /**
@@ -39,14 +38,14 @@ class Commission extends Model
      */
     public static $createRules = [
         // Contact information
-        'name' => 'string|nullable|min:3|max:191',
-        'email' => 'email|required|min:3|max:191',
+        'name'    => 'string|nullable|min:3|max:191',
+        'email'   => 'email|required|min:3|max:191',
         'contact' => 'required|string|min:3|max:191',
-        'paypal' => 'email|nullable|min:3|max:191',
+        'paypal'  => 'email|nullable|min:3|max:191',
 
         // Other
-        'terms' => 'accepted',
-        'g-recaptcha-response' => 'required|recaptchav3:submit,0.5'
+        'terms'                => 'accepted',
+        'g-recaptcha-response' => 'required|recaptchav3:submit,0.5',
     ];
 
     /**
@@ -56,10 +55,10 @@ class Commission extends Model
      */
     public static $manualCreateRules = [
         // Contact information
-        'name' => 'string|nullable|min:3|max:191',
-        'email' => 'email|required_without:commissioner_id|min:3|max:191|nullable',
+        'name'    => 'string|nullable|min:3|max:191',
+        'email'   => 'email|required_without:commissioner_id|min:3|max:191|nullable',
         'contact' => 'required_without:commissioner_id|string|min:3|max:191|nullable',
-        'paypal' => 'email|nullable|min:3|max:191'
+        'paypal'  => 'email|nullable|min:3|max:191',
     ];
 
     /**
@@ -68,7 +67,7 @@ class Commission extends Model
      * @var array
      */
     public static $updateRules = [
-        'cost.*' => 'nullable|filled|required_with:tip.*'
+        'cost.*' => 'nullable|filled|required_with:tip.*',
     ];
 
     /**********************************************************************************************
@@ -110,14 +109,15 @@ class Commission extends Model
     /**
      * Scope a query to only include commissions of a given class.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  int                                 $class
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param int                                   $class
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeClass($query, $class)
     {
-        return $query->whereIn('commission_type',
+        return $query->whereIn(
+            'commission_type',
             CommissionType::whereIn('category_id', CommissionCategory::byClass($class)->pluck('id')->toArray())->pluck('id')->toArray()
         );
     }
@@ -145,9 +145,15 @@ class Commission extends Model
      */
     public function getPaidStatusAttribute()
     {
-        if(!isset($this->costData)) return 0;
-        foreach($this->costData as $payment)
-            if($payment['paid'] == 0) return 0;
+        if (!isset($this->costData)) {
+            return 0;
+        }
+        foreach ($this->costData as $payment) {
+            if ($payment['paid'] == 0) {
+                return 0;
+            }
+        }
+
         return 1;
     }
 
@@ -158,7 +164,10 @@ class Commission extends Model
      */
     public function getIsPaidAttribute()
     {
-        if(!isset($this->costData)) return '-';
+        if (!isset($this->costData)) {
+            return '-';
+        }
+
         return $this->paidStatus ?
             '<span class="text-success">Paid</span>' :
             ($this->status == 'Accepted' ? '<span class="text-danger"><strong>Unpaid</strong></span>' : '<s>Unpaid</s>');
@@ -182,8 +191,12 @@ class Commission extends Model
     public function getCostAttribute()
     {
         $total = 0;
-        if(isset($this->costData)) foreach($this->costData as $payment)
-            $total += $payment['cost'];
+        if (isset($this->costData)) {
+            foreach ($this->costData as $payment) {
+                $total += $payment['cost'];
+            }
+        }
+
         return $total;
     }
 
@@ -195,8 +208,12 @@ class Commission extends Model
     public function getTipAttribute()
     {
         $total = 0;
-        if(isset($this->costData)) foreach($this->costData as $payment)
-            $total += (isset($payment['tip']) ? $payment['tip'] : 0);
+        if (isset($this->costData)) {
+            foreach ($this->costData as $payment) {
+                $total += (isset($payment['tip']) ? $payment['tip'] : 0);
+            }
+        }
+
         return $total;
     }
 
@@ -219,8 +236,12 @@ class Commission extends Model
     {
         $total = 0;
         // Cycle through payments, getting their total with fees
-        if(isset($this->costData)) foreach($this->costData as $payment)
-            $total += $this->paymentWithFees($payment);
+        if (isset($this->costData)) {
+            foreach ($this->costData as $payment) {
+                $total += $this->paymentWithFees($payment);
+            }
+        }
+
         return $total;
     }
 
@@ -258,7 +279,7 @@ class Commission extends Model
         // and filter by this commission's ID; this should return only it,
         // preserving its key/position in the queue
         // Then strip the collection down to just the key
-        $commissions = $this->class($this->type->category->class->id)->where('status', 'Accepted')->orderBy('created_at')->get()->filter(function($commission) use ($id) {
+        $commissions = $this->class($this->type->category->class->id)->where('status', 'Accepted')->orderBy('created_at')->get()->filter(function ($commission) use ($id) {
             return $commission->id == $id;
         })->keys();
 
@@ -275,7 +296,8 @@ class Commission extends Model
     /**
      * Calculate the total for a payment after fees.
      *
-     * @param  array              $payment
+     * @param array $payment
+     *
      * @return int
      */
     public function paymentWithFees($payment)

@@ -11,8 +11,8 @@
 
 Route::get('/', 'AdminController@getIndex');
 
-# QUEUES
-Route::group(['prefix' => 'commissions'], function() {
+// QUEUES
+Route::group(['prefix' => 'commissions'], function () {
     Route::get('/{class}', 'CommissionController@getCommissionIndex');
     Route::get('/{class}/{status}', 'CommissionController@getCommissionIndex')->where('status', 'pending|accepted|complete|declined');
     Route::get('edit/{id}', 'CommissionController@getCommission');
@@ -25,9 +25,9 @@ Route::group(['prefix' => 'commissions'], function() {
 
 Route::get('ledger', 'CommissionController@getLedger');
 
-# DATA
-Route::group(['prefix' => 'data', 'namespace' => 'Data'], function() {
-    # PROJECTS
+// DATA
+Route::group(['prefix' => 'data', 'namespace' => 'Data'], function () {
+    // PROJECTS
     Route::get('projects', 'GalleryController@getProjectIndex');
     Route::get('projects/create', 'GalleryController@getCreateProject');
     Route::get('projects/edit/{id}', 'GalleryController@getEditProject');
@@ -37,7 +37,7 @@ Route::group(['prefix' => 'data', 'namespace' => 'Data'], function() {
     Route::post('projects/delete/{id}', 'GalleryController@postDeleteProject');
     Route::post('projects/sort', 'GalleryController@postSortProject');
 
-    # PIECES
+    // PIECES
     Route::get('pieces', 'GalleryController@getPieceIndex');
     Route::get('pieces/create', 'GalleryController@getCreatePiece');
     Route::get('pieces/edit/{id}', 'GalleryController@getEditPiece');
@@ -55,7 +55,7 @@ Route::group(['prefix' => 'data', 'namespace' => 'Data'], function() {
 
     Route::post('pieces/{id}/sort-images', 'GalleryController@postSortPieceImages');
 
-    # TAGS
+    // TAGS
     Route::get('tags', 'GalleryController@getTagIndex');
     Route::get('tags/create', 'GalleryController@getCreateTag');
     Route::get('tags/edit/{id}', 'GalleryController@getEditTag');
@@ -64,7 +64,7 @@ Route::group(['prefix' => 'data', 'namespace' => 'Data'], function() {
     Route::post('tags/edit/{id?}', 'GalleryController@postCreateEditTag');
     Route::post('tags/delete/{id}', 'GalleryController@postDeleteTag');
 
-    # PROGRAMS
+    // PROGRAMS
     Route::get('programs', 'GalleryController@getProgramIndex');
     Route::get('programs/create', 'GalleryController@getCreateProgram');
     Route::get('programs/edit/{id}', 'GalleryController@getEditProgram');
@@ -73,7 +73,7 @@ Route::group(['prefix' => 'data', 'namespace' => 'Data'], function() {
     Route::post('programs/edit/{id?}', 'GalleryController@postCreateEditProgram');
     Route::post('programs/delete/{id}', 'GalleryController@postDeleteProgram');
 
-    # COMMISSION CLASSES
+    // COMMISSION CLASSES
     Route::get('commission-classes', 'CommissionController@getCommissionClassIndex');
     Route::get('commission-classes/create', 'CommissionController@getCreateCommissionClass');
     Route::get('commission-classes/edit/{id}', 'CommissionController@getEditCommissionClass');
@@ -83,7 +83,7 @@ Route::group(['prefix' => 'data', 'namespace' => 'Data'], function() {
     Route::post('commission-classes/delete/{id}', 'CommissionController@postDeleteCommissionClass');
     Route::post('commission-classes/sort', 'CommissionController@postSortCommissionClass');
 
-    # COMMISSION CATEGORIES
+    // COMMISSION CATEGORIES
     Route::get('commission-categories', 'CommissionController@getIndex');
     Route::get('commission-categories/create', 'CommissionController@getCreateCommissionCategory');
     Route::get('commission-categories/edit/{id}', 'CommissionController@getEditCommissionCategory');
@@ -93,7 +93,7 @@ Route::group(['prefix' => 'data', 'namespace' => 'Data'], function() {
     Route::post('commission-categories/delete/{id}', 'CommissionController@postDeleteCommissionCategory');
     Route::post('commission-categories/sort', 'CommissionController@postSortCommissionCategory');
 
-    # COMMISSION TYPES
+    // COMMISSION TYPES
     Route::get('commission-types', 'CommissionController@getCommissionTypeIndex');
     Route::get('commission-types/create', 'CommissionController@getCreateCommissionType');
     Route::get('commission-types/edit/{id}', 'CommissionController@getEditCommissionType');
@@ -104,15 +104,15 @@ Route::group(['prefix' => 'data', 'namespace' => 'Data'], function() {
     Route::post('commission-types/sort', 'CommissionController@postSortCommissionType');
 });
 
-# TEXT PAGES
-Route::group(['prefix' => 'pages'], function() {
+// TEXT PAGES
+Route::group(['prefix' => 'pages'], function () {
     Route::get('/', 'PageController@getPagesIndex');
     Route::get('edit/{id}', 'PageController@getEditPage');
     Route::post('edit/{id?}', 'PageController@postEditPage');
 });
 
-# CHANGELOG
-Route::group(['prefix' => 'changelog'], function() {
+// CHANGELOG
+Route::group(['prefix' => 'changelog'], function () {
     Route::get('/', 'ChangelogController@getChangelogIndex');
     Route::get('create', 'ChangelogController@getCreateLog');
     Route::get('edit/{id}', 'ChangelogController@getEditLog');
@@ -122,24 +122,24 @@ Route::group(['prefix' => 'changelog'], function() {
     Route::post('delete/{id}', 'ChangelogController@postDeleteLog');
 });
 
-# SITE SETTINGS
+// SITE SETTINGS
 Route::get('site-settings', 'AdminController@getSettings');
 Route::post('site-settings/{key}', 'AdminController@postEditSetting');
 
-# SITE IMAGES
-Route::group(['prefix' => 'site-images'], function() {
+// SITE IMAGES
+Route::group(['prefix' => 'site-images'], function () {
     Route::get('/', 'AdminController@getSiteImages');
     Route::post('upload', 'AdminController@postUploadImage');
     Route::post('upload/css', 'AdminController@postUploadCss');
 });
 
-# ACCOUNT SETTINGS
-Route::group(['prefix' => 'account-settings'], function() {
+// ACCOUNT SETTINGS
+Route::group(['prefix' => 'account-settings'], function () {
     Route::get('/', 'AccountController@getAccountSettings');
     Route::post('email', 'AccountController@postEmail');
     Route::post('password', 'AccountController@postPassword');
 
-    Route::group(['prefix' => 'two-factor'], function() {
+    Route::group(['prefix' => 'two-factor'], function () {
         Route::post('enable', 'AccountController@postEnableTwoFactor');
         Route::get('confirm', 'AccountController@getConfirmTwoFactor');
         Route::post('confirm', 'AccountController@postConfirmTwoFactor');

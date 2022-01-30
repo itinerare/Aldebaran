@@ -2,27 +2,12 @@
 
 namespace App\Http\Controllers\Admin;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Collection;
-
-use Config;
-use Settings;
-use DB;
-use Auth;
-
-use Laravel\Fortify\Contracts\TwoFactorAuthenticationProvider;
-use Laravel\Fortify\RecoveryCode;
-use BaconQrCode\Renderer\Color\Rgb;
-use BaconQrCode\Renderer\Image\SvgImageBackEnd;
-use BaconQrCode\Renderer\ImageRenderer;
-use BaconQrCode\Renderer\RendererStyle\Fill;
-use BaconQrCode\Renderer\RendererStyle\RendererStyle;
-use BaconQrCode\Writer;
-
-use App\Services\UserService;
 use App\Services\FileManager;
-use App\Models\Commission\Commission;
+use Config;
+use DB;
+use Illuminate\Http\Request;
+use Settings;
 
 class AdminController extends Controller
 {
@@ -57,26 +42,28 @@ class AdminController extends Controller
     public function getSettings()
     {
         return view('admin.settings', [
-            'settings' => DB::table('site_settings')->orderBy('key')->get()
+            'settings' => DB::table('site_settings')->orderBy('key')->get(),
         ]);
     }
 
     /**
      * Edits a setting.
      *
-     * @param  \Illuminate\Http\Request       $request
-     * @param  string                         $key
+     * @param string $key
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function postEditSetting(Request $request, $key)
     {
-        if(!$request->get('value')) $value = 0;
-        if(DB::table('site_settings')->where('key', $key)->update(['value' => isset($value) ? $value : $request->get('value')])) {
-            flash('Setting updated successfully.')->success();
+        if (!$request->get('value')) {
+            $value = 0;
         }
-        else {
+        if (DB::table('site_settings')->where('key', $key)->update(['value' => isset($value) ? $value : $request->get('value')])) {
+            flash('Setting updated successfully.')->success();
+        } else {
             flash('Invalid setting selected.')->success();
         }
+
         return redirect()->back();
     }
 
@@ -92,15 +79,15 @@ class AdminController extends Controller
     public function getSiteImages()
     {
         return view('admin.images', [
-            'images' => Config::get('itinerare.image_files')
+            'images' => Config::get('itinerare.image_files'),
         ]);
     }
 
     /**
      * Uploads a site image file.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  App\Services\FileManager  $service
+     * @param App\Services\FileManager $service
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function postUploadImage(Request $request, FileManager $service)
@@ -110,20 +97,22 @@ class AdminController extends Controller
         $key = $request->get('key');
         $filename = Config::get('itinerare.image_files.'.$key)['filename'];
 
-        if($service->uploadFile($file, null, $filename, false)) {
+        if ($service->uploadFile($file, null, $filename, false)) {
             flash('Image uploaded successfully.')->success();
+        } else {
+            foreach ($service->errors()->getMessages()['error'] as $error) {
+                flash($error)->error();
+            }
         }
-        else {
-            foreach($service->errors()->getMessages()['error'] as $error) flash($error)->error();
-        }
+
         return redirect()->back();
     }
 
     /**
      * Uploads a custom site CSS file.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  App\Services\FileManager  $service
+     * @param App\Services\FileManager $service
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function postUploadCss(Request $request, FileManager $service)
@@ -131,12 +120,14 @@ class AdminController extends Controller
         $request->validate(['file' => 'required|file']);
         $file = $request->file('file');
 
-        if($service->uploadCss($file)) {
+        if ($service->uploadCss($file)) {
             flash('File uploaded successfully.')->success();
+        } else {
+            foreach ($service->errors()->getMessages()['error'] as $error) {
+                flash($error)->error();
+            }
         }
-        else {
-            foreach($service->errors()->getMessages()['error'] as $error) flash($error)->error();
-        }
+
         return redirect()->back();
     }
 }
