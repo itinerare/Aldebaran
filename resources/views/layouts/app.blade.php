@@ -64,7 +64,7 @@
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
-    <link href="{{ asset('css/itinerare.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/ars.css') }}" rel="stylesheet">
 
     @if(file_exists(public_path(). '/css/custom.css'))
         <link href="{{ asset('css/custom.css') }}" rel="stylesheet">
@@ -147,7 +147,7 @@
                     toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | removeformat | code',
                     content_css: [
                         '{{ asset('css/app.css') }}',
-                        '{{ asset('css/itinerare.css') }}'
+                        '{{ asset('css/ars.css') }}'
                     ],
                     target_list: false
                 });
