@@ -39,7 +39,7 @@ class AddTextPages extends Command
     public function handle()
     {
         //
-        $pages = Config::get('itinerare.text_pages');
+        $pages = Config::get('ars.text_pages');
 
         $this->info('******************');
         $this->info('* ADD TEXT PAGES *');

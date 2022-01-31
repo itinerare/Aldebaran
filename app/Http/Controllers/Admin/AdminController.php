@@ -79,7 +79,7 @@ class AdminController extends Controller
     public function getSiteImages()
     {
         return view('admin.images', [
-            'images' => Config::get('itinerare.image_files'),
+            'images' => Config::get('ars.image_files'),
         ]);
     }
 
@@ -95,7 +95,7 @@ class AdminController extends Controller
         $request->validate(['file' => 'required|file']);
         $file = $request->file('file');
         $key = $request->get('key');
-        $filename = Config::get('itinerare.image_files.'.$key)['filename'];
+        $filename = Config::get('ars.image_files.'.$key)['filename'];
 
         if ($service->uploadFile($file, null, $filename, false)) {
             flash('Image uploaded successfully.')->success();

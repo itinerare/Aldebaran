@@ -41,7 +41,7 @@ class CopyDefaultImages extends Command
         $this->info('* COPY DEFAULT IMAGES *');
         $this->info('***********************'."\n");
 
-        $images = Config::get('itinerare.image_files');
+        $images = Config::get('ars.image_files');
 
         $sourceDir = base_path().'/data/assets/';
         $destDir = public_path().'/images/assets/';
