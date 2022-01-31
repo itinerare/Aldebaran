@@ -28,4 +28,16 @@ return [
         'percent'      => 3.49,
         'percent_intl' => 4.99,
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Version
+    |--------------------------------------------------------------------------
+    |
+    | This is the current version of Ars Errabunda that your site is using.
+    | Do not change this value!
+    |
+    */
+
+    'version' => '2.0.0',
 ];
