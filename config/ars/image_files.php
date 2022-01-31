@@ -8,13 +8,13 @@ return [
     |--------------------------------------------------------------------------
     |
     | This is a list of files that will appear in the image uploader
-    | section of the admin panel, to be used in the site layout.
+    | section of the admin panel, to be used in the site and its layout.
     |
     */
 
     'avatar' => [
         'name'        => 'Avatar',
-        'description' => 'Personal avatar, displayed on the main page.',
+        'description' => 'Personal avatar. Used for meta tags.',
         'filename'    => 'avatar.png',
     ],
 
@@ -26,7 +26,7 @@ return [
 
     'sidebar_bg' => [
         'name'        => 'Sidebar Background',
-        'description' => 'Background used for the sidebar.',
+        'description' => 'Background used for the sidebar. Optional.',
         'filename'    => 'sidebar_bg.png',
     ],
 ];
