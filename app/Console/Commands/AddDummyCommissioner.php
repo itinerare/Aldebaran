@@ -36,12 +36,14 @@ class AddDummyCommissioner extends Command
      */
     public function handle()
     {
-        if (!Commissioner::where('email', 'client@itinerare.net')->first()) {
+        $url = parse_url(env('APP_URL', 'https://itinerare.net'));
+
+        if (!Commissioner::where('email', 'client@'.$url['host'])->first()) {
             Commissioner::create([
                 'name'    => 'A Client',
-                'email'   => 'client@itinerare.net',
+                'email'   => 'client@'.$url['host'],
                 'contact' => 'Varies',
-                'paypal'  => 'client@itinerare.net',
+                'paypal'  => 'client@'.$url['host'],
             ]);
             $this->line('Dummy commissioner data created!');
         } else {
