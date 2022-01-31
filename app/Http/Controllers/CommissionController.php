@@ -34,6 +34,9 @@ class CommissionController extends Controller
      */
     public function getInfo($class)
     {
+        if (!Settings::get('commissions_on')) {
+            abort(404);
+        }
         $class = CommissionClass::active()->where('slug', $class)->first();
         if (!$class) {
             abort(404);
@@ -59,6 +62,9 @@ class CommissionController extends Controller
      */
     public function getTos($class)
     {
+        if (!Settings::get('commissions_on')) {
+            abort(404);
+        }
         $class = CommissionClass::active()->where('slug', $class)->first();
         if (!$class) {
             abort(404);
@@ -83,6 +89,9 @@ class CommissionController extends Controller
      */
     public function getClassPage($class, $key)
     {
+        if (!Settings::get('commissions_on')) {
+            abort(404);
+        }
         $class = CommissionClass::active()->where('slug', $class)->first();
         $page = TextPage::where('key', $key)->first();
 
@@ -108,6 +117,9 @@ class CommissionController extends Controller
      */
     public function getQueue($class)
     {
+        if (!Settings::get('commissions_on')) {
+            abort(404);
+        }
         $class = CommissionClass::active()->where('slug', $class)->first();
         if (!$class) {
             abort(404);
@@ -131,6 +143,9 @@ class CommissionController extends Controller
      */
     public function getType($key)
     {
+        if (!Settings::get('commissions_on')) {
+            abort(404);
+        }
         $type = CommissionType::active()->where('key', $key)->first();
         if (!$type) {
             abort(404);
@@ -153,6 +168,10 @@ class CommissionController extends Controller
      */
     public function getTypeGallery($key, Request $request)
     {
+        if (!Settings::get('commissions_on')) {
+            abort(404);
+        }
+
         // Find the commission type, either via ID or, failing that,
         // via its key.
         if (is_numeric($key)) {
@@ -218,6 +237,10 @@ class CommissionController extends Controller
      */
     public function getNewCommission(Request $request)
     {
+        if (!Settings::get('commissions_on')) {
+            abort(404);
+        }
+
         // Retrive type ID and if relevant key from request
         $data = $request->only(['type', 'key']);
         // and then check for and retreive type,
@@ -302,6 +325,9 @@ class CommissionController extends Controller
      */
     public function getViewCommission($key)
     {
+        if (!Settings::get('commissions_on')) {
+            abort(404);
+        }
         $commission = Commission::where('commission_key', $key)->first();
         if (!$commission) {
             abort(404);

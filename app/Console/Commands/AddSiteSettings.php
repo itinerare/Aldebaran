@@ -47,6 +47,8 @@ class AddSiteSettings extends Command
 
         $this->addSiteSetting('notif_emails', 0, 'Whether or not you wish to receive a notification email when a commission request is submitted. Note: requires mail to be configured!');
 
+        $this->addSiteSetting('commissions_on', 1, 'Whether or not the commission-related components should be enabled and displayed. Note for temporary closures you should close commissions via the toggle(s) below as this disables all related functionality.');
+
         $this->line("\nSite settings up to date!");
     }
 

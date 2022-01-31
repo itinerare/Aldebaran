@@ -10,6 +10,7 @@ use App\Models\Gallery\Tag;
 use App\Services\CommissionService;
 use Auth;
 use Illuminate\Http\Request;
+use Settings;
 use Spatie\ValidationRules\Rules\Delimited;
 use Validator;
 
@@ -35,6 +36,10 @@ class CommissionController extends Controller
      */
     public function getCommissionClassIndex()
     {
+        if (!Settings::get('commissions_on')) {
+            abort(404);
+        }
+
         return view('admin.commissions.commission_classes', [
             'classes' => CommissionClass::orderBy('sort', 'DESC')->get(),
         ]);
@@ -47,6 +52,10 @@ class CommissionController extends Controller
      */
     public function getCreateCommissionClass()
     {
+        if (!Settings::get('commissions_on')) {
+            abort(404);
+        }
+
         return view('admin.commissions.create_edit_commission_class', [
             'class'      => new CommissionClass,
             'fieldTypes' => ['text' => 'Text', 'textarea' => 'Textbox', 'number' => 'Number', 'checkbox' => 'Checkbox/Toggle', 'choice' => 'Choose One', 'multiple' => 'Choose Multiple'],
@@ -62,6 +71,9 @@ class CommissionController extends Controller
      */
     public function getEditCommissionClass($id)
     {
+        if (!Settings::get('commissions_on')) {
+            abort(404);
+        }
         $class = CommissionClass::find($id);
         if (!$class) {
             abort(404);
@@ -140,6 +152,9 @@ class CommissionController extends Controller
      */
     public function getDeleteCommissionClass($id)
     {
+        if (!Settings::get('commissions_on')) {
+            abort(404);
+        }
         $class = CommissionClass::find($id);
 
         return view('admin.commissions._delete_commission_class', [
@@ -199,6 +214,10 @@ class CommissionController extends Controller
      */
     public function getIndex()
     {
+        if (!Settings::get('commissions_on')) {
+            abort(404);
+        }
+
         return view('admin.commissions.commission_categories', [
             'categories' => CommissionCategory::orderBy('sort', 'DESC')->get(),
         ]);
@@ -211,6 +230,10 @@ class CommissionController extends Controller
      */
     public function getCreateCommissionCategory()
     {
+        if (!Settings::get('commissions_on')) {
+            abort(404);
+        }
+
         return view('admin.commissions.create_edit_commission_category', [
             'category'   => new CommissionCategory,
             'classes'    => CommissionClass::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
@@ -227,6 +250,9 @@ class CommissionController extends Controller
      */
     public function getEditCommissionCategory($id)
     {
+        if (!Settings::get('commissions_on')) {
+            abort(404);
+        }
         $category = CommissionCategory::find($id);
         if (!$category) {
             abort(404);
@@ -306,6 +332,9 @@ class CommissionController extends Controller
      */
     public function getDeleteCommissionCategory($id)
     {
+        if (!Settings::get('commissions_on')) {
+            abort(404);
+        }
         $category = CommissionCategory::find($id);
 
         return view('admin.commissions._delete_commission_category', [
@@ -365,6 +394,9 @@ class CommissionController extends Controller
      */
     public function getCommissionTypeIndex(Request $request)
     {
+        if (!Settings::get('commissions_on')) {
+            abort(404);
+        }
         $query = CommissionType::query();
         $data = $request->only(['commission_category_id', 'name']);
         if (isset($data['category_id']) && $data['category_id'] != 'none') {
@@ -387,6 +419,10 @@ class CommissionController extends Controller
      */
     public function getCreateCommissionType()
     {
+        if (!Settings::get('commissions_on')) {
+            abort(404);
+        }
+
         return view('admin.commissions.create_edit_commission_type', [
             'type'       => new CommissionType,
             'categories' => CommissionCategory::orderBy('sort', 'DESC')->get()->pluck('fullName', 'id')->toArray(),
@@ -404,6 +440,9 @@ class CommissionController extends Controller
      */
     public function getEditCommissionType($id)
     {
+        if (!Settings::get('commissions_on')) {
+            abort(404);
+        }
         $commissionType = CommissionType::find($id);
         if (!$commissionType) {
             abort(404);
@@ -486,6 +525,9 @@ class CommissionController extends Controller
      */
     public function getDeleteCommissionType($id)
     {
+        if (!Settings::get('commissions_on')) {
+            abort(404);
+        }
         $commissionType = CommissionType::find($id);
 
         return view('admin.commissions._delete_commission_type', [

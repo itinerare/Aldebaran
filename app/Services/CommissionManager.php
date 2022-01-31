@@ -38,6 +38,10 @@ class CommissionManager extends Service
         DB::beginTransaction();
 
         try {
+            if (!Settings::get('commissions_on')) {
+                throw new \Exception('Commissions are not enabled for this site.');
+            }
+
             // Verify the type and, if necessary, key
             $type = CommissionType::where('id', $data['type'])->first();
             if (!$type) {
@@ -159,11 +163,11 @@ class CommissionManager extends Service
             if (Settings::get('overall_'.$commission->type->category->class->slug.'_slots') > 0 || $commission->type->slots != null) {
                 // Overall slots filled
                 if (is_int($commission->type->getSlots($commission->type->category->class)) && $commission->type->getSlots($commission->type->category->class) == 0) {
-                    Commission::class($commission->type->category->class->id)->where('status', 'Pending')->update(['status' => 'Declined', 'comments' => '<p>Sorry, all slots have been filled! Thank you for your interest in commissioning me, and I hope you consider submitting a request when next I open commissions!</p>']);
+                    Commission::class($commission->type->category->class->id)->where('status', 'Pending')->update(['status' => 'Declined', 'comments' => '<p>Sorry, all slots have been filled! '.Settings::get($commission->type->category->class->slug.'_full').'</p>']);
                 }
                 // Type slots filled
                 elseif ($commission->type->availability > 0 && ($commission->type->currentSlots - 1) <= 0) {
-                    Commission::where('commission_type', $commission->type->id)->where('status', 'Pending')->update(['status' => 'Declined', 'comments' => '<p>Sorry, all slots for this commission type have been filled! Thank you for your interest in commissioning me, and I hope you consider submitting a request when next I open commissions!</p>']);
+                    Commission::where('commission_type', $commission->type->id)->where('status', 'Pending')->update(['status' => 'Declined', 'comments' => '<p>Sorry, all slots for this commission type have been filled! '.Settings::get($commission->type->category->class->slug.'_full').'</p>']);
                 }
             }
 

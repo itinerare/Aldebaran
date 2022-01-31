@@ -35,7 +35,7 @@
                     </li>
                 @endif
 
-                @if(isset($commissionClasses) && $commissionClasses->count())
+                @if(Settings::get('commissions_on') && isset($commissionClasses) && $commissionClasses->count())
                 <li class="nav-item dropdown">
                     <a id="commDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                         Commissions

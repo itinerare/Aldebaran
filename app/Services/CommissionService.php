@@ -480,6 +480,16 @@ class CommissionService extends Service
             ]);
         }
 
+        if (!DB::table('site_settings')->where('key', $class->slug.'_full')->exists()) {
+            DB::table('site_settings')->insert([
+                [
+                    'key'         => $class->slug.'_full',
+                    'value'       => isset($data['slug_old']) && isset($data['settings'][$data['slug_old'].'_full']) ? $data['settings'][$data['slug_old'].'_full'] : 'Thank you for your interest in commissioning me, and I hope you consider submitting a request when next I open commissions!',
+                    'description' => 'A short message used when auto-declining commissions over a slot limit.',
+                ],
+            ]);
+        }
+
         // Add and/or modify text pages
         $pages = [
             $class->slug.'tos' => [

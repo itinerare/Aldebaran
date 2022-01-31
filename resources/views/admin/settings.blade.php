@@ -34,56 +34,80 @@
         </div>
     {!! Form::close() !!}
 
-    {!! Form::open(['url' => 'admin/site-settings/notif_emails']) !!}
+    <!-- Commission Type Settings -->
+    <h2>Commission Settings</h2>
+
+    {!! Form::open(['url' => 'admin/site-settings/commissions_on']) !!}
         <div class="form-group h-100">
-            <strong>{!! Form::label('Email Notifications') !!}:</strong> {{ $settings->where('key', 'notif_emails')->first()->description }}
-            {!! Form::checkbox('value', 1, $settings->where('key', 'notif_emails')->first()->value, ['class' => 'form-check-input mb-3', 'data-toggle' => 'toggle']) !!}
+            <strong>{!! Form::label('Enable Commission Components') !!}:</strong> {{ $settings->where('key', 'commissions_on')->first()->description }}<br/>
+            {!! Form::checkbox('value', 1, $settings->where('key', 'commissions_on')->first()->value, ['class' => 'form-check-input mb-3', 'data-toggle' => 'toggle']) !!}
             <div class="form-group text-right mb-3">
                 {!! Form::submit('Edit', ['class' => 'btn btn-primary']) !!}
             </div>
         </div>
     {!! Form::close() !!}
 
-    <!-- Commission Type Settings -->
-    <h2>Commission Settings</h2>
-    @foreach($commissionClasses as $class)
-        @if($loop->count > 1)<h3>{{ $class->name }} Commissions</h3>@endif
-        <div class="row">
-            <div class="col-md-6 mb-2">
-                {!! Form::open(['url' => 'admin/site-settings/'.$class->slug.'_comms_open']) !!}
-                <div class="form-group h-100">
-                    <strong>{!! Form::label('Commissions Open') !!}:</strong> {{ $settings->where('key', $class->slug.'_comms_open')->first()->description }}<br/>
-                    {!! Form::checkbox('value', 1, $settings->where('key', $class->slug.'_comms_open')->first()->value, ['class' => 'form-check-input mb-3', 'data-toggle' => 'toggle']) !!}
-                    <div class="form-group text-right mb-3">
-                        {!! Form::submit('Edit', ['class' => 'btn btn-primary']) !!}
-                    </div>
+    @if(Settings::get('commissions_on'))
+        {!! Form::open(['url' => 'admin/site-settings/notif_emails']) !!}
+            <div class="form-group h-100">
+                <strong>{!! Form::label('Email Notifications') !!}:</strong> {{ $settings->where('key', 'notif_emails')->first()->description }}<br/>
+                {!! Form::checkbox('value', 1, $settings->where('key', 'notif_emails')->first()->value, ['class' => 'form-check-input mb-3', 'data-toggle' => 'toggle']) !!}
+                <div class="form-group text-right mb-3">
+                    {!! Form::submit('Edit', ['class' => 'btn btn-primary']) !!}
                 </div>
-                {!! Form::close() !!}
             </div>
-            <div class="col-md-6 mb-2">
-                {!! Form::open(['url' => 'admin/site-settings/overall_'.$class->slug.'_slots']) !!}
+        {!! Form::close() !!}
+
+        @foreach($commissionClasses as $class)
+            @if($loop->count > 1)<h3>{{ $class->name }} Commissions</h3>@endif
+            <div class="row">
+                <div class="col-md-6 mb-2">
+                    {!! Form::open(['url' => 'admin/site-settings/'.$class->slug.'_comms_open']) !!}
                     <div class="form-group h-100">
-                        <strong>{!! Form::label('Overall Slots') !!}:</strong> {{ $settings->where('key', 'overall_'.$class->slug.'_slots')->first()->description }}
-                        {!! Form::number('value', $settings->where('key', 'overall_'.$class->slug.'_slots')->first()->value, ['class' => 'form-control']) !!}
+                        <strong>{!! Form::label('Commissions Open') !!}:</strong> {{ $settings->where('key', $class->slug.'_comms_open')->first()->description }}<br/>
+                        {!! Form::checkbox('value', 1, $settings->where('key', $class->slug.'_comms_open')->first()->value, ['class' => 'form-check-input mb-3', 'data-toggle' => 'toggle']) !!}
+                        <div class="form-group text-right mb-3">
+                            {!! Form::submit('Edit', ['class' => 'btn btn-primary']) !!}
+                        </div>
                     </div>
-                    <div class="form-group text-right mb-3">
-                        {!! Form::submit('Edit', ['class' => 'btn btn-primary']) !!}
-                    </div>
-                {!! Form::close() !!}
+                    {!! Form::close() !!}
+                </div>
+                <div class="col-md-6 mb-2">
+                    {!! Form::open(['url' => 'admin/site-settings/overall_'.$class->slug.'_slots']) !!}
+                        <div class="form-group h-100">
+                            <strong>{!! Form::label('Overall Slots') !!}:</strong> {{ $settings->where('key', 'overall_'.$class->slug.'_slots')->first()->description }}
+                            {!! Form::number('value', $settings->where('key', 'overall_'.$class->slug.'_slots')->first()->value, ['class' => 'form-control']) !!}
+                        </div>
+                        <div class="form-group text-right mb-3">
+                            {!! Form::submit('Edit', ['class' => 'btn btn-primary']) !!}
+                        </div>
+                    {!! Form::close() !!}
+                </div>
+                <div class="col-md-12 mb-2">
+                    {!! Form::open(['url' => 'admin/site-settings/'.$class->slug.'_status']) !!}
+                        <div class="form-group h-100">
+                            <strong>{!! Form::label('Status Message') !!}:</strong> {{ $settings->where('key', $class->slug.'_status')->first()->description }}
+                            {!! Form::text('value', $settings->where('key', $class->slug.'_status')->first()->value, ['class' => 'form-control']) !!}
+                        </div>
+                        <div class="form-group text-right mb-3">
+                            {!! Form::submit('Edit', ['class' => 'btn btn-primary']) !!}
+                        </div>
+                    {!! Form::close() !!}
+                </div>
+                <div class="col-md-12 mb-2">
+                    {!! Form::open(['url' => 'admin/site-settings/'.$class->slug.'_full']) !!}
+                        <div class="form-group h-100">
+                            <strong>{!! Form::label('Full Commissions Message') !!}:</strong> {{ $settings->where('key', $class->slug.'_full')->first()->description }}
+                            {!! Form::text('value', $settings->where('key', $class->slug.'_full')->first()->value, ['class' => 'form-control']) !!}
+                        </div>
+                        <div class="form-group text-right mb-3">
+                            {!! Form::submit('Edit', ['class' => 'btn btn-primary']) !!}
+                        </div>
+                    {!! Form::close() !!}
+                </div>
             </div>
-            <div class="col-md-12 mb-2">
-                {!! Form::open(['url' => 'admin/site-settings/'.$class->slug.'_status']) !!}
-                    <div class="form-group h-100">
-                        <strong>{!! Form::label('Status Message') !!}:</strong> {{ $settings->where('key', $class->slug.'_status')->first()->description }}
-                        {!! Form::text('value', $settings->where('key', $class->slug.'_status')->first()->value, ['class' => 'form-control']) !!}
-                    </div>
-                    <div class="form-group text-right mb-3">
-                        {!! Form::submit('Edit', ['class' => 'btn btn-primary']) !!}
-                    </div>
-                {!! Form::close() !!}
-            </div>
-        </div>
-    @endforeach
+        @endforeach
+    @endif
 @endif
 
 @endsection
