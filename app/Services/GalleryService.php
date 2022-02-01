@@ -528,6 +528,7 @@ class GalleryService extends Service
         DB::beginTransaction();
 
         try {
+            $image = null;
             if (isset($data['image']) && $data['image']) {
                 $data['has_image'] = 1;
                 $image = $data['image'];
@@ -588,6 +589,7 @@ class GalleryService extends Service
             } else {
                 $data['has_image'] = 0;
             }
+
             if (!isset($data['is_visible'])) {
                 $data['is_visible'] = 0;
             }
