@@ -148,7 +148,7 @@ class DataGalleryTagTest extends TestCase
         // Define some basic data
         $data = [
             'name'       => $this->faker->unique()->domainWord(),
-            'is_visible' => 0,
+            'is_visible' => 1,
         ];
 
         // Try to post data
@@ -159,7 +159,7 @@ class DataGalleryTagTest extends TestCase
         // Directly verify that the appropriate change has occurred
         $this->assertDatabaseHas('tags', [
             'name'       => $data['name'],
-            'is_visible' => 0,
+            'is_visible' => 1,
         ]);
     }
 
@@ -172,8 +172,7 @@ class DataGalleryTagTest extends TestCase
 
         // Define some basic data
         $data = [
-            'name'       => $this->faker->unique()->domainWord(),
-            'is_visible' => 0,
+            'name' => $this->faker->unique()->domainWord(),
         ];
 
         // Try to post data
@@ -197,7 +196,7 @@ class DataGalleryTagTest extends TestCase
         // Define some basic data
         $data = [
             'name'       => $this->faker->unique()->domainWord(),
-            'is_active'  => 0,
+            'is_active'  => 1,
         ];
 
         // Try to post data
@@ -208,7 +207,7 @@ class DataGalleryTagTest extends TestCase
         // Directly verify that the appropriate change has occurred
         $this->assertDatabaseHas('tags', [
             'name'       => $data['name'],
-            'is_active'  => 0,
+            'is_active'  => 1,
         ]);
     }
 
