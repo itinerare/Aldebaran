@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Services\FileManager;
+use App\Services\FileService;
 use Config;
 use DB;
 use Illuminate\Http\Request;
@@ -86,11 +86,11 @@ class AdminController extends Controller
     /**
      * Uploads a site image file.
      *
-     * @param App\Services\FileManager $service
+     * @param App\Services\FileService $service
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function postUploadImage(Request $request, FileManager $service)
+    public function postUploadImage(Request $request, FileService $service)
     {
         $request->validate(['file' => 'required|file']);
         $file = $request->file('file');
@@ -111,11 +111,11 @@ class AdminController extends Controller
     /**
      * Uploads a custom site CSS file.
      *
-     * @param App\Services\FileManager $service
+     * @param App\Services\FileService $service
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function postUploadCss(Request $request, FileManager $service)
+    public function postUploadCss(Request $request, FileService $service)
     {
         $request->validate(['file' => 'required|file']);
         $file = $request->file('file');
