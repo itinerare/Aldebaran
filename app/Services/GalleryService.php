@@ -543,7 +543,7 @@ class GalleryService extends Service
             $program = Program::create($data);
 
             if ($image) {
-                $this->handleImage($image, $program->imageDirectory, $program->imageFileName);
+                $this->handleImage($image, $program->imagePath, $program->imageFileName);
             }
 
             return $this->commitReturn($program);
@@ -597,7 +597,7 @@ class GalleryService extends Service
             $program->update($data);
 
             if ($image) {
-                $this->handleImage($image, $program->imageDirectory, $program->imageFileName);
+                $this->handleImage($image, $program->imagePath, $program->imageFileName);
             }
 
             return $this->commitReturn($program);
