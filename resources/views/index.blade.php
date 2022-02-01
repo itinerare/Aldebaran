@@ -2,7 +2,11 @@
 
 @section('content')
 
-{!! $page->text !!}
+@if($page)
+    {!! $page->text !!}
+@else
+    <p>Please finish initial site setup!</p>
+@endif
 
 @if(Settings::get('commissions_on'))
     @foreach($commissionClasses as $class)

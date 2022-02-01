@@ -39,9 +39,6 @@ class Controller extends BaseController
     public function getIndex()
     {
         $page = TextPage::where('key', 'index')->first();
-        if (!$page) {
-            abort(404);
-        }
 
         return view('index', [
             'page' => $page,
