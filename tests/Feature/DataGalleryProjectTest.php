@@ -13,7 +13,7 @@ class DataGalleryProjectTest extends TestCase
     use RefreshDatabase, WithFaker;
 
     /******************************************************************************
-        GALLERY: PROJECTS
+        GALLERY DATA: PROJECTS
     *******************************************************************************/
 
     /**
