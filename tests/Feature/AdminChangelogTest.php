@@ -145,6 +145,55 @@ class AdminChangelogTest extends TestCase
     }
 
     /**
+     * Test changelog creation with visibility.
+     */
+    public function test_canPostCreateChangelogVisibility()
+    {
+        // Define some basic data
+        $data = [
+            'text'       => '<p>'.$this->faker->unique()->domainWord().'</p>',
+            'is_visible' => 0,
+        ];
+
+        // Try to post data
+        $response = $this
+            ->actingAs(User::factory()->make())
+            ->post('/admin/changelog/create', $data);
+
+        // Directly verify that the appropriate change has occurred
+        $this->assertDatabaseHas('changelog_entries', [
+            'text'       => $data['text'],
+            'is_visible' => 0,
+        ]);
+    }
+
+    /**
+     * Test changelog editing with visibility.
+     */
+    public function test_canPostEditChangelogVisibility()
+    {
+        $log = Changelog::factory()->create();
+
+        // Define some basic data
+        $data = [
+            'text'       => '<p>'.$this->faker->unique()->domainWord().'</p>',
+            'is_visible' => 0,
+        ];
+
+        // Try to post data
+        $response = $this
+            ->actingAs(User::factory()->make())
+            ->post('/admin/changelog/edit/'.$log->id, $data);
+
+        // Directly verify that the appropriate change has occurred
+        $this->assertDatabaseHas('changelog_entries', [
+            'id'         => $log->id,
+            'text'       => $data['text'],
+            'is_visible' => 0,
+        ]);
+    }
+
+    /**
      * Test changelog delete access.
      */
     public function test_canGetDeleteChangelog()
@@ -155,7 +204,7 @@ class AdminChangelogTest extends TestCase
     }
 
     /**
-     * Test subject category deletion.
+     * Test changelog deletion.
      */
     public function test_canPostDeleteChangelog()
     {
