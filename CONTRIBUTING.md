@@ -1,15 +1,15 @@
-# Ars Errabunda Contribution Guide
+# Aldebaran Contribution Guide
 
 For support and general questions and discussions, please visit the [support Discord server](https://discord.gg/mVqUzgQXMd)! Please do not use the issue tracker for general support questions. Please also remember that unless explicitly stated otherwise/you have hired services to that end, all support is free and offered on a volunteer basis, and there is no guarantee or obligation upon maintainers and/or community members to provide support.
 
-The following are accepted uses for the [issue tracker](https://github.com/itinerare/Ars-Errabunda/issues):
+The following are accepted uses for the [issue tracker](https://github.com/itinerare/Aldebaran/issues):
 - Bug reports
 - Feature or enhancement requests (within reason)-- note that these may be denied if they are deemed out of scope of the project and/or are not feasible to implement for any reason.
 
 ## Opening an Issue
 ### Reporting a bug
 
-File bugs in the [issue tracker](https://github.com/itinerare/Ars-Errabunda/issues). Please follow these guidelines:
+File bugs in the [issue tracker](https://github.com/itinerare/Aldebaran/issues). Please follow these guidelines:
 
 - Search existing issues first! Make sure your issue hasn't already been reported.
 - Stay on topic, but describe the issue in detail so that others can reproduce it.
@@ -17,7 +17,7 @@ File bugs in the [issue tracker](https://github.com/itinerare/Ars-Errabunda/issu
 
 ### Feature requests
 
-It's recommended, but not required, to discuss potential new features in the [support Discord](https://discord.gg/mVqUzgQXMd) before creating an issue, as this helps check that it is valid for a feature request and if it would be useful to others-- something which increases its likelihood of the issue being accepted and consequently the feature being implemented. Please also check that your request has not already been posted on the [issue tracker](https://github.com/itinerare/Ars-Errabunda/issues).
+It's recommended, but not required, to discuss potential new features in the [support Discord](https://discord.gg/mVqUzgQXMd) before creating an issue, as this helps check that it is valid for a feature request and if it would be useful to others-- something which increases its likelihood of the issue being accepted and consequently the feature being implemented. Please also check that your request has not already been posted on the [issue tracker](https://github.com/itinerare/Aldebaran/issues).
 
 Avoid listing multiple requests in one issue. One issue per request makes it easier to track and discuss it. If need be, you may make multiple issues (within reason), but do not spam. Do not make multiple issues for the same request.
 
@@ -25,18 +25,18 @@ Avoid listing multiple requests in one issue. One issue per request makes it eas
 
 If you want to start contributing to the project's code, please follow these guidelines before creating a pull request: 
 
-- Bugfixes are always welcome. Start by reviewing the [list of bugs](https://github.com/itinerare/Ars-Errabunda/issues?q=is%3Aissue+is%3Aopen+label%3Abug)!
-- A good way to easily start contributing is to pick and work on a [good first issue](https://github.com/itinerare/Ars-Errabunda/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22). We try to make these issues as clear as possible and provide basic info on how the code should be changed, and if something is unclear feel free to ask for more information on the issue.
-- Before adding a new feature, ask about it in the [issue tracker](https://github.com/itinerare/Ars-Errabunda/issues) or the [support Discord](https://discord.gg/mVqUzgQXMd), or check if there is an existing issue to make sure the new functionality is desired. 
-- **Changes that will consist of more than 50 lines of code should be discussed via an [issue](https://github.com/itinerare/Ars-Errabunda/issues) or the [support Discord](https://discord.gg/mVqUzgQXMd)**, so that you don't spend too much time implementing something that might not be accepted.
+- Bugfixes are always welcome. Start by reviewing the [list of bugs](https://github.com/itinerare/Aldebaran/issues?q=is%3Aissue+is%3Aopen+label%3Abug)!
+- A good way to easily start contributing is to pick and work on a [good first issue](https://github.com/itinerare/Aldebaran/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22). We try to make these issues as clear as possible and provide basic info on how the code should be changed, and if something is unclear feel free to ask for more information on the issue.
+- Before adding a new feature, ask about it in the [issue tracker](https://github.com/itinerare/Aldebaran/issues) or the [support Discord](https://discord.gg/mVqUzgQXMd), or check if there is an existing issue to make sure the new functionality is desired. 
+- **Changes that will consist of more than 50 lines of code should be discussed via an [issue](https://github.com/itinerare/Aldebaran/issues) or the [support Discord](https://discord.gg/mVqUzgQXMd)**, so that you don't spend too much time implementing something that might not be accepted.
 - Pull requests that make many changes using an automated tool, like for spell fixing, styling, etc. will not be accepted. An exception would be if the changes have been discussed and someone has agreed to review **and test** the pull request.
-- It's recommended to run tests for at minimum the general area(s) you are modifying! While all tests are run by default on creation of a pull request, these tests *must* pass, and running them locally first can help catch issues before making a pull request. Note that if your changes require tests to be added and/or updated, you **must** do so. For more information on working with tests, see [here](https://github.com/itinerare/Ars-Errabunda/wiki/Working-With-Tests).
+- It's recommended to run tests for at minimum the general area(s) you are modifying! While all tests are run by default on creation of a pull request, these tests *must* pass, and running them locally first can help catch issues before making a pull request. Note that if your changes require tests to be added and/or updated, you **must** do so. For more information on working with tests, see [here](https://github.com/itinerare/Aldebaran/wiki/Working-With-Tests).
 - Be sure to include any instructions, such as running `php artisan migrate`, in your pull request!
 - If in doubt, provide more information, not less. It can sometimes be difficult to tell from code alone what the purpose of a change is, so you should explain as best you can.
 
 ### General Architecture
 
-Generally speaking, Ars Errabunda and its branches are structured and maintained in keeping with [GitFlow](https://datasift.github.io/gitflow/IntroducingGitFlow.html). Loosely, this means that there are two persistent branches:
+Generally speaking, Aldebaran and its branches are structured and maintained in keeping with [GitFlow](https://datasift.github.io/gitflow/IntroducingGitFlow.html). Loosely, this means that there are two persistent branches:
 
 - The default/primary branch-- `main`, in this case-- which always contains the current release/the current stable version, and
 - The development branch-- `develop`, in this case-- which always contains the latest work-- features, fixes, and so on. It is by definition unstable.
@@ -63,7 +63,7 @@ There are additionally three types of impermanent branches. Each branch of these
 
 In summary:
 
-- When contributing to Ars Errabunda, you will create either a feature or (more rarely) a hotfix branch.
+- When contributing to Aldebaran, you will create either a feature or (more rarely) a hotfix branch.
 - If you are creating a new feature, it must be isolated in its own feature branch and merged via pull request into `develop`.
 
 If you are fixing bug(s), there are a few possibilities depending on the circumstances:
