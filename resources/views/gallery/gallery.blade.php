@@ -44,7 +44,7 @@
 @if($pieces->count())
     {!! $pieces->render() !!}
 
-    @include('gallery._flex_'.Config::get('ars.settings.gallery_arrangement'), ['pieces' => $pieces])
+    @include('gallery._flex_'.Config::get('aldebaran.settings.gallery_arrangement'), ['pieces' => $pieces])
 
     {!! $pieces->render() !!}
 @else

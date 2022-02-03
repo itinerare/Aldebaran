@@ -34,7 +34,7 @@ return [
     | Version
     |--------------------------------------------------------------------------
     |
-    | This is the current version of Ars Errabunda that your site is using.
+    | This is the current version of Aldebaran that your site is using.
     | Do not change this value!
     |
     */

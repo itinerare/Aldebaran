@@ -752,13 +752,13 @@ class GalleryService extends Service
         // Process and save thumbnail from the fullsize image
         $thumbnail = Image::make($image->imagePath.'/'.$image->fullsizeFileName);
         // Resize and save thumbnail
-        if (Config::get('ars.settings.gallery_arrangement') == 'columns') {
-            $thumbnail->resize(Config::get('ars.settings.thumbnail_width'), null, function ($constraint) {
+        if (Config::get('aldebaran.settings.gallery_arrangement') == 'columns') {
+            $thumbnail->resize(Config::get('aldebaran.settings.thumbnail_width'), null, function ($constraint) {
                 $constraint->aspectRatio();
                 $constraint->upsize();
             });
         } else {
-            $thumbnail->resize(null, Config::get('ars.settings.thumbnail_height'), function ($constraint) {
+            $thumbnail->resize(null, Config::get('aldebaran.settings.thumbnail_height'), function ($constraint) {
                 $constraint->aspectRatio();
                 $constraint->upsize();
             });
@@ -770,7 +770,7 @@ class GalleryService extends Service
         $processImage = Image::make($image->imagePath.'/'.$image->fullsizeFileName);
 
         // Resize image if either dimension is larger than 2k px
-        $adjustedCap = isset($data['image_scale']) ? min((max($processImage->height(), $processImage->width()) * $data['image_scale']), Config::get('ars.settings.display_image_size')) : Config::get('ars.settings.display_image_size');
+        $adjustedCap = isset($data['image_scale']) ? min((max($processImage->height(), $processImage->width()) * $data['image_scale']), Config::get('aldebaran.settings.display_image_size')) : Config::get('aldebaran.settings.display_image_size');
 
         if (max($processImage->height(), $processImage->width()) > $adjustedCap) {
             if ($processImage->width() > $processImage->height()) {

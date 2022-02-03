@@ -46,7 +46,7 @@
 @if($pieces->count())
     {!! $pieces->render() !!}
 
-    @include('gallery._flex_'.Config::get('ars.settings.gallery_arrangement'), ['pieces' => $pieces, 'source' => 'commissions/types/'.(isset($source) && $source == 'key' ? $type->key : $type->id).'/gallery'])
+    @include('gallery._flex_'.Config::get('aldebaran.settings.gallery_arrangement'), ['pieces' => $pieces, 'source' => 'commissions/types/'.(isset($source) && $source == 'key' ? $type->key : $type->id).'/gallery'])
 
     {!! $pieces->render() !!}
 @else

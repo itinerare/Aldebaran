@@ -306,7 +306,7 @@ class Commission extends Model
 
         // Calculate fee and round
         $fee =
-            ($total * ((isset($payment['intl']) && $payment['intl'] ? Config::get('ars.settings.fee.percent_intl') : Config::get('ars.settings.fee.percent')) / 100)) + Config::get('ars.settings.fee.base');
+            ($total * ((isset($payment['intl']) && $payment['intl'] ? Config::get('aldebaran.settings.fee.percent_intl') : Config::get('aldebaran.settings.fee.percent')) / 100)) + Config::get('aldebaran.settings.fee.base');
         $fee = round($fee, 2);
 
         return $total - $fee;
