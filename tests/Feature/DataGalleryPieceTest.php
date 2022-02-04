@@ -149,6 +149,33 @@ class DataGalleryPieceTest extends TestCase
     }
 
     /**
+     * Test piece editing with a removed description.
+     */
+    public function test_canPostEditPieceWithoutDescription()
+    {
+        $piece = Piece::factory()->description()->create();
+
+        // Define some basic data
+        $data = [
+            'name'        => $this->faker->unique()->domainWord(),
+            'project_id'  => $piece->project_id,
+            'description' => null,
+        ];
+
+        // Try to post data
+        $response = $this
+            ->actingAs(User::factory()->make())
+            ->post('/admin/data/pieces/edit/'.$piece->id, $data);
+
+        // Directly verify that the appropriate change has occurred
+        $this->assertDatabaseHas('pieces', [
+            'id'          => $piece->id,
+            'name'        => $data['name'],
+            'description' => $data['description'],
+        ]);
+    }
+
+    /**
      * Test piece creation with visibility.
      */
     public function test_canPostCreatePieceVisibility()
@@ -235,6 +262,33 @@ class DataGalleryPieceTest extends TestCase
             'name'       => $this->faker->unique()->domainWord(),
             'project_id' => $piece->project_id,
             'timestamp'  => Carbon::now(),
+        ];
+
+        // Try to post data
+        $response = $this
+            ->actingAs(User::factory()->make())
+            ->post('/admin/data/pieces/edit/'.$piece->id, $data);
+
+        // Directly verify that the appropriate change has occurred
+        $this->assertDatabaseHas('pieces', [
+            'id'        => $piece->id,
+            'name'      => $data['name'],
+            'timestamp' => $data['timestamp'],
+        ]);
+    }
+
+    /**
+     * Test piece editing with a removed timestamp.
+     */
+    public function test_canPostEditPieceWithoutTimestamp()
+    {
+        $piece = Piece::factory()->timestamp()->create();
+
+        // Define some basic data
+        $data = [
+            'name'       => $this->faker->unique()->domainWord(),
+            'project_id' => $piece->project_id,
+            'timestamp'  => null,
         ];
 
         // Try to post data

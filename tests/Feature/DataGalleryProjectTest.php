@@ -141,6 +141,32 @@ class DataGalleryProjectTest extends TestCase
     }
 
     /**
+     * Test project editing with a removed description.
+     */
+    public function test_canPostEditProjectWithoutDescription()
+    {
+        $project = Project::factory()->description()->create();
+
+        // Define some basic data
+        $data = [
+            'name'        => $this->faker->unique()->domainWord(),
+            'description' => null,
+        ];
+
+        // Try to post data
+        $response = $this
+            ->actingAs(User::factory()->make())
+            ->post('/admin/data/projects/edit/'.$project->id, $data);
+
+        // Directly verify that the appropriate change has occurred
+        $this->assertDatabaseHas('projects', [
+            'id'          => $project->id,
+            'name'        => $data['name'],
+            'description' => $data['description'],
+        ]);
+    }
+
+    /**
      * Test project creation with visibility.
      */
     public function test_canPostCreateProjectVisibility()

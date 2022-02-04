@@ -30,6 +30,20 @@ class ChangelogFactory extends Factory
     }
 
     /**
+     * Generate a changelog with a title.
+     *
+     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     */
+    public function title()
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'name' => $this->faker->unique()->domainWord(),
+            ];
+        });
+    }
+
+    /**
      * Generate a changelog that is hidden.
      *
      * @return \Illuminate\Database\Eloquent\Factories\Factory

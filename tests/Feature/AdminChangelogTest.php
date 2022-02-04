@@ -145,6 +145,32 @@ class AdminChangelogTest extends TestCase
     }
 
     /**
+     * Test changelog editing with a removed title.
+     */
+    public function test_canPostEditChangelogWithoutTitle()
+    {
+        $log = Changelog::factory()->title()->create();
+
+        // Define some basic data
+        $data = [
+            'name' => null,
+            'text' => '<p>'.$this->faker->unique()->domainWord().'</p>',
+        ];
+
+        // Try to post data
+        $response = $this
+            ->actingAs(User::factory()->make())
+            ->post('/admin/changelog/edit/'.$log->id, $data);
+
+        // Directly verify that the appropriate change has occurred
+        $this->assertDatabaseHas('changelog_entries', [
+            'id'   => $log->id,
+            'name' => $data['name'],
+            'text' => $data['text'],
+        ]);
+    }
+
+    /**
      * Test changelog creation with visibility.
      */
     public function test_canPostCreateChangelogVisibility()

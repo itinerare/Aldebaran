@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Gallery\Program;
 use App\Models\User;
+use App\Services\GalleryService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
@@ -158,6 +159,39 @@ class DataGalleryProgramTest extends TestCase
         if (File::exists(public_path('images/programs/'.$program->id.'-image.png'))) {
             unlink('public/images/programs/'.$program->id.'-image.png');
         }
+    }
+
+    /**
+     * Test program editing with a removed icon.
+     */
+    public function test_canPostEditProgramWithoutIcon()
+    {
+        // Set up the program and add an icon
+        $program = Program::factory()->create();
+
+        (new GalleryService)->handleImage(UploadedFile::fake()->image('test_image.png'), $program->imagePath, $program->imageFileName);
+        $program->update(['has_image' => 1]);
+
+        // Define some basic data
+        $data = [
+            'name'         => $this->faker->unique()->domainWord(),
+            'remove_image' => 1,
+        ];
+
+        // Try to post data
+        $response = $this
+            ->actingAs(User::factory()->make())
+            ->post('/admin/data/programs/edit/'.$program->id, $data);
+
+        // Directly verify that the appropriate change has occurred
+        $this->assertDatabaseHas('programs', [
+            'id'        => $program->id,
+            'name'      => $data['name'],
+            'has_image' => 0,
+        ]);
+
+        // Check that the file is not present
+        $this->assertFalse(File::exists(public_path('images/programs/'.$program->id.'-image.png')));
     }
 
     /**

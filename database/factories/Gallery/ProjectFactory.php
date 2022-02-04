@@ -29,6 +29,20 @@ class ProjectFactory extends Factory
     }
 
     /**
+     * Generate a piece with a description.
+     *
+     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     */
+    public function description()
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'description' => '<p>'.$this->faker->unique()->domainWord().'</p>',
+            ];
+        });
+    }
+
+    /**
      * Generate a project that is hidden.
      *
      * @return \Illuminate\Database\Eloquent\Factories\Factory

@@ -4,6 +4,7 @@ namespace Database\Factories\Gallery;
 
 use App\Models\Gallery\Piece;
 use App\Models\Gallery\Project;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class PieceFactory extends Factory
@@ -31,6 +32,20 @@ class PieceFactory extends Factory
     }
 
     /**
+     * Generate a piece with a description.
+     *
+     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     */
+    public function description()
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'description' => '<p>'.$this->faker->unique()->domainWord().'</p>',
+            ];
+        });
+    }
+
+    /**
      * Generate a piece that is hidden.
      *
      * @return \Illuminate\Database\Eloquent\Factories\Factory
@@ -54,6 +69,20 @@ class PieceFactory extends Factory
         return $this->state(function (array $attributes) {
             return [
                 'good_example' => 1,
+            ];
+        });
+    }
+
+    /**
+     * Generate a piece with a timestamp.
+     *
+     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     */
+    public function timestamp()
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'timestamp' => Carbon::now(),
             ];
         });
     }
