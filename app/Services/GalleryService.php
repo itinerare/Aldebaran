@@ -169,13 +169,9 @@ class GalleryService extends Service
             $piece = Piece::create($data);
 
             // If tags are selected, validate and create data for them
-            if (isset($data['tags']) && $piece->id) {
-                $data = $this->processTags($data, $piece);
-            }
+            $data = $this->processTags($data, $piece);
             // If programs are selected, validate and create data for them
-            if (isset($data['programs']) && $piece->id) {
-                $data = $this->processPrograms($data, $piece);
-            }
+            $data = $this->processPrograms($data, $piece);
 
             return $this->commitReturn($piece);
         } catch (\Exception $e) {
@@ -208,13 +204,9 @@ class GalleryService extends Service
 
             $data = $this->populateData($data);
             // If tags are selected, validate and create data for them
-            if (isset($data['tags']) && $piece->id) {
-                $data = $this->processTags($data, $piece);
-            }
+            $data = $this->processTags($data, $piece);
             // If programs are selected, validate and create data for them
-            if (isset($data['programs']) && $piece->id) {
-                $data = $this->processPrograms($data, $piece);
-            }
+            $data = $this->processPrograms($data, $piece);
 
             $piece->update($data);
 
@@ -671,15 +663,17 @@ class GalleryService extends Service
             PieceTag::where('piece_id', $piece->id)->delete();
         }
 
-        foreach ($data['tags'] as $tag) {
-            if (!Tag::where('id', $tag)->exists()) {
-                throw new \Exception('One or more of the selected tags is invalid.');
-            }
+        if (isset($data['tags'])) {
+            foreach ($data['tags'] as $tag) {
+                if (!Tag::where('id', $tag)->exists()) {
+                    throw new \Exception('One or more of the selected tags is invalid.');
+                }
 
-            PieceTag::create([
+                PieceTag::create([
                 'piece_id' => $piece->id,
                 'tag_id'   => $tag,
-            ]);
+                ]);
+            }
         }
 
         return $data;
@@ -701,15 +695,17 @@ class GalleryService extends Service
             PieceProgram::where('piece_id', $piece->id)->delete();
         }
 
-        foreach ($data['programs'] as $program) {
-            if (!Program::where('id', $program)->exists()) {
-                throw new \Exception('One or more of the selected programs is invalid.');
-            }
+        if (isset($data['programs'])) {
+            foreach ($data['programs'] as $program) {
+                if (!Program::where('id', $program)->exists()) {
+                    throw new \Exception('One or more of the selected programs is invalid.');
+                }
 
-            PieceProgram::create([
+                PieceProgram::create([
                 'piece_id'   => $piece->id,
                 'program_id' => $program,
-            ]);
+                ]);
+            }
         }
 
         return $data;
