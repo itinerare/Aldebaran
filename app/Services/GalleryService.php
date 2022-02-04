@@ -574,7 +574,7 @@ class GalleryService extends Service
             }
 
             if (isset($data['remove_image']) && !isset($data['image'])) {
-                if ($program && $program->has_image && $data['remove_image']) {
+                if ($program->has_image && $data['remove_image']) {
                     $data['has_image'] = 0;
                     $this->deleteImage($program->imagePath, $program->imageFileName);
                 }
@@ -586,8 +586,6 @@ class GalleryService extends Service
                 $data['has_image'] = 1;
                 $image = $data['image'];
                 unset($data['image']);
-            } else {
-                $data['has_image'] = 0;
             }
 
             if (!isset($data['is_visible'])) {

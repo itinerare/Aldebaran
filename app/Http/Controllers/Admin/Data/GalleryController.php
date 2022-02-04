@@ -597,7 +597,7 @@ class GalleryController extends Controller
     {
         $id ? $request->validate(Program::$updateRules) : $request->validate(Program::$createRules);
         $data = $request->only([
-            'name', 'image', 'is_visible',
+            'name', 'image', 'is_visible', 'remove_image'
         ]);
         if ($id && $service->updateProgram(Program::find($id), $data, Auth::user())) {
             flash('Program updated successfully.')->success();
