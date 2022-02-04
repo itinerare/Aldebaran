@@ -188,11 +188,12 @@ class DataGalleryProgramTest extends TestCase
      */
     public function test_canPostEditProgramVisibility()
     {
-        $program = Program::factory()->create();
+        $program = Program::factory()->hidden()->create();
 
         // Define some basic data
         $data = [
-            'name' => $this->faker->unique()->domainWord(),
+            'name'       => $this->faker->unique()->domainWord(),
+            'is_visible' => 1,
         ];
 
         // Try to post data
@@ -204,7 +205,7 @@ class DataGalleryProgramTest extends TestCase
         $this->assertDatabaseHas('programs', [
             'id'         => $program->id,
             'name'       => $data['name'],
-            'is_visible' => 0,
+            'is_visible' => 1,
         ]);
     }
 

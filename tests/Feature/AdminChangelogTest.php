@@ -152,7 +152,7 @@ class AdminChangelogTest extends TestCase
         // Define some basic data
         $data = [
             'text'       => '<p>'.$this->faker->unique()->domainWord().'</p>',
-            'is_visible' => 0,
+            'is_visible' => 1,
         ];
 
         // Try to post data
@@ -163,7 +163,7 @@ class AdminChangelogTest extends TestCase
         // Directly verify that the appropriate change has occurred
         $this->assertDatabaseHas('changelog_entries', [
             'text'       => $data['text'],
-            'is_visible' => 0,
+            'is_visible' => 1,
         ]);
     }
 
@@ -172,12 +172,12 @@ class AdminChangelogTest extends TestCase
      */
     public function test_canPostEditChangelogVisibility()
     {
-        $log = Changelog::factory()->create();
+        $log = Changelog::factory()->hidden()->create();
 
         // Define some basic data
         $data = [
             'text'       => '<p>'.$this->faker->unique()->domainWord().'</p>',
-            'is_visible' => 0,
+            'is_visible' => 1,
         ];
 
         // Try to post data
@@ -189,7 +189,7 @@ class AdminChangelogTest extends TestCase
         $this->assertDatabaseHas('changelog_entries', [
             'id'         => $log->id,
             'text'       => $data['text'],
-            'is_visible' => 0,
+            'is_visible' => 1,
         ]);
     }
 

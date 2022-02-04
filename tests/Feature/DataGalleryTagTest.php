@@ -168,11 +168,12 @@ class DataGalleryTagTest extends TestCase
      */
     public function test_canPostEditTagVisibility()
     {
-        $tag = Tag::factory()->create();
+        $tag = Tag::factory()->hidden()->create();
 
         // Define some basic data
         $data = [
-            'name' => $this->faker->unique()->domainWord(),
+            'name'       => $this->faker->unique()->domainWord(),
+            'is_visible' => 1,
         ];
 
         // Try to post data
@@ -184,7 +185,7 @@ class DataGalleryTagTest extends TestCase
         $this->assertDatabaseHas('tags', [
             'id'         => $tag->id,
             'name'       => $data['name'],
-            'is_visible' => 0,
+            'is_visible' => 1,
         ]);
     }
 

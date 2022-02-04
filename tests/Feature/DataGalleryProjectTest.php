@@ -168,11 +168,12 @@ class DataGalleryProjectTest extends TestCase
      */
     public function test_canPostEditProjectVisibility()
     {
-        $project = Project::factory()->create();
+        $project = Project::factory()->hidden()->create();
 
         // Define some basic data
         $data = [
-            'name' => $this->faker->unique()->domainWord(),
+            'name'       => $this->faker->unique()->domainWord(),
+            'is_visible' => 1,
         ];
 
         // Try to post data
@@ -184,7 +185,7 @@ class DataGalleryProjectTest extends TestCase
         $this->assertDatabaseHas('projects', [
             'id'         => $project->id,
             'name'       => $data['name'],
-            'is_visible' => 0,
+            'is_visible' => 1,
         ]);
     }
 

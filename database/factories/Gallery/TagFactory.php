@@ -30,6 +30,20 @@ class TagFactory extends Factory
     }
 
     /**
+     * Generate a tag that is hidden.
+     *
+     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     */
+    public function hidden()
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'is_visible' => 0,
+            ];
+        });
+    }
+
+    /**
      * Generate a tag that is hidden in the gallery.
      *
      * @return \Illuminate\Database\Eloquent\Factories\Factory
