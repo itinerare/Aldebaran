@@ -2,6 +2,7 @@
 
 namespace App\Models\Gallery;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Settings;
@@ -10,7 +11,7 @@ use Spatie\Feed\FeedItem;
 
 class Piece extends Model implements Feedable
 {
-    use SoftDeletes;
+    use HasFactory, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
