@@ -3,7 +3,11 @@
 namespace Tests\Feature;
 
 use App\Models\Gallery\Piece;
+use App\Models\Gallery\PieceProgram;
+use App\Models\Gallery\PieceTag;
+use App\Models\Gallery\Program;
 use App\Models\Gallery\Project;
+use App\Models\Gallery\Tag;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -302,6 +306,166 @@ class DataGalleryPieceTest extends TestCase
             'name'      => $data['name'],
             'timestamp' => $data['timestamp'],
         ]);
+    }
+
+    /**
+     * Test piece creation with tag.
+     */
+    public function test_canPostCreatePieceWithTag()
+    {
+        // Define some basic data
+        $data = [
+            'name'       => $this->faker->unique()->domainWord(),
+            'project_id' => Project::factory()->create()->id,
+            'tags'       => [
+                0 => Tag::factory()->create()->id,
+            ],
+        ];
+
+        // Try to post data
+        $response = $this
+            ->actingAs(User::factory()->make())
+            ->post('/admin/data/pieces/create', $data);
+
+        $piece = Piece::where('name', $data['name'])->first();
+
+        // Directly verify that the appropriate change has occurred
+        $this->assertDatabaseHas('piece_tags', [
+            'piece_id' => $piece->id,
+            'tag_id'   => $data['tags'][0],
+        ]);
+    }
+
+    /**
+     * Test piece editing with tag.
+     */
+    public function test_canPostEditPieceWithTag()
+    {
+        $piece = Piece::factory()->create();
+
+        // Define some basic data
+        $data = [
+            'name'       => $this->faker->unique()->domainWord(),
+            'project_id' => $piece->project_id,
+            'tags'       => [
+                0 => Tag::factory()->create()->id,
+            ],
+        ];
+
+        // Try to post data
+        $response = $this
+            ->actingAs(User::factory()->make())
+            ->post('/admin/data/pieces/edit/'.$piece->id, $data);
+
+        // Directly verify that the appropriate change has occurred
+        $this->assertDatabaseHas('piece_tags', [
+            'piece_id' => $piece->id,
+            'tag_id'   => $data['tags'][0],
+        ]);
+    }
+
+    /**
+     * Test piece editing with removed tag.
+     */
+    public function test_canPostEditPieceWithoutTag()
+    {
+        $piece = Piece::factory()->create();
+        $tag = PieceTag::factory()->piece($piece->id)->create();
+
+        // Define some basic data
+        $data = [
+            'name'       => $this->faker->unique()->domainWord(),
+            'project_id' => $piece->project_id,
+            'tags'       => null,
+        ];
+
+        // Try to post data
+        $response = $this
+            ->actingAs(User::factory()->make())
+            ->post('/admin/data/pieces/edit/'.$piece->id, $data);
+
+        // Directly verify that the appropriate change has occurred
+        $this->assertDeleted($tag);
+    }
+
+    /**
+     * Test piece creation with program.
+     */
+    public function test_canPostCreatePieceWithProgram()
+    {
+        // Define some basic data
+        $data = [
+            'name'       => $this->faker->unique()->domainWord(),
+            'project_id' => Project::factory()->create()->id,
+            'programs'   => [
+                0 => Program::factory()->create()->id,
+            ],
+        ];
+
+        // Try to post data
+        $response = $this
+            ->actingAs(User::factory()->make())
+            ->post('/admin/data/pieces/create', $data);
+
+        $piece = Piece::where('name', $data['name'])->first();
+
+        // Directly verify that the appropriate change has occurred
+        $this->assertDatabaseHas('piece_programs', [
+            'piece_id'   => $piece->id,
+            'program_id' => $data['programs'][0],
+        ]);
+    }
+
+    /**
+     * Test piece editing with program.
+     */
+    public function test_canPostEditPieceWithProgram()
+    {
+        $piece = Piece::factory()->create();
+
+        // Define some basic data
+        $data = [
+            'name'       => $this->faker->unique()->domainWord(),
+            'project_id' => $piece->project_id,
+            'programs'   => [
+                0 => Program::factory()->create()->id,
+            ],
+        ];
+
+        // Try to post data
+        $response = $this
+            ->actingAs(User::factory()->make())
+            ->post('/admin/data/pieces/edit/'.$piece->id, $data);
+
+        // Directly verify that the appropriate change has occurred
+        $this->assertDatabaseHas('piece_programs', [
+            'piece_id'   => $piece->id,
+            'program_id' => $data['programs'][0],
+        ]);
+    }
+
+    /**
+     * Test piece editing with removed program.
+     */
+    public function test_canPostEditPieceWithoutProgram()
+    {
+        $piece = Piece::factory()->create();
+        $program = PieceProgram::factory()->piece($piece->id)->create();
+
+        // Define some basic data
+        $data = [
+            'name'       => $this->faker->unique()->domainWord(),
+            'project_id' => $piece->project_id,
+            'programs'   => null,
+        ];
+
+        // Try to post data
+        $response = $this
+            ->actingAs(User::factory()->make())
+            ->post('/admin/data/pieces/edit/'.$piece->id, $data);
+
+        // Directly verify that the appropriate change has occurred
+        $this->assertDeleted($program);
     }
 
     /**

@@ -2,10 +2,13 @@
 
 namespace App\Models\Gallery;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class PieceTag extends Model
 {
+    use HasFactory;
+
     /**
      * The attributes that are mass assignable.
      *
