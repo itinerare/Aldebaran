@@ -24,6 +24,7 @@ $rules = [
         'elements' => ['method' => 'one']
     ],
     'class_definition' => true,
+    'class_reference_name_casing' => true,
     'concat_space' => [
         'spacing' => 'none'
     ],
