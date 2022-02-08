@@ -15,7 +15,7 @@ class AccessTest extends TestCase
     /**
      * Test getting the main page.
      */
-    public function test_CanGetIndex()
+    public function testCanGetIndex()
     {
         // Attempt to access the site on the most basic level
         $response = $this
@@ -26,7 +26,7 @@ class AccessTest extends TestCase
     /**
      * Ensure visitor cannot access admin routes.
      */
-    public function test_visitorCannotGetAdminIndex()
+    public function testVisitorCannotGetAdminIndex()
     {
         $response = $this
             ->get('/admin')
@@ -36,7 +36,7 @@ class AccessTest extends TestCase
     /**
      * Ensure user can access admin routes.
      */
-    public function test_userCanGetAdminIndex()
+    public function testUserCanGetAdminIndex()
     {
         // Try to access admin dashboard
         $response = $this->actingAs(User::factory()->make())

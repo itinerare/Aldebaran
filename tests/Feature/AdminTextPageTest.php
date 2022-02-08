@@ -18,7 +18,7 @@ class AdminTextPageTest extends TestCase
     /**
      * Test text page index access.
      */
-    public function test_canGetTextPageIndex()
+    public function testCanGetTextPageIndex()
     {
         $response = $this->actingAs(User::factory()->make())
             ->get('/admin/pages')
@@ -28,7 +28,7 @@ class AdminTextPageTest extends TestCase
     /**
      * Test text page editing.
      */
-    public function test_canPostEditSitePage()
+    public function testCanPostEditSitePage()
     {
         // Ensure text pages are present to modify
         $this->artisan('add-text-pages');

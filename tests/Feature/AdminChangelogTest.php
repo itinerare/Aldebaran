@@ -19,7 +19,7 @@ class AdminChangelogTest extends TestCase
     /**
      * Test changelog index access.
      */
-    public function test_canGetChangelogIndex()
+    public function testCanGetChangelogIndex()
     {
         $response = $this->actingAs(User::factory()->make())
             ->get('/admin/changelog')
@@ -29,7 +29,7 @@ class AdminChangelogTest extends TestCase
     /**
      * Test changelog create access.
      */
-    public function test_canGetCreateChangelog()
+    public function testCanGetCreateChangelog()
     {
         $response = $this->actingAs(User::factory()->make())
             ->get('/admin/changelog/create')
@@ -39,7 +39,7 @@ class AdminChangelogTest extends TestCase
     /**
      * Test changelog edit access.
      */
-    public function test_canGetEditChangelog()
+    public function testCanGetEditChangelog()
     {
         $log = Changelog::factory()->create();
 
@@ -51,7 +51,7 @@ class AdminChangelogTest extends TestCase
     /**
      * Test changelog creation.
      */
-    public function test_canPostCreateChangelog()
+    public function testCanPostCreateChangelog()
     {
         // Define some basic data
         $data = [
@@ -73,7 +73,7 @@ class AdminChangelogTest extends TestCase
     /**
      * Test changelog editing.
      */
-    public function test_canPostEditChangelog()
+    public function testCanPostEditChangelog()
     {
         $log = Changelog::factory()->create();
 
@@ -98,7 +98,7 @@ class AdminChangelogTest extends TestCase
     /**
      * Test changelog creation with title.
      */
-    public function test_canPostCreateChangelogWithTitle()
+    public function testCanPostCreateChangelogWithTitle()
     {
         // Define some basic data
         $data = [
@@ -121,7 +121,7 @@ class AdminChangelogTest extends TestCase
     /**
      * Test changelog editing with title.
      */
-    public function test_canPostEditChangelogWithTitle()
+    public function testCanPostEditChangelogWithTitle()
     {
         $log = Changelog::factory()->create();
 
@@ -147,7 +147,7 @@ class AdminChangelogTest extends TestCase
     /**
      * Test changelog editing with a removed title.
      */
-    public function test_canPostEditChangelogWithoutTitle()
+    public function testCanPostEditChangelogWithoutTitle()
     {
         $log = Changelog::factory()->title()->create();
 
@@ -173,7 +173,7 @@ class AdminChangelogTest extends TestCase
     /**
      * Test changelog creation with visibility.
      */
-    public function test_canPostCreateChangelogVisibility()
+    public function testCanPostCreateChangelogVisibility()
     {
         // Define some basic data
         $data = [
@@ -196,7 +196,7 @@ class AdminChangelogTest extends TestCase
     /**
      * Test changelog editing with visibility.
      */
-    public function test_canPostEditChangelogVisibility()
+    public function testCanPostEditChangelogVisibility()
     {
         $log = Changelog::factory()->hidden()->create();
 
@@ -222,7 +222,7 @@ class AdminChangelogTest extends TestCase
     /**
      * Test changelog delete access.
      */
-    public function test_canGetDeleteChangelog()
+    public function testCanGetDeleteChangelog()
     {
         $response = $this->actingAs(User::factory()->make())
             ->get('/admin/changelog/delete/'.Changelog::factory()->create()->id)
@@ -232,7 +232,7 @@ class AdminChangelogTest extends TestCase
     /**
      * Test changelog deletion.
      */
-    public function test_canPostDeleteChangelog()
+    public function testCanPostDeleteChangelog()
     {
         // Create a category to delete
         $log = Changelog::factory()->create();

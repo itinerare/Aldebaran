@@ -19,7 +19,7 @@ class DataGalleryTagTest extends TestCase
     /**
      * Test tag index access.
      */
-    public function test_canGetTagIndex()
+    public function testCanGetTagIndex()
     {
         $response = $this->actingAs(User::factory()->make())
             ->get('/admin/data/tags')
@@ -29,7 +29,7 @@ class DataGalleryTagTest extends TestCase
     /**
      * Test tag create access.
      */
-    public function test_canGetCreateTag()
+    public function testCanGetCreateTag()
     {
         $response = $this->actingAs(User::factory()->make())
             ->get('/admin/data/tags/create')
@@ -39,7 +39,7 @@ class DataGalleryTagTest extends TestCase
     /**
      * Test tag edit access.
      */
-    public function test_canGetEditTag()
+    public function testCanGetEditTag()
     {
         $response = $this->actingAs(User::factory()->make())
             ->get('/admin/data/tags/edit/'.Tag::factory()->create()->id)
@@ -49,7 +49,7 @@ class DataGalleryTagTest extends TestCase
     /**
      * Test tag creation.
      */
-    public function test_canPostCreateTag()
+    public function testCanPostCreateTag()
     {
         // Define some basic data
         $data = [
@@ -70,7 +70,7 @@ class DataGalleryTagTest extends TestCase
     /**
      * Test tag editing.
      */
-    public function test_canPostEditTag()
+    public function testCanPostEditTag()
     {
         $tag = Tag::factory()->create();
 
@@ -94,7 +94,7 @@ class DataGalleryTagTest extends TestCase
     /**
      * Test tag creation with a description.
      */
-    public function test_canPostCreateTagWithDescription()
+    public function testCanPostCreateTagWithDescription()
     {
         // Define some basic data
         $data = [
@@ -117,7 +117,7 @@ class DataGalleryTagTest extends TestCase
     /**
      * Test tag editing with a description.
      */
-    public function test_canPostEditTagWithDescription()
+    public function testCanPostEditTagWithDescription()
     {
         $tag = Tag::factory()->create();
 
@@ -143,7 +143,7 @@ class DataGalleryTagTest extends TestCase
     /**
      * Test tag creation with visibility.
      */
-    public function test_canPostCreateTagVisibility()
+    public function testCanPostCreateTagVisibility()
     {
         // Define some basic data
         $data = [
@@ -166,7 +166,7 @@ class DataGalleryTagTest extends TestCase
     /**
      * Test tag editing with visibility.
      */
-    public function test_canPostEditTagVisibility()
+    public function testCanPostEditTagVisibility()
     {
         $tag = Tag::factory()->hidden()->create();
 
@@ -192,7 +192,7 @@ class DataGalleryTagTest extends TestCase
     /**
      * Test tag creation with active status.
      */
-    public function test_canPostCreateTagActivity()
+    public function testCanPostCreateTagActivity()
     {
         // Define some basic data
         $data = [
@@ -215,7 +215,7 @@ class DataGalleryTagTest extends TestCase
     /**
      * Test tag editing with active status.
      */
-    public function test_canPostEditTagActivity()
+    public function testCanPostEditTagActivity()
     {
         $tag = Tag::factory()->create();
 
@@ -241,7 +241,7 @@ class DataGalleryTagTest extends TestCase
     /**
      * Test tag delete access.
      */
-    public function test_canGetDeleteTag()
+    public function testCanGetDeleteTag()
     {
         $response = $this->actingAs(User::factory()->make())
             ->get('/admin/data/tags/delete/'.Tag::factory()->create()->id)
@@ -251,7 +251,7 @@ class DataGalleryTagTest extends TestCase
     /**
      * Test tag deletion.
      */
-    public function test_canPostDeleteTag()
+    public function testCanPostDeleteTag()
     {
         // Create a category to delete
         $tag = Tag::factory()->create();

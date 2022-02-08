@@ -22,7 +22,7 @@ class DataGalleryProgramTest extends TestCase
     /**
      * Test program index access.
      */
-    public function test_canGetProgramIndex()
+    public function testCanGetProgramIndex()
     {
         $response = $this->actingAs(User::factory()->make())
             ->get('/admin/data/programs')
@@ -32,7 +32,7 @@ class DataGalleryProgramTest extends TestCase
     /**
      * Test program create access.
      */
-    public function test_canGetCreateProgram()
+    public function testCanGetCreateProgram()
     {
         $response = $this->actingAs(User::factory()->make())
             ->get('/admin/data/programs/create')
@@ -42,7 +42,7 @@ class DataGalleryProgramTest extends TestCase
     /**
      * Test program edit access.
      */
-    public function test_canGetEditProgram()
+    public function testCanGetEditProgram()
     {
         $response = $this->actingAs(User::factory()->make())
             ->get('/admin/data/programs/edit/'.Program::factory()->create()->id)
@@ -52,7 +52,7 @@ class DataGalleryProgramTest extends TestCase
     /**
      * Test program creation.
      */
-    public function test_canPostCreateProgram()
+    public function testCanPostCreateProgram()
     {
         // Define some basic data
         $data = [
@@ -73,7 +73,7 @@ class DataGalleryProgramTest extends TestCase
     /**
      * Test program editing.
      */
-    public function test_canPostEditProgram()
+    public function testCanPostEditProgram()
     {
         $program = Program::factory()->create();
 
@@ -97,7 +97,7 @@ class DataGalleryProgramTest extends TestCase
     /**
      * Test program creation with an icon.
      */
-    public function test_canPostCreateProgramWithIcon()
+    public function testCanPostCreateProgramWithIcon()
     {
         // Define some basic data
         $data = [
@@ -130,7 +130,7 @@ class DataGalleryProgramTest extends TestCase
     /**
      * Test program editing with an icon.
      */
-    public function test_canPostEditProgramWithIcon()
+    public function testCanPostEditProgramWithIcon()
     {
         $program = Program::factory()->create();
 
@@ -164,7 +164,7 @@ class DataGalleryProgramTest extends TestCase
     /**
      * Test program editing with a removed icon.
      */
-    public function test_canPostEditProgramWithoutIcon()
+    public function testCanPostEditProgramWithoutIcon()
     {
         // Set up the program and add an icon
         $program = Program::factory()->create();
@@ -197,7 +197,7 @@ class DataGalleryProgramTest extends TestCase
     /**
      * Test program creation with visibility.
      */
-    public function test_canPostCreateProgramVisibility()
+    public function testCanPostCreateProgramVisibility()
     {
         // Define some basic data
         $data = [
@@ -220,7 +220,7 @@ class DataGalleryProgramTest extends TestCase
     /**
      * Test program editing with visibility.
      */
-    public function test_canPostEditProgramVisibility()
+    public function testCanPostEditProgramVisibility()
     {
         $program = Program::factory()->hidden()->create();
 
@@ -246,7 +246,7 @@ class DataGalleryProgramTest extends TestCase
     /**
      * Test program delete access.
      */
-    public function test_canGetDeleteProgram()
+    public function testCanGetDeleteProgram()
     {
         $response = $this->actingAs(User::factory()->make())
             ->get('/admin/data/programs/delete/'.Program::factory()->create()->id)
@@ -256,7 +256,7 @@ class DataGalleryProgramTest extends TestCase
     /**
      * Test program deletion.
      */
-    public function test_canPostDeleteProgram()
+    public function testCanPostDeleteProgram()
     {
         // Create a category to delete
         $program = Program::factory()->create();

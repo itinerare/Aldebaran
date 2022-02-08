@@ -25,7 +25,7 @@ class DataGalleryPieceTest extends TestCase
     /**
      * Test piece index access.
      */
-    public function test_canGetPieceIndex()
+    public function testCanGetPieceIndex()
     {
         $response = $this->actingAs(User::factory()->make())
             ->get('/admin/data/pieces')
@@ -35,7 +35,7 @@ class DataGalleryPieceTest extends TestCase
     /**
      * Test piece create access.
      */
-    public function test_canGetCreatePiece()
+    public function testCanGetCreatePiece()
     {
         $response = $this->actingAs(User::factory()->make())
             ->get('/admin/data/pieces/create')
@@ -45,7 +45,7 @@ class DataGalleryPieceTest extends TestCase
     /**
      * Test piece edit access.
      */
-    public function test_canGetEditPiece()
+    public function testCanGetEditPiece()
     {
         $piece = Piece::factory()->create();
 
@@ -57,7 +57,7 @@ class DataGalleryPieceTest extends TestCase
     /**
      * Test piece creation.
      */
-    public function test_canPostCreatePiece()
+    public function testCanPostCreatePiece()
     {
         // Define some basic data
         $data = [
@@ -79,7 +79,7 @@ class DataGalleryPieceTest extends TestCase
     /**
      * Test piece editing.
      */
-    public function test_canPostEditPiece()
+    public function testCanPostEditPiece()
     {
         $piece = Piece::factory()->create();
 
@@ -104,7 +104,7 @@ class DataGalleryPieceTest extends TestCase
     /**
      * Test piece creation with description.
      */
-    public function test_canPostCreatePieceWithDescription()
+    public function testCanPostCreatePieceWithDescription()
     {
         // Define some basic data
         $data = [
@@ -128,7 +128,7 @@ class DataGalleryPieceTest extends TestCase
     /**
      * Test piece editing with description.
      */
-    public function test_canPostEditPieceWithDescription()
+    public function testCanPostEditPieceWithDescription()
     {
         $piece = Piece::factory()->create();
 
@@ -155,7 +155,7 @@ class DataGalleryPieceTest extends TestCase
     /**
      * Test piece editing with a removed description.
      */
-    public function test_canPostEditPieceWithoutDescription()
+    public function testCanPostEditPieceWithoutDescription()
     {
         $piece = Piece::factory()->description()->create();
 
@@ -182,7 +182,7 @@ class DataGalleryPieceTest extends TestCase
     /**
      * Test piece creation with visibility.
      */
-    public function test_canPostCreatePieceVisibility()
+    public function testCanPostCreatePieceVisibility()
     {
         // Define some basic data
         $data = [
@@ -206,7 +206,7 @@ class DataGalleryPieceTest extends TestCase
     /**
      * Test piece editing with visibility.
      */
-    public function test_canPostEditPieceVisibility()
+    public function testCanPostEditPieceVisibility()
     {
         $piece = Piece::factory()->hidden()->create();
 
@@ -233,7 +233,7 @@ class DataGalleryPieceTest extends TestCase
     /**
      * Test piece creation with timestamp.
      */
-    public function test_canPostCreatePieceWithTimestamp()
+    public function testCanPostCreatePieceWithTimestamp()
     {
         // Define some basic data
         $data = [
@@ -257,7 +257,7 @@ class DataGalleryPieceTest extends TestCase
     /**
      * Test piece editing with timestamp.
      */
-    public function test_canPostEditPieceWithTimestamp()
+    public function testCanPostEditPieceWithTimestamp()
     {
         $piece = Piece::factory()->create();
 
@@ -284,7 +284,7 @@ class DataGalleryPieceTest extends TestCase
     /**
      * Test piece editing with a removed timestamp.
      */
-    public function test_canPostEditPieceWithoutTimestamp()
+    public function testCanPostEditPieceWithoutTimestamp()
     {
         $piece = Piece::factory()->timestamp()->create();
 
@@ -311,7 +311,7 @@ class DataGalleryPieceTest extends TestCase
     /**
      * Test piece creation with tag.
      */
-    public function test_canPostCreatePieceWithTag()
+    public function testCanPostCreatePieceWithTag()
     {
         // Define some basic data
         $data = [
@@ -339,7 +339,7 @@ class DataGalleryPieceTest extends TestCase
     /**
      * Test piece editing with tag.
      */
-    public function test_canPostEditPieceWithTag()
+    public function testCanPostEditPieceWithTag()
     {
         $piece = Piece::factory()->create();
 
@@ -367,7 +367,7 @@ class DataGalleryPieceTest extends TestCase
     /**
      * Test piece editing with removed tag.
      */
-    public function test_canPostEditPieceWithoutTag()
+    public function testCanPostEditPieceWithoutTag()
     {
         $piece = Piece::factory()->create();
         $tag = PieceTag::factory()->piece($piece->id)->create();
@@ -391,7 +391,7 @@ class DataGalleryPieceTest extends TestCase
     /**
      * Test piece creation with program.
      */
-    public function test_canPostCreatePieceWithProgram()
+    public function testCanPostCreatePieceWithProgram()
     {
         // Define some basic data
         $data = [
@@ -419,7 +419,7 @@ class DataGalleryPieceTest extends TestCase
     /**
      * Test piece editing with program.
      */
-    public function test_canPostEditPieceWithProgram()
+    public function testCanPostEditPieceWithProgram()
     {
         $piece = Piece::factory()->create();
 
@@ -447,7 +447,7 @@ class DataGalleryPieceTest extends TestCase
     /**
      * Test piece editing with removed program.
      */
-    public function test_canPostEditPieceWithoutProgram()
+    public function testCanPostEditPieceWithoutProgram()
     {
         $piece = Piece::factory()->create();
         $program = PieceProgram::factory()->piece($piece->id)->create();
@@ -471,7 +471,7 @@ class DataGalleryPieceTest extends TestCase
     /**
      * Test piece creation with good example.
      */
-    public function test_canPostCreatePieceWithGoodExample()
+    public function testCanPostCreatePieceWithGoodExample()
     {
         // Define some basic data
         $data = [
@@ -495,7 +495,7 @@ class DataGalleryPieceTest extends TestCase
     /**
      * Test piece editing with good example.
      */
-    public function test_canPostEditPieceWithGoodExample()
+    public function testCanPostEditPieceWithGoodExample()
     {
         $piece = Piece::factory()->create();
 
@@ -522,7 +522,7 @@ class DataGalleryPieceTest extends TestCase
     /**
      * Test piece delete access.
      */
-    public function test_canGetDeletePiece()
+    public function testCanGetDeletePiece()
     {
         $response = $this->actingAs(User::factory()->make())
             ->get('/admin/data/pieces/delete/'.Piece::factory()->create()->id)
@@ -532,7 +532,7 @@ class DataGalleryPieceTest extends TestCase
     /**
      * Test piece deletion.
      */
-    public function test_canPostDeletePiece()
+    public function testCanPostDeletePiece()
     {
         // Create a category to delete
         $piece = Piece::factory()->create();

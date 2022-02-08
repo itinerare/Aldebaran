@@ -19,7 +19,7 @@ class AdminSiteImagesTest extends TestCase
     /**
      * Test site image index access.
      */
-    public function test_canGetSiteImagesIndex()
+    public function testCanGetSiteImagesIndex()
     {
         $response = $this->actingAs(User::factory()->make())
             ->get('/admin/site-images')
@@ -29,7 +29,7 @@ class AdminSiteImagesTest extends TestCase
     /**
      * Test avatar image uploading.
      */
-    public function test_canPostEditAvatar()
+    public function testCanPostEditAvatar()
     {
         // Create a fake file
         $file = UploadedFile::fake()->image('test_image.png');
@@ -58,7 +58,7 @@ class AdminSiteImagesTest extends TestCase
     /**
      * Test watermark image uploading.
      */
-    public function test_canPostEditWatermark()
+    public function testCanPostEditWatermark()
     {
         // Create a fake file
         $file = UploadedFile::fake()->image('test_image.png');
@@ -87,7 +87,7 @@ class AdminSiteImagesTest extends TestCase
     /**
      * Test sidebar image uploading.
      */
-    public function test_canPostEditSidebar()
+    public function testCanPostEditSidebar()
     {
         // Create a fake file
         $file = UploadedFile::fake()->image('test_image.png');
@@ -116,7 +116,7 @@ class AdminSiteImagesTest extends TestCase
     /**
      * Test custom css uploading.
      */
-    public function test_canPostEditSiteCss()
+    public function testCanPostEditSiteCss()
     {
         // Create a fake file
         $file = UploadedFile::fake()->create('test.css', 50);

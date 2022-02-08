@@ -19,7 +19,7 @@ class DataGalleryProjectTest extends TestCase
     /**
      * Test project index access.
      */
-    public function test_canGetProjectIndex()
+    public function testCanGetProjectIndex()
     {
         $response = $this->actingAs(User::factory()->make())
             ->get('/admin/data/projects')
@@ -29,7 +29,7 @@ class DataGalleryProjectTest extends TestCase
     /**
      * Test project create access.
      */
-    public function test_canGetCreateProject()
+    public function testCanGetCreateProject()
     {
         $response = $this->actingAs(User::factory()->make())
             ->get('/admin/data/projects/create')
@@ -39,7 +39,7 @@ class DataGalleryProjectTest extends TestCase
     /**
      * Test project edit access.
      */
-    public function test_canGetEditProject()
+    public function testCanGetEditProject()
     {
         $response = $this->actingAs(User::factory()->make())
             ->get('/admin/data/projects/edit/'.Project::factory()->create()->id)
@@ -49,7 +49,7 @@ class DataGalleryProjectTest extends TestCase
     /**
      * Test project creation.
      */
-    public function test_canPostCreateProject()
+    public function testCanPostCreateProject()
     {
         // Define some basic data
         $data = [
@@ -70,7 +70,7 @@ class DataGalleryProjectTest extends TestCase
     /**
      * Test project editing.
      */
-    public function test_canPostEditProject()
+    public function testCanPostEditProject()
     {
         $project = Project::factory()->create();
 
@@ -94,7 +94,7 @@ class DataGalleryProjectTest extends TestCase
     /**
      * Test project creation with a description.
      */
-    public function test_canPostCreateProjectWithDescription()
+    public function testCanPostCreateProjectWithDescription()
     {
         // Define some basic data
         $data = [
@@ -117,7 +117,7 @@ class DataGalleryProjectTest extends TestCase
     /**
      * Test project editing with a description.
      */
-    public function test_canPostEditProjectWithDescription()
+    public function testCanPostEditProjectWithDescription()
     {
         $project = Project::factory()->create();
 
@@ -143,7 +143,7 @@ class DataGalleryProjectTest extends TestCase
     /**
      * Test project editing with a removed description.
      */
-    public function test_canPostEditProjectWithoutDescription()
+    public function testCanPostEditProjectWithoutDescription()
     {
         $project = Project::factory()->description()->create();
 
@@ -169,7 +169,7 @@ class DataGalleryProjectTest extends TestCase
     /**
      * Test project creation with visibility.
      */
-    public function test_canPostCreateProjectVisibility()
+    public function testCanPostCreateProjectVisibility()
     {
         // Define some basic data
         $data = [
@@ -192,7 +192,7 @@ class DataGalleryProjectTest extends TestCase
     /**
      * Test project editing with visibility.
      */
-    public function test_canPostEditProjectVisibility()
+    public function testCanPostEditProjectVisibility()
     {
         $project = Project::factory()->hidden()->create();
 
@@ -218,7 +218,7 @@ class DataGalleryProjectTest extends TestCase
     /**
      * Test project delete access.
      */
-    public function test_canGetDeleteProject()
+    public function testCanGetDeleteProject()
     {
         $response = $this->actingAs(User::factory()->make())
             ->get('/admin/data/projects/delete/'.Project::factory()->create()->id)
@@ -228,7 +228,7 @@ class DataGalleryProjectTest extends TestCase
     /**
      * Test project deletion.
      */
-    public function test_canPostDeleteProject()
+    public function testCanPostDeleteProject()
     {
         // Create a category to delete
         $project = Project::factory()->create();
