@@ -12,6 +12,7 @@ use App\Models\Gallery\Project;
 use App\Models\Gallery\Tag;
 use Config;
 use DB;
+use Illuminate\Http\UploadedFile;
 use Image;
 use Settings;
 
@@ -528,6 +529,7 @@ class GalleryService extends Service
             } else {
                 $data['has_image'] = 0;
             }
+
             if (!isset($data['is_visible'])) {
                 $data['is_visible'] = 0;
             }
@@ -624,6 +626,36 @@ class GalleryService extends Service
         }
 
         return $this->rollbackReturn(false);
+    }
+
+    /**
+     * Generates and saves test images for page image test purposes.
+     * This is a workaround for normal image processing depending on Intervention.
+     *
+     * @param \App\Models\Gallery\PieceImage $image
+     * @param bool                           $create
+     *
+     * @return bool
+     */
+    public function testImages($image, $create = true)
+    {
+        if ($create) {// Generate the fake files to save
+            $file['fullsize'] = UploadedFile::fake()->image('test_image.png');
+            $file['image'] = UploadedFile::fake()->image('test_watermarked.png');
+            $file['thumbnail'] = UploadedFile::fake()->image('test_thumb.png');
+
+            // Save the files in line with usual image handling.
+            $this->handleImage($file['fullsize'], $image->imagePath, $image->fullsizeFileName);
+            $this->handleImage($file['image'], $image->imagePath, $image->imageFileName);
+            $this->handleImage($file['thumbnail'], $image->imagePath, $image->thumbnailFileName);
+        } elseif (!$create) {
+            // Remove test files
+            unlink($image->imagePath.'/'.$image->thumbnailFileName);
+            unlink($image->imagePath.'/'.$image->imageFileName);
+            unlink($image->imagePath.'/'.$image->fullsizeFileName);
+        }
+
+        return true;
     }
 
     /**
