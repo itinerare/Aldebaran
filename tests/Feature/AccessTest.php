@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -12,35 +11,64 @@ class AccessTest extends TestCase
 
     // These tests check that visitor/user access to different routes is as expected
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+    }
+
     /**
      * Test getting the main page.
+     * This should be representative of all visitor-accessible routes.
+     *
+     * @dataProvider accessProvider
+     *
+     * @param bool $user
+     * @param int  $status
      */
-    public function testCanGetIndex()
+    public function testCanGetIndex($user, $status)
     {
-        // Attempt to access the site on the most basic level
-        $response = $this
-            ->get('/')
-            ->assertStatus(200);
+        if ($user) {
+            $response = $this->actingAs($this->user)->get('/');
+        } else {
+            $response = $this->get('/');
+        }
+
+        $response->assertStatus($status);
+    }
+
+    public function accessProvider()
+    {
+        return [
+            'visitor' => [0, 200],
+            'user'    => [1, 200],
+        ];
     }
 
     /**
-     * Ensure visitor cannot access admin routes.
+     * Test access to the admin index.
+     * This should be representative of all user-only routes.
+     *
+     * @dataProvider adminAccessProvider
+     *
+     * @param bool $user
+     * @param int  $status
      */
-    public function testVisitorCannotGetAdminIndex()
+    public function testAdminIndexAccess($user, $status)
     {
-        $response = $this
-            ->get('/admin')
-            ->assertStatus(302);
+        if ($user) {
+            $response = $this->actingAs($this->user)->get('/admin');
+        } else {
+            $response = $this->get('/admin');
+        }
+
+        $response->assertStatus($status);
     }
 
-    /**
-     * Ensure user can access admin routes.
-     */
-    public function testUserCanGetAdminIndex()
+    public function adminAccessProvider()
     {
-        // Try to access admin dashboard
-        $response = $this->actingAs(User::factory()->make())
-            ->get('/admin')
-            ->assertStatus(200);
+        return [
+            'visitor' => [0, 302],
+            'user'    => [1, 200],
+        ];
     }
 }

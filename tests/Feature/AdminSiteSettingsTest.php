@@ -2,49 +2,71 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
-use DB;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class AdminSiteSettingsTest extends TestCase
 {
-    use RefreshDatabase;
+    use RefreshDatabase, WithFaker;
 
     /******************************************************************************
         SITE SETTINGS
     *******************************************************************************/
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->value = $this->faker->unique()->domainWord();
+    }
 
     /**
      * Test site settings access.
      */
     public function testCanGetSiteSettingsIndex()
     {
-        $response = $this->actingAs(User::factory()->make())
+        $this->actingAs($this->user)
             ->get('/admin/site-settings')
             ->assertStatus(200);
     }
 
     /**
      * Test site setting editing.
+     *
+     * @dataProvider settingsProvider
+     *
+     * @param string     $key
+     * @param mixed|null $value
      */
-    public function testCanPostEditSiteSetting()
+    public function testCanPostEditSiteSetting($key, $value = null)
     {
         // Ensure site settings are present to modify
         $this->artisan('add-site-settings');
 
-        // Make sure the setting is true so as to consistently test
-        DB::table('site_settings')->where('key', 'commissions_on')->update(['value' => 1]);
-
         // Try to post data
-        $response = $this
-            ->actingAs(User::factory()->make())
-            ->post('/admin/site-settings/commissions_on', ['value' => 0]);
+        $this
+            ->actingAs($this->user)
+            ->post('/admin/site-settings/'.$key, ['value' => isset($value) ? $value : $this->value]);
 
         // Directly verify that the appropriate change has occurred
         $this->assertDatabaseHas('site_settings', [
-            'key'   => 'commissions_on',
-            'value' => 0,
+            'key'   => $key,
+            'value' => isset($value) ? $value : $this->value,
         ]);
+    }
+
+    public function settingsProvider()
+    {
+        // Values here should *not* be the defaults for the setting
+        // For settings which ordinarily use a string, provide null;
+        // The test will substitute in a generated string
+
+        return [
+            'site name'           => ['site_name', null],
+            'site description'    => ['site_desc', null],
+            'notification emails' => ['notif_emails', 1],
+            'commissions on'      => ['commissions_on', 0],
+        ];
     }
 }

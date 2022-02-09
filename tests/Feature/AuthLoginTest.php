@@ -22,7 +22,7 @@ class AuthLoginTest extends TestCase
      */
     public function testCanGetLoginForm()
     {
-        $response = $this
+        $this
             ->get('/login')
             ->assertStatus(200);
     }
@@ -35,12 +35,11 @@ class AuthLoginTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $response = $this->post('/login', [
-            'email'    => $user->email,
-            'password' => 'password',
-        ]);
-
-        $response->assertStatus(302);
+        $this
+            ->post('/login', [
+                'email'    => $user->email,
+                'password' => 'password',
+            ])->assertStatus(302);
 
         $this->assertAuthenticatedAs($user);
     }
@@ -53,12 +52,11 @@ class AuthLoginTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $response = $this->post('/login', [
-            'email'    => $user->email,
-            'password' => 'invalid',
-        ]);
-
-        $response->assertSessionHasErrors();
+        $this
+            ->post('/login', [
+                'email'    => $user->email,
+                'password' => 'invalid',
+            ])->assertSessionHasErrors();
 
         $this->assertGuest();
     }
@@ -68,11 +66,10 @@ class AuthLoginTest extends TestCase
      */
     public function testCanPostLogout()
     {
-        $response = $this
+        $this
             ->actingAs(User::factory()->create())
-            ->post('/logout');
-
-        $response->assertStatus(302);
+            ->post('/logout')
+            ->assertStatus(302);
 
         $this->assertGuest();
     }

@@ -3,7 +3,6 @@
 namespace Tests\Feature;
 
 use App\Models\Changelog;
-use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -16,12 +15,24 @@ class AdminChangelogTest extends TestCase
         CHANGELOG
     *******************************************************************************/
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // Create a changelog for editing, etc. purposes
+        $this->log = Changelog::factory()->create();
+
+        // Generate title and text values
+        $this->title = $this->faker()->unique()->domainWord();
+        $this->text = '<p>'.$this->faker->unique()->domainWord().'</p>';
+    }
+
     /**
      * Test changelog index access.
      */
     public function testCanGetChangelogIndex()
     {
-        $response = $this->actingAs(User::factory()->make())
+        $response = $this->actingAs($this->user)
             ->get('/admin/changelog')
             ->assertStatus(200);
     }
@@ -31,7 +42,7 @@ class AdminChangelogTest extends TestCase
      */
     public function testCanGetCreateChangelog()
     {
-        $response = $this->actingAs(User::factory()->make())
+        $response = $this->actingAs($this->user)
             ->get('/admin/changelog/create')
             ->assertStatus(200);
     }
@@ -43,178 +54,93 @@ class AdminChangelogTest extends TestCase
     {
         $log = Changelog::factory()->create();
 
-        $response = $this->actingAs(User::factory()->make())
+        $response = $this->actingAs($this->user)
             ->get('/admin/changelog/edit/'.$log->id)
             ->assertStatus(200);
     }
 
     /**
      * Test changelog creation.
+     *
+     * @dataProvider changelogProvider
+     *
+     * @param bool $title
+     * @param bool $isVisible
      */
-    public function testCanPostCreateChangelog()
+    public function testCanPostCreateChangelog($title, $isVisible)
     {
-        // Define some basic data
-        $data = [
-            'text' => '<p>'.$this->faker->unique()->domainWord().'</p>',
-        ];
+        $this
+            ->actingAs($this->user)
+            ->post('/admin/changelog/create', [
+                'name'       => $title ? $this->title : null,
+                'text'       => $this->text,
+                'is_visible' => $isVisible,
+            ]);
 
-        // Try to post data
-        $response = $this
-            ->actingAs(User::factory()->make())
-            ->post('/admin/changelog/create', $data);
-
-        // Directly verify that the appropriate change has occurred
         $this->assertDatabaseHas('changelog_entries', [
-            'name' => null,
-            'text' => $data['text'],
+            'name'       => null,
+            'name'       => $title ? $this->title : null,
+            'text'       => $this->text,
+            'is_visible' => $isVisible,
         ]);
     }
 
     /**
      * Test changelog editing.
+     *
+     * @dataProvider changelogProvider
+     *
+     * @param bool $title
+     * @param bool $isVisible
      */
-    public function testCanPostEditChangelog()
+    public function testCanPostEditChangelog($title, $isVisible)
     {
-        $log = Changelog::factory()->create();
+        $this
+            ->actingAs($this->user)
+            ->post('/admin/changelog/edit/'.$this->log->id, [
+                'name'       => $title ? $this->title : null,
+                'text'       => $this->text,
+                'is_visible' => $isVisible,
+            ]);
 
-        // Define some basic data
-        $data = [
-            'text' => '<p>'.$this->faker->unique()->domainWord().'</p>',
-        ];
-
-        // Try to post data
-        $response = $this
-            ->actingAs(User::factory()->make())
-            ->post('/admin/changelog/edit/'.$log->id, $data);
-
-        // Directly verify that the appropriate change has occurred
         $this->assertDatabaseHas('changelog_entries', [
-            'id'   => $log->id,
-            'name' => null,
-            'text' => $data['text'],
+            'id'         => $this->log->id,
+            'name'       => $title ? $this->title : null,
+            'text'       => $this->text,
+            'is_visible' => $isVisible,
         ]);
     }
 
-    /**
-     * Test changelog creation with title.
-     */
-    public function testCanPostCreateChangelogWithTitle()
+    public function changelogProvider()
     {
-        // Define some basic data
-        $data = [
-            'name' => $this->faker->unique()->domainWord(),
-            'text' => '<p>'.$this->faker->unique()->domainWord().'</p>',
+        return [
+            'minimal'           => [0, 1],
+            'title'             => [1, 1],
+            'visible'           => [0, 1],
+            'hidden'            => [0, 0],
+            'hidden with title' => [1, 0],
         ];
-
-        // Try to post data
-        $response = $this
-            ->actingAs(User::factory()->make())
-            ->post('/admin/changelog/create', $data);
-
-        // Directly verify that the appropriate change has occurred
-        $this->assertDatabaseHas('changelog_entries', [
-            'name' => $data['name'],
-            'text' => $data['text'],
-        ]);
     }
 
     /**
-     * Test changelog editing with title.
-     */
-    public function testCanPostEditChangelogWithTitle()
-    {
-        $log = Changelog::factory()->create();
-
-        // Define some basic data
-        $data = [
-            'name' => $this->faker->unique()->domainWord(),
-            'text' => '<p>'.$this->faker->unique()->domainWord().'</p>',
-        ];
-
-        // Try to post data
-        $response = $this
-            ->actingAs(User::factory()->make())
-            ->post('/admin/changelog/edit/'.$log->id, $data);
-
-        // Directly verify that the appropriate change has occurred
-        $this->assertDatabaseHas('changelog_entries', [
-            'id'   => $log->id,
-            'name' => $data['name'],
-            'text' => $data['text'],
-        ]);
-    }
-
-    /**
-     * Test changelog editing with a removed title.
+     * Test changelog editing, removing the a title.
      */
     public function testCanPostEditChangelogWithoutTitle()
     {
         $log = Changelog::factory()->title()->create();
 
-        // Define some basic data
-        $data = [
-            'name' => null,
-            'text' => '<p>'.$this->faker->unique()->domainWord().'</p>',
-        ];
+        $this
+            ->actingAs($this->user)
+            ->post('/admin/changelog/edit/'.$log->id, [
+                'name'       => null,
+                'text'       => $this->text,
+                'is_visible' => 1,
+            ]);
 
-        // Try to post data
-        $response = $this
-            ->actingAs(User::factory()->make())
-            ->post('/admin/changelog/edit/'.$log->id, $data);
-
-        // Directly verify that the appropriate change has occurred
-        $this->assertDatabaseHas('changelog_entries', [
-            'id'   => $log->id,
-            'name' => $data['name'],
-            'text' => $data['text'],
-        ]);
-    }
-
-    /**
-     * Test changelog creation with visibility.
-     */
-    public function testCanPostCreateChangelogVisibility()
-    {
-        // Define some basic data
-        $data = [
-            'text'       => '<p>'.$this->faker->unique()->domainWord().'</p>',
-            'is_visible' => 1,
-        ];
-
-        // Try to post data
-        $response = $this
-            ->actingAs(User::factory()->make())
-            ->post('/admin/changelog/create', $data);
-
-        // Directly verify that the appropriate change has occurred
-        $this->assertDatabaseHas('changelog_entries', [
-            'text'       => $data['text'],
-            'is_visible' => 1,
-        ]);
-    }
-
-    /**
-     * Test changelog editing with visibility.
-     */
-    public function testCanPostEditChangelogVisibility()
-    {
-        $log = Changelog::factory()->hidden()->create();
-
-        // Define some basic data
-        $data = [
-            'text'       => '<p>'.$this->faker->unique()->domainWord().'</p>',
-            'is_visible' => 1,
-        ];
-
-        // Try to post data
-        $response = $this
-            ->actingAs(User::factory()->make())
-            ->post('/admin/changelog/edit/'.$log->id, $data);
-
-        // Directly verify that the appropriate change has occurred
         $this->assertDatabaseHas('changelog_entries', [
             'id'         => $log->id,
-            'text'       => $data['text'],
+            'name'       => null,
+            'text'       => $this->text,
             'is_visible' => 1,
         ]);
     }
@@ -224,8 +150,8 @@ class AdminChangelogTest extends TestCase
      */
     public function testCanGetDeleteChangelog()
     {
-        $response = $this->actingAs(User::factory()->make())
-            ->get('/admin/changelog/delete/'.Changelog::factory()->create()->id)
+        $this->actingAs($this->user)
+            ->get('/admin/changelog/delete/'.$this->log->id)
             ->assertStatus(200);
     }
 
@@ -234,15 +160,10 @@ class AdminChangelogTest extends TestCase
      */
     public function testCanPostDeleteChangelog()
     {
-        // Create a category to delete
-        $log = Changelog::factory()->create();
+        $this
+            ->actingAs($this->user)
+            ->post('/admin/changelog/delete/'.$this->log->id);
 
-        // Try to post data
-        $response = $this
-            ->actingAs(User::factory()->make())
-            ->post('/admin/changelog/delete/'.$log->id);
-
-        // Check that there are fewer categories than before
-        $this->assertDeleted($log);
+        $this->assertDeleted($this->log);
     }
 }

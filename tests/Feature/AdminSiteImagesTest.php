@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
@@ -16,107 +15,67 @@ class AdminSiteImagesTest extends TestCase
         SITE IMAGES
     *******************************************************************************/
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // Create a fake file to test image uploading
+        $this->file = UploadedFile::fake()->image('test_image.png');
+    }
+
     /**
      * Test site image index access.
      */
     public function testCanGetSiteImagesIndex()
     {
-        $response = $this->actingAs(User::factory()->make())
+        $this->actingAs($this->user)
             ->get('/admin/site-images')
             ->assertStatus(200);
     }
 
     /**
-     * Test avatar image uploading.
+     * Test image uploading.
+     *
+     * @dataProvider siteImageProvider
+     *
+     * @param string $key
      */
-    public function testCanPostEditAvatar()
+    public function testCanPostUploadImage($key)
     {
-        // Create a fake file
-        $file = UploadedFile::fake()->image('test_image.png');
-
-        // Remove the current logo file if it exists
-        if (File::exists(public_path('images/assets/avatar.png'))) {
-            unlink('public/images/assets/avatar.png');
+        // Remove the current file if it exists
+        if (File::exists(public_path('images/assets/'.$key.'.png'))) {
+            unlink('public/images/assets/'.$key.'.png');
         }
 
         // Try to post data
-        $response = $this
-            ->actingAs(User::factory()->make())
+        $this
+            ->actingAs($this->user)
             ->post('/admin/site-images/upload', [
-                'file' => $file,
-                'key'  => 'avatar',
+                'file' => $this->file,
+                'key'  => $key,
             ]);
 
         // Check that the file is now present
         $this->
-            assertTrue(File::exists(public_path('images/assets/avatar.png')));
+            assertTrue(File::exists(public_path('images/assets/'.$key.'.png')));
 
         // Replace with default images for tidiness
         $this->artisan('copy-default-images');
     }
 
-    /**
-     * Test watermark image uploading.
-     */
-    public function testCanPostEditWatermark()
+    public function siteImageProvider()
     {
-        // Create a fake file
-        $file = UploadedFile::fake()->image('test_image.png');
-
-        // Remove the current logo file if it exists
-        if (File::exists(public_path('images/assets/watermark.png'))) {
-            unlink('public/images/assets/watermark.png');
-        }
-
-        // Try to post data
-        $response = $this
-            ->actingAs(User::factory()->make())
-            ->post('/admin/site-images/upload', [
-                'file' => $file,
-                'key'  => 'watermark',
-            ]);
-
-        // Check that the file is now present
-        $this->
-            assertTrue(File::exists(public_path('images/assets/watermark.png')));
-
-        // Replace with default images for tidiness
-        $this->artisan('copy-default-images');
-    }
-
-    /**
-     * Test sidebar image uploading.
-     */
-    public function testCanPostEditSidebar()
-    {
-        // Create a fake file
-        $file = UploadedFile::fake()->image('test_image.png');
-
-        // Remove the current logo file if it exists
-        if (File::exists(public_path('images/assets/sidebar_bg.png'))) {
-            unlink('public/images/assets/sidebar_bg.png');
-        }
-
-        // Try to post data
-        $response = $this
-            ->actingAs(User::factory()->make())
-            ->post('/admin/site-images/upload', [
-                'file' => $file,
-                'key'  => 'sidebar_bg',
-            ]);
-
-        // Check that the file is now present
-        $this->
-            assertTrue(File::exists(public_path('images/assets/sidebar_bg.png')));
-
-        // Replace with default images for tidiness
-        $this->artisan('copy-default-images');
+        return [
+            'avatar'    => ['avatar'],
+            'watermark' => ['watermark'],
+            'sidebar'   => ['sidebar_bg'],
+        ];
     }
 
     /**
      * Test custom css uploading.
      */
-    public function testCanPostEditSiteCss()
+    public function testCanPostUploadSiteCss()
     {
         // Create a fake file
         $file = UploadedFile::fake()->create('test.css', 50);
@@ -127,8 +86,8 @@ class AdminSiteImagesTest extends TestCase
         }
 
         // Try to post data
-        $response = $this
-            ->actingAs(User::factory()->make())
+        $this
+            ->actingAs($this->user)
             ->post('/admin/site-images/upload/css', [
                 'file' => $file,
             ]);
