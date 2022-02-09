@@ -3,7 +3,6 @@
 namespace Tests\Feature;
 
 use App\Models\Gallery\Program;
-use App\Models\User;
 use App\Services\GalleryService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -19,12 +18,31 @@ class DataGalleryProgramTest extends TestCase
         GALLERY DATA: PROGRAMS
     *******************************************************************************/
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // Create a program for editing, etc. purposes
+        $this->program = Program::factory()->create();
+
+        // Generate some test data
+        $this->name = $this->faker->unique()->domainWord();
+        $this->file = UploadedFile::fake()->image('test_image.png');
+    }
+
+    protected function tearDown(): void
+    {
+        if (File::exists(public_path('images/programs/'.$this->program->id.'-image.png'))) {
+            unlink('public/images/programs/'.$this->program->id.'-image.png');
+        }
+    }
+
     /**
      * Test program index access.
      */
     public function testCanGetProgramIndex()
     {
-        $response = $this->actingAs(User::factory()->make())
+        $this->actingAs($this->user)
             ->get('/admin/data/programs')
             ->assertStatus(200);
     }
@@ -34,7 +52,7 @@ class DataGalleryProgramTest extends TestCase
      */
     public function testCanGetCreateProgram()
     {
-        $response = $this->actingAs(User::factory()->make())
+        $this->actingAs($this->user)
             ->get('/admin/data/programs/create')
             ->assertStatus(200);
     }
@@ -44,203 +62,97 @@ class DataGalleryProgramTest extends TestCase
      */
     public function testCanGetEditProgram()
     {
-        $response = $this->actingAs(User::factory()->make())
-            ->get('/admin/data/programs/edit/'.Program::factory()->create()->id)
+        $this->actingAs($this->user)
+            ->get('/admin/data/programs/edit/'.$this->program->id)
             ->assertStatus(200);
     }
 
     /**
      * Test program creation.
+     *
+     * @dataProvider programCreateProvider
+     *
+     * @param bool $image
+     * @param bool $isVisible
      */
-    public function testCanPostCreateProgram()
+    public function testCanPostCreateProgram($image, $isVisible)
     {
-        // Define some basic data
-        $data = [
-            'name' => $this->faker->unique()->domainWord(),
-        ];
+        $this
+            ->actingAs($this->user)
+            ->post('/admin/data/programs/create', [
+                'name'       => $this->name,
+                'image'      => $image ? $this->file : null,
+                'is_visible' => $isVisible,
+            ]);
 
-        // Try to post data
-        $response = $this
-            ->actingAs(User::factory()->make())
-            ->post('/admin/data/programs/create', $data);
-
-        // Directly verify that the appropriate change has occurred
         $this->assertDatabaseHas('programs', [
-            'name' => $data['name'],
+            'name'       => $this->name,
+            'has_image'  => $image,
+            'is_visible' => $isVisible,
         ]);
+
+        if ($image) {
+            // Locate the created program to properly check for its image
+            // and perform cleanup after the fact
+            $this->program = Program::where('name', $this->name)->first();
+
+            $this->assertTrue(
+                File::exists(public_path('images/programs/'.$this->program->id.'-image.png'))
+            );
+        }
+    }
+
+    public function programCreateProvider()
+    {
+        return $this->booleanSequences(2);
     }
 
     /**
      * Test program editing.
+     *
+     * @dataProvider programEditProvider
+     *
+     * @param bool $hasImage
+     * @param bool $image
+     * @param bool $removeImage
+     * @param bool $isVisible
      */
-    public function testCanPostEditProgram()
+    public function testCanPostEditProgram($hasImage, $image, $removeImage, $isVisible)
     {
-        $program = Program::factory()->create();
+        if ($hasImage) {
+            (new GalleryService)->handleImage(UploadedFile::fake()->image('alt_test_image.png'), $this->program->imagePath, $this->program->imageFileName);
+            $this->program->update(['has_image' => 1]);
+        }
 
-        // Define some basic data
-        $data = [
-            'name' => $this->faker->unique()->domainWord(),
-        ];
+        $this
+            ->actingAs($this->user)
+            ->post('/admin/data/programs/edit/'.$this->program->id, [
+                'name'         => $this->name,
+                'image'        => $image ? $this->file : null,
+                'is_visible'   => $isVisible,
+                'remove_image' => $removeImage,
+            ]);
 
-        // Try to post data
-        $response = $this
-            ->actingAs(User::factory()->make())
-            ->post('/admin/data/programs/edit/'.$program->id, $data);
-
-        // Directly verify that the appropriate change has occurred
         $this->assertDatabaseHas('programs', [
-            'id'   => $program->id,
-            'name' => $data['name'],
-        ]);
-    }
-
-    /**
-     * Test program creation with an icon.
-     */
-    public function testCanPostCreateProgramWithIcon()
-    {
-        // Define some basic data
-        $data = [
-            'name'  => $this->faker->unique()->domainWord(),
-            'image' => UploadedFile::fake()->image('test_image.png'),
-        ];
-
-        // Try to post data
-        $response = $this
-            ->actingAs(User::factory()->make())
-            ->post('/admin/data/programs/create', $data);
-
-        $program = Program::where('name', $data['name'])->first();
-
-        // Directly verify that the appropriate change has occurred
-        $this->assertDatabaseHas('programs', [
-            'name'      => $data['name'],
-            'has_image' => 1,
+            'id'         => $this->program->id,
+            'name'       => $this->name,
+            'has_image'  => ($hasImage && !$removeImage) || $image ? 1 : 0,
+            'is_visible' => $isVisible,
         ]);
 
-        // Check that the file is now present
-        $this->assertTrue(File::exists(public_path('images/programs/'.$program->id.'-image.png')));
-
-        // Perform cleanup
-        if (File::exists(public_path('images/programs/'.$program->id.'-image.png'))) {
-            unlink('public/images/programs/'.$program->id.'-image.png');
+        if ($image) {
+            $this->assertTrue(
+                File::exists(public_path('images/programs/'.$this->program->id.'-image.png'))
+            );
+        } elseif ($removeImage) {
+            // Check that the file is not present
+            $this->assertFalse(File::exists(public_path('images/programs/'.$this->program->id.'-image.png')));
         }
     }
 
-    /**
-     * Test program editing with an icon.
-     */
-    public function testCanPostEditProgramWithIcon()
+    public function programEditProvider()
     {
-        $program = Program::factory()->create();
-
-        // Define some basic data
-        $data = [
-            'name'  => $this->faker->unique()->domainWord(),
-            'image' => UploadedFile::fake()->image('test_image.png'),
-        ];
-
-        // Try to post data
-        $response = $this
-            ->actingAs(User::factory()->make())
-            ->post('/admin/data/programs/edit/'.$program->id, $data);
-
-        // Directly verify that the appropriate change has occurred
-        $this->assertDatabaseHas('programs', [
-            'id'        => $program->id,
-            'name'      => $data['name'],
-            'has_image' => 1,
-        ]);
-
-        // Check that the file is now present
-        $this->assertTrue(File::exists(public_path('images/programs/'.$program->id.'-image.png')));
-
-        // Perform cleanup
-        if (File::exists(public_path('images/programs/'.$program->id.'-image.png'))) {
-            unlink('public/images/programs/'.$program->id.'-image.png');
-        }
-    }
-
-    /**
-     * Test program editing with a removed icon.
-     */
-    public function testCanPostEditProgramWithoutIcon()
-    {
-        // Set up the program and add an icon
-        $program = Program::factory()->create();
-
-        (new GalleryService)->handleImage(UploadedFile::fake()->image('test_image.png'), $program->imagePath, $program->imageFileName);
-        $program->update(['has_image' => 1]);
-
-        // Define some basic data
-        $data = [
-            'name'         => $this->faker->unique()->domainWord(),
-            'remove_image' => 1,
-        ];
-
-        // Try to post data
-        $response = $this
-            ->actingAs(User::factory()->make())
-            ->post('/admin/data/programs/edit/'.$program->id, $data);
-
-        // Directly verify that the appropriate change has occurred
-        $this->assertDatabaseHas('programs', [
-            'id'        => $program->id,
-            'name'      => $data['name'],
-            'has_image' => 0,
-        ]);
-
-        // Check that the file is not present
-        $this->assertFalse(File::exists(public_path('images/programs/'.$program->id.'-image.png')));
-    }
-
-    /**
-     * Test program creation with visibility.
-     */
-    public function testCanPostCreateProgramVisibility()
-    {
-        // Define some basic data
-        $data = [
-            'name'       => $this->faker->unique()->domainWord(),
-            'is_visible' => 1,
-        ];
-
-        // Try to post data
-        $response = $this
-            ->actingAs(User::factory()->make())
-            ->post('/admin/data/programs/create', $data);
-
-        // Directly verify that the appropriate change has occurred
-        $this->assertDatabaseHas('programs', [
-            'name'       => $data['name'],
-            'is_visible' => 1,
-        ]);
-    }
-
-    /**
-     * Test program editing with visibility.
-     */
-    public function testCanPostEditProgramVisibility()
-    {
-        $program = Program::factory()->hidden()->create();
-
-        // Define some basic data
-        $data = [
-            'name'       => $this->faker->unique()->domainWord(),
-            'is_visible' => 1,
-        ];
-
-        // Try to post data
-        $response = $this
-            ->actingAs(User::factory()->make())
-            ->post('/admin/data/programs/edit/'.$program->id, $data);
-
-        // Directly verify that the appropriate change has occurred
-        $this->assertDatabaseHas('programs', [
-            'id'         => $program->id,
-            'name'       => $data['name'],
-            'is_visible' => 1,
-        ]);
+        return $this->booleanSequences(4);
     }
 
     /**
@@ -248,8 +160,8 @@ class DataGalleryProgramTest extends TestCase
      */
     public function testCanGetDeleteProgram()
     {
-        $response = $this->actingAs(User::factory()->make())
-            ->get('/admin/data/programs/delete/'.Program::factory()->create()->id)
+        $this->actingAs($this->user)
+            ->get('/admin/data/programs/delete/'.$this->program->id)
             ->assertStatus(200);
     }
 
@@ -258,15 +170,10 @@ class DataGalleryProgramTest extends TestCase
      */
     public function testCanPostDeleteProgram()
     {
-        // Create a category to delete
-        $program = Program::factory()->create();
+        $this
+            ->actingAs($this->user)
+            ->post('/admin/data/programs/delete/'.$this->program->id);
 
-        // Try to post data
-        $response = $this
-            ->actingAs(User::factory()->make())
-            ->post('/admin/data/programs/delete/'.$program->id);
-
-        // Check that there are fewer categories than before
-        $this->assertDeleted($program);
+        $this->assertDeleted($this->program);
     }
 }

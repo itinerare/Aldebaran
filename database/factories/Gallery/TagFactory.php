@@ -30,6 +30,20 @@ class TagFactory extends Factory
     }
 
     /**
+     * Generate a tag with a description.
+     *
+     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     */
+    public function description()
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'description' => $this->faker->unique()->domainWord(),
+            ];
+        });
+    }
+
+    /**
      * Generate a tag that is hidden.
      *
      * @return \Illuminate\Database\Eloquent\Factories\Factory
@@ -48,7 +62,7 @@ class TagFactory extends Factory
      *
      * @return \Illuminate\Database\Eloquent\Factories\Factory
      */
-    public function galleryHide()
+    public function inactive()
     {
         return $this->state(function (array $attributes) {
             return [

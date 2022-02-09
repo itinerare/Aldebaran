@@ -21,6 +21,8 @@ class AdminChangelogTest extends TestCase
 
         // Create a changelog for editing, etc. purposes
         $this->log = Changelog::factory()->create();
+        $this->dataLog = Changelog::factory()
+            ->title()->hidden()->create();
 
         // Generate title and text values
         $this->title = $this->faker()->unique()->domainWord();
@@ -64,10 +66,11 @@ class AdminChangelogTest extends TestCase
      *
      * @dataProvider changelogProvider
      *
+     * @param bool $hasData
      * @param bool $title
      * @param bool $isVisible
      */
-    public function testCanPostCreateChangelog($title, $isVisible)
+    public function testCanPostCreateChangelog($hasData, $title, $isVisible)
     {
         $this
             ->actingAs($this->user)
@@ -90,21 +93,22 @@ class AdminChangelogTest extends TestCase
      *
      * @dataProvider changelogProvider
      *
+     * @param bool $hasData
      * @param bool $title
      * @param bool $isVisible
      */
-    public function testCanPostEditChangelog($title, $isVisible)
+    public function testCanPostEditChangelog($hasData, $title, $isVisible)
     {
         $this
             ->actingAs($this->user)
-            ->post('/admin/changelog/edit/'.$this->log->id, [
+            ->post('/admin/changelog/edit/'.($hasData ? $this->dataLog->id : $this->log->id), [
                 'name'       => $title ? $this->title : null,
                 'text'       => $this->text,
                 'is_visible' => $isVisible,
             ]);
 
         $this->assertDatabaseHas('changelog_entries', [
-            'id'         => $this->log->id,
+            'id'         => $hasData ? $this->dataLog->id : $this->log->id,
             'name'       => $title ? $this->title : null,
             'text'       => $this->text,
             'is_visible' => $isVisible,
@@ -113,36 +117,8 @@ class AdminChangelogTest extends TestCase
 
     public function changelogProvider()
     {
-        return [
-            'minimal'           => [0, 1],
-            'title'             => [1, 1],
-            'visible'           => [0, 1],
-            'hidden'            => [0, 0],
-            'hidden with title' => [1, 0],
-        ];
-    }
-
-    /**
-     * Test changelog editing, removing the a title.
-     */
-    public function testCanPostEditChangelogWithoutTitle()
-    {
-        $log = Changelog::factory()->title()->create();
-
-        $this
-            ->actingAs($this->user)
-            ->post('/admin/changelog/edit/'.$log->id, [
-                'name'       => null,
-                'text'       => $this->text,
-                'is_visible' => 1,
-            ]);
-
-        $this->assertDatabaseHas('changelog_entries', [
-            'id'         => $log->id,
-            'name'       => null,
-            'text'       => $this->text,
-            'is_visible' => 1,
-        ]);
+        // Get all possible sequences
+        return $this->booleanSequences(3);
     }
 
     /**

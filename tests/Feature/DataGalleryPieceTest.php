@@ -5,9 +5,6 @@ namespace Tests\Feature;
 use App\Models\Gallery\Piece;
 use App\Models\Gallery\PieceProgram;
 use App\Models\Gallery\PieceTag;
-use App\Models\Gallery\Program;
-use App\Models\Gallery\Project;
-use App\Models\Gallery\Tag;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -22,12 +19,32 @@ class DataGalleryPieceTest extends TestCase
         GALLERY DATA: PIECES
     *******************************************************************************/
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // Create a piece for editing, etc. purposes
+        $this->piece = Piece::factory()->create();
+
+        // Create another piece with full data, to test removal
+        // of different information
+        $this->dataPiece = Piece::factory()
+            ->description()->timestamp()->goodExample()
+            ->create();
+        $this->tag = PieceTag::factory()->piece($this->dataPiece->id)->create();
+        $this->program = PieceProgram::factory()->piece($this->dataPiece->id)->create();
+
+        // Generate some test information
+        $this->name = $this->faker()->unique()->domainWord();
+        $this->text = '<p>'.$this->faker->unique()->domainWord().'</p>';
+    }
+
     /**
      * Test piece index access.
      */
     public function testCanGetPieceIndex()
     {
-        $response = $this->actingAs(User::factory()->make())
+        $this->actingAs($this->user)
             ->get('/admin/data/pieces')
             ->assertStatus(200);
     }
@@ -37,7 +54,7 @@ class DataGalleryPieceTest extends TestCase
      */
     public function testCanGetCreatePiece()
     {
-        $response = $this->actingAs(User::factory()->make())
+        $this->actingAs($this->user)
             ->get('/admin/data/pieces/create')
             ->assertStatus(200);
     }
@@ -47,476 +64,145 @@ class DataGalleryPieceTest extends TestCase
      */
     public function testCanGetEditPiece()
     {
-        $piece = Piece::factory()->create();
-
-        $response = $this->actingAs(User::factory()->make())
-            ->get('/admin/data/pieces/edit/'.$piece->id)
+        $this->actingAs($this->user)
+            ->get('/admin/data/pieces/edit/'.$this->piece->id)
             ->assertStatus(200);
     }
 
     /**
      * Test piece creation.
+     *
+     * @dataProvider pieceProvider
+     *
+     * @param bool $hasData
+     * @param bool $description
+     * @param bool $isVisible
+     * @param bool $timestamp
+     * @param bool $tag
+     * @param bool $program
+     * @param bool $goodExample
      */
-    public function testCanPostCreatePiece()
+    public function testCanPostCreatePiece($hasData, $description, $isVisible, $timestamp, $tag, $program, $goodExample)
     {
-        // Define some basic data
-        $data = [
-            'name'       => $this->faker->unique()->domainWord(),
-            'project_id' => Project::factory()->create()->id,
-        ];
-
-        // Try to post data
-        $response = $this
+        $this
             ->actingAs(User::factory()->make())
-            ->post('/admin/data/pieces/create', $data);
+            ->post('/admin/data/pieces/create', [
+                'name'         => $this->name,
+                'project_id'   => $this->piece->project_id,
+                'description'  => $description ? $this->text : null,
+                'is_visible'   => $isVisible,
+                'timestamp'    => $timestamp ? Carbon::now() : null,
+                'tags'         => $tag ? [0 => $this->tag->tag_id] : null,
+                'programs'     => $program ? [0 => $this->program->program_id] : null,
+                'good_example' => $goodExample,
+            ]);
 
-        // Directly verify that the appropriate change has occurred
         $this->assertDatabaseHas('pieces', [
-            'name' => $data['name'],
+            'name'         => $this->name,
+            'description'  => $description ? $this->text : null,
+            'is_visible'   => $isVisible,
+            'timestamp'    => $timestamp ? Carbon::now() : null,
+            'good_example' => $goodExample,
         ]);
+
+        // Get the created piece for proper checking
+        $this->piece = Piece::where('name', $this->name)->first();
+
+        if ($tag) {
+            $this->assertDatabaseHas('piece_tags', [
+                'piece_id' => $this->piece->id,
+                'tag_id'   => $this->tag->tag_id,
+            ]);
+        }
+
+        if ($program) {
+            $this->assertDatabaseHas('piece_programs', [
+                'piece_id'   => $this->piece->id,
+                'program_id' => $this->program->program_id,
+            ]);
+        }
     }
 
     /**
      * Test piece editing.
+     *
+     * @dataProvider pieceProvider
+     *
+     * @param bool $hasData
+     * @param bool $description
+     * @param bool $isVisible
+     * @param bool $timestamp
+     * @param bool $tag
+     * @param bool $program
+     * @param bool $goodExample
      */
-    public function testCanPostEditPiece()
+    public function testCanPostEditPiece($hasData, $description, $isVisible, $timestamp, $tag, $program, $goodExample)
     {
-        $piece = Piece::factory()->create();
+        $this
+            ->actingAs($this->user)
+            ->post('/admin/data/pieces/edit/'.($hasData ? $this->dataPiece->id : $this->piece->id), [
+                'name'         => $this->name,
+                'project_id'   => $hasData ? $this->dataPiece->project_id : $this->piece->project_id,
+                'description'  => $description ? $this->text : null,
+                'is_visible'   => $isVisible,
+                'timestamp'    => $timestamp ? Carbon::now() : null,
+                'tags'         => $tag ? [0 => $this->tag->tag_id] : null,
+                'programs'     => $program ? [0 => $this->program->program_id] : null,
+                'good_example' => $goodExample,
+            ]);
 
-        // Define some basic data
-        $data = [
-            'name'       => $this->faker->unique()->domainWord(),
-            'project_id' => $piece->project_id,
-        ];
-
-        // Try to post data
-        $response = $this
-            ->actingAs(User::factory()->make())
-            ->post('/admin/data/pieces/edit/'.$piece->id, $data);
-
-        // Directly verify that the appropriate change has occurred
         $this->assertDatabaseHas('pieces', [
-            'id'   => $piece->id,
-            'name' => $data['name'],
+            'id'           => $hasData ? $this->dataPiece->id : $this->piece->id,
+            'name'         => $this->name,
+            'description'  => $description ? $this->text : null,
+            'is_visible'   => $isVisible,
+            'timestamp'    => $timestamp ? Carbon::now() : null,
+            'good_example' => $goodExample,
         ]);
+
+        if ($hasData) {
+            if (!$tag) {
+                $this->assertDeleted($this->tag);
+            }
+            if (!$program) {
+                $this->assertDeleted($this->program);
+            }
+        } else {
+            if ($tag) {
+                $this->assertDatabaseHas('piece_tags', [
+                    'piece_id' => $this->piece->id,
+                    'tag_id'   => $this->tag->tag_id,
+                ]);
+            }
+
+            if ($program) {
+                $this->assertDatabaseHas('piece_programs', [
+                    'piece_id'   => $this->piece->id,
+                    'program_id' => $this->program->program_id,
+                ]);
+            }
+        }
     }
 
-    /**
-     * Test piece creation with description.
-     */
-    public function testCanPostCreatePieceWithDescription()
+    public function pieceProvider()
     {
-        // Define some basic data
-        $data = [
-            'name'        => $this->faker->unique()->domainWord(),
-            'project_id'  => Project::factory()->create()->id,
-            'description' => '<p>'.$this->faker->unique()->domainWord().'</p>',
+        // ($hasData, $description, $isVisible, $timestamp, $tag, $program, $goodExample)
+
+        return [
+            'basic'              => [0, 0, 1, 0, 0, 0, 0],
+            'description'        => [0, 1, 1, 0, 0, 0, 0],
+            'remove description' => [1, 0, 1, 0, 0, 0, 0],
+            'visible'            => [0, 0, 1, 0, 0, 0, 0],
+            'hidden'             => [1, 0, 0, 0, 0, 0, 0],
+            'timestamp'          => [0, 0, 1, 1, 0, 0, 0],
+            'remove timestamp'   => [1, 0, 1, 0, 0, 0, 0],
+            'tag'                => [0, 0, 1, 0, 1, 0, 0],
+            'remove tag'         => [1, 0, 1, 0, 0, 0, 0],
+            'program'            => [0, 0, 1, 0, 0, 1, 0],
+            'remove program'     => [1, 0, 1, 0, 0, 0, 0],
+            'good example'       => [0, 0, 1, 0, 0, 0, 1],
+            'bad example'        => [1, 0, 1, 0, 0, 0, 0],
         ];
-
-        // Try to post data
-        $response = $this
-            ->actingAs(User::factory()->make())
-            ->post('/admin/data/pieces/create', $data);
-
-        // Directly verify that the appropriate change has occurred
-        $this->assertDatabaseHas('pieces', [
-            'name'        => $data['name'],
-            'description' => $data['description'],
-        ]);
-    }
-
-    /**
-     * Test piece editing with description.
-     */
-    public function testCanPostEditPieceWithDescription()
-    {
-        $piece = Piece::factory()->create();
-
-        // Define some basic data
-        $data = [
-            'name'        => $this->faker->unique()->domainWord(),
-            'project_id'  => $piece->project_id,
-            'description' => '<p>'.$this->faker->unique()->domainWord().'</p>',
-        ];
-
-        // Try to post data
-        $response = $this
-            ->actingAs(User::factory()->make())
-            ->post('/admin/data/pieces/edit/'.$piece->id, $data);
-
-        // Directly verify that the appropriate change has occurred
-        $this->assertDatabaseHas('pieces', [
-            'id'          => $piece->id,
-            'name'        => $data['name'],
-            'description' => $data['description'],
-        ]);
-    }
-
-    /**
-     * Test piece editing with a removed description.
-     */
-    public function testCanPostEditPieceWithoutDescription()
-    {
-        $piece = Piece::factory()->description()->create();
-
-        // Define some basic data
-        $data = [
-            'name'        => $this->faker->unique()->domainWord(),
-            'project_id'  => $piece->project_id,
-            'description' => null,
-        ];
-
-        // Try to post data
-        $response = $this
-            ->actingAs(User::factory()->make())
-            ->post('/admin/data/pieces/edit/'.$piece->id, $data);
-
-        // Directly verify that the appropriate change has occurred
-        $this->assertDatabaseHas('pieces', [
-            'id'          => $piece->id,
-            'name'        => $data['name'],
-            'description' => $data['description'],
-        ]);
-    }
-
-    /**
-     * Test piece creation with visibility.
-     */
-    public function testCanPostCreatePieceVisibility()
-    {
-        // Define some basic data
-        $data = [
-            'name'       => $this->faker->unique()->domainWord(),
-            'project_id' => Project::factory()->create()->id,
-            'is_visible' => 1,
-        ];
-
-        // Try to post data
-        $response = $this
-            ->actingAs(User::factory()->make())
-            ->post('/admin/data/pieces/create', $data);
-
-        // Directly verify that the appropriate change has occurred
-        $this->assertDatabaseHas('pieces', [
-            'name'       => $data['name'],
-            'is_visible' => 1,
-        ]);
-    }
-
-    /**
-     * Test piece editing with visibility.
-     */
-    public function testCanPostEditPieceVisibility()
-    {
-        $piece = Piece::factory()->hidden()->create();
-
-        // Define some basic data
-        $data = [
-            'name'       => $this->faker->unique()->domainWord(),
-            'project_id' => $piece->project_id,
-            'is_visible' => 1,
-        ];
-
-        // Try to post data
-        $response = $this
-            ->actingAs(User::factory()->make())
-            ->post('/admin/data/pieces/edit/'.$piece->id, $data);
-
-        // Directly verify that the appropriate change has occurred
-        $this->assertDatabaseHas('pieces', [
-            'id'         => $piece->id,
-            'name'       => $data['name'],
-            'is_visible' => 1,
-        ]);
-    }
-
-    /**
-     * Test piece creation with timestamp.
-     */
-    public function testCanPostCreatePieceWithTimestamp()
-    {
-        // Define some basic data
-        $data = [
-            'name'       => $this->faker->unique()->domainWord(),
-            'project_id' => Project::factory()->create()->id,
-            'timestamp'  => Carbon::now(),
-        ];
-
-        // Try to post data
-        $response = $this
-            ->actingAs(User::factory()->make())
-            ->post('/admin/data/pieces/create', $data);
-
-        // Directly verify that the appropriate change has occurred
-        $this->assertDatabaseHas('pieces', [
-            'name'      => $data['name'],
-            'timestamp' => $data['timestamp'],
-        ]);
-    }
-
-    /**
-     * Test piece editing with timestamp.
-     */
-    public function testCanPostEditPieceWithTimestamp()
-    {
-        $piece = Piece::factory()->create();
-
-        // Define some basic data
-        $data = [
-            'name'       => $this->faker->unique()->domainWord(),
-            'project_id' => $piece->project_id,
-            'timestamp'  => Carbon::now(),
-        ];
-
-        // Try to post data
-        $response = $this
-            ->actingAs(User::factory()->make())
-            ->post('/admin/data/pieces/edit/'.$piece->id, $data);
-
-        // Directly verify that the appropriate change has occurred
-        $this->assertDatabaseHas('pieces', [
-            'id'        => $piece->id,
-            'name'      => $data['name'],
-            'timestamp' => $data['timestamp'],
-        ]);
-    }
-
-    /**
-     * Test piece editing with a removed timestamp.
-     */
-    public function testCanPostEditPieceWithoutTimestamp()
-    {
-        $piece = Piece::factory()->timestamp()->create();
-
-        // Define some basic data
-        $data = [
-            'name'       => $this->faker->unique()->domainWord(),
-            'project_id' => $piece->project_id,
-            'timestamp'  => null,
-        ];
-
-        // Try to post data
-        $response = $this
-            ->actingAs(User::factory()->make())
-            ->post('/admin/data/pieces/edit/'.$piece->id, $data);
-
-        // Directly verify that the appropriate change has occurred
-        $this->assertDatabaseHas('pieces', [
-            'id'        => $piece->id,
-            'name'      => $data['name'],
-            'timestamp' => $data['timestamp'],
-        ]);
-    }
-
-    /**
-     * Test piece creation with tag.
-     */
-    public function testCanPostCreatePieceWithTag()
-    {
-        // Define some basic data
-        $data = [
-            'name'       => $this->faker->unique()->domainWord(),
-            'project_id' => Project::factory()->create()->id,
-            'tags'       => [
-                0 => Tag::factory()->create()->id,
-            ],
-        ];
-
-        // Try to post data
-        $response = $this
-            ->actingAs(User::factory()->make())
-            ->post('/admin/data/pieces/create', $data);
-
-        $piece = Piece::where('name', $data['name'])->first();
-
-        // Directly verify that the appropriate change has occurred
-        $this->assertDatabaseHas('piece_tags', [
-            'piece_id' => $piece->id,
-            'tag_id'   => $data['tags'][0],
-        ]);
-    }
-
-    /**
-     * Test piece editing with tag.
-     */
-    public function testCanPostEditPieceWithTag()
-    {
-        $piece = Piece::factory()->create();
-
-        // Define some basic data
-        $data = [
-            'name'       => $this->faker->unique()->domainWord(),
-            'project_id' => $piece->project_id,
-            'tags'       => [
-                0 => Tag::factory()->create()->id,
-            ],
-        ];
-
-        // Try to post data
-        $response = $this
-            ->actingAs(User::factory()->make())
-            ->post('/admin/data/pieces/edit/'.$piece->id, $data);
-
-        // Directly verify that the appropriate change has occurred
-        $this->assertDatabaseHas('piece_tags', [
-            'piece_id' => $piece->id,
-            'tag_id'   => $data['tags'][0],
-        ]);
-    }
-
-    /**
-     * Test piece editing with removed tag.
-     */
-    public function testCanPostEditPieceWithoutTag()
-    {
-        $piece = Piece::factory()->create();
-        $tag = PieceTag::factory()->piece($piece->id)->create();
-
-        // Define some basic data
-        $data = [
-            'name'       => $this->faker->unique()->domainWord(),
-            'project_id' => $piece->project_id,
-            'tags'       => null,
-        ];
-
-        // Try to post data
-        $response = $this
-            ->actingAs(User::factory()->make())
-            ->post('/admin/data/pieces/edit/'.$piece->id, $data);
-
-        // Directly verify that the appropriate change has occurred
-        $this->assertDeleted($tag);
-    }
-
-    /**
-     * Test piece creation with program.
-     */
-    public function testCanPostCreatePieceWithProgram()
-    {
-        // Define some basic data
-        $data = [
-            'name'       => $this->faker->unique()->domainWord(),
-            'project_id' => Project::factory()->create()->id,
-            'programs'   => [
-                0 => Program::factory()->create()->id,
-            ],
-        ];
-
-        // Try to post data
-        $response = $this
-            ->actingAs(User::factory()->make())
-            ->post('/admin/data/pieces/create', $data);
-
-        $piece = Piece::where('name', $data['name'])->first();
-
-        // Directly verify that the appropriate change has occurred
-        $this->assertDatabaseHas('piece_programs', [
-            'piece_id'   => $piece->id,
-            'program_id' => $data['programs'][0],
-        ]);
-    }
-
-    /**
-     * Test piece editing with program.
-     */
-    public function testCanPostEditPieceWithProgram()
-    {
-        $piece = Piece::factory()->create();
-
-        // Define some basic data
-        $data = [
-            'name'       => $this->faker->unique()->domainWord(),
-            'project_id' => $piece->project_id,
-            'programs'   => [
-                0 => Program::factory()->create()->id,
-            ],
-        ];
-
-        // Try to post data
-        $response = $this
-            ->actingAs(User::factory()->make())
-            ->post('/admin/data/pieces/edit/'.$piece->id, $data);
-
-        // Directly verify that the appropriate change has occurred
-        $this->assertDatabaseHas('piece_programs', [
-            'piece_id'   => $piece->id,
-            'program_id' => $data['programs'][0],
-        ]);
-    }
-
-    /**
-     * Test piece editing with removed program.
-     */
-    public function testCanPostEditPieceWithoutProgram()
-    {
-        $piece = Piece::factory()->create();
-        $program = PieceProgram::factory()->piece($piece->id)->create();
-
-        // Define some basic data
-        $data = [
-            'name'       => $this->faker->unique()->domainWord(),
-            'project_id' => $piece->project_id,
-            'programs'   => null,
-        ];
-
-        // Try to post data
-        $response = $this
-            ->actingAs(User::factory()->make())
-            ->post('/admin/data/pieces/edit/'.$piece->id, $data);
-
-        // Directly verify that the appropriate change has occurred
-        $this->assertDeleted($program);
-    }
-
-    /**
-     * Test piece creation with good example.
-     */
-    public function testCanPostCreatePieceWithGoodExample()
-    {
-        // Define some basic data
-        $data = [
-            'name'         => $this->faker->unique()->domainWord(),
-            'project_id'   => Project::factory()->create()->id,
-            'good_example' => 1,
-        ];
-
-        // Try to post data
-        $response = $this
-            ->actingAs(User::factory()->make())
-            ->post('/admin/data/pieces/create', $data);
-
-        // Directly verify that the appropriate change has occurred
-        $this->assertDatabaseHas('pieces', [
-            'name'         => $data['name'],
-            'good_example' => 1,
-        ]);
-    }
-
-    /**
-     * Test piece editing with good example.
-     */
-    public function testCanPostEditPieceWithGoodExample()
-    {
-        $piece = Piece::factory()->create();
-
-        // Define some basic data
-        $data = [
-            'name'         => $this->faker->unique()->domainWord(),
-            'project_id'   => $piece->project_id,
-            'good_example' => 1,
-        ];
-
-        // Try to post data
-        $response = $this
-            ->actingAs(User::factory()->make())
-            ->post('/admin/data/pieces/edit/'.$piece->id, $data);
-
-        // Directly verify that the appropriate change has occurred
-        $this->assertDatabaseHas('pieces', [
-            'id'           => $piece->id,
-            'name'         => $data['name'],
-            'good_example' => 1,
-        ]);
     }
 
     /**
@@ -524,8 +210,8 @@ class DataGalleryPieceTest extends TestCase
      */
     public function testCanGetDeletePiece()
     {
-        $response = $this->actingAs(User::factory()->make())
-            ->get('/admin/data/pieces/delete/'.Piece::factory()->create()->id)
+        $this->actingAs($this->user)
+            ->get('/admin/data/pieces/delete/'.$this->piece->id)
             ->assertStatus(200);
     }
 
@@ -534,15 +220,10 @@ class DataGalleryPieceTest extends TestCase
      */
     public function testCanPostDeletePiece()
     {
-        // Create a category to delete
-        $piece = Piece::factory()->create();
+        $this
+            ->actingAs($this->user)
+            ->post('/admin/data/pieces/delete/'.$this->piece->id);
 
-        // Try to post data
-        $response = $this
-            ->actingAs(User::factory()->make())
-            ->post('/admin/data/pieces/delete/'.$piece->id);
-
-        // Check that there are fewer categories than before
-        $this->assertSoftDeleted($piece);
+        $this->assertSoftDeleted($this->piece);
     }
 }

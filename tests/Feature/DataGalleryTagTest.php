@@ -3,7 +3,6 @@
 namespace Tests\Feature;
 
 use App\Models\Gallery\Tag;
-use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -16,12 +15,26 @@ class DataGalleryTagTest extends TestCase
         GALLERY DATA: TAGS
     *******************************************************************************/
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // Create a couple tags for editing, etc. purposes
+        $this->tag = Tag::factory()->create();
+        $this->dataTag = Tag::factory()
+            ->description()->hidden()->inactive()->create();
+
+        // Generate some test data
+        $this->name = $this->faker->unique()->domainWord();
+        $this->text = $this->faker->unique()->domainWord();
+    }
+
     /**
      * Test tag index access.
      */
     public function testCanGetTagIndex()
     {
-        $response = $this->actingAs(User::factory()->make())
+        $this->actingAs($this->user)
             ->get('/admin/data/tags')
             ->assertStatus(200);
     }
@@ -31,7 +44,7 @@ class DataGalleryTagTest extends TestCase
      */
     public function testCanGetCreateTag()
     {
-        $response = $this->actingAs(User::factory()->make())
+        $this->actingAs($this->user)
             ->get('/admin/data/tags/create')
             ->assertStatus(200);
     }
@@ -41,201 +54,75 @@ class DataGalleryTagTest extends TestCase
      */
     public function testCanGetEditTag()
     {
-        $response = $this->actingAs(User::factory()->make())
-            ->get('/admin/data/tags/edit/'.Tag::factory()->create()->id)
+        $this->actingAs($this->user)
+            ->get('/admin/data/tags/edit/'.$this->tag->id)
             ->assertStatus(200);
     }
 
     /**
      * Test tag creation.
+     *
+     * @dataProvider tagProvider
+     *
+     * @param bool $hasData
+     * @param bool $hasDescription
+     * @param bool $isVisible
+     * @param bool $isActive
      */
-    public function testCanPostCreateTag()
+    public function testCanPostCreateTag($hasData, $hasDescription, $isVisible, $isActive)
     {
-        // Define some basic data
-        $data = [
-            'name' => $this->faker->unique()->domainWord(),
-        ];
+        $this
+            ->actingAs($this->user)
+            ->post('/admin/data/tags/create', [
+                'name'        => $this->name,
+                'description' => $hasDescription ? $this->text : null,
+                'is_visible'  => $isVisible,
+                'is_active'   => $isActive,
+            ]);
 
-        // Try to post data
-        $response = $this
-            ->actingAs(User::factory()->make())
-            ->post('/admin/data/tags/create', $data);
-
-        // Directly verify that the appropriate change has occurred
         $this->assertDatabaseHas('tags', [
-            'name' => $data['name'],
+            'name'        => $this->name,
+            'description' => $hasDescription ? $this->text : null,
+            'is_visible'  => $isVisible,
+            'is_active'   => $isActive,
         ]);
     }
 
     /**
      * Test tag editing.
+     *
+     * @dataProvider tagProvider
+     *
+     * @param bool $hasData
+     * @param bool $hasDescription
+     * @param bool $isVisible
+     * @param bool $isActive
      */
-    public function testCanPostEditTag()
+    public function testCanPostEditTag($hasData, $hasDescription, $isVisible, $isActive)
     {
-        $tag = Tag::factory()->create();
-
-        // Define some basic data
-        $data = [
-            'name' => $this->faker->unique()->domainWord(),
-        ];
-
-        // Try to post data
-        $response = $this
-            ->actingAs(User::factory()->make())
-            ->post('/admin/data/tags/edit/'.$tag->id, $data);
+        $this
+            ->actingAs($this->user)
+            ->post('/admin/data/tags/edit/'.($hasData ? $this->dataTag->id : $this->tag->id), [
+                'name'        => $this->name,
+                'description' => $hasDescription ? $this->text : null,
+                'is_visible'  => $isVisible,
+                'is_active'   => $isActive,
+            ]);
 
         // Directly verify that the appropriate change has occurred
         $this->assertDatabaseHas('tags', [
-            'id'   => $tag->id,
-            'name' => $data['name'],
+            'id'          => $hasData ? $this->dataTag->id : $this->tag->id,
+            'name'        => $this->name,
+            'description' => $hasDescription ? $this->text : null,
+            'is_visible'  => $isVisible,
+            'is_active'   => $isActive,
         ]);
     }
 
-    /**
-     * Test tag creation with a description.
-     */
-    public function testCanPostCreateTagWithDescription()
+    public function tagProvider()
     {
-        // Define some basic data
-        $data = [
-            'name'        => $this->faker->unique()->domainWord(),
-            'description' => $this->faker->unique()->domainWord(),
-        ];
-
-        // Try to post data
-        $response = $this
-            ->actingAs(User::factory()->make())
-            ->post('/admin/data/tags/create', $data);
-
-        // Directly verify that the appropriate change has occurred
-        $this->assertDatabaseHas('tags', [
-            'name'        => $data['name'],
-            'description' => $data['description'],
-        ]);
-    }
-
-    /**
-     * Test tag editing with a description.
-     */
-    public function testCanPostEditTagWithDescription()
-    {
-        $tag = Tag::factory()->create();
-
-        // Define some basic data
-        $data = [
-            'name'        => $this->faker->unique()->domainWord(),
-            'description' => $this->faker->unique()->domainWord(),
-        ];
-
-        // Try to post data
-        $response = $this
-            ->actingAs(User::factory()->make())
-            ->post('/admin/data/tags/edit/'.$tag->id, $data);
-
-        // Directly verify that the appropriate change has occurred
-        $this->assertDatabaseHas('tags', [
-            'id'          => $tag->id,
-            'name'        => $data['name'],
-            'description' => $data['description'],
-        ]);
-    }
-
-    /**
-     * Test tag creation with visibility.
-     */
-    public function testCanPostCreateTagVisibility()
-    {
-        // Define some basic data
-        $data = [
-            'name'       => $this->faker->unique()->domainWord(),
-            'is_visible' => 1,
-        ];
-
-        // Try to post data
-        $response = $this
-            ->actingAs(User::factory()->make())
-            ->post('/admin/data/tags/create', $data);
-
-        // Directly verify that the appropriate change has occurred
-        $this->assertDatabaseHas('tags', [
-            'name'       => $data['name'],
-            'is_visible' => 1,
-        ]);
-    }
-
-    /**
-     * Test tag editing with visibility.
-     */
-    public function testCanPostEditTagVisibility()
-    {
-        $tag = Tag::factory()->hidden()->create();
-
-        // Define some basic data
-        $data = [
-            'name'       => $this->faker->unique()->domainWord(),
-            'is_visible' => 1,
-        ];
-
-        // Try to post data
-        $response = $this
-            ->actingAs(User::factory()->make())
-            ->post('/admin/data/tags/edit/'.$tag->id, $data);
-
-        // Directly verify that the appropriate change has occurred
-        $this->assertDatabaseHas('tags', [
-            'id'         => $tag->id,
-            'name'       => $data['name'],
-            'is_visible' => 1,
-        ]);
-    }
-
-    /**
-     * Test tag creation with active status.
-     */
-    public function testCanPostCreateTagActivity()
-    {
-        // Define some basic data
-        $data = [
-            'name'       => $this->faker->unique()->domainWord(),
-            'is_active'  => 1,
-        ];
-
-        // Try to post data
-        $response = $this
-            ->actingAs(User::factory()->make())
-            ->post('/admin/data/tags/create', $data);
-
-        // Directly verify that the appropriate change has occurred
-        $this->assertDatabaseHas('tags', [
-            'name'       => $data['name'],
-            'is_active'  => 1,
-        ]);
-    }
-
-    /**
-     * Test tag editing with active status.
-     */
-    public function testCanPostEditTagActivity()
-    {
-        $tag = Tag::factory()->create();
-
-        // Define some basic data
-        $data = [
-            'name'       => $this->faker->unique()->domainWord(),
-            'is_active'  => 0,
-        ];
-
-        // Try to post data
-        $response = $this
-            ->actingAs(User::factory()->make())
-            ->post('/admin/data/tags/edit/'.$tag->id, $data);
-
-        // Directly verify that the appropriate change has occurred
-        $this->assertDatabaseHas('tags', [
-            'id'         => $tag->id,
-            'name'       => $data['name'],
-            'is_active'  => 0,
-        ]);
+        // Get all possible sequences
+        return $this->booleanSequences(4);
     }
 
     /**
@@ -243,8 +130,8 @@ class DataGalleryTagTest extends TestCase
      */
     public function testCanGetDeleteTag()
     {
-        $response = $this->actingAs(User::factory()->make())
-            ->get('/admin/data/tags/delete/'.Tag::factory()->create()->id)
+        $this->actingAs($this->user)
+            ->get('/admin/data/tags/delete/'.$this->tag->id)
             ->assertStatus(200);
     }
 
@@ -253,15 +140,10 @@ class DataGalleryTagTest extends TestCase
      */
     public function testCanPostDeleteTag()
     {
-        // Create a category to delete
-        $tag = Tag::factory()->create();
+        $this
+            ->actingAs($this->user)
+            ->post('/admin/data/tags/delete/'.$this->tag->id);
 
-        // Try to post data
-        $response = $this
-            ->actingAs(User::factory()->make())
-            ->post('/admin/data/tags/delete/'.$tag->id);
-
-        // Check that there are fewer categories than before
-        $this->assertDeleted($tag);
+        $this->assertDeleted($this->tag);
     }
 }
