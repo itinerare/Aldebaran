@@ -18,7 +18,7 @@
         "popper.js": "^1.12",
         "sass": "^1.49.7",
         "sass-loader": "^12.5.0",
-        "vue": "^3.2.30",
+        "vue": "^3.2.31",
         "vue-template-compiler": "^2.6.14"
     }
 }
