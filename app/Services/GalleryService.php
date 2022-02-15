@@ -847,7 +847,7 @@ class GalleryService extends Service
                     while ($x < $processImage->width() + 150) {
                         foreach ($watermarkText as $key=>$text) {
                             $processImage->text($text, $key == 0 && count($watermarkText) > 1 ? $x + (22 + ($offset * 5)) : $x, $key > 0 ? $y + $i : $y, function ($font) use ($data) {
-                                $font->file(public_path('webfonts/Forum-Regular.ttf'));
+                                $font->file(public_path('webfonts/RobotoCondensed-Regular.ttf'));
                                 $font->size(24);
                                 $font->color([255, 255, 255, $data['text_opacity']]);
                                 $font->valign(500);
@@ -900,7 +900,7 @@ class GalleryService extends Service
                 'text_watermark' => isset($data['text_watermark']) ? $data['text_watermark'] : null,
                 'text_opacity'   => isset($data['text_opacity']) ? $data['text_opacity'] : null,
             ];
-            $image->update(['data' => json_encode($data['data'])]);
+            $image->update(['data' => $data['data']]);
         }
 
         return $image;
