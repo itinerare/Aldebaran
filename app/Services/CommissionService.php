@@ -94,21 +94,13 @@ class CommissionService extends Service
                 $data['pages_old'] = $class->data['pages'];
             }
 
-            $class->update($data);
-
             // Process fields, site settings, and pages
             if (isset($data['field_key'])) {
                 $data = $this->processFormFields($data);
             }
             $data = $this->processClassSettings($class, $data);
 
-            // Encode and save data
-            if (isset($data['data'])) {
-                $class->data = json_encode($data['data']);
-            } else {
-                $class->data = null;
-            }
-            $class->save();
+            $class->update($data);
 
             return $this->commitReturn($class);
         } catch (\Exception $e) {
