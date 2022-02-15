@@ -25,7 +25,7 @@
         "laravel/tinker": "^2.5",
         "laravelcollective/html": "^6.0",
         "spatie/laravel-backup": "^6.16",
-        "josiasmontag/laravel-recaptchav3": "^0.6.0",
+        "josiasmontag/laravel-recaptchav3": "^1.0.0",
         "spatie/laravel-feed": "^3.2",
         "spatie/laravel-honeypot": "^3.0",
         "spatie/laravel-validation-rules": "^3.0"
