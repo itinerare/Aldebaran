@@ -25,6 +25,17 @@ class Commission extends Model
     protected $table = 'commissions';
 
     /**
+     * The attributes that should be casted to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'data'        => 'array',
+        'cost_data'   => 'array',
+        'description' => 'array',
+    ];
+
+    /**
      * Whether the model contains timestamps to be saved and updated.
      *
      * @var string
@@ -174,16 +185,6 @@ class Commission extends Model
     }
 
     /**
-     * Get the data attribute as an associative array.
-     *
-     * @return array
-     */
-    public function getCostDataAttribute()
-    {
-        return json_decode($this->attributes['cost_data'], true);
-    }
-
-    /**
      * Get overall cost.
      *
      * @return int
@@ -243,26 +244,6 @@ class Commission extends Model
         }
 
         return $total;
-    }
-
-    /**
-     * Get the data attribute as an associative array.
-     *
-     * @return array
-     */
-    public function getDataAttribute()
-    {
-        return json_decode($this->attributes['data'], true);
-    }
-
-    /**
-     * Get the description attribute as an associative array.
-     *
-     * @return array
-     */
-    public function getDescriptionAttribute()
-    {
-        return json_decode($this->attributes['description'], true);
     }
 
     /**

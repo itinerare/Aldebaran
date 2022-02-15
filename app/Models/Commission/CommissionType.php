@@ -27,6 +27,15 @@ class CommissionType extends Model
     protected $table = 'commission_types';
 
     /**
+     * The attributes that should be casted to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'data' => 'array',
+    ];
+
+    /**
      * Whether the model contains timestamps to be saved and updated.
      *
      * @var string
@@ -138,20 +147,6 @@ class CommissionType extends Model
         } else {
             return '<a href="'.url('commissions/'.$this->category->class->slug.'#'.$this->category->name).'">'.$this->category->name.': '.$this->name.'</a>';
         }
-    }
-
-    /**
-     * Get the data attribute as an associative array.
-     *
-     * @return array
-     */
-    public function getDataAttribute()
-    {
-        if (!$this->id) {
-            return null;
-        }
-
-        return json_decode($this->attributes['data'], true);
     }
 
     /**

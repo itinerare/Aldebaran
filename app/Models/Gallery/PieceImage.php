@@ -27,6 +27,15 @@ class PieceImage extends Model
     protected $table = 'piece_images';
 
     /**
+     * The attributes that should be casted to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'data' => 'array',
+    ];
+
+    /**
      * Whether the model contains timestamps to be saved and updated.
      *
      * @var string
@@ -196,15 +205,5 @@ class PieceImage extends Model
     public function getFullsizeUrlAttribute()
     {
         return asset($this->imageDirectory.'/'.$this->fullsizeFileName);
-    }
-
-    /**
-     * Get the data attribute as an associative array.
-     *
-     * @return array
-     */
-    public function getDataAttribute()
-    {
-        return json_decode($this->attributes['data'], true);
     }
 }
