@@ -33,7 +33,6 @@ class AdminAccountSettingsTest extends TestCase
                 'email' => $email,
             ]);
 
-        // Directly verify that the appropriate change has occurred
         $this->assertDatabaseHas('users', [
             'name'  => $user->name,
             'email' => $email,

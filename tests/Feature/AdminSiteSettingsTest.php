@@ -49,7 +49,6 @@ class AdminSiteSettingsTest extends TestCase
             ->actingAs($this->user)
             ->post('/admin/site-settings/'.$key, ['value' => isset($value) ? $value : $this->value]);
 
-        // Directly verify that the appropriate change has occurred
         $this->assertDatabaseHas('site_settings', [
             'key'   => $key,
             'value' => isset($value) ? $value : $this->value,

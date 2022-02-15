@@ -86,7 +86,6 @@ class DataGalleryPieceImageTest extends TestCase
                 'is_primary_image' => $isPrimary,
             ]);
 
-        // Directly verify that the appropriate change has occurred
         $this->assertDatabaseHas('piece_images', [
             'id'               => $hasData ? $this->dataImage->id : $this->image->id,
             'description'      => $hasDescription ? $this->caption : null,

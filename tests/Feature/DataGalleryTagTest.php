@@ -109,7 +109,6 @@ class DataGalleryTagTest extends TestCase
                 'is_active'   => $isActive,
             ]);
 
-        // Directly verify that the appropriate change has occurred
         $this->assertDatabaseHas('tags', [
             'id'          => $hasData ? $this->dataTag->id : $this->tag->id,
             'name'        => $this->name,

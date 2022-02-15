@@ -78,7 +78,6 @@ class DataGalleryProjectTest extends TestCase
                 'is_visible'  => $isVisible,
             ]);
 
-        // Directly verify that the appropriate change has occurred
         $this->assertDatabaseHas('projects', [
             'name'        => $this->name,
             'description' => $hasDescription ? $this->text : null,
@@ -105,7 +104,6 @@ class DataGalleryProjectTest extends TestCase
                 'is_visible'  => $isVisible,
             ]);
 
-        // Directly verify that the appropriate change has occurred
         $this->assertDatabaseHas('projects', [
             'id'          => $hasData ? $this->dataProject->id : $this->project->id,
             'name'        => $this->name,
@@ -138,7 +136,6 @@ class DataGalleryProjectTest extends TestCase
             ->actingAs($this->user)
             ->post('/admin/data/projects/delete/'.$this->project->id);
 
-        // Check that there are fewer categories than before
         $this->assertDeleted($this->project);
     }
 }

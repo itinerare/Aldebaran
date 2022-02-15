@@ -54,7 +54,6 @@ class AdminTextPageTest extends TestCase
                 'text' => $this->text,
             ]);
 
-        // Directly verify that the appropriate change has occurred
         $this->assertDatabaseHas('text_pages', [
             'key'  => $key,
             'text' => $this->text,
