@@ -127,6 +127,27 @@ class CommissionService extends Service
                 throw new \Exception('A commission category with this class exists. Please change its class first.');
             }
 
+            // Clean up automatically generated pages
+            foreach (['tos', 'info'] as $page) {
+                if (TextPage::where('key', $class->slug.$page)->first()) {
+                    TextPage::where('key', $class->slug.$page)->first()->delete();
+                }
+            }
+
+            // Clean up custom pages
+            if (isset($class->data) && isset($class->data['pages'])) {
+                foreach ($class->data['pages'] as $id=>$page) {
+                    TextPage::where('id', $id)->first()->delete();
+                }
+            }
+
+            // Clean up settings
+            foreach (['comms_open', 'overall_slots', 'full', 'status'] as $setting) {
+                if (DB::table('site_settings')->where('key', $class->slug.'_'.$setting)->exists()) {
+                    DB::table('site_settings')->where('key', $class->slug.'_'.$setting)->delete();
+                }
+            }
+
             $class->delete();
 
             return $this->commitReturn(true);
@@ -433,7 +454,7 @@ class CommissionService extends Service
         // Add and/or modify site settings
         // If the slug has been changed, check for existing settings and save their values
         if (isset($data['slug_old'])) {
-            foreach ([$data['slug_old'].'_comms_open', 'overall_'.$data['slug_old'].'_slots'] as $setting) {
+            foreach ([$data['slug_old'].'_comms_open', $data['slug_old'].'_overall_slots', $data['slug_old'].'_full', $data['slug_old'].'_status'] as $setting) {
                 if (DB::table('site_settings')->where('key', $setting)->exists()) {
                     $data['settings'][$setting] = Settings::get($setting);
                     DB::table('site_settings')->where('key', $setting)->delete();
@@ -452,11 +473,11 @@ class CommissionService extends Service
             ]);
         }
 
-        if (!DB::table('site_settings')->where('key', 'overall_'.$class->slug.'_slots')->exists()) {
+        if (!DB::table('site_settings')->where('key', $class->slug.'_overall_slots')->exists()) {
             DB::table('site_settings')->insert([
                 [
-                    'key'         => 'overall_'.$class->slug.'_slots',
-                    'value'       => isset($data['slug_old']) && isset($data['settings']['overall_'.$data['slug_old'].'_slots']) ? $data['settings']['overall_'.$data['slug_old'].'_slots'] : 0,
+                    'key'         => $class->slug.'_overall_slots',
+                    'value'       => isset($data['slug_old']) && isset($data['settings'][$data['slug_old'].'_overall_slots']) ? $data['settings'][$data['slug_old'].'_overall_slots'] : 0,
                     'description' => 'Overall number of availabile commission slots. Set to 0 to disable limits.',
                 ],
             ]);
