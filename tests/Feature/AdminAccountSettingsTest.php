@@ -19,7 +19,7 @@ class AdminAccountSettingsTest extends TestCase
     /**
      * Test email editing.
      */
-    public function testCanPostEditEmail()
+    public function testPostEditEmail()
     {
         // Make a persistent user
         $user = User::factory()->create();
@@ -43,7 +43,7 @@ class AdminAccountSettingsTest extends TestCase
      * Test password editing with a valid password.
      * This should work.
      */
-    public function testCanPostEditValidPassword()
+    public function testPostEditValidPassword()
     {
         // Make a persistent user
         $user = User::factory()->simplePass()->create();
@@ -64,7 +64,7 @@ class AdminAccountSettingsTest extends TestCase
      * Test password editing with an invalid password.
      * This shouldn't work.
      */
-    public function testCannotPostEditInvalidPassword()
+    public function testnotPostEditInvalidPassword()
     {
         // Make a persistent user
         $user = User::factory()->simplePass()->create();

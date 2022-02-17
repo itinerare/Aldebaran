@@ -24,7 +24,7 @@ class AdminSiteSettingsTest extends TestCase
     /**
      * Test site settings access.
      */
-    public function testCanGetSiteSettingsIndex()
+    public function testGetSiteSettingsIndex()
     {
         $this->actingAs($this->user)
             ->get('/admin/site-settings')
@@ -39,7 +39,7 @@ class AdminSiteSettingsTest extends TestCase
      * @param string     $key
      * @param mixed|null $value
      */
-    public function testCanPostEditSiteSetting($key, $value = null)
+    public function testPostEditSiteSetting($key, $value = null)
     {
         // Ensure site settings are present to modify
         $this->artisan('add-site-settings');

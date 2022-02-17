@@ -42,7 +42,7 @@ class DataGalleryPieceTest extends TestCase
     /**
      * Test piece index access.
      */
-    public function testCanGetPieceIndex()
+    public function testGetPieceIndex()
     {
         $this->actingAs($this->user)
             ->get('/admin/data/pieces')
@@ -52,7 +52,7 @@ class DataGalleryPieceTest extends TestCase
     /**
      * Test piece create access.
      */
-    public function testCanGetCreatePiece()
+    public function testGetCreatePiece()
     {
         $this->actingAs($this->user)
             ->get('/admin/data/pieces/create')
@@ -62,7 +62,7 @@ class DataGalleryPieceTest extends TestCase
     /**
      * Test piece edit access.
      */
-    public function testCanGetEditPiece()
+    public function testGetEditPiece()
     {
         $this->actingAs($this->user)
             ->get('/admin/data/pieces/edit/'.$this->piece->id)
@@ -82,7 +82,7 @@ class DataGalleryPieceTest extends TestCase
      * @param bool $program
      * @param bool $goodExample
      */
-    public function testCanPostCreatePiece($hasData, $description, $isVisible, $timestamp, $tag, $program, $goodExample)
+    public function testPostCreatePiece($hasData, $description, $isVisible, $timestamp, $tag, $program, $goodExample)
     {
         $this
             ->actingAs(User::factory()->make())
@@ -136,7 +136,7 @@ class DataGalleryPieceTest extends TestCase
      * @param bool $program
      * @param bool $goodExample
      */
-    public function testCanPostEditPiece($hasData, $description, $isVisible, $timestamp, $tag, $program, $goodExample)
+    public function testPostEditPiece($hasData, $description, $isVisible, $timestamp, $tag, $program, $goodExample)
     {
         $this
             ->actingAs($this->user)
@@ -208,7 +208,7 @@ class DataGalleryPieceTest extends TestCase
     /**
      * Test piece delete access.
      */
-    public function testCanGetDeletePiece()
+    public function testGetDeletePiece()
     {
         $this->actingAs($this->user)
             ->get('/admin/data/pieces/delete/'.$this->piece->id)
@@ -218,7 +218,7 @@ class DataGalleryPieceTest extends TestCase
     /**
      * Test piece deletion.
      */
-    public function testCanPostDeletePiece()
+    public function testPostDeletePiece()
     {
         $this
             ->actingAs($this->user)

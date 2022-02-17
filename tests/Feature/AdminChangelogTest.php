@@ -32,7 +32,7 @@ class AdminChangelogTest extends TestCase
     /**
      * Test changelog index access.
      */
-    public function testCanGetChangelogIndex()
+    public function testGetChangelogIndex()
     {
         $response = $this->actingAs($this->user)
             ->get('/admin/changelog')
@@ -42,7 +42,7 @@ class AdminChangelogTest extends TestCase
     /**
      * Test changelog create access.
      */
-    public function testCanGetCreateChangelog()
+    public function testGetCreateChangelog()
     {
         $response = $this->actingAs($this->user)
             ->get('/admin/changelog/create')
@@ -52,7 +52,7 @@ class AdminChangelogTest extends TestCase
     /**
      * Test changelog edit access.
      */
-    public function testCanGetEditChangelog()
+    public function testGetEditChangelog()
     {
         $log = Changelog::factory()->create();
 
@@ -70,7 +70,7 @@ class AdminChangelogTest extends TestCase
      * @param bool $title
      * @param bool $isVisible
      */
-    public function testCanPostCreateChangelog($hasData, $title, $isVisible)
+    public function testPostCreateChangelog($hasData, $title, $isVisible)
     {
         $this
             ->actingAs($this->user)
@@ -97,7 +97,7 @@ class AdminChangelogTest extends TestCase
      * @param bool $title
      * @param bool $isVisible
      */
-    public function testCanPostEditChangelog($hasData, $title, $isVisible)
+    public function testPostEditChangelog($hasData, $title, $isVisible)
     {
         $this
             ->actingAs($this->user)
@@ -124,7 +124,7 @@ class AdminChangelogTest extends TestCase
     /**
      * Test changelog delete access.
      */
-    public function testCanGetDeleteChangelog()
+    public function testGetDeleteChangelog()
     {
         $this->actingAs($this->user)
             ->get('/admin/changelog/delete/'.$this->log->id)
@@ -134,7 +134,7 @@ class AdminChangelogTest extends TestCase
     /**
      * Test changelog deletion.
      */
-    public function testCanPostDeleteChangelog()
+    public function testPostDeleteChangelog()
     {
         $this
             ->actingAs($this->user)

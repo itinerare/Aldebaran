@@ -32,7 +32,7 @@ class DataGalleryProjectTest extends TestCase
     /**
      * Test project index access.
      */
-    public function testCanGetProjectIndex()
+    public function testGetProjectIndex()
     {
         $this->actingAs($this->user)
             ->get('/admin/data/projects')
@@ -42,7 +42,7 @@ class DataGalleryProjectTest extends TestCase
     /**
      * Test project create access.
      */
-    public function testCanGetCreateProject()
+    public function testGetCreateProject()
     {
         $this->actingAs($this->user)
             ->get('/admin/data/projects/create')
@@ -52,7 +52,7 @@ class DataGalleryProjectTest extends TestCase
     /**
      * Test project edit access.
      */
-    public function testCanGetEditProject()
+    public function testGetEditProject()
     {
         $this->actingAs($this->user)
             ->get('/admin/data/projects/edit/'.$this->project->id)
@@ -68,7 +68,7 @@ class DataGalleryProjectTest extends TestCase
      * @param bool $hasDescription
      * @param bool $isVisible
      */
-    public function testCanPostCreateProject($hasData, $hasDescription, $isVisible)
+    public function testPostCreateProject($hasData, $hasDescription, $isVisible)
     {
         $this
             ->actingAs($this->user)
@@ -94,7 +94,7 @@ class DataGalleryProjectTest extends TestCase
      * @param bool $hasDescription
      * @param bool $isVisible
      */
-    public function testCanPostEditProject($hasData, $hasDescription, $isVisible)
+    public function testPostEditProject($hasData, $hasDescription, $isVisible)
     {
         $this
             ->actingAs($this->user)
@@ -120,7 +120,7 @@ class DataGalleryProjectTest extends TestCase
     /**
      * Test project delete access.
      */
-    public function testCanGetDeleteProject()
+    public function testGetDeleteProject()
     {
         $this->actingAs($this->user)
             ->get('/admin/data/projects/delete/'.$this->project->id)
@@ -130,7 +130,7 @@ class DataGalleryProjectTest extends TestCase
     /**
      * Test project deletion.
      */
-    public function testCanPostDeleteProject()
+    public function testPostDeleteProject()
     {
         $this
             ->actingAs($this->user)

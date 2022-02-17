@@ -32,7 +32,7 @@ class DataGalleryTagTest extends TestCase
     /**
      * Test tag index access.
      */
-    public function testCanGetTagIndex()
+    public function testGetTagIndex()
     {
         $this->actingAs($this->user)
             ->get('/admin/data/tags')
@@ -42,7 +42,7 @@ class DataGalleryTagTest extends TestCase
     /**
      * Test tag create access.
      */
-    public function testCanGetCreateTag()
+    public function testGetCreateTag()
     {
         $this->actingAs($this->user)
             ->get('/admin/data/tags/create')
@@ -52,7 +52,7 @@ class DataGalleryTagTest extends TestCase
     /**
      * Test tag edit access.
      */
-    public function testCanGetEditTag()
+    public function testGetEditTag()
     {
         $this->actingAs($this->user)
             ->get('/admin/data/tags/edit/'.$this->tag->id)
@@ -69,7 +69,7 @@ class DataGalleryTagTest extends TestCase
      * @param bool $isVisible
      * @param bool $isActive
      */
-    public function testCanPostCreateTag($hasData, $hasDescription, $isVisible, $isActive)
+    public function testPostCreateTag($hasData, $hasDescription, $isVisible, $isActive)
     {
         $this
             ->actingAs($this->user)
@@ -98,7 +98,7 @@ class DataGalleryTagTest extends TestCase
      * @param bool $isVisible
      * @param bool $isActive
      */
-    public function testCanPostEditTag($hasData, $hasDescription, $isVisible, $isActive)
+    public function testPostEditTag($hasData, $hasDescription, $isVisible, $isActive)
     {
         $this
             ->actingAs($this->user)
@@ -127,7 +127,7 @@ class DataGalleryTagTest extends TestCase
     /**
      * Test tag delete access.
      */
-    public function testCanGetDeleteTag()
+    public function testGetDeleteTag()
     {
         $this->actingAs($this->user)
             ->get('/admin/data/tags/delete/'.$this->tag->id)
@@ -137,7 +137,7 @@ class DataGalleryTagTest extends TestCase
     /**
      * Test tag deletion.
      */
-    public function testCanPostDeleteTag()
+    public function testPostDeleteTag()
     {
         $this
             ->actingAs($this->user)

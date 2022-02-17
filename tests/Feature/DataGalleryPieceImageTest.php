@@ -49,7 +49,7 @@ class DataGalleryPieceImageTest extends TestCase
     /**
      * Test image creation access.
      */
-    public function testCanGetCreateImage()
+    public function testGetCreateImage()
     {
         $this->actingAs($this->user)
             ->get('/admin/data/pieces/images/create/'.$this->piece->id)
@@ -59,7 +59,7 @@ class DataGalleryPieceImageTest extends TestCase
     /**
      * Test image editing access.
      */
-    public function testCanGetEditImage()
+    public function testGetEditImage()
     {
         $this->actingAs($this->user)
             ->get('/admin/data/pieces/images/edit/'.$this->image->id)
@@ -76,7 +76,7 @@ class DataGalleryPieceImageTest extends TestCase
      * @param bool $isVisible
      * @param bool $isPrimary
      */
-    public function testCanPostEditImageInfo($hasData, $hasDescription, $isVisible, $isPrimary)
+    public function testPostEditImageInfo($hasData, $hasDescription, $isVisible, $isPrimary)
     {
         $this
             ->actingAs($this->user)

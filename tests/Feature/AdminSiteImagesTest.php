@@ -26,7 +26,7 @@ class AdminSiteImagesTest extends TestCase
     /**
      * Test site image index access.
      */
-    public function testCanGetSiteImagesIndex()
+    public function testGetSiteImagesIndex()
     {
         $this->actingAs($this->user)
             ->get('/admin/site-images')
@@ -40,7 +40,7 @@ class AdminSiteImagesTest extends TestCase
      *
      * @param string $key
      */
-    public function testCanPostUploadImage($key)
+    public function testPostUploadImage($key)
     {
         // Remove the current file if it exists
         if (File::exists(public_path('images/assets/'.$key.'.png'))) {
@@ -75,7 +75,7 @@ class AdminSiteImagesTest extends TestCase
     /**
      * Test custom css uploading.
      */
-    public function testCanPostUploadSiteCss()
+    public function testPostUploadSiteCss()
     {
         // Create a fake file
         $file = UploadedFile::fake()->create('test.css', 50);

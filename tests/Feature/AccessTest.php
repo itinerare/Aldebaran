@@ -25,7 +25,7 @@ class AccessTest extends TestCase
      * @param bool $user
      * @param int  $status
      */
-    public function testCanGetIndex($user, $status)
+    public function testGetIndex($user, $status)
     {
         if ($user) {
             $response = $this->actingAs($this->user)->get('/');

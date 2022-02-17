@@ -36,7 +36,7 @@ class DataCommissionClassTest extends TestCase
     /**
      * Test commission class index access.
      */
-    public function testCanGetClassIndex()
+    public function testGetClassIndex()
     {
         $this->actingAs($this->user)
             ->get('/admin/data/commission-classes')
@@ -46,7 +46,7 @@ class DataCommissionClassTest extends TestCase
     /**
      * Test class create access.
      */
-    public function testCanGetCreateClass()
+    public function testGetCreateClass()
     {
         $this->actingAs($this->user)
             ->get('/admin/data/commission-classes/create')
@@ -56,7 +56,7 @@ class DataCommissionClassTest extends TestCase
     /**
      * Test class edit access.
      */
-    public function testCanGetEditClass()
+    public function testGetEditClass()
     {
         $this->actingAs($this->user)
             ->get('/admin/data/commission-classes/edit/'.$this->class->id)
@@ -70,7 +70,7 @@ class DataCommissionClassTest extends TestCase
      *
      * @param bool $isActive
      */
-    public function testCanPostCreateClass($isActive)
+    public function testPostCreateClass($isActive)
     {
         $this
             ->actingAs($this->user)
@@ -118,7 +118,7 @@ class DataCommissionClassTest extends TestCase
      * @param array|null $fieldData
      * @param bool       $isActive
      */
-    public function testCanPostEditClass($hasData, $hasPage, $fieldData, $isActive)
+    public function testPostEditClass($hasData, $hasPage, $fieldData, $isActive)
     {
         $this
             ->actingAs($this->user)
@@ -195,7 +195,7 @@ class DataCommissionClassTest extends TestCase
     /**
      * Test class delete access.
      */
-    public function testCanGetDeleteClass()
+    public function testGetDeleteClass()
     {
         $this->actingAs($this->user)
             ->get('/admin/data/commission-classes/delete/'.$this->class->id)
@@ -205,7 +205,7 @@ class DataCommissionClassTest extends TestCase
     /**
      * Test class deletion.
      */
-    public function testCanPostDeleteClass()
+    public function testPostDeleteClass()
     {
         $className = $this->class->name;
         $classSlug = $this->class->slug;

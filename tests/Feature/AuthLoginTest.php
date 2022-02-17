@@ -20,7 +20,7 @@ class AuthLoginTest extends TestCase
     /**
      * Test login form access.
      */
-    public function testCanGetLoginForm()
+    public function testGetLoginForm()
     {
         $this
             ->get('/login')
@@ -31,7 +31,7 @@ class AuthLoginTest extends TestCase
      * Test login as a valid user.
      * This should work.
      */
-    public function testCanPostValidLogin()
+    public function testPostValidLogin()
     {
         $user = User::factory()->create();
 
@@ -48,7 +48,7 @@ class AuthLoginTest extends TestCase
      * Test login as an invalid user.
      * This shouldn't work.
      */
-    public function testCannotPostInvalidLogin()
+    public function testnotPostInvalidLogin()
     {
         $user = User::factory()->create();
 
@@ -64,7 +64,7 @@ class AuthLoginTest extends TestCase
     /**
      * Test user logout.
      */
-    public function testCanPostLogout()
+    public function testPostLogout()
     {
         $this
             ->actingAs(User::factory()->create())
