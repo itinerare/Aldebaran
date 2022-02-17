@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use App\Models\Gallery\Piece;
+use App\Models\Gallery\PieceProgram;
 use App\Models\Gallery\Program;
 use App\Services\GalleryService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -40,7 +42,7 @@ class DataGalleryProgramTest extends TestCase
     /**
      * Test program index access.
      */
-    public function testCanGetProgramIndex()
+    public function testGetProgramIndex()
     {
         $this->actingAs($this->user)
             ->get('/admin/data/programs')
@@ -50,7 +52,7 @@ class DataGalleryProgramTest extends TestCase
     /**
      * Test program create access.
      */
-    public function testCanGetCreateProgram()
+    public function testGetCreateProgram()
     {
         $this->actingAs($this->user)
             ->get('/admin/data/programs/create')
@@ -60,7 +62,7 @@ class DataGalleryProgramTest extends TestCase
     /**
      * Test program edit access.
      */
-    public function testCanGetEditProgram()
+    public function testGetEditProgram()
     {
         $this->actingAs($this->user)
             ->get('/admin/data/programs/edit/'.$this->program->id)
@@ -75,7 +77,7 @@ class DataGalleryProgramTest extends TestCase
      * @param bool $image
      * @param bool $isVisible
      */
-    public function testCanPostCreateProgram($image, $isVisible)
+    public function testPostCreateProgram($image, $isVisible)
     {
         $this
             ->actingAs($this->user)
@@ -117,7 +119,7 @@ class DataGalleryProgramTest extends TestCase
      * @param bool $removeImage
      * @param bool $isVisible
      */
-    public function testCanPostEditProgram($hasImage, $image, $removeImage, $isVisible)
+    public function testPostEditProgram($hasImage, $image, $removeImage, $isVisible)
     {
         if ($hasImage) {
             (new GalleryService)->handleImage(UploadedFile::fake()->image('alt_test_image.png'), $this->program->imagePath, $this->program->imageFileName);
@@ -158,7 +160,7 @@ class DataGalleryProgramTest extends TestCase
     /**
      * Test program delete access.
      */
-    public function testCanGetDeleteProgram()
+    public function testGetDeleteProgram()
     {
         $this->actingAs($this->user)
             ->get('/admin/data/programs/delete/'.$this->program->id)
@@ -167,13 +169,37 @@ class DataGalleryProgramTest extends TestCase
 
     /**
      * Test program deletion.
+     *
+     * @dataProvider programDeleteProvider
+     *
+     * @param bool $withPiece
+     * @param bool $expected
      */
-    public function testCanPostDeleteProgram()
+    public function testPostDeleteProgram($withPiece, $expected)
     {
+        if ($withPiece) {
+            $piece = Piece::factory()->create();
+            PieceProgram::factory()
+                ->piece($piece->id)->program($this->program->id)
+                ->create();
+        }
+
         $this
             ->actingAs($this->user)
             ->post('/admin/data/programs/delete/'.$this->program->id);
 
-        $this->assertDeleted($this->program);
+        if ($expected) {
+            $this->assertDeleted($this->program);
+        } else {
+            $this->assertModelExists($this->program);
+        }
+    }
+
+    public function programDeleteProvider()
+    {
+        return [
+            'basic'      => [0, 1],
+            'with piece' => [1, 0],
+        ];
     }
 }
