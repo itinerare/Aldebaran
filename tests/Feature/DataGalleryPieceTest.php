@@ -6,7 +6,6 @@ use App\Models\Gallery\Piece;
 use App\Models\Gallery\PieceProgram;
 use App\Models\Gallery\PieceTag;
 use App\Models\User;
-use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -91,7 +90,7 @@ class DataGalleryPieceTest extends TestCase
                 'project_id'   => $this->piece->project_id,
                 'description'  => $description ? $this->text : null,
                 'is_visible'   => $isVisible,
-                'timestamp'    => $timestamp ? Carbon::now() : null,
+                'timestamp'    => $timestamp ? $this->piece->created_at : null,
                 'tags'         => $tag ? [0 => $this->tag->tag_id] : null,
                 'programs'     => $program ? [0 => $this->program->program_id] : null,
                 'good_example' => $goodExample,
@@ -101,7 +100,7 @@ class DataGalleryPieceTest extends TestCase
             'name'         => $this->name,
             'description'  => $description ? $this->text : null,
             'is_visible'   => $isVisible,
-            'timestamp'    => $timestamp ? Carbon::now() : null,
+            'timestamp'    => $timestamp ? $this->piece->created_at : null,
             'good_example' => $goodExample,
         ]);
 
@@ -145,7 +144,7 @@ class DataGalleryPieceTest extends TestCase
                 'project_id'   => $hasData ? $this->dataPiece->project_id : $this->piece->project_id,
                 'description'  => $description ? $this->text : null,
                 'is_visible'   => $isVisible,
-                'timestamp'    => $timestamp ? Carbon::now() : null,
+                'timestamp'    => $timestamp ? $this->piece->created_at : null,
                 'tags'         => $tag ? [0 => $this->tag->tag_id] : null,
                 'programs'     => $program ? [0 => $this->program->program_id] : null,
                 'good_example' => $goodExample,
@@ -156,7 +155,7 @@ class DataGalleryPieceTest extends TestCase
             'name'         => $this->name,
             'description'  => $description ? $this->text : null,
             'is_visible'   => $isVisible,
-            'timestamp'    => $timestamp ? Carbon::now() : null,
+            'timestamp'    => $timestamp ? $this->piece->created_at : null,
             'good_example' => $goodExample,
         ]);
 
