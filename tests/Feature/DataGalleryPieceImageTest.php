@@ -61,7 +61,10 @@ class DataGalleryPieceImageTest extends TestCase
      */
     public function testGetEditImage()
     {
-        $this->markTestSkipped('Skipped due to cast incompatibility');
+        // This sidesteps casts not working correctly in tests,
+        // for some reason
+        $this->image->data = json_decode($this->image->data, true);
+        $this->image->save();
 
         $this->actingAs($this->user)
             ->get('/admin/data/pieces/images/edit/'.$this->image->id)
