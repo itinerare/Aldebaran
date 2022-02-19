@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Changelog;
 use App\Services\ChangelogService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class ChangelogController extends Controller
 {
@@ -76,9 +75,9 @@ class ChangelogController extends Controller
         $data = $request->only([
             'name', 'text', 'is_visible',
         ]);
-        if ($id && $service->updateLog(Changelog::find($id), $data, Auth::user())) {
+        if ($id && $service->updateLog(Changelog::find($id), $data, $request->user())) {
             flash('Entry updated successfully.')->success();
-        } elseif (!$id && $log = $service->createLog($data, Auth::user())) {
+        } elseif (!$id && $log = $service->createLog($data, $request->user())) {
             flash('Entry created successfully.')->success();
 
             return redirect()->to('admin/changelog/edit/'.$log->id);

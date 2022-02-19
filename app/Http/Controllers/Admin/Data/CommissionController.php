@@ -9,7 +9,6 @@ use App\Models\Commission\CommissionType;
 use App\Models\Gallery\Tag;
 use App\Services\CommissionService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Settings;
 use Spatie\ValidationRules\Rules\Delimited;
 use Validator;
@@ -128,9 +127,9 @@ class CommissionController extends Controller
             }
         }
 
-        if ($id && $service->updateCommissionClass(CommissionClass::find($id), $data, Auth::user())) {
+        if ($id && $service->updateCommissionClass(CommissionClass::find($id), $data, $request->user())) {
             flash('Class updated successfully.')->success();
-        } elseif (!$id && $class = $service->createCommissionClass($data, Auth::user())) {
+        } elseif (!$id && $class = $service->createCommissionClass($data, $request->user())) {
             flash('Class created successfully.')->success();
 
             return redirect()->to('admin/data/commission-classes/edit/'.$class->id);
@@ -308,9 +307,9 @@ class CommissionController extends Controller
             }
         }
 
-        if ($id && $service->updateCommissionCategory(CommissionCategory::find($id), $data, Auth::user())) {
+        if ($id && $service->updateCommissionCategory(CommissionCategory::find($id), $data, $request->user())) {
             flash('Category updated successfully.')->success();
-        } elseif (!$id && $category = $service->createCommissionCategory($data, Auth::user())) {
+        } elseif (!$id && $category = $service->createCommissionCategory($data, $request->user())) {
             flash('Category created successfully.')->success();
 
             return redirect()->to('admin/data/commission-categories/edit/'.$category->id);
@@ -501,9 +500,9 @@ class CommissionController extends Controller
             }
         }
 
-        if ($id && $service->updateCommissionType(CommissionType::find($id), $data, Auth::user())) {
+        if ($id && $service->updateCommissionType(CommissionType::find($id), $data, $request->user())) {
             flash('Commission type updated successfully.')->success();
-        } elseif (!$id && $type = $service->createCommissionType($data, Auth::user())) {
+        } elseif (!$id && $type = $service->createCommissionType($data, $request->user())) {
             flash('Commission type created successfully.')->success();
 
             return redirect()->to('admin/data/commission-types/edit/'.$type->id);

@@ -11,7 +11,6 @@ use App\Models\Gallery\Project;
 use App\Models\TextPage;
 use App\Services\CommissionManager;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Settings;
 
 class CommissionController extends Controller
@@ -190,7 +189,7 @@ class CommissionController extends Controller
         }
 
         // Fetch visible examples
-        $query = Piece::visible(Auth::check() ? Auth::user() : null)->whereIn('id', $type->getExamples(Auth::check() ? Auth::user() : null, true)->pluck('id')->toArray());
+        $query = Piece::visible($request->user() ?? null)->whereIn('id', $type->getExamples($request->user() ?? null, true)->pluck('id')->toArray());
 
         // Perform any filtering/sorting
         $data = $request->only(['project_id', 'name', 'sort']);

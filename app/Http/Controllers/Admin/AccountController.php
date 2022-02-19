@@ -49,7 +49,7 @@ class AccountController extends Controller
         $request->validate([
             'email' => 'required|string|email|max:255|unique:users',
         ]);
-        if ($service->updateEmail($request->only(['email']), Auth::user())) {
+        if ($service->updateEmail($request->only(['email']), $request->user())) {
             flash('Email updated successfully.')->success();
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
@@ -73,7 +73,7 @@ class AccountController extends Controller
             'old_password' => 'required|string',
             'new_password' => 'required|string|min:8|confirmed',
         ]);
-        if ($service->updatePassword($request->only(['old_password', 'new_password', 'new_password_confirmation']), Auth::user())) {
+        if ($service->updatePassword($request->only(['old_password', 'new_password', 'new_password_confirmation']), $request->user())) {
             flash('Password updated successfully.')->success();
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
@@ -121,7 +121,7 @@ class AccountController extends Controller
     public function getConfirmTwoFactor(Request $request)
     {
         // Assemble URL and QR Code svg from session information
-        $qrUrl = app(TwoFactorAuthenticationProvider::class)->qrCodeUrl(config('app.name'), Auth::user()->email, decrypt($request->session()->get('two_factor_secret')));
+        $qrUrl = app(TwoFactorAuthenticationProvider::class)->qrCodeUrl(config('app.name'), $request->user()->email, decrypt($request->session()->get('two_factor_secret')));
         $qrCode = (new Writer(
             new ImageRenderer(
                 new RendererStyle(192, 0, null, null, Fill::uniformColor(new Rgb(255, 255, 255), new Rgb(45, 55, 72))),
@@ -148,7 +148,7 @@ class AccountController extends Controller
         $request->validate([
             'code' => 'required',
         ]);
-        if ($service->confirmTwoFactor($request->only(['code']), $request->session()->only(['two_factor_secret', 'two_factor_recovery_codes']), Auth::user())) {
+        if ($service->confirmTwoFactor($request->only(['code']), $request->session()->only(['two_factor_secret', 'two_factor_recovery_codes']), $request->user())) {
             flash('2FA enabled succesfully.')->success();
             $request->session()->forget(['two_factor_secret', 'two_factor_recovery_codes']);
         } else {
@@ -172,7 +172,7 @@ class AccountController extends Controller
         $request->validate([
             'code' => 'required',
         ]);
-        if ($service->disableTwoFactor($request->only(['code']), Auth::user())) {
+        if ($service->disableTwoFactor($request->only(['code']), $request->user())) {
             flash('2FA disabled succesfully.')->success();
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {

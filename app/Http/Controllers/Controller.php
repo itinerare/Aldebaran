@@ -11,7 +11,6 @@ use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\View;
 
 class Controller extends BaseController
@@ -21,9 +20,9 @@ class Controller extends BaseController
     /**
      * Create a new controller instance.
      */
-    public function __construct()
+    public function __construct(Request $request)
     {
-        $this->commissionClasses = CommissionClass::active(Auth::check() ? Auth::user() : null)->orderBy('sort', 'DESC')->get();
+        $this->commissionClasses = CommissionClass::active($request->user() ?? null)->orderBy('sort', 'DESC')->get();
 
         View::share('visibleProjects', Project::visible()->orderBy('sort', 'DESC')->get());
         view()->composer('*', function ($view) {

@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\TextPage;
 use App\Services\PageService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class PageController extends Controller
 {
@@ -63,7 +62,7 @@ class PageController extends Controller
         $request->validate(TextPage::$updateRules);
         $data = $request->only(['text']);
 
-        if ($service->updatePage(TextPage::find($id), $data, Auth::user())) {
+        if ($service->updatePage(TextPage::find($id), $data, $request->user())) {
             flash('Page updated successfully.')->success();
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {

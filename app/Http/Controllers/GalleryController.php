@@ -28,7 +28,7 @@ class GalleryController extends Controller
      */
     public function getGallery(Request $request)
     {
-        $query = Piece::visible(Auth::check() ? Auth::user() : null)->gallery();
+        $query = Piece::visible($request->user() ?? null)->gallery();
 
         $data = $request->only(['project_id', 'name', 'tags', 'sort']);
         if (isset($data['project_id']) && $data['project_id'] != 'none') {
@@ -87,7 +87,7 @@ class GalleryController extends Controller
             abort(404);
         }
 
-        $query = Piece::visible(Auth::check() ? Auth::user() : null)->where('project_id', $project->id);
+        $query = Piece::visible($request->user() ?? null)->where('project_id', $project->id);
 
         $data = $request->only(['project_id', 'name', 'tags', 'sort']);
         if (isset($data['name'])) {
