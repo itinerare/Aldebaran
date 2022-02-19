@@ -7,7 +7,7 @@ use App\Models\Commission\CommissionClass;
 use App\Models\Commission\CommissionType;
 use App\Models\TextPage;
 use Carbon\Carbon;
-use DB;
+use Illuminate\Support\Facades\DB;
 use Settings;
 
 class CommissionService extends Service
@@ -245,13 +245,7 @@ class CommissionService extends Service
             if (!isset($data['include_class'])) {
                 $data['data']['include']['class'] = 0;
             } else {
-                $data['data']['include']['class'] = 1;
-            }
-
-            if (isset($data['data'])) {
-                $data['data'] = json_encode($data['data']);
-            } else {
-                $data['data'] = null;
+                $data['data']['include']['class'] = $data['include_class'];
             }
 
             $category->update($data);
