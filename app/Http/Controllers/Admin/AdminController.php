@@ -3,10 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Commission\Commission;
 use App\Services\FileService;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Http\Request;
 use Settings;
 
 class AdminController extends Controller
@@ -27,7 +28,15 @@ class AdminController extends Controller
      */
     public function getIndex()
     {
-        return view('admin.index');
+        foreach ($this->commissionClasses as $class) {
+            $pendingCount[$class->id] = Commission::where('status', 'Pending')->class($class->id)->count();
+            $acceptedCount[$class->id] = Commission::where('status', 'Accepted')->class($class->id)->count();
+        }
+
+        return view('admin.index', [
+            'pendingCount'  => $pendingCount,
+            'acceptedCount' => $acceptedCount,
+        ]);
     }
 
     /******************************************************************************
