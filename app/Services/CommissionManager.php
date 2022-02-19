@@ -11,7 +11,7 @@ use App\Models\Commission\CommissionType;
 use App\Models\Gallery\Piece;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
-use Mail;
+use Illuminate\Support\Facades\Mail;
 use Settings;
 
 class CommissionManager extends Service
@@ -107,7 +107,7 @@ class CommissionManager extends Service
 
             // If desired, send an email notification to the admin account
             // that a commission request was submitted
-            if (Settings::get('notif_emails') && !$manual && (env('MAIL_USERNAME', false) && env('MAIL_PASSWORD', false))) {
+            if (Settings::get('notif_emails') && !$manual && (config('aldebaran.settings.admin_email.address') && config('aldebaran.settings.admin_email.password'))) {
                 Mail::to(User::find(1))->send(new CommissionRequested($commission));
             }
 
