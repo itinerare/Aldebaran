@@ -50,7 +50,7 @@ class Commissioner extends Model
      */
     public function ips()
     {
-        return $this->hasMany('App\Models\Commission\CommissionerIp', 'commissioner_id');
+        return $this->hasMany(CommissionerIp::class, 'commissioner_id');
     }
 
     /**
@@ -58,7 +58,7 @@ class Commissioner extends Model
      */
     public function commissions()
     {
-        return $this->hasMany('App\Models\Commission\Commission', 'commissioner_id');
+        return $this->hasMany(Commission::class, 'commissioner_id');
     }
 
     /**********************************************************************************************

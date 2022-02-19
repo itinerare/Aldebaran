@@ -52,7 +52,7 @@ class PieceTag extends Model
      */
     public function tag()
     {
-        return $this->belongsTo('App\Models\Gallery\Tag', 'tag_id');
+        return $this->belongsTo(Tag::class, 'tag_id');
     }
 
     /**********************************************************************************************

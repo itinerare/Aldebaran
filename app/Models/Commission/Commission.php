@@ -91,7 +91,7 @@ class Commission extends Model
      */
     public function type()
     {
-        return $this->belongsTo('App\Models\Commission\CommissionType', 'commission_type');
+        return $this->belongsTo(CommissionType::class, 'commission_type');
     }
 
     /**
@@ -99,7 +99,7 @@ class Commission extends Model
      */
     public function commissioner()
     {
-        return $this->belongsTo('App\Models\Commission\Commissioner', 'commissioner_id');
+        return $this->belongsTo(Commissioner::class, 'commissioner_id');
     }
 
     /**
@@ -107,7 +107,7 @@ class Commission extends Model
      */
     public function pieces()
     {
-        return $this->hasMany('App\Models\Commission\CommissionPiece', 'commission_id');
+        return $this->hasMany(CommissionPiece::class, 'commission_id');
     }
 
     /**********************************************************************************************

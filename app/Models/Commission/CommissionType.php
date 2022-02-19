@@ -78,7 +78,7 @@ class CommissionType extends Model
      */
     public function category()
     {
-        return $this->belongsTo('App\Models\Commission\CommissionCategory', 'category_id');
+        return $this->belongsTo(CommissionCategory::class, 'category_id');
     }
 
     /**
@@ -86,7 +86,7 @@ class CommissionType extends Model
      */
     public function commissions()
     {
-        return $this->hasMany('App\Models\Commission\Commission', 'commission_type');
+        return $this->hasMany(Commission::class, 'commission_type');
     }
 
     /**********************************************************************************************

@@ -52,7 +52,7 @@ class PieceProgram extends Model
      */
     public function program()
     {
-        return $this->belongsTo('App\Models\Gallery\Program', 'program_id');
+        return $this->belongsTo(Program::class, 'program_id');
     }
 
     /**********************************************************************************************
