@@ -7,7 +7,7 @@ use App\Models\Gallery\PieceTag;
 use App\Models\Gallery\Project;
 use App\Models\Gallery\Tag;
 use App\Models\TextPage;
-use Auth;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
 class GalleryController extends Controller

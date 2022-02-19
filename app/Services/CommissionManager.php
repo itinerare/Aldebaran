@@ -10,7 +10,7 @@ use App\Models\Commission\CommissionPiece;
 use App\Models\Commission\CommissionType;
 use App\Models\Gallery\Piece;
 use App\Models\User;
-use DB;
+use Illuminate\Support\Facades\DB;
 use Mail;
 use Settings;
 

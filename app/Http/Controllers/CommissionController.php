@@ -10,7 +10,7 @@ use App\Models\Gallery\Piece;
 use App\Models\Gallery\Project;
 use App\Models\TextPage;
 use App\Services\CommissionManager;
-use Auth;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Settings;
 

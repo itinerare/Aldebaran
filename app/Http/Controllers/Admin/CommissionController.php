@@ -9,7 +9,7 @@ use App\Models\Commission\Commissioner;
 use App\Models\Commission\CommissionType;
 use App\Models\Gallery\Piece;
 use App\Services\CommissionManager;
-use Auth;
+use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 

@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use Config;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Console\Command;
 
 class CopyDefaultImages extends Command

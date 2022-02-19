@@ -8,7 +8,7 @@ use App\Models\Commission\CommissionClass;
 use App\Models\Commission\CommissionType;
 use App\Models\Gallery\Tag;
 use App\Services\CommissionService;
-use Auth;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Settings;
 use Spatie\ValidationRules\Rules\Delimited;
