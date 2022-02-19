@@ -7,7 +7,7 @@ use App\Models\Commission\CommissionClass;
 use App\Models\TextPage;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-use Str;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class DataCommissionClassTest extends TestCase

@@ -4,7 +4,7 @@ namespace Database\Factories;
 
 use App\Models\TextPage;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Str;
+use Illuminate\Support\Str;
 
 class TextPageFactory extends Factory
 {

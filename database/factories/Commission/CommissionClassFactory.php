@@ -6,7 +6,7 @@ use App\Models\Commission\CommissionClass;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\DB;
-use Str;
+use Illuminate\Support\Str;
 
 class CommissionClassFactory extends Factory
 {
