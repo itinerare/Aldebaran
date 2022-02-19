@@ -820,6 +820,8 @@ class GalleryService extends Service
 
             // Add text watermark if necessary
             if (isset($data['text_watermark']) && $data['text_watermark']) {
+                $watermarkText = null;
+
                 // Set text based on form input
                 switch ($data['text_watermark']) {
                     case 'generic':
