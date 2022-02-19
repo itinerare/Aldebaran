@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use App\Models\Gallery\Piece;
+use App\Models\Gallery\PieceTag;
 use App\Models\Gallery\Tag;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -136,13 +138,37 @@ class DataGalleryTagTest extends TestCase
 
     /**
      * Test tag deletion.
+     *
+     * @dataProvider tagDeleteProvider
+     *
+     * @param bool $withPiece
+     * @param bool $expected
      */
-    public function testPostDeleteTag()
+    public function testPostDeleteTag($withPiece, $expected)
     {
+        if ($withPiece) {
+            $piece = Piece::factory()->create();
+            PieceTag::factory()
+                ->piece($piece->id)->tag($this->tag->id)
+                ->create();
+        }
+
         $this
             ->actingAs($this->user)
             ->post('/admin/data/tags/delete/'.$this->tag->id);
 
-        $this->assertDeleted($this->tag);
+        if ($expected) {
+            $this->assertDeleted($this->tag);
+        } else {
+            $this->assertModelExists($this->tag);
+        }
+    }
+
+    public function tagDeleteProvider()
+    {
+        return [
+            'basic'      => [0, 1],
+            'with piece' => [1, 0],
+        ];
     }
 }
