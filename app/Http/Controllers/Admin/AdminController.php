@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Commission\Commission;
 use App\Services\FileService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Settings;
 
@@ -88,7 +87,7 @@ class AdminController extends Controller
     public function getSiteImages()
     {
         return view('admin.images', [
-            'images' => Config::get('aldebaran.image_files'),
+            'images' => config('aldebaran.image_files'),
         ]);
     }
 
@@ -104,7 +103,7 @@ class AdminController extends Controller
         $request->validate(['file' => 'required|file']);
         $file = $request->file('file');
         $key = $request->get('key');
-        $filename = Config::get('aldebaran.image_files.'.$key)['filename'];
+        $filename = config('aldebaran.image_files.'.$key)['filename'];
 
         if ($service->uploadFile($file, null, $filename, false)) {
             flash('Image uploaded successfully.')->success();

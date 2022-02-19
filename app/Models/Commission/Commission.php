@@ -3,7 +3,6 @@
 namespace App\Models\Commission;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Config;
 
 class Commission extends Model
 {
@@ -287,7 +286,7 @@ class Commission extends Model
 
         // Calculate fee and round
         $fee =
-            ($total * ((isset($payment['intl']) && $payment['intl'] ? Config::get('aldebaran.settings.fee.percent_intl') : Config::get('aldebaran.settings.fee.percent')) / 100)) + Config::get('aldebaran.settings.fee.base');
+            ($total * ((isset($payment['intl']) && $payment['intl'] ? config('aldebaran.settings.fee.percent_intl') : config('aldebaran.settings.fee.percent')) / 100)) + config('aldebaran.settings.fee.base');
         $fee = round($fee, 2);
 
         return $total - $fee;

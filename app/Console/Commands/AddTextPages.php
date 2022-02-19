@@ -39,7 +39,7 @@ class AddTextPages extends Command
     public function handle()
     {
         //
-        $pages = Config::get('aldebaran.text_pages');
+        $pages = config('aldebaran.text_pages');
 
         $this->info('******************');
         $this->info('* ADD TEXT PAGES *');

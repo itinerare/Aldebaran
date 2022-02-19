@@ -43,7 +43,7 @@
 @if($pieces->count())
     {!! $pieces->render() !!}
 
-    @include('gallery._flex_'.Config::get('aldebaran.settings.gallery_arrangement'), ['pieces' => $pieces, 'project' => true, 'source' => 'projects/'.$project->slug])
+    @include('gallery._flex_'.config('aldebaran.settings.gallery_arrangement'), ['pieces' => $pieces, 'project' => true, 'source' => 'projects/'.$project->slug])
 
     {!! $pieces->render() !!}
 @else
