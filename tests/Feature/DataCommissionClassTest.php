@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Commission\CommissionCategory;
 use App\Models\Commission\CommissionClass;
 use App\Models\TextPage;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -204,9 +205,18 @@ class DataCommissionClassTest extends TestCase
 
     /**
      * Test class deletion.
+     *
+     * @dataProvider classDeleteProvider
+     *
+     * @param bool $withCategory
+     * @param bool $expected
      */
-    public function testPostDeleteClass()
+    public function testPostDeleteClass($withCategory, $expected)
     {
+        if ($withCategory) {
+            CommissionCategory::factory()->class($this->class->id)->create();
+        }
+
         $className = $this->class->name;
         $classSlug = $this->class->slug;
 
@@ -214,21 +224,33 @@ class DataCommissionClassTest extends TestCase
             ->actingAs($this->user)
             ->post('/admin/data/commission-classes/delete/'.$this->class->id);
 
-        $this->assertDeleted($this->class);
+        if ($expected) {
+            $this->assertDeleted($this->class);
 
-        // Verify that default commission class text pages are deleted
-        foreach (['tos', 'info'] as $page) {
-            $this->assertDatabaseMissing('text_pages', [
-                'name' => $className.' Commission '.($page == 'tos' ? 'Terms of Service' : 'Info'),
-                'key'  => $classSlug.$page,
-            ]);
-        }
+            // Verify that default commission class text pages are deleted
+            foreach (['tos', 'info'] as $page) {
+                $this->assertDatabaseMissing('text_pages', [
+                    'name' => $className.' Commission '.($page == 'tos' ? 'Terms of Service' : 'Info'),
+                    'key'  => $classSlug.$page,
+                ]);
+            }
 
-        // Verify that commission class settings are deleted
-        foreach (['comms_open', 'overall_slots', 'full', 'status'] as $setting) {
-            $this->assertDatabaseMissing('site_settings', [
-                'key' => $classSlug.'_'.$setting,
-            ]);
+            // Verify that commission class settings are deleted
+            foreach (['comms_open', 'overall_slots', 'full', 'status'] as $setting) {
+                $this->assertDatabaseMissing('site_settings', [
+                    'key' => $classSlug.'_'.$setting,
+                ]);
+            }
+        } else {
+            $this->assertModelExists($this->class);
         }
+    }
+
+    public function classDeleteProvider()
+    {
+        return [
+            'basic'         => [0, 1],
+            'with category' => [1, 0],
+        ];
     }
 }

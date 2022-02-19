@@ -2,10 +2,13 @@
 
 namespace App\Models\Commission;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class CommissionCategory extends Model
 {
+    use HasFactory;
+
     /**
      * The attributes that are mass assignable.
      *
@@ -76,7 +79,7 @@ class CommissionCategory extends Model
      */
     public function class()
     {
-        return $this->belongsTo('App\Models\Commission\CommissionClass', 'class_id');
+        return $this->belongsTo(CommissionClass::class, 'class_id');
     }
 
     /**
@@ -84,7 +87,7 @@ class CommissionCategory extends Model
      */
     public function types()
     {
-        return $this->hasMany('App\Models\Commission\CommissionType', 'category_id')->orderBy('sort', 'DESC');
+        return $this->hasMany(CommissionType::class, 'category_id')->orderBy('sort', 'DESC');
     }
 
     /**********************************************************************************************

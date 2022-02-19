@@ -4,8 +4,8 @@ namespace Database\Factories\Commission;
 
 use App\Models\Commission\CommissionClass;
 use Carbon\Carbon;
-use DB;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Facades\DB;
 use Str;
 
 class CommissionClassFactory extends Factory
