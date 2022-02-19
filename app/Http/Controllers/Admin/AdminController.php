@@ -27,6 +27,8 @@ class AdminController extends Controller
      */
     public function getIndex()
     {
+        $pendingCount = [];
+        $acceptedCount = [];
         foreach ($this->commissionClasses as $class) {
             $pendingCount[$class->id] = Commission::where('status', 'Pending')->class($class->id)->count();
             $acceptedCount[$class->id] = Commission::where('status', 'Accepted')->class($class->id)->count();
