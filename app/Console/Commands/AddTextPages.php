@@ -3,9 +3,9 @@
 namespace App\Console\Commands;
 
 use Carbon\Carbon;
+use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Console\Command;
 
 class AddTextPages extends Command
 {

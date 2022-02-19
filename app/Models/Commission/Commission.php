@@ -2,8 +2,8 @@
 
 namespace App\Models\Commission;
 
-use Illuminate\Support\Facades\Config;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Config;
 
 class Commission extends Model
 {

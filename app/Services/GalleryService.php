@@ -10,9 +10,9 @@ use App\Models\Gallery\PieceTag;
 use App\Models\Gallery\Program;
 use App\Models\Gallery\Project;
 use App\Models\Gallery\Tag;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Http\UploadedFile;
 use Image;
 use Settings;
 

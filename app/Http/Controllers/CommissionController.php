@@ -10,8 +10,8 @@ use App\Models\Gallery\Piece;
 use App\Models\Gallery\Project;
 use App\Models\TextPage;
 use App\Services\CommissionManager;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Settings;
 
 class CommissionController extends Controller

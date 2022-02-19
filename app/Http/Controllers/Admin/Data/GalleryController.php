@@ -10,8 +10,8 @@ use App\Models\Gallery\Program;
 use App\Models\Gallery\Project;
 use App\Models\Gallery\Tag;
 use App\Services\GalleryService;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class GalleryController extends Controller
 {
