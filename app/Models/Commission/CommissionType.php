@@ -5,7 +5,7 @@ namespace App\Models\Commission;
 use App\Models\Gallery\Piece;
 use App\Models\Gallery\PieceTag;
 use Illuminate\Database\Eloquent\Model;
-use Settings;
+use App\Facades\Settings;
 
 class CommissionType extends Model
 {

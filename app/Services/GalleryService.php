@@ -13,7 +13,7 @@ use App\Models\Gallery\Tag;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Image;
-use Settings;
+use App\Facades\Settings;
 
 class GalleryService extends Service
 {

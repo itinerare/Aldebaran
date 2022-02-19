@@ -9,7 +9,7 @@ use App\Models\Commission\CommissionType;
 use App\Models\Gallery\Tag;
 use App\Services\CommissionService;
 use Illuminate\Http\Request;
-use Settings;
+use App\Facades\Settings;
 use Spatie\ValidationRules\Rules\Delimited;
 use Validator;
 

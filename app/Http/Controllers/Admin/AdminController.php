@@ -7,7 +7,7 @@ use App\Models\Commission\Commission;
 use App\Services\FileService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Settings;
+use App\Facades\Settings;
 
 class AdminController extends Controller
 {

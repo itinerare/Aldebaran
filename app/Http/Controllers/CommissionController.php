@@ -11,7 +11,7 @@ use App\Models\Gallery\Project;
 use App\Models\TextPage;
 use App\Services\CommissionManager;
 use Illuminate\Http\Request;
-use Settings;
+use App\Facades\Settings;
 
 class CommissionController extends Controller
 {

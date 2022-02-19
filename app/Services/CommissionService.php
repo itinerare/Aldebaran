@@ -8,7 +8,7 @@ use App\Models\Commission\CommissionType;
 use App\Models\TextPage;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
-use Settings;
+use App\Facades\Settings;
 
 class CommissionService extends Service
 {
@@ -161,7 +161,7 @@ class CommissionService extends Service
     /**
      * Sorts class order.
      *
-     * @param array $data
+     * @param string $data
      *
      * @return bool
      */
@@ -288,7 +288,7 @@ class CommissionService extends Service
     /**
      * Sorts category order.
      *
-     * @param array $data
+     * @param string $data
      *
      * @return bool
      */
@@ -411,7 +411,7 @@ class CommissionService extends Service
     /**
      * Sorts type order.
      *
-     * @param array $data
+     * @param string $data
      *
      * @return bool
      */
