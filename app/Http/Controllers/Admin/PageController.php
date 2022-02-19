@@ -52,8 +52,7 @@ class PageController extends Controller
     /**
      * Edits a text page.
      *
-     * @param App\Services\PageService $service
-     * @param int|null                 $id
+     * @param int|null $id
      *
      * @return \Illuminate\Http\RedirectResponse
      */

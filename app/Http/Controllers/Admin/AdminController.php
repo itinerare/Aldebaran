@@ -96,8 +96,6 @@ class AdminController extends Controller
     /**
      * Uploads a site image file.
      *
-     * @param App\Services\FileService $service
-     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function postUploadImage(Request $request, FileService $service)
@@ -120,8 +118,6 @@ class AdminController extends Controller
 
     /**
      * Uploads a custom site CSS file.
-     *
-     * @param App\Services\FileService $service
      *
      * @return \Illuminate\Http\RedirectResponse
      */

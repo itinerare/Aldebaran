@@ -271,8 +271,7 @@ class CommissionController extends Controller
     /**
      * Submits a new commission request.
      *
-     * @param App\Services\CommissionManager $service
-     * @param int|null                       $id
+     * @param int|null $id
      *
      * @return \Illuminate\Http\RedirectResponse
      */

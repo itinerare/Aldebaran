@@ -87,8 +87,7 @@ class CommissionController extends Controller
     /**
      * Creates or edits an commission class.
      *
-     * @param App\Services\CommissionService $service
-     * @param int|null                       $id
+     * @param int|null $id
      *
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -164,8 +163,7 @@ class CommissionController extends Controller
     /**
      * Deletes an commission class.
      *
-     * @param App\Services\CommissionService $service
-     * @param int                            $id
+     * @param int $id
      *
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -184,8 +182,6 @@ class CommissionController extends Controller
 
     /**
      * Sorts commission classes.
-     *
-     * @param App\Services\CommissionService $service
      *
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -267,8 +263,7 @@ class CommissionController extends Controller
     /**
      * Creates or edits an commission category.
      *
-     * @param App\Services\CommissionService $service
-     * @param int|null                       $id
+     * @param int|null $id
      *
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -344,8 +339,7 @@ class CommissionController extends Controller
     /**
      * Deletes an commission category.
      *
-     * @param App\Services\CommissionService $service
-     * @param int                            $id
+     * @param int $id
      *
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -364,8 +358,6 @@ class CommissionController extends Controller
 
     /**
      * Sorts commission categories.
-     *
-     * @param App\Services\CommissionService $service
      *
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -458,8 +450,7 @@ class CommissionController extends Controller
     /**
      * Creates or edits a commission type.
      *
-     * @param App\Services\CommissionService $service
-     * @param int|null                       $id
+     * @param int|null $id
      *
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -537,8 +528,7 @@ class CommissionController extends Controller
     /**
      * Deletes a commission type.
      *
-     * @param App\Services\CommissionService $service
-     * @param int                            $id
+     * @param int $id
      *
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -557,8 +547,6 @@ class CommissionController extends Controller
 
     /**
      * Sorts commission types.
-     *
-     * @param App\Services\CommissionService $service
      *
      * @return \Illuminate\Http\RedirectResponse
      */

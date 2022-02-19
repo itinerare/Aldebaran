@@ -40,8 +40,6 @@ class AccountController extends Controller
     /**
      * Changes the user's email address and sends a verification email.
      *
-     * @param App\Services\UserService $service
-     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function postEmail(Request $request, UserService $service)
@@ -62,8 +60,6 @@ class AccountController extends Controller
 
     /**
      * Changes the user's password.
-     *
-     * @param App\Services\UserService $service
      *
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -90,8 +86,6 @@ class AccountController extends Controller
 
     /**
      * Enables the user's two factor auth.
-     *
-     * @param App\Services\UserService $service
      *
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -139,8 +133,6 @@ class AccountController extends Controller
     /**
      * Confirms and fully enables the user's two factor auth.
      *
-     * @param App\Services\UserService $service
-     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function postConfirmTwoFactor(Request $request, UserService $service)
@@ -162,8 +154,6 @@ class AccountController extends Controller
 
     /**
      * Confirms and disables the user's two factor auth.
-     *
-     * @param App\Services\UserService $service
      *
      * @return \Illuminate\Http\RedirectResponse
      */

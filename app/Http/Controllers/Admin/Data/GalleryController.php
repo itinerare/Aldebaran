@@ -73,8 +73,7 @@ class GalleryController extends Controller
     /**
      * Creates or edits a project.
      *
-     * @param App\Services\GalleryService $service
-     * @param int|null                    $id
+     * @param int|null $id
      *
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -118,8 +117,7 @@ class GalleryController extends Controller
     /**
      * Deletes a project.
      *
-     * @param App\Services\GalleryService $service
-     * @param int                         $id
+     * @param int $id
      *
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -138,8 +136,6 @@ class GalleryController extends Controller
 
     /**
      * Sorts projects.
-     *
-     * @param App\Services\GalleryService $service
      *
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -228,8 +224,7 @@ class GalleryController extends Controller
     /**
      * Creates or edits a piece.
      *
-     * @param App\Services\GalleryService $service
-     * @param int|null                    $id
+     * @param int|null $id
      *
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -273,8 +268,7 @@ class GalleryController extends Controller
     /**
      * Deletes a piece.
      *
-     * @param App\Services\GalleryService $service
-     * @param int                         $id
+     * @param int $id
      *
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -294,8 +288,7 @@ class GalleryController extends Controller
     /**
      * Sorts piece images.
      *
-     * @param App\Services\GalleryService $service
-     * @param mixed                       $id
+     * @param mixed $id
      *
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -356,8 +349,7 @@ class GalleryController extends Controller
     /**
      * Creates and updates images.
      *
-     * @param App\Services\GalleryService $service
-     * @param int                         $id
+     * @param int $id
      *
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -404,8 +396,7 @@ class GalleryController extends Controller
     /**
      * Deletes an image.
      *
-     * @param App\Services\GalleryService $service
-     * @param int                         $id
+     * @param int $id
      *
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -474,8 +465,7 @@ class GalleryController extends Controller
     /**
      * Creates or edits a tag.
      *
-     * @param App\Services\GalleryService $service
-     * @param int|null                    $id
+     * @param int|null $id
      *
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -519,8 +509,7 @@ class GalleryController extends Controller
     /**
      * Deletes a tag.
      *
-     * @param App\Services\GalleryService $service
-     * @param int                         $id
+     * @param int $id
      *
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -587,8 +576,7 @@ class GalleryController extends Controller
     /**
      * Creates or edits a program.
      *
-     * @param App\Services\GalleryService $service
-     * @param int|null                    $id
+     * @param int|null $id
      *
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -632,8 +620,7 @@ class GalleryController extends Controller
     /**
      * Deletes a program.
      *
-     * @param App\Services\GalleryService $service
-     * @param int                         $id
+     * @param int $id
      *
      * @return \Illuminate\Http\RedirectResponse
      */

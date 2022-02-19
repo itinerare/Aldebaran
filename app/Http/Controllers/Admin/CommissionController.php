@@ -92,8 +92,7 @@ class CommissionController extends Controller
     /**
      * Submits a new commission request.
      *
-     * @param App\Services\CommissionManager $service
-     * @param int|null                       $id
+     * @param int|null $id
      *
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -158,9 +157,8 @@ class CommissionController extends Controller
     /**
      * Acts on a commission.
      *
-     * @param int                            $id
-     * @param string                         $action
-     * @param App\Services\CommissionManager $service
+     * @param int    $id
+     * @param string $action
      *
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -220,8 +218,7 @@ class CommissionController extends Controller
     /**
      * Accepts a commission.
      *
-     * @param int                            $id
-     * @param App\Services\CommissionManager $service
+     * @param int $id
      *
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -241,8 +238,7 @@ class CommissionController extends Controller
     /**
      * Updates a commission.
      *
-     * @param int                            $id
-     * @param App\Services\CommissionManager $service
+     * @param int $id
      *
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -264,8 +260,7 @@ class CommissionController extends Controller
     /**
      * Marks a commission complete.
      *
-     * @param int                            $id
-     * @param App\Services\CommissionManager $service
+     * @param int $id
      *
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -285,8 +280,7 @@ class CommissionController extends Controller
     /**
      * Declines a commission.
      *
-     * @param int                            $id
-     * @param App\Services\CommissionManager $service
+     * @param int $id
      *
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -306,8 +300,7 @@ class CommissionController extends Controller
     /**
      * Accepts a commission.
      *
-     * @param int                            $id
-     * @param App\Services\CommissionManager $service
+     * @param int $id
      *
      * @return \Illuminate\Http\RedirectResponse
      */
