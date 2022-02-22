@@ -18,7 +18,7 @@ class DataCommissionCategoryTest extends TestCase
 
         // Create a commission category for editing, etc. purposes
         $this->category = CommissionCategory::factory()->create();
-        $this->category = CommissionCategory::factory()
+        $this->dataCategory = CommissionCategory::factory()
             ->inactive()->testData(true)->create();
 
         // Generate some test data
@@ -133,6 +133,9 @@ class DataCommissionCategoryTest extends TestCase
             'basic'                => [0, null, 1, 0],
             'inactive'             => [0, null, 0, 0],
             'include class fields' => [0, null, 1, 1],
+            'basic with data'      => [1, null, 1, 0],
+            'inactive with data'   => [1, null, 0, 0],
+            'include with data'    => [1, null, 1, 1],
 
             // Field type tests
             // (string) type, (bool) rules, (bool) choices, value, (string) help
