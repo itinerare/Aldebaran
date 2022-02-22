@@ -49,4 +49,23 @@ class CommissionPayment extends Model
     {
         return $this->belongsTo(Commission::class, 'commission_id');
     }
+
+    /**********************************************************************************************
+
+        ACCESSORS
+
+    **********************************************************************************************/
+
+    /**
+     * Get cost with fees.
+     *
+     * @return int
+     */
+    public function getTotalWithFeesAttribute()
+    {
+        $total = 0;
+        $total += $this->commission->paymentWithFees($this);
+
+        return $total;
+    }
 }
