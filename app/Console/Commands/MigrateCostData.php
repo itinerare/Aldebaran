@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\Commission\Commission;
+use App\Models\Commission\CommissionPayment;
 use Illuminate\Console\Command;
 
 class MigrateCostData extends Command
@@ -36,18 +37,22 @@ class MigrateCostData extends Command
      */
     public function handle()
     {
-        $commissions = $this->withProgressBar(Commission::all(), function ($commission) {
-            $cost[$commission->id][0] = [
-                'cost' => $commission->getRawOriginal('cost_data'),
-                'tip'  => isset($commission->data['tip']) ? $commission->data['tip'] : null,
-                'paid' => $commission->getRawOriginal('paid_status'),
-                'intl' => 0,
-            ];
+        $this->withProgressBar(Commission::all(), function ($commission) {
+            // Fetch existing data and create payment object(s)
+            foreach ($commission->costData as $data) {
+                $payment = CommissionPayment::create([
+                    'commission_id' => $commission->id,
+                    'cost'          => $data['cost'],
+                    'tip'           => $data['tip'] ? $data['tip'] : 0.00,
+                    'is_paid'       => $data['paid'],
+                    'is_intl'       => $data['intl'],
+                    'paid_at'       => $data['paid'] ? $commission->updated_at : null,
+                ]);
 
-            // Update the commission with the new data
-            $commission->update([
-                'cost_data' => json_encode($cost[$commission->id]),
-            ]);
+                if (!$payment) {
+                    $this->error('Failed to create payment record.');
+                }
+            }
         });
     }
 }
