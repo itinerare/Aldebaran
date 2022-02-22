@@ -237,14 +237,14 @@ class CommissionManager extends Service
                 foreach ($data['cost'] as $key=>$cost) {
                     CommissionPayment::create([
                         'commission_id' => $commission->id,
-                        'cost' => $cost,
-                        'tip'  => isset($data['tip'][$key]) ? $data['tip'][$key] : null,
-                        'is_paid' => isset($data['is_paid'][$key]) ? $data['is_paid'][$key] : 0,
-                        'is_intl' => isset($data['is_intl'][$key]) ? $data['is_intl'][$key] : 0,
-                        'paid_at' => isset($data['is_paid'][$key]) && $data['is_paid'][$key] ? (isset($data['paid_at'][$key]) ? $data['paid_at'][$key] : Carbon::now()) : null,
+                        'cost'          => $cost,
+                        'tip'           => isset($data['tip'][$key]) ? $data['tip'][$key] : null,
+                        'is_paid'       => isset($data['is_paid'][$key]) ? $data['is_paid'][$key] : 0,
+                        'is_intl'       => isset($data['is_intl'][$key]) ? $data['is_intl'][$key] : 0,
+                        'paid_at'       => isset($data['is_paid'][$key]) && $data['is_paid'][$key] ? (isset($data['paid_at'][$key]) ? $data['paid_at'][$key] : Carbon::now()) : null,
                     ]);
                 }
-            } elseif($commission->payments->count()) {
+            } elseif ($commission->payments->count()) {
                 // Clear old payment records
                 CommissionPayment::where('commission_id', $commission->id)->delete();
             }

@@ -39,8 +39,9 @@ class MigrateCostData extends Command
     {
         $this->withProgressBar(Commission::all(), function ($commission) {
             // Fetch existing data and create payment object(s)
-            foreach ($commission->costData as $data) {
-                $payment = CommissionPayment::create([
+            if (!$commission->payments->count()) {
+                foreach ($commission->costData as $data) {
+                    $payment = CommissionPayment::create([
                     'commission_id' => $commission->id,
                     'cost'          => $data['cost'],
                     'tip'           => $data['tip'] ? $data['tip'] : 0.00,
@@ -49,8 +50,9 @@ class MigrateCostData extends Command
                     'paid_at'       => $data['paid'] ? $commission->updated_at : null,
                 ]);
 
-                if (!$payment) {
-                    $this->error('Failed to create payment record.');
+                    if (!$payment) {
+                        $this->error('Failed to create payment record.');
+                    }
                 }
             }
         });
