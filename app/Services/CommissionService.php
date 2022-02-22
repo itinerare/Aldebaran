@@ -369,7 +369,6 @@ class CommissionService extends Service
                 $data = $this->processFormFields($data);
             }
             $data = $this->populateData($data, $type);
-            $data['data'] = json_encode($data['data']);
 
             $type->update($data);
 
@@ -699,9 +698,6 @@ class CommissionService extends Service
         if (!$type || $data['regenerate_key']) {
             $data['key'] = randomString(10);
         }
-
-        // Encode data
-        $data['data'] = json_encode($data['data']);
 
         return $data;
     }

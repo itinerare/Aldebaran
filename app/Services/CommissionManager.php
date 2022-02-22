@@ -97,7 +97,7 @@ class CommissionManager extends Service
                 'commissioner_id' => $commissioner->id,
                 'commission_type' => $type->id,
                 'status'          => 'Pending',
-                'data'            => json_encode($data['data']),
+                'data'            => $data['data'],
             ]);
 
             // Now that the commission has an ID, assign it a key incorporating it
@@ -236,8 +236,6 @@ class CommissionManager extends Service
                         'intl' => isset($data['intl'][$key]) ? $data['intl'][$key] : 0,
                     ];
                 }
-
-                $data['cost_data'] = json_encode($data['cost_data']);
             } else {
                 $data['cost_data'] = null;
             }

@@ -314,7 +314,6 @@ class GalleryService extends Service
                 'text_watermark' => isset($data['text_watermark']) ? $data['text_watermark'] : null,
                 'text_opacity'   => isset($data['text_opacity']) ? $data['text_opacity'] : null,
             ];
-            $data['data'] = json_encode($data['data']);
 
             // Record data for the image
             $image = PieceImage::create([
