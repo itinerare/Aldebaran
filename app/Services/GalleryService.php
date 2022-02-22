@@ -13,7 +13,7 @@ use App\Models\Gallery\Project;
 use App\Models\Gallery\Tag;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
-use Image;
+use Intervention\Image\Facades\Image;
 
 class GalleryService extends Service
 {
@@ -120,7 +120,7 @@ class GalleryService extends Service
     /**
      * Sorts project order.
      *
-     * @param array $data
+     * @param string $data
      *
      * @return bool
      */
@@ -256,7 +256,7 @@ class GalleryService extends Service
      * Sorts project order.
      *
      * @param int   $id
-     * @param array $data
+     * @param string $data
      *
      * @return bool
      */
