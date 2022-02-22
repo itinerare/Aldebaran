@@ -255,7 +255,7 @@ class GalleryService extends Service
     /**
      * Sorts project order.
      *
-     * @param int   $id
+     * @param int    $id
      * @param string $data
      *
      * @return bool
