@@ -11,7 +11,7 @@ use App\Models\Gallery\Tag;
 use App\Services\CommissionService;
 use Illuminate\Http\Request;
 use Spatie\ValidationRules\Rules\Delimited;
-use Validator;
+use Illuminate\Support\Facades\Validator;
 
 class CommissionController extends Controller
 {
