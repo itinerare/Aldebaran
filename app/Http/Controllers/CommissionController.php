@@ -296,6 +296,12 @@ class CommissionController extends Controller
             }
         }
 
+        // If the app is running in a prod environment,
+        // validate recaptcha response as well
+        if (config('app.env') == 'production') {
+            $validationRules['g-recaptcha-response'] = 'required|recaptchav3:submit,0.5';
+        }
+
         $request->validate($validationRules);
 
         $data = $request->only([

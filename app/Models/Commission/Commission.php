@@ -44,8 +44,7 @@ class Commission extends Model
         'paypal'  => 'email|nullable|min:3|max:191',
 
         // Other
-        'terms'                => 'accepted',
-        'g-recaptcha-response' => 'required|recaptchav3:submit,0.5',
+        'terms' => 'accepted',
     ];
 
     /**
