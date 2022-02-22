@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\Data;
 
+use App\Facades\Settings;
 use App\Http\Controllers\Controller;
 use App\Models\Commission\CommissionCategory;
 use App\Models\Commission\CommissionClass;
@@ -9,7 +10,6 @@ use App\Models\Commission\CommissionType;
 use App\Models\Gallery\Tag;
 use App\Services\CommissionService;
 use Illuminate\Http\Request;
-use App\Facades\Settings;
 use Spatie\ValidationRules\Rules\Delimited;
 use Validator;
 

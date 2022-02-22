@@ -2,10 +2,10 @@
 
 namespace App\Models\Gallery;
 
+use App\Facades\Settings;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Facades\Settings;
 use Spatie\Feed\Feedable;
 use Spatie\Feed\FeedItem;
 

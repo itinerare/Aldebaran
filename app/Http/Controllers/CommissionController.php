@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Facades\Settings;
 use App\Models\Commission\Commission;
 use App\Models\Commission\CommissionCategory;
 use App\Models\Commission\CommissionClass;
@@ -11,7 +12,6 @@ use App\Models\Gallery\Project;
 use App\Models\TextPage;
 use App\Services\CommissionManager;
 use Illuminate\Http\Request;
-use App\Facades\Settings;
 
 class CommissionController extends Controller
 {

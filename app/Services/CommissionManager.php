@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Facades\Settings;
 use App\Mail\CommissionRequested;
 use App\Models\Commission\Commission;
 use App\Models\Commission\Commissioner;
@@ -12,7 +13,6 @@ use App\Models\Gallery\Piece;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
-use App\Facades\Settings;
 
 class CommissionManager extends Service
 {

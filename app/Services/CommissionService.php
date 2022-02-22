@@ -2,13 +2,13 @@
 
 namespace App\Services;
 
+use App\Facades\Settings;
 use App\Models\Commission\CommissionCategory;
 use App\Models\Commission\CommissionClass;
 use App\Models\Commission\CommissionType;
 use App\Models\TextPage;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
-use App\Facades\Settings;
 
 class CommissionService extends Service
 {

@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Facades\Settings;
 use App\Models\Commission\CommissionPiece;
 use App\Models\Gallery\Piece;
 use App\Models\Gallery\PieceImage;
@@ -13,7 +14,6 @@ use App\Models\Gallery\Tag;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Image;
-use App\Facades\Settings;
 
 class GalleryService extends Service
 {
