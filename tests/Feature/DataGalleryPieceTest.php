@@ -5,7 +5,6 @@ namespace Tests\Feature;
 use App\Models\Gallery\Piece;
 use App\Models\Gallery\PieceProgram;
 use App\Models\Gallery\PieceTag;
-use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -84,7 +83,7 @@ class DataGalleryPieceTest extends TestCase
     public function testPostCreatePiece($hasData, $description, $isVisible, $timestamp, $tag, $program, $goodExample)
     {
         $this
-            ->actingAs(User::factory()->make())
+            ->actingAs($this->user)
             ->post('/admin/data/pieces/create', [
                 'name'         => $this->name,
                 'project_id'   => $this->piece->project_id,
