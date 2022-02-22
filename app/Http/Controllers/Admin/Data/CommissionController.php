@@ -10,8 +10,8 @@ use App\Models\Commission\CommissionType;
 use App\Models\Gallery\Tag;
 use App\Services\CommissionService;
 use Illuminate\Http\Request;
-use Spatie\ValidationRules\Rules\Delimited;
 use Illuminate\Support\Facades\Validator;
+use Spatie\ValidationRules\Rules\Delimited;
 
 class CommissionController extends Controller
 {
