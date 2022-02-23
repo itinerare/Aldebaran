@@ -139,11 +139,8 @@ class GalleryController extends Controller
             abort(404);
         }
 
-        return view(
-            'gallery.piece',
-            [
+        return view('gallery.piece', [
             'piece' => $piece,
-        ]
-        );
+        ]);
     }
 }
