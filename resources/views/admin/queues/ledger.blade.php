@@ -42,7 +42,7 @@
                             / <abbr data-toggle="tooltip" title="(After Fees)">
                                 ${{ $payment->totalWithFees }}
                             </abbr>
-                            {{ !$payment->is_paid ? '(Unpaid)' : ($payment->commission->status != 'Complete' ? '(Uncompleted)' : '')}}
+                            {{ !$payment->is_paid ? '(Unpaid)' : ($payment->commission->status != 'Complete' ? ($payment->commission->status == 'Declined' ? '(Cancelled)' : '(Uncompleted)') : '')}}
                         </span>
                     </h5>
                 </div>

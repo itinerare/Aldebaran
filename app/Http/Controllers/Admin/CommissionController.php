@@ -82,13 +82,10 @@ class CommissionController extends Controller
 
         $commissioners = Commissioner::where('is_banned', 0)->get()->pluck('fullName', 'id')->sort()->toArray();
 
-        return view(
-            'admin.queues.new',
-            [
+        return view('admin.queues.new', [
             'type'          => $type,
             'commissioners' => $commissioners,
-        ]
-        );
+        ]);
     }
 
     /**
@@ -203,7 +200,15 @@ class CommissionController extends Controller
             return Carbon::parse($date->created_at)->format('Y');
         });
 
-        $yearPayments = CommissionPayment::orderBy('created_at', 'DESC')->get()->groupBy(function ($date) {
+        $yearPayments = CommissionPayment::orderBy('created_at', 'DESC')->get()->filter(function ($payment) {
+            if ($payment->is_paid) {
+                return 1;
+            } elseif ($payment->commission->status == 'Accepted' || $payment->commission->status == 'Complete') {
+                return 1;
+            }
+
+            return 0;
+        })->groupBy(function ($date) {
             if (isset($date->paid_at)) {
                 return Carbon::parse($date->paid_at)->format('Y');
             }
@@ -221,15 +226,12 @@ class CommissionController extends Controller
             });
         })->sort();
 
-        return view(
-            'admin.queues.ledger',
-            [
+        return view('admin.queues.ledger', [
             'years'           => $groupedPayments->paginate(1)->appends($request->query()),
             'yearPayments'    => $yearPayments,
             'yearCommissions' => $yearCommissions,
             'year'            => $groupedPayments->keys()->skip(($request->get('page') ? $request->get('page') : 1) - 1)->first(),
-        ]
-        );
+        ]);
     }
 
     /**
