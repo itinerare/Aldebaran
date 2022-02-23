@@ -39,14 +39,14 @@ class MigrateCostData extends Command
     {
         $this->withProgressBar(Commission::all(), function ($commission) {
             // Fetch existing data and create payment object(s)
-            if (!$commission->payments->count()) {
+            if (!$commission->payments->count() && isset($commission->costData)) {
                 foreach ($commission->costData as $data) {
                     $payment = CommissionPayment::create([
                     'commission_id' => $commission->id,
                     'cost'          => $data['cost'],
                     'tip'           => $data['tip'] ? $data['tip'] : 0.00,
-                    'is_paid'       => $data['paid'],
-                    'is_intl'       => $data['intl'],
+                    'is_paid'       => isset($data['paid']) ? $data['paid'] : 0,
+                    'is_intl'       => isset($data['intl']) ? $data['intl'] : 0,
                     'paid_at'       => $data['paid'] ? $commission->updated_at : null,
                 ]);
 
