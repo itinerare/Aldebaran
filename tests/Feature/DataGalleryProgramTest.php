@@ -98,9 +98,7 @@ class DataGalleryProgramTest extends TestCase
             // and perform cleanup after the fact
             $this->program = Program::where('name', $this->name)->first();
 
-            $this->assertTrue(
-                File::exists(public_path('images/programs/'.$this->program->id.'-image.png'))
-            );
+            $this->assertTrue(File::exists(public_path('images/programs/'.$this->program->id.'-image.png')));
         }
     }
 
@@ -143,9 +141,7 @@ class DataGalleryProgramTest extends TestCase
         ]);
 
         if ($image) {
-            $this->assertTrue(
-                File::exists(public_path('images/programs/'.$this->program->id.'-image.png'))
-            );
+            $this->assertTrue(File::exists(public_path('images/programs/'.$this->program->id.'-image.png')));
         } elseif ($removeImage) {
             // Check that the file is not present
             $this->assertFalse(File::exists(public_path('images/programs/'.$this->program->id.'-image.png')));

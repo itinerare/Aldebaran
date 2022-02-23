@@ -116,12 +116,7 @@ class AccountController extends Controller
     {
         // Assemble URL and QR Code svg from session information
         $qrUrl = app(TwoFactorAuthenticationProvider::class)->qrCodeUrl(config('app.name'), $request->user()->email, decrypt($request->session()->get('two_factor_secret')));
-        $qrCode = (new Writer(
-            new ImageRenderer(
-                new RendererStyle(192, 0, null, null, Fill::uniformColor(new Rgb(255, 255, 255), new Rgb(45, 55, 72))),
-                new SvgImageBackEnd
-            )
-        ))->writeString($qrUrl);
+        $qrCode = (new Writer(new ImageRenderer(new RendererStyle(192, 0, null, null, Fill::uniformColor(new Rgb(255, 255, 255), new Rgb(45, 55, 72))), new SvgImageBackEnd)))->writeString($qrUrl);
         $qrCode = trim(substr($qrCode, strpos($qrCode, "\n") + 1));
 
         return view('auth.confirm_two_factor', [
