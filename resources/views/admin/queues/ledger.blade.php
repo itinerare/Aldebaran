@@ -37,7 +37,7 @@
                         <a href="{{ url('admin/commissions/edit/'.$payment->commission->id) }}">View</a>
                         <span class="float-right">
                             <abbr data-toggle="tooltip" title="(Before Fees)">
-                                ${{ $payment->cost }}{{ $payment->tip ? ' + $'.$payment->tip.' Tip' : '' }}
+                                ${{ $payment->cost }}{{ $payment->tip > 0 ? ' + $'.$payment->tip.' Tip' : '' }}
                             </abbr>
                             / <abbr data-toggle="tooltip" title="(After Fees)">
                                 ${{ $payment->totalWithFees }}
