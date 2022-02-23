@@ -123,10 +123,7 @@ class Commission extends Model
      */
     public function scopeClass($query, $class)
     {
-        return $query->whereIn(
-            'commission_type',
-            CommissionType::whereIn('category_id', CommissionCategory::byClass($class)->pluck('id')->toArray())->pluck('id')->toArray()
-        );
+        return $query->whereIn('commission_type', CommissionType::whereIn('category_id', CommissionCategory::byClass($class)->pluck('id')->toArray())->pluck('id')->toArray());
     }
 
     /**********************************************************************************************

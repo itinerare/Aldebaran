@@ -42,15 +42,12 @@ class CommissionController extends Controller
             abort(404);
         }
 
-        return view(
-            'commissions.info',
-            [
+        return view('commissions.info', [
             'class'      => $class,
             'page'       => TextPage::where('key', $class->slug.'info')->first(),
             'categories' => CommissionCategory::byClass($class->id)->active()->orderBy('sort', 'DESC')->whereIn('id', CommissionType::visible()->pluck('category_id')->toArray())->get(),
             'count'      => new CommissionType,
-        ]
-        );
+        ]);
     }
 
     /**
@@ -70,13 +67,10 @@ class CommissionController extends Controller
             abort(404);
         }
 
-        return view(
-            'commissions.text_page',
-            [
+        return view('commissions.text_page', [
             'class' => $class,
             'page'  => TextPage::where('key', $class->slug.'tos')->first(),
-        ]
-        );
+        ]);
     }
 
     /**
@@ -99,13 +93,10 @@ class CommissionController extends Controller
             abort(404);
         }
 
-        return view(
-            'commissions.text_page',
-            [
+        return view('commissions.text_page', [
             'class' => $class,
             'page'  => $page,
-        ]
-        );
+        ]);
     }
 
     /**
@@ -125,13 +116,10 @@ class CommissionController extends Controller
             abort(404);
         }
 
-        return view(
-            'commissions.queue',
-            [
+        return view('commissions.queue', [
             'class'       => $class,
             'commissions' => Commission::class($class->id)->where('status', 'Accepted')->orderBy('created_at', 'ASC')->get(),
-        ]
-        );
+        ]);
     }
 
     /**
@@ -151,12 +139,9 @@ class CommissionController extends Controller
             abort(404);
         }
 
-        return view(
-            'commissions.type',
-            [
+        return view('commissions.type', [
             'type' => $type,
-        ]
-        );
+        ]);
     }
 
     /**
@@ -260,13 +245,10 @@ class CommissionController extends Controller
             abort(404);
         }
 
-        return view(
-            'commissions.new',
-            [
+        return view('commissions.new', [
             'page' => TextPage::where('key', 'new_commission')->first(),
             'type' => $type,
-        ]
-        );
+        ]);
     }
 
     /**
@@ -339,11 +321,8 @@ class CommissionController extends Controller
             abort(404);
         }
 
-        return view(
-            'commissions.view_commission',
-            [
+        return view('commissions.view_commission', [
             'commission' => $commission,
-        ]
-        );
+        ]);
     }
 }
