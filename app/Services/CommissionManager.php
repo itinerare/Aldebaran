@@ -7,10 +7,12 @@ use App\Mail\CommissionRequested;
 use App\Models\Commission\Commission;
 use App\Models\Commission\Commissioner;
 use App\Models\Commission\CommissionerIp;
+use App\Models\Commission\CommissionPayment;
 use App\Models\Commission\CommissionPiece;
 use App\Models\Commission\CommissionType;
 use App\Models\Gallery\Piece;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 
@@ -228,16 +230,23 @@ class CommissionManager extends Service
 
             // Process payment data
             if (isset($data['cost'])) {
+                // Clear old payments
+                CommissionPayment::where('commission_id', $commission->id)->delete();
+
+                // Create payment record for each
                 foreach ($data['cost'] as $key=>$cost) {
-                    $data['cost_data'][$key] = [
-                        'cost' => $cost,
-                        'tip'  => isset($data['tip'][$key]) ? $data['tip'][$key] : null,
-                        'paid' => isset($data['paid'][$key]) ? $data['paid'][$key] : 0,
-                        'intl' => isset($data['intl'][$key]) ? $data['intl'][$key] : 0,
-                    ];
+                    CommissionPayment::create([
+                        'commission_id' => $commission->id,
+                        'cost'          => $cost,
+                        'tip'           => isset($data['tip'][$key]) ? $data['tip'][$key] : null,
+                        'is_paid'       => isset($data['is_paid'][$key]) ? $data['is_paid'][$key] : 0,
+                        'is_intl'       => isset($data['is_intl'][$key]) ? $data['is_intl'][$key] : 0,
+                        'paid_at'       => isset($data['is_paid'][$key]) && $data['is_paid'][$key] ? (isset($data['paid_at'][$key]) ? $data['paid_at'][$key] : Carbon::now()) : null,
+                    ]);
                 }
-            } else {
-                $data['cost_data'] = null;
+            } elseif ($commission->payments->count()) {
+                // Clear old payment records
+                CommissionPayment::where('commission_id', $commission->id)->delete();
             }
 
             // Update the commission

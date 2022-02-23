@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Commission\Commission;
 use App\Models\Commission\CommissionClass;
 use App\Models\Commission\Commissioner;
+use App\Models\Commission\CommissionPayment;
 use App\Models\Commission\CommissionType;
 use App\Models\Gallery\Piece;
 use App\Services\CommissionManager;
@@ -199,18 +200,31 @@ class CommissionController extends Controller
             return Carbon::parse($date->created_at)->format('Y');
         });
 
-        $groupedCommissions = $yearCommissions->map(function ($year) {
-            return $year->groupBy(function ($commission) {
-                return Carbon::parse($commission->created_at)->format('F Y');
-            });
+        $yearPayments = CommissionPayment::orderBy('created_at', 'DESC')->get()->groupBy(function ($date) {
+            if (isset($date->paid_at)) {
+                return Carbon::parse($date->paid_at)->format('Y');
+            }
+
+            return Carbon::now()->format('Y');
         });
+
+        $groupedPayments = $yearPayments->map(function ($year) {
+            return $year->groupBy(function ($payment) {
+                if (isset($payment->paid_at)) {
+                    return Carbon::parse($payment->paid_at)->format('F Y');
+                }
+
+                return Carbon::parse($payment->created_at)->format('F Y');
+            });
+        })->sort();
 
         return view(
             'admin.queues.ledger',
             [
-            'years'           => $groupedCommissions->paginate(1)->appends($request->query()),
+            'years'           => $groupedPayments->paginate(1)->appends($request->query()),
+            'yearPayments'    => $yearPayments,
             'yearCommissions' => $yearCommissions,
-            'year'            => $groupedCommissions->keys()->skip(($request->get('page') ? $request->get('page') : 1) - 1)->first(),
+            'year'            => $groupedPayments->keys()->skip(($request->get('page') ? $request->get('page') : 1) - 1)->first(),
         ]
         );
     }
@@ -245,7 +259,7 @@ class CommissionController extends Controller
     private function postUpdateCommission($id, Request $request, CommissionManager $service)
     {
         $request->validate(Commission::$updateRules);
-        $data = $request->only(['pieces', 'paid_status', 'progress', 'comments', 'cost', 'tip', 'paid', 'intl']);
+        $data = $request->only(['pieces', 'paid_status', 'progress', 'comments', 'cost', 'tip', 'is_paid', 'is_intl', 'paid_at']);
         if ($service->updateCommission($id, $data, $request->user())) {
             flash('Commission updated successfully.')->success();
         } else {

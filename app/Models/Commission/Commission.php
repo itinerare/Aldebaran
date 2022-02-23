@@ -54,8 +54,7 @@ class Commission extends Model
         'paypal'  => 'email|nullable|min:3|max:191',
 
         // Other
-        'terms'                => 'accepted',
-        'g-recaptcha-response' => 'required|recaptchav3:submit,0.5',
+        'terms' => 'accepted',
     ];
 
     /**
@@ -100,6 +99,14 @@ class Commission extends Model
     public function commissioner()
     {
         return $this->belongsTo(Commissioner::class, 'commissioner_id');
+    }
+
+    /**
+     * Get the payments associated with this commission.
+     */
+    public function payments()
+    {
+        return $this->hasMany(CommissionPayment::class, 'commission_id');
     }
 
     /**
@@ -155,11 +162,11 @@ class Commission extends Model
      */
     public function getPaidStatusAttribute()
     {
-        if (!isset($this->costData)) {
+        if (!$this->payments->count()) {
             return 0;
         }
-        foreach ($this->costData as $payment) {
-            if ($payment['paid'] == 0) {
+        foreach ($this->payments as $payment) {
+            if ($payment->is_paid == 0) {
                 return 0;
             }
         }
@@ -174,10 +181,6 @@ class Commission extends Model
      */
     public function getIsPaidAttribute()
     {
-        if (!isset($this->costData)) {
-            return '-';
-        }
-
         return $this->paidStatus ?
             '<span class="text-success">Paid</span>' :
             ($this->status == 'Accepted' ? '<span class="text-danger"><strong>Unpaid</strong></span>' : '<s>Unpaid</s>');
@@ -191,9 +194,9 @@ class Commission extends Model
     public function getCostAttribute()
     {
         $total = 0;
-        if (isset($this->costData)) {
-            foreach ($this->costData as $payment) {
-                $total += $payment['cost'];
+        if ($this->payments->count()) {
+            foreach ($this->payments as $payment) {
+                $total += $payment->cost;
             }
         }
 
@@ -208,9 +211,9 @@ class Commission extends Model
     public function getTipAttribute()
     {
         $total = 0;
-        if (isset($this->costData)) {
-            foreach ($this->costData as $payment) {
-                $total += (isset($payment['tip']) ? $payment['tip'] : 0);
+        if ($this->payments->count()) {
+            foreach ($this->payments as $payment) {
+                $total += $payment->tip;
             }
         }
 
@@ -236,8 +239,8 @@ class Commission extends Model
     {
         $total = 0;
         // Cycle through payments, getting their total with fees
-        if (isset($this->costData)) {
-            foreach ($this->costData as $payment) {
+        if ($this->payments->count()) {
+            foreach ($this->payments as $payment) {
                 $total += $this->paymentWithFees($payment);
             }
         }
@@ -276,17 +279,17 @@ class Commission extends Model
     /**
      * Calculate the total for a payment after fees.
      *
-     * @param array $payment
+     * @param \App\Models\Commission\CommissionPayment $payment
      *
      * @return int
      */
     public function paymentWithFees($payment)
     {
-        $total = $payment['cost'] + (isset($payment['tip']) && $payment['tip'] ? $payment['tip'] : 0);
+        $total = $payment->cost + (isset($payment->tip) && $payment->tip ? $payment->tip : 0);
 
         // Calculate fee and round
         $fee =
-            ($total * ((isset($payment['intl']) && $payment['intl'] ? config('aldebaran.settings.fee.percent_intl') : config('aldebaran.settings.fee.percent')) / 100)) + config('aldebaran.settings.fee.base');
+            ($total * ((isset($payment->is_intl) && $payment->is_intl ? config('aldebaran.settings.fee.percent_intl') : config('aldebaran.settings.fee.percent')) / 100)) + config('aldebaran.settings.fee.base');
         $fee = round($fee, 2);
 
         return $total - $fee;
