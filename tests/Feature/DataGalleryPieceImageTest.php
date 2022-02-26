@@ -8,6 +8,8 @@ use App\Services\GalleryService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\File;
+use Intervention\Image;
 use Tests\TestCase;
 
 class DataGalleryPieceImageTest extends TestCase
@@ -44,6 +46,7 @@ class DataGalleryPieceImageTest extends TestCase
     protected function tearDown(): void
     {
         $this->service->testImages($this->image, false);
+        $this->service->testImages($this->dataImage, false);
     }
 
     /**
@@ -72,34 +75,88 @@ class DataGalleryPieceImageTest extends TestCase
     }
 
     /**
-     * Test image editing.
+     * Test image creation.
      *
-     * @dataProvider imageProvider
+     * @dataProvider imageCreateProvider
      *
-     * @param bool $hasData
-     * @param bool $hasDescription
+     * @param bool $withDescription
      * @param bool $isVisible
      * @param bool $isPrimary
      */
-    public function testPostEditImageInfo($hasData, $hasDescription, $isVisible, $isPrimary)
+    public function testPostCreateImage($withDescription, $isVisible, $isPrimary)
     {
         $this
             ->actingAs($this->user)
-            ->post('/admin/data/pieces/images/edit/'.($hasData ? $this->dataImage->id : $this->image->id), [
-                'description'      => $hasDescription ? $this->caption : null,
+            ->post('/admin/data/pieces/images/create', [
+                'piece_id'           => $this->piece->id,
+                'image'              => $this->file,
+                'description'        => $withDescription ? $this->caption : null,
+                'is_visible'         => $isVisible,
+                'is_primary_image'   => $isPrimary,
+                'watermark_scale'    => '.'.mt_rand(2, 7).'0',
+                'watermark_opacity'  => mt_rand(0, 10).'0',
+                'watermark_position' => 'bottom-right',
+                'watermark_color'    => null,
+                'text_watermark'     => null,
+                'text_opacity'       => '.'.mt_rand(1, 9).'0',
+            ]);
+
+        $image = PieceImage::where('piece_id', $this->piece->id)->whereNotIn('id', [$this->image->id, $this->dataImage->id])->where('is_visible', $isVisible)->where('is_primary_image', $isPrimary)->first();
+
+        $this->assertDatabaseHas('piece_images', [
+            'description'      => $withDescription ? $this->caption : null,
+            'is_visible'       => $isVisible,
+            'is_primary_image' => $isPrimary,
+        ]);
+
+        // Check that the associated image files are present
+        $this->
+            assertTrue(File::exists($image->imagePath.'/'.$image->fullsizeFilename));
+        $this->
+            assertTrue(File::exists($image->imagePath.'/'.$image->imageFilename));
+        $this->
+            assertTrue(File::exists($image->imagePath.'/'.$image->thumbnailFilename));
+
+        // Clean up test files
+        $this->service->testImages($image, false);
+    }
+
+    public function imageCreateProvider()
+    {
+        // Get all possible sequences
+        return $this->booleanSequences(3);
+    }
+
+    /**
+     * Test image editing.
+     * Largely checks associated info due to quirks of the test environment.
+     *
+     * @dataProvider imageEditProvider
+     *
+     * @param bool $withData
+     * @param bool $withDescription
+     * @param bool $isVisible
+     * @param bool $isPrimary
+     */
+    public function testPostEditImage($withData, $withDescription, $isVisible, $isPrimary)
+    {
+        $this
+            ->actingAs($this->user)
+            ->post('/admin/data/pieces/images/edit/'.($withData ? $this->dataImage->id : $this->image->id), [
+                'description'      => $withDescription ? $this->caption : null,
                 'is_visible'       => $isVisible,
                 'is_primary_image' => $isPrimary,
             ]);
 
         $this->assertDatabaseHas('piece_images', [
-            'id'               => $hasData ? $this->dataImage->id : $this->image->id,
-            'description'      => $hasDescription ? $this->caption : null,
+            'id'               => $withData ? $this->dataImage->id : $this->image->id,
+            'description'      => $withDescription ? $this->caption : null,
             'is_visible'       => $isVisible,
             'is_primary_image' => $isPrimary,
         ]);
     }
 
-    public function imageProvider()
+    public function imageEditProvider()
     {
         // Get all possible sequences
         return $this->booleanSequences(4);

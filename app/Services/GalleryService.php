@@ -772,7 +772,7 @@ class GalleryService extends Service
 
         // Save fullsize image before doing any processing
         if (!$regen) {
-            $this->handleImage($data['image'], $image->imageDirectory, $image->fullsizeFileName);
+            $this->handleImage($data['image'], $image->imagePath, $image->fullsizeFileName);
         }
 
         // Process and save thumbnail from the fullsize image
