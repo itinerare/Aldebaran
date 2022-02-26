@@ -48,7 +48,8 @@ class CommissionCategory extends Model
      */
     public static $createRules = [
         //
-        'name' => 'required|unique:commission_categories',
+        'name'     => 'required|unique:commission_categories',
+        'class_id' => 'required',
     ];
 
     /**
@@ -59,6 +60,7 @@ class CommissionCategory extends Model
     public static $updateRules = [
         //
         'name'            => 'required',
+        'class_id'        => 'required',
         'field_key.*'     => 'nullable|between:3,25|alpha_dash',
         'field_type.*'    => 'nullable|required_with:field_key.*',
         'field_label.*'   => 'nullable|string|required_with:field_key.*',

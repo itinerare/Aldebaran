@@ -202,6 +202,11 @@ class CommissionService extends Service
         DB::beginTransaction();
 
         try {
+            $class = CommissionClass::find($data['class_id']);
+            if (!$class) {
+                throw new \Exception('Invalid commission class selected.');
+            }
+
             if (!isset($data['is_active'])) {
                 $data['is_active'] = 0;
             }
@@ -230,6 +235,11 @@ class CommissionService extends Service
         DB::beginTransaction();
 
         try {
+            $class = CommissionClass::find($data['class_id']);
+            if (!$class) {
+                throw new \Exception('Invalid commission class selected.');
+            }
+
             // More specific validation
             if (CommissionCategory::where('name', $data['name'])->where('id', '!=', $category->id)->exists()) {
                 throw new \Exception('The name has already been taken.');
