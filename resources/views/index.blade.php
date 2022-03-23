@@ -8,7 +8,7 @@
     <p>Please finish initial site setup!</p>
 @endif
 
-@if(Settings::get('commissions_on'))
+@if(config('aldebaran.settings.commissions.enabled'))
     @foreach($commissionClasses as $class)
     <div class="card mb-4">
         <div class="card-header">

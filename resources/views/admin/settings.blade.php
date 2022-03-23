@@ -34,20 +34,10 @@
         </div>
     {!! Form::close() !!}
 
-    <!-- Commission Type Settings -->
-    <h2>Commission Settings</h2>
+    @if(config('aldebaran.settings.commissions.enabled'))
+        <!-- Commission Type Settings -->
+        <h2>Commission Settings</h2>
 
-    {!! Form::open(['url' => 'admin/site-settings/commissions_on']) !!}
-        <div class="form-group h-100">
-            <strong>{!! Form::label('Enable Commission Components') !!}:</strong> {{ $settings->where('key', 'commissions_on')->first()->description }}<br/>
-            {!! Form::checkbox('value', 1, $settings->where('key', 'commissions_on')->first()->value, ['class' => 'form-check-input mb-3', 'data-toggle' => 'toggle']) !!}
-            <div class="form-group text-right mb-3">
-                {!! Form::submit('Edit', ['class' => 'btn btn-primary']) !!}
-            </div>
-        </div>
-    {!! Form::close() !!}
-
-    @if(Settings::get('commissions_on'))
         {!! Form::open(['url' => 'admin/site-settings/notif_emails']) !!}
             <div class="form-group h-100">
                 <strong>{!! Form::label('Email Notifications') !!}:</strong> {{ $settings->where('key', 'notif_emails')->first()->description }}<br/>

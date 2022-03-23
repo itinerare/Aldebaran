@@ -33,7 +33,7 @@ class CommissionController extends Controller
      */
     public function getInfo($class)
     {
-        if (!Settings::get('commissions_on')) {
+        if (!config('aldebaran.settings.commissions.enabled')) {
             abort(404);
         }
         $class = CommissionClass::active()->where('slug', $class)->first();
@@ -58,7 +58,7 @@ class CommissionController extends Controller
      */
     public function getTos($class)
     {
-        if (!Settings::get('commissions_on')) {
+        if (!config('aldebaran.settings.commissions.enabled')) {
             abort(404);
         }
         $class = CommissionClass::active()->where('slug', $class)->first();
@@ -82,7 +82,7 @@ class CommissionController extends Controller
      */
     public function getClassPage($class, $key)
     {
-        if (!Settings::get('commissions_on')) {
+        if (!config('aldebaran.settings.commissions.enabled')) {
             abort(404);
         }
         $class = CommissionClass::active()->where('slug', $class)->first();
@@ -107,7 +107,7 @@ class CommissionController extends Controller
      */
     public function getQueue($class)
     {
-        if (!Settings::get('commissions_on')) {
+        if (!config('aldebaran.settings.commissions.enabled')) {
             abort(404);
         }
         $class = CommissionClass::active()->where('slug', $class)->first();
@@ -130,7 +130,7 @@ class CommissionController extends Controller
      */
     public function getType($key)
     {
-        if (!Settings::get('commissions_on')) {
+        if (!config('aldebaran.settings.commissions.enabled')) {
             abort(404);
         }
         $type = CommissionType::active()->where('key', $key)->first();
@@ -152,7 +152,7 @@ class CommissionController extends Controller
      */
     public function getTypeGallery($key, Request $request)
     {
-        if (!Settings::get('commissions_on')) {
+        if (!config('aldebaran.settings.commissions.enabled')) {
             abort(404);
         }
 
@@ -221,7 +221,7 @@ class CommissionController extends Controller
      */
     public function getNewCommission(Request $request)
     {
-        if (!Settings::get('commissions_on')) {
+        if (!config('aldebaran.settings.commissions.enabled')) {
             abort(404);
         }
 
@@ -311,7 +311,7 @@ class CommissionController extends Controller
      */
     public function getViewCommission($key)
     {
-        if (!Settings::get('commissions_on')) {
+        if (!config('aldebaran.settings.commissions.enabled')) {
             abort(404);
         }
         $commission = Commission::where('commission_key', $key)->first();

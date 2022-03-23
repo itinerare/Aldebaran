@@ -35,7 +35,7 @@ class CommissionController extends Controller
      */
     public function getCommissionClassIndex()
     {
-        if (!Settings::get('commissions_on')) {
+        if (!config('aldebaran.settings.commissions.enabled')) {
             abort(404);
         }
 
@@ -51,7 +51,7 @@ class CommissionController extends Controller
      */
     public function getCreateCommissionClass()
     {
-        if (!Settings::get('commissions_on')) {
+        if (!config('aldebaran.settings.commissions.enabled')) {
             abort(404);
         }
 
@@ -70,7 +70,7 @@ class CommissionController extends Controller
      */
     public function getEditCommissionClass($id)
     {
-        if (!Settings::get('commissions_on')) {
+        if (!config('aldebaran.settings.commissions.enabled')) {
             abort(404);
         }
         $class = CommissionClass::find($id);
@@ -150,7 +150,7 @@ class CommissionController extends Controller
      */
     public function getDeleteCommissionClass($id)
     {
-        if (!Settings::get('commissions_on')) {
+        if (!config('aldebaran.settings.commissions.enabled')) {
             abort(404);
         }
         $class = CommissionClass::find($id);
@@ -209,7 +209,7 @@ class CommissionController extends Controller
      */
     public function getIndex()
     {
-        if (!Settings::get('commissions_on')) {
+        if (!config('aldebaran.settings.commissions.enabled')) {
             abort(404);
         }
 
@@ -225,7 +225,7 @@ class CommissionController extends Controller
      */
     public function getCreateCommissionCategory()
     {
-        if (!Settings::get('commissions_on')) {
+        if (!config('aldebaran.settings.commissions.enabled')) {
             abort(404);
         }
 
@@ -245,7 +245,7 @@ class CommissionController extends Controller
      */
     public function getEditCommissionCategory($id)
     {
-        if (!Settings::get('commissions_on')) {
+        if (!config('aldebaran.settings.commissions.enabled')) {
             abort(404);
         }
         $category = CommissionCategory::find($id);
@@ -326,7 +326,7 @@ class CommissionController extends Controller
      */
     public function getDeleteCommissionCategory($id)
     {
-        if (!Settings::get('commissions_on')) {
+        if (!config('aldebaran.settings.commissions.enabled')) {
             abort(404);
         }
         $category = CommissionCategory::find($id);
@@ -385,7 +385,7 @@ class CommissionController extends Controller
      */
     public function getCommissionTypeIndex(Request $request)
     {
-        if (!Settings::get('commissions_on')) {
+        if (!config('aldebaran.settings.commissions.enabled')) {
             abort(404);
         }
         $query = CommissionType::query();
@@ -410,7 +410,7 @@ class CommissionController extends Controller
      */
     public function getCreateCommissionType()
     {
-        if (!Settings::get('commissions_on')) {
+        if (!config('aldebaran.settings.commissions.enabled')) {
             abort(404);
         }
 
@@ -431,7 +431,7 @@ class CommissionController extends Controller
      */
     public function getEditCommissionType($id)
     {
-        if (!Settings::get('commissions_on')) {
+        if (!config('aldebaran.settings.commissions.enabled')) {
             abort(404);
         }
         $commissionType = CommissionType::find($id);
@@ -515,7 +515,7 @@ class CommissionController extends Controller
      */
     public function getDeleteCommissionType($id)
     {
-        if (!Settings::get('commissions_on')) {
+        if (!config('aldebaran.settings.commissions.enabled')) {
             abort(404);
         }
         $commissionType = CommissionType::find($id);

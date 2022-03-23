@@ -5,7 +5,7 @@
 @section('admin-content')
 {!! breadcrumbs(['Admin Panel' => 'admin']) !!}
 
-@if(Settings::get('commissions_on'))
+@if(config('aldebaran.settings.commissions.enabled'))
     @if(isset($commissionClasses) && $commissionClasses->count())
         <div class="row">
             @foreach($commissionClasses as $class)
