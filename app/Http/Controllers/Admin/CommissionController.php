@@ -196,6 +196,10 @@ class CommissionController extends Controller
      */
     public function getLedger(Request $request)
     {
+        if (!config('aldebaran.settings.commissions.enabled')) {
+            abort(404);
+        }
+
         $yearCommissions = Commission::whereIn('status', ['Accepted', 'Complete'])->whereNotNull('cost_data')->orderBy('created_at', 'DESC')->get()->groupBy(function ($date) {
             return Carbon::parse($date->created_at)->format('Y');
         });

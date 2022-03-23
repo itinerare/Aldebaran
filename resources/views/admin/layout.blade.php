@@ -19,13 +19,15 @@
             <div class="card-body inventory-body collapse" id="mobileNav">
                 <h5>
                     <a href="{{ url('admin') }}">Admin Home</a><br/>
-                    @if(config('aldebaran.settings.commissions.enabled') && isset($commissionClasses) && $commissionClasses->count())
-                        Queues:
-                        @foreach($commissionClasses as $class)
-                            <a href="{{ url('admin/commissions/'.$class->slug) }}">{{ $class->name }} Queue</a> ・
-                        @endforeach
+                    @if(config('aldebaran.settings.commissions.enabled'))
+                        @if(isset($commissionClasses) && $commissionClasses->count())
+                            Queues:
+                            @foreach($commissionClasses as $class)
+                                <a href="{{ url('admin/commissions/'.$class->slug) }}">{{ $class->name }} Queue</a> ・
+                            @endforeach
+                        @endif
+                        <a href="{{ url('admin/ledger') }}">Ledger</a><br/>
                     @endif
-                    <a href="{{ url('admin/ledger') }}">Ledger</a><br/>
                     Gallery Data:
                     <a href="{{ url('admin/data/projects') }}">Projects</a> ・
                     <a href="{{ url('admin/data/pieces') }}">Pieces</a> ・
