@@ -15,24 +15,34 @@
                     <a class="nav-link" href="{{ url('about') }}">About</a>
                 </li>
 
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url('gallery') }}">Gallery</a>
-                </li>
+                @if(config('aldebaran.settings.navigation.gallery'))
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url('gallery') }}">Gallery</a>
+                    </li>
+                @endif
 
                 @if(isset($visibleProjects) && $visibleProjects->count())
-                    <li class="nav-item dropdown">
-                        <a id="projectDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                            Projects
-                        </a>
+                    @if(config('aldebaran.settings.navigation.projects_nav'))
+                        @foreach($visibleProjects as $project)
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ $project->url }}">{{ $project->name }}</a>
+                            </li>
+                        @endforeach
+                    @else
+                        <li class="nav-item dropdown">
+                            <a id="projectDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                                Projects
+                            </a>
 
-                        <div class="dropdown-menu" aria-labelledby="projectDropdown">
-                            @foreach($visibleProjects as $project)
-                                <a class="dropdown-item" href="{{ $project->url }}">
-                                    {{ $project->name }}
-                                </a>
-                            @endforeach
-                        </div>
-                    </li>
+                            <div class="dropdown-menu" aria-labelledby="projectDropdown">
+                                @foreach($visibleProjects as $project)
+                                    <a class="dropdown-item" href="{{ $project->url }}">
+                                        {{ $project->name }}
+                                    </a>
+                                @endforeach
+                            </div>
+                        </li>
+                    @endif
                 @endif
 
                 @if(Settings::get('commissions_on') && isset($commissionClasses) && $commissionClasses->count())

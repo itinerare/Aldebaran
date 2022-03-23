@@ -12,6 +12,18 @@ return [
     |
     */
 
+    'navigation' => [
+        // This enables the main gallery page and shows the nav bar item
+        // By default, this is enabled (1) but can be set to 0 to disable
+        'gallery' => 1,
+
+        // By default, projects are in a drop-down on the nav bar; this
+        // makes each project its own item on the nav bar
+        // Note that this requires being careful about how many projects/
+        // overall navbar items you have!
+        'projects_nav' => 0,
+    ],
+
     // Whether galleries should display images in columns or rows.
     // Should be either 'rows' or 'columns'
     'gallery_arrangement' => 'rows',

@@ -28,6 +28,10 @@ class GalleryController extends Controller
      */
     public function getGallery(Request $request)
     {
+        if (!config('aldebaran.settings.navigation.gallery')) {
+            abort(404);
+        }
+
         $query = Piece::visible(Auth::check() ? Auth::user() : null)->gallery();
 
         $data = $request->only(['project_id', 'name', 'tags', 'sort']);
