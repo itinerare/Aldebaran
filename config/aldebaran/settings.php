@@ -47,7 +47,7 @@ return [
         // NOTE: Enabling this and using these components in a way that
         // generates income, or contributes to generating income,
         // requires a private license!
-        'enabled' => 1,
+        'enabled' => 0,
 
         // Fee information. Current for PayPal as of Aug 10 2021
         'fee' => [
