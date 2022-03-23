@@ -10,7 +10,6 @@ use App\Models\Gallery\Tag;
 use App\Services\CommissionService;
 use Auth;
 use Illuminate\Http\Request;
-use Settings;
 use Spatie\ValidationRules\Rules\Delimited;
 use Validator;
 
