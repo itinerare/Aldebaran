@@ -1,7 +1,7 @@
 <ul>
     <li class="sidebar-header"><a href="{{ url('admin') }}" class="card-link">Admin Home</a></li>
 
-    @if(Settings::get('commissions_on') && isset($commissionClasses) && $commissionClasses->count())
+    @if(config('aldebaran.settings.commissions.enabled') && isset($commissionClasses) && $commissionClasses->count())
         <li class="sidebar-section">
             <div class="sidebar-section-header">Queues</div>
             @foreach($commissionClasses as $class)
@@ -19,7 +19,7 @@
         <div class="sidebar-item"><a href="{{ url('admin/data/programs') }}" class="{{ set_active('admin/data/programs*') }}">Programs</a></div>
     </li>
 
-    @if(Settings::get('commissions_on'))
+    @if(config('aldebaran.settings.commissions.enabled'))
         <li class="sidebar-section">
             <div class="sidebar-section-header">Commission Data</div>
             <div class="sidebar-item"><a href="{{ url('admin/data/commission-classes') }}" class="{{ set_active('admin/data/commission-classes*') }}">Classes</a></div>

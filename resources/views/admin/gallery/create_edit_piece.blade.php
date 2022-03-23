@@ -52,7 +52,7 @@
     {!! Form::select('programs[]', $programs, $piece->id ? $piece->programs->pluck('program_id')->toArray() : null, ['id' => 'programsList', 'class' => 'form-control', 'multiple']) !!}
 </div>
 
-@if(Settings::get('commissions_on'))
+@if(config('aldebaran.settings.commissions.enabled'))
     <div class="form-group">
         {!! Form::checkbox('good_example', 1, $piece->id ? $piece->good_example : 1, ['class' => 'form-check-input', 'data-toggle' => 'toggle']) !!}
         {!! Form::label('good_example', 'Good Example', ['class' => 'form-check-label ml-3']) !!} {!! add_help('Whether or not this piece is a good example for any relevant commission type(s).') !!}
