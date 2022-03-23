@@ -27,8 +27,7 @@ return [
     'layout' => [
         // Whether or not the site should be full-width
         // By default content is confined to the center portion
-        // This is overridden for the admin panel/
-        // anywhere there is a navigation sidebar
+        // This is overridden for the admin panel/anywhere there is a navigation sidebar
         'full_width' => 0,
     ],
 
@@ -45,8 +44,7 @@ return [
     'commissions' => [
         // Enables and displays the site's commission components
         // NOTE: Enabling this and using these components in a way that
-        // generates income, or contributes to generating income,
-        // requires a private license!
+        // generates income, or contributes to generating income, requires a private license!
         'enabled' => 0,
 
         // Fee information. Current for PayPal as of Aug 10 2021
