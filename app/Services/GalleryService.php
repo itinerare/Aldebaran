@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Facades\Settings;
 use App\Models\Commission\CommissionPiece;
+use App\Models\Commission\CommissionType;
 use App\Models\Gallery\Piece;
 use App\Models\Gallery\PieceImage;
 use App\Models\Gallery\PieceProgram;
@@ -489,6 +490,9 @@ class GalleryService extends Service
             // Check first if the tag is currently in use
             if (PieceTag::where('tag_id', $tag->id)->exists()) {
                 throw new \Exception('A piece with this tag exists. Please remove the tag first.');
+            }
+            if (CommissionType::whereJsonContains('data->tags', (string) $tag->id)->exists()) {
+                throw new \Exception('A commission type using this tag exists. Please remove the tag first.');
             }
 
             PieceTag::where('tag_id', $tag->id)->delete();
