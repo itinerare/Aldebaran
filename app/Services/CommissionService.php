@@ -670,12 +670,12 @@ class CommissionService extends Service
         if (!isset($data['include_class'])) {
             $data['data']['include']['class'] = 0;
         } else {
-            $data['data']['include']['class'] = 1;
+            $data['data']['include']['class'] = $data['include_class'];
         }
         if (!isset($data['include_category'])) {
             $data['data']['include']['category'] = 0;
         } else {
-            $data['data']['include']['category'] = 1;
+            $data['data']['include']['category'] = $data['include_class'];
         }
 
         // Assemble and encode data
