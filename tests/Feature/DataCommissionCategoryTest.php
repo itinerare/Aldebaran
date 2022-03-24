@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Commission\CommissionCategory;
 use App\Models\Commission\CommissionClass;
+use App\Models\Commission\CommissionType;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -167,13 +168,34 @@ class DataCommissionCategoryTest extends TestCase
 
     /**
      * Test category deletion.
+     *
+     * @dataProvider categoryDeleteProvider
+     *
+     * @param bool $withType
+     * @param bool $expected
      */
-    public function testPostDeleteCategory()
+    public function testPostDeleteCategory($withType, $expected)
     {
+        if ($withType) {
+            CommissionType::factory()->category($this->category->id)->create();
+        }
+
         $this
             ->actingAs($this->user)
             ->post('/admin/data/commission-categories/delete/'.$this->category->id);
 
-        $this->assertDeleted($this->category);
+        if ($expected) {
+            $this->assertDeleted($this->category);
+        } else {
+            $this->assertModelExists($this->category);
+        }
+    }
+
+    public function categoryDeleteProvider()
+    {
+        return [
+            'basic'     => [0, 1],
+            'with type' => [1, 0],
+        ];
     }
 }
