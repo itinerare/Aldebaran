@@ -675,7 +675,7 @@ class CommissionService extends Service
         if (!isset($data['include_category'])) {
             $data['data']['include']['category'] = 0;
         } else {
-            $data['data']['include']['category'] = $data['include_class'];
+            $data['data']['include']['category'] = $data['include_category'];
         }
 
         // Assemble and encode data
