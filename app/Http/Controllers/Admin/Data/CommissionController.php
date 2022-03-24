@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Admin\Data;
 
-use App\Facades\Settings;
 use App\Http\Controllers\Controller;
 use App\Models\Commission\CommissionCategory;
 use App\Models\Commission\CommissionClass;
