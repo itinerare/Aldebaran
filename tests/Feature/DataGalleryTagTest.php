@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Commission\CommissionType;
 use App\Models\Gallery\Piece;
 use App\Models\Gallery\PieceTag;
 use App\Models\Gallery\Tag;
@@ -141,16 +142,19 @@ class DataGalleryTagTest extends TestCase
      *
      * @dataProvider tagDeleteProvider
      *
-     * @param bool $withPiece
-     * @param bool $expected
+     * @param array $with
+     * @param bool  $expected
      */
-    public function testPostDeleteTag($withPiece, $expected)
+    public function testPostDeleteTag($with, $expected)
     {
-        if ($withPiece) {
+        if ($with[0] ?? false) {
             $piece = Piece::factory()->create();
             PieceTag::factory()
                 ->piece($piece->id)->tag($this->tag->id)
                 ->create();
+        }
+        if ($with[1] ?? false) {
+            CommissionType::factory()->testData(['type' => 'flat', 'cost' => 10], true, $this->tag->id, true, true, $this->faker->unique()->domainWord())->create();
         }
 
         $this
@@ -167,8 +171,12 @@ class DataGalleryTagTest extends TestCase
     public function tagDeleteProvider()
     {
         return [
-            'basic'      => [0, 1],
-            'with piece' => [1, 0],
+            'basic'               => [[0, 0], 1],
+            'with piece'          => [[1, 0], 0],
+
+            // JSON searching may not work well in the test environment
+            //'with type'           => [[0, 1], 0],
+            //'with piece and type' => [[1, 1], 0],
         ];
     }
 }
