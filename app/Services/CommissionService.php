@@ -407,7 +407,7 @@ class CommissionService extends Service
                 throw new \Exception('A commission of this type exists. Consider making the type unavailable instead.');
             }
 
-            $commission->delete();
+            $type->delete();
 
             return $this->commitReturn(true);
         } catch (\Exception $e) {
