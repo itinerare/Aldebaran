@@ -65,7 +65,6 @@ class AdminSiteSettingsTest extends TestCase
             'site name'           => ['site_name', null],
             'site description'    => ['site_desc', null],
             'notification emails' => ['notif_emails', 1],
-            'commissions on'      => ['commissions_on', 0],
         ];
     }
 }
