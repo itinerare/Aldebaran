@@ -5,10 +5,13 @@ namespace App\Models\Commission;
 use App\Facades\Settings;
 use App\Models\Gallery\Piece;
 use App\Models\Gallery\PieceTag;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class CommissionType extends Model
 {
+    use HasFactory;
+
     /**
      * The attributes that are mass assignable.
      *
