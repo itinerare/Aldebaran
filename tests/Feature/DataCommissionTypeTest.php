@@ -12,6 +12,10 @@ class DataCommissionTypeTest extends TestCase
 {
     use RefreshDatabase, WithFaker;
 
+    /******************************************************************************
+        COMMISSION DATA: TYPES
+    *******************************************************************************/
+
     protected function setUp(): void
     {
         parent::setUp();
