@@ -9,7 +9,7 @@
     <h1>Gallery</h1>
 </div>
 
-{!! $page->text !!}
+{!! $page ? $page->text : '' !!}
 
 <div>
     {!! Form::open(['method' => 'GET', 'class' => '']) !!}
