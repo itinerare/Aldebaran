@@ -32,6 +32,22 @@ class PieceFactory extends Factory
     }
 
     /**
+     * Generate an piece in a specific project.
+     *
+     * @param int $id
+     *
+     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     */
+    public function project($id)
+    {
+        return $this->state(function (array $attributes) use ($id) {
+            return [
+                'project_id' => $id,
+            ];
+        });
+    }
+
+    /**
      * Generate a piece with a description.
      *
      * @return \Illuminate\Database\Eloquent\Factories\Factory
