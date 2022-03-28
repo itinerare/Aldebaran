@@ -388,7 +388,7 @@ class CommissionController extends Controller
             abort(404);
         }
         $query = CommissionType::query();
-        $data = $request->only(['commission_category_id', 'name']);
+        $data = $request->only(['category_id', 'name']);
         if (isset($data['category_id']) && $data['category_id'] != 'none') {
             $query->where('category_id', $data['category_id']);
         }
