@@ -5,6 +5,8 @@ namespace Tests\Feature;
 use App\Models\Gallery\Piece;
 use App\Models\Gallery\PieceProgram;
 use App\Models\Gallery\PieceTag;
+use App\Models\Gallery\Project;
+use App\Models\Gallery\Tag;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -39,12 +41,60 @@ class DataGalleryPieceTest extends TestCase
 
     /**
      * Test piece index access.
+     *
+     * @dataProvider pieceIndexProvider
+     *
+     * @param bool       $withPiece
+     * @param array|null $search
      */
-    public function testGetPieceIndex()
+    public function testGetPieceIndex($withPiece, $search)
     {
-        $this->actingAs($this->user)
-            ->get('/admin/data/pieces')
+        // Remove testing pieces if not in use
+        if (!$withPiece) {
+            Piece::query()->delete();
+        }
+
+        $url = '/admin/data/pieces';
+        // Set up urls for different search criteria / intended success
+        if ($search) {
+            $url = $url.'?'.$search[0].'=';
+            switch ($search[0]) {
+                case 'name':
+                    $url = $url.($search[1] ? $this->piece->name : $this->faker->unique()->domainWord());
+                    break;
+                case 'project_id':
+                    $url = $url.($search[1] ? $this->piece->project_id : Project::factory()->create()->id);
+                    break;
+                case 'tags%5B%5D':
+                    $url = $url.($search[1] ? PieceTag::factory()->piece($this->piece)->create()->tag_id : Tag::factory()->create()->id);
+            }
+        }
+
+        $response = $this->actingAs($this->user)
+            ->get($url)
             ->assertStatus(200);
+
+        $response->assertViewHas('pieces', function ($pieces) use ($search, $withPiece) {
+            if ($withPiece && (!$search || $search[1])) {
+                return $pieces->contains($this->piece);
+            } else {
+                return !$pieces->contains($this->piece);
+            }
+        });
+    }
+
+    public function pieceIndexProvider()
+    {
+        return [
+            'basic'                             => [0, null],
+            'with piece'                        => [1, null],
+            'search by name (successful)'       => [1, ['name', 1]],
+            'search by name (unsuccessful)'     => [1, ['name', 0]],
+            'search by project (successful)'    => [1, ['project_id', 1]],
+            'search by project (unsuccessful)'  => [1, ['project_id', 0]],
+            'search by tag (successful)'        => [1, ['tags%5B%5D', 1]],
+            'search by tag (unsuccessful)'      => [1, ['tags%5B%5D', 0]],
+        ];
     }
 
     /**
