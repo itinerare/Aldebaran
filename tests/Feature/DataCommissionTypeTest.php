@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Commission\CommissionCategory;
 use App\Models\Commission\CommissionType;
 use App\Models\Gallery\Tag;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -38,12 +39,55 @@ class DataCommissionTypeTest extends TestCase
 
     /**
      * Test commission type index access.
+     *
+     * @param bool       $withType
+     * @param array|null $search
+     * @dataProvider indexProvider
      */
-    public function testGetTypeIndex()
+    public function testGetTypeIndex($withType, $search)
     {
-        $this->actingAs($this->user)
-            ->get('/admin/data/commission-types')
+        // Remove testing types if not in use
+        if (!$withType) {
+            CommissionType::query()->delete();
+        }
+
+        $url = '/admin/data/commission-types';
+        // Set up urls for different search criteria / intended success
+        if ($withType && $search) {
+            $url = $url.'?'.$search[0].'=';
+            switch ($search[0]) {
+                case 'name':
+                    $url = $url.($search[1] ? $this->type->name : $this->faker->unique()->domainWord());
+                    break;
+                case 'category_id':
+                    $url = $url.($search[1] ? $this->type->category_id : CommissionCategory::factory()->create()->id);
+                    break;
+            }
+        }
+
+        $response = $this->actingAs($this->user)
+            ->get($url)
             ->assertStatus(200);
+
+        $response->assertViewHas('types', function ($types) use ($search, $withType) {
+            if ($withType && (!$search || $search[1])) {
+                return $types->contains($this->type);
+            } else {
+                return !$types->contains($this->type);
+            }
+        });
+    }
+
+    public function indexProvider()
+    {
+        return [
+            'basic'                             => [0, null],
+            'with type'                         => [1, null],
+            'search by name (successful)'       => [1, ['name', 1]],
+            'search by name (unsuccessful)'     => [1, ['name', 0]],
+            'search by category (successful)'   => [1, ['category_id', 1]],
+            'search by category (unsuccessful)' => [1, ['category_id', 0]],
+        ];
     }
 
     /**
