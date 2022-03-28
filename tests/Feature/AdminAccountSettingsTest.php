@@ -13,7 +13,7 @@ class AdminAccountSettingsTest extends TestCase
     use RefreshDatabase, WithFaker;
 
     /******************************************************************************
-        SETTINGS
+        ACCOUNT SETTINGS
     *******************************************************************************/
 
     protected function setUp(): void
