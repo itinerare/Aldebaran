@@ -40,9 +40,10 @@ class DataCommissionTypeTest extends TestCase
     /**
      * Test commission type index access.
      *
+     * @dataProvider typeIndexProvider
+     *
      * @param bool       $withType
      * @param array|null $search
-     * @dataProvider indexProvider
      */
     public function testGetTypeIndex($withType, $search)
     {
@@ -78,7 +79,7 @@ class DataCommissionTypeTest extends TestCase
         });
     }
 
-    public function indexProvider()
+    public function typeIndexProvider()
     {
         return [
             'basic'                             => [0, null],
