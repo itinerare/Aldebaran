@@ -16,25 +16,27 @@ class AdminAccountSettingsTest extends TestCase
         SETTINGS
     *******************************************************************************/
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+    }
+
     /**
      * Test email editing.
      */
     public function testPostEditEmail()
     {
-        // Make a persistent user
-        $user = User::factory()->create();
-
         // Generate an email address
         $email = $this->faker->unique()->safeEmail();
 
         // Attempt to post data
-        $response = $this->actingAs($user)
+        $this->actingAs($this->user)
             ->post('admin/account-settings/email', [
                 'email' => $email,
             ]);
 
         $this->assertDatabaseHas('users', [
-            'name'  => $user->name,
+            'name'  => $this->user->name,
             'email' => $email,
         ]);
     }
@@ -64,13 +66,10 @@ class AdminAccountSettingsTest extends TestCase
      * Test password editing with an invalid password.
      * This shouldn't work.
      */
-    public function testnotPostEditInvalidPassword()
+    public function testNotPostEditInvalidPassword()
     {
-        // Make a persistent user
-        $user = User::factory()->simplePass()->create();
-
         // Attempt to post data
-        $response = $this->actingAs($user)
+        $response = $this->actingAs($this->user)
             ->post('admin/account-settings/password', [
                 'old_password'              => 'simple_password',
                 'new_password'              => 'password',
