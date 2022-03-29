@@ -19,7 +19,7 @@ class CommissionType extends Model
      */
     protected $fillable = [
         'category_id', 'name', 'availability', 'description', 'data', 'key',
-        'is_active', 'is_visible', 'sort',
+        'is_active', 'is_visible', 'sort', 'show_examples',
     ];
 
     /**

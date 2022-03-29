@@ -153,13 +153,14 @@ class DataCommissionTypeTest extends TestCase
             ]);
 
         $this->assertDatabaseHas('commission_types', [
-            'category_id'  => $this->type->category_id,
-            'name'         => $this->name,
-            'description'  => $withDescription ? $this->text : null,
-            'is_active'    => $isActive,
-            'is_visible'   => $isVisible,
-            'availability' => $slots ?? 0,
-            'data'         => '{"include":{"class":0,"category":0},"pricing":{"type":"'.$pricing['type'].'",'.($pricing['type'] != 'range' ? '"cost":'.$pricing['cost'] : '"range":{"min":'.$pricing['cost']['min'].',"max":'.$pricing['cost']['max'].'}').'},"extras":'.($withExtras ? '"'.$this->text.'"' : 'null').',"show_examples":'.$showExamples.',"tags":'.($withTag ? '['.$this->tag->id.']' : 'null').'}',
+            'category_id'   => $this->type->category_id,
+            'name'          => $this->name,
+            'description'   => $withDescription ? $this->text : null,
+            'is_active'     => $isActive,
+            'is_visible'    => $isVisible,
+            'availability'  => $slots ?? 0,
+            'show_examples' => $showExamples,
+            'data'          => '{"include":{"class":0,"category":0},"pricing":{"type":"'.$pricing['type'].'",'.($pricing['type'] != 'range' ? '"cost":'.$pricing['cost'] : '"range":{"min":'.$pricing['cost']['min'].',"max":'.$pricing['cost']['max'].'}').'},"extras":'.($withExtras ? '"'.$this->text.'"' : 'null').',"tags":'.($withTag ? '['.$this->tag->id.']' : 'null').'}',
         ]);
     }
 
@@ -232,14 +233,15 @@ class DataCommissionTypeTest extends TestCase
             ]);
 
         $this->assertDatabaseHas('commission_types', [
-            'id'           => $this->type->id,
-            'category_id'  => $this->type->category_id,
-            'name'         => $this->name,
-            'description'  => $withDescription ? $this->text : null,
-            'is_active'    => $isActive,
-            'is_visible'   => $isVisible,
-            'availability' => $slots ?? 0,
-            'data'         => '{'.(isset($fieldData) ? '"fields":{"test":{"label":"Test Field","type":"'.$fieldData[0].'","rules":'.(isset($fieldData) && $fieldData[1] ? '"required"' : 'null').',"choices":'.(isset($fieldData) && $fieldData[2] ? '["option 1","option 2"]' : 'null').',"value":'.($fieldData[3] ? '"'.$fieldData[3].'"' : 'null').',"help":'.($fieldData[4] ? '"'.$fieldData[4].'"' : 'null').'}},' : '').'"include":{"class":'.$includeClass.',"category":'.$includeCategory.'},"pricing":{"type":"'.$pricing['type'].'",'.($pricing['type'] != 'range' ? '"cost":'.$pricing['cost'] : '"range":{"min":'.$pricing['cost']['min'].',"max":'.$pricing['cost']['max'].'}').'},"extras":'.($withExtras ? '"'.$this->text.'"' : 'null').',"show_examples":'.$showExamples.',"tags":'.($withTag ? '['.$this->tag->id.']' : 'null').'}',
+            'id'            => $this->type->id,
+            'category_id'   => $this->type->category_id,
+            'name'          => $this->name,
+            'description'   => $withDescription ? $this->text : null,
+            'is_active'     => $isActive,
+            'is_visible'    => $isVisible,
+            'availability'  => $slots ?? 0,
+            'show_examples' => $showExamples,
+            'data'          => '{'.(isset($fieldData) ? '"fields":{"test":{"label":"Test Field","type":"'.$fieldData[0].'","rules":'.(isset($fieldData) && $fieldData[1] ? '"required"' : 'null').',"choices":'.(isset($fieldData) && $fieldData[2] ? '["option 1","option 2"]' : 'null').',"value":'.($fieldData[3] ? '"'.$fieldData[3].'"' : 'null').',"help":'.($fieldData[4] ? '"'.$fieldData[4].'"' : 'null').'}},' : '').'"include":{"class":'.$includeClass.',"category":'.$includeCategory.'},"pricing":{"type":"'.$pricing['type'].'",'.($pricing['type'] != 'range' ? '"cost":'.$pricing['cost'] : '"range":{"min":'.$pricing['cost']['min'].',"max":'.$pricing['cost']['max'].'}').'},"extras":'.($withExtras ? '"'.$this->text.'"' : 'null').',"tags":'.($withTag ? '['.$this->tag->id.']' : 'null').'}',
         ]);
     }
 

@@ -700,7 +700,6 @@ class CommissionService extends Service
 
         $data['data']['pricing'] = $data['pricing'];
         $data['data']['extras'] = isset($data['extras']) ? $data['extras'] : null;
-        $data['data']['show_examples'] = $data['show_examples'];
         $data['data']['tags'] = isset($data['tags']) ? $data['tags'] : null;
 
         // Generate a key if the type is being created or if
