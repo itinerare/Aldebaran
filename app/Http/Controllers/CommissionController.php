@@ -88,7 +88,16 @@ class CommissionController extends Controller
         $class = CommissionClass::active($request->user() ?? null)->where('slug', $class)->first();
         $page = TextPage::where('key', $key)->first();
 
-        if (!$class || !$page || !isset($class->data['pages'][$page->id])) {
+        if (!$class || !$page) {
+            abort(404);
+        }
+
+        // Fallback for testing purposes
+        if (!is_array($class->data)) {
+            $class->data = json_decode($class->data, true);
+        }
+
+        if (!isset($class->data['pages'][$page->id])) {
             abort(404);
         }
 

@@ -176,6 +176,11 @@ class CommissionType extends Model
         if (!$this->id) {
             return null;
         }
+
+        // Fallback for testing
+        if (!is_array($this->data)) {
+            $this->data = json_decode($this->data, true);
+        }
         $pricingData = $this->data['pricing'];
 
         switch ($pricingData['type']) {
@@ -323,6 +328,10 @@ class CommissionType extends Model
      */
     public function getExamples($user = null, $all = false, $limit = 4)
     {
+        if (!is_array($this->data)) {
+            // Fallback for testing purposes
+            $this->data = json_decode($this->data, true);
+        }
         if (!isset($this->data['tags'])) {
             return null;
         }
