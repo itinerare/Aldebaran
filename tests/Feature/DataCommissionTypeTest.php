@@ -33,8 +33,8 @@ class DataCommissionTypeTest extends TestCase
         $this->name = $this->faker->unique()->domainWord();
         $this->text = $this->faker->unique()->domainWord();
 
-        // Add site settings so that these functions will be accessible
-        $this->artisan('add-site-settings');
+        // Enable commission components
+        config(['aldebaran.settings.commissions.enabled' => 1]);
     }
 
     /**
