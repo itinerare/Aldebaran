@@ -9,7 +9,9 @@ class AccessTest extends TestCase
 {
     use RefreshDatabase;
 
-    // These tests check that visitor/user access to different routes is as expected
+    /******************************************************************************
+        ACCESS/MIDDLEWARE
+    *******************************************************************************/
 
     protected function setUp(): void
     {
