@@ -165,7 +165,7 @@ class CommissionController extends Controller
             $type = CommissionType::active()->where('key', $key)->first();
             $source = 'key';
         }
-        if (!$type || !$type->show_examples) {
+        if (!$type || (!$request->user() && !$type->category->class->is_active) || !$type->show_examples) {
             abort(404);
         }
 
