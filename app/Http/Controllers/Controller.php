@@ -22,11 +22,9 @@ class Controller extends BaseController
      */
     public function __construct(Request $request)
     {
-        $this->commissionClasses = CommissionClass::active($request->user() ?? null)->orderBy('sort', 'DESC')->get();
-
         View::share('visibleProjects', Project::visible()->orderBy('sort', 'DESC')->get());
-        view()->composer('*', function ($view) {
-            $view->with('commissionClasses', $this->commissionClasses);
+        view()->composer('*', function ($view) use ($request) {
+            $view->with('commissionClasses', CommissionClass::active($request->user() ?? null)->orderBy('sort', 'DESC')->get());
         });
     }
 

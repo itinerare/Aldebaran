@@ -31,12 +31,12 @@ class CommissionController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getInfo($class)
+    public function getInfo($class, Request $request)
     {
         if (!config('aldebaran.settings.commissions.enabled')) {
             abort(404);
         }
-        $class = CommissionClass::active()->where('slug', $class)->first();
+        $class = CommissionClass::active($request->user() ?? null)->where('slug', $class)->first();
         if (!$class) {
             abort(404);
         }
@@ -56,12 +56,12 @@ class CommissionController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getTos($class)
+    public function getTos($class, Request $request)
     {
         if (!config('aldebaran.settings.commissions.enabled')) {
             abort(404);
         }
-        $class = CommissionClass::active()->where('slug', $class)->first();
+        $class = CommissionClass::active($request->user() ?? null)->where('slug', $class)->first();
         if (!$class) {
             abort(404);
         }
@@ -80,12 +80,12 @@ class CommissionController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getClassPage($class, $key)
+    public function getClassPage($class, $key, Request $request)
     {
         if (!config('aldebaran.settings.commissions.enabled')) {
             abort(404);
         }
-        $class = CommissionClass::active()->where('slug', $class)->first();
+        $class = CommissionClass::active($request->user() ?? null)->where('slug', $class)->first();
         $page = TextPage::where('key', $key)->first();
 
         if (!$class || !$page || !isset($class->data['pages'][$page->id])) {
@@ -105,12 +105,12 @@ class CommissionController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getQueue($class)
+    public function getQueue($class, Request $request)
     {
         if (!config('aldebaran.settings.commissions.enabled')) {
             abort(404);
         }
-        $class = CommissionClass::active()->where('slug', $class)->first();
+        $class = CommissionClass::active($request->user() ?? null)->where('slug', $class)->first();
         if (!$class) {
             abort(404);
         }
