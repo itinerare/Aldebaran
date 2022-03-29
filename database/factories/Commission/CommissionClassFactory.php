@@ -132,7 +132,7 @@ class CommissionClassFactory extends Factory
     {
         return $this->state(function (array $attributes) use ($page) {
             return [
-                'data' => '{"fields":{"'.$this->faker->unique()->domainWord().'":{"label":"'.$this->faker->unique()->domainWord().'","type":"text","rules":null,"choices":null,"value":null,"help":"null}},"pages":{"'.$page->id.'":{"key":"'.$page->key.'","title":"'.$page->name.'"}}}',
+                'data' => '{"fields":{"'.$this->faker->unique()->domainWord().'":{"label":"'.$this->faker->unique()->domainWord().'","type":"text","rules":null,"choices":null,"value":null,"help":null}},"pages":{"'.$page->id.'":{"key":"'.$page->key.'","title":"'.$page->name.'"}}}',
             ];
         });
     }
