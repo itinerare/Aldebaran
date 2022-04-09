@@ -137,13 +137,13 @@ class CommissionController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getType($key)
+    public function getType($key, Request $request)
     {
         if (!config('aldebaran.settings.commissions.enabled')) {
             abort(404);
         }
-        $type = CommissionType::active()->where('key', $key)->first();
-        if (!$type) {
+        $type = CommissionType::active()->where('key', $key)->where('is_visible', 0)->first();
+        if (!$type || !$type->category->class->is_active) {
             abort(404);
         }
 
