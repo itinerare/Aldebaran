@@ -14,6 +14,7 @@ use App\Models\TextPage;
 use App\Services\GalleryService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
 class CommissionInfoTest extends TestCase
@@ -78,7 +79,7 @@ class CommissionInfoTest extends TestCase
                     $image = PieceImage::factory()->piece($piece->id)->create();
                     $this->service->testImages($image);
 
-                    // Create examples if
+                    // Create examples if relevant
                     foreach ([$data[3][3], $data[3][4]] as $key => $quantity) {
                         if ($quantity > 0) {
                             $examples = [];
@@ -152,6 +153,133 @@ class CommissionInfoTest extends TestCase
             //'good example with 4 ok examples' => [[1, 1], 1, [1, 1, 1, [1, 1, 0, 0, 4]], 200],
             //'ok example with 3 good examples' => [[1, 1], 1, [1, 1, 1, [1, 1, 0, 3, 0]], 200],
             //'ok example with 4 good examples' => [[1, 1], 1, [1, 1, 1, [1, 1, 0, 4, 0]], 200],
+        ];
+    }
+
+    /**
+     * Test commission type info access.
+     *
+     * @dataProvider commissionTypeProvider
+     *
+     * @param array $visibility
+     * @param bool  $user
+     * @param array $data
+     * @param int   $status
+     */
+    public function testGetCommissionTypeInfo($visibility, $user, $data, $status)
+    {
+        // Enable/disable commission components
+        config(['aldebaran.settings.commissions.enabled' => $visibility[0]]);
+
+        // Update various settings
+        $this->class->update(['is_active' => $visibility[1]]);
+        if ($visibility[2]) {
+            DB::table('site_settings')->where('key', $this->class->slug.'_comms_open')->update([
+                'value' => 1,
+            ]);
+        }
+
+        // Perform additional setup
+        if ($data && $data[0]) {
+            $category = CommissionCategory::factory()->class($this->class->id)->create();
+
+            if ($data[1]) {
+                $tag = Tag::factory()->create();
+                $type = CommissionType::factory()->category($category->id)->testData(['type' => 'flat', 'cost' => 10], $tag->id, true, true, $this->faker->unique()->domainWord())->create();
+
+                $type->update([
+                    'is_active'  => $visibility[3],
+                    'is_visible' => $visibility[4],
+                ]);
+
+                $this->class->update(['show_examples' => $data[1]]);
+
+                if ($data[3][0]) {
+                    $piece = Piece::factory()->create();
+                    PieceTag::factory()->piece($piece)->tag($tag->id)->create();
+
+                    $piece->update([
+                        'is_visible'   => $data[3][1],
+                        'good_example' => $data[3][2],
+                    ]);
+
+                    // Create images and test files
+                    $image = PieceImage::factory()->piece($piece->id)->create();
+                    $this->service->testImages($image);
+
+                    // Create examples if relevant
+                    foreach ([$data[3][3], $data[3][4]] as $key => $quantity) {
+                        if ($quantity > 0) {
+                            $examples = [];
+                            for ($i = 0; $i <= $quantity; $i++) {
+                                $examples[$i] = Piece::factory()->create();
+                                PieceTag::factory()->piece($examples[$i])->tag($tag->id)->create();
+                                $examples[$i]->update(['good_example' => ($key == 3 ? 1 : 0)]);
+
+                                $exampleImages[$key][$i] = PieceImage::factory()->piece($examples[$i]->id)->create();
+                                $this->service->testImages($exampleImages[$key][$i]);
+                            }
+                            unset($examples);
+                        }
+                    }
+                }
+            }
+        }
+
+        // Basic access testing
+        if ($user) {
+            $response = $this->actingAs($this->user)->get('commissions/types/'.$type->key);
+        } else {
+            $response = $this->get('commissions/types/'.$type->key);
+        }
+
+        $response->assertStatus($status);
+
+        if ($data && $data[3][0]) {
+            if ($status == 200) {
+                // Fetch examples
+                $examples = $type->getExamples($user ? $this->user : null);
+                $this->assertTrue($examples->count() == (($data[3][1] || $user ? $data[3][0] : 0) + $data[3][3] + $data[3][4]));
+
+                // For this particular case, it's difficult to test against the view,
+                // so instead check that the view loads as expected and examples are
+                // returned or not based on visibility here
+                if ($data[2] && ($user || $data[3][1]) && ($data[3][2] || $data[3][3] < 4)) {
+                    $this->assertTrue($examples->contains($piece));
+                } else {
+                    $this->assertFalse($examples->contains($piece));
+                }
+            }
+
+            // Clean up test images
+            $this->service->testImages($image, false);
+        }
+    }
+
+    public function commissionTypeProvider()
+    {
+        // $visibility = [commsEnabled, classActive, commsOpen, typeActive, typeVisible, withKey]
+        // $data = [hasCategory, hasType, withExamples, [withPiece, isVisible, isGoodExample, goodExamples, okExamples]]
+
+        return [
+            'visitor, type active, visible'           => [[1, 1, 1, 1, 1, 0], 0, [1, 1, 0, [0, 0, 0, 0, 0]], 404],
+            'visitor, type inactive, visible'         => [[1, 1, 1, 0, 1, 0], 0, [1, 1, 0, [0, 0, 0, 0, 0]], 404],
+            'visitor, type active, hidden with key'   => [[1, 1, 1, 1, 0, 1], 0, [1, 1, 0, [0, 0, 0, 0, 0]], 200],
+            'visitor, type inactive, hidden with key' => [[1, 1, 1, 0, 0, 1], 0, [1, 1, 0, [0, 0, 0, 0, 0]], 404],
+            'visitor, class inactive'                 => [[1, 0, 1, 1, 1, 0], 0, [1, 1, 0, [0, 0, 0, 0, 0]], 404],
+            'visitor, comms disabled'                 => [[0, 1, 1, 1, 1, 0], 0, [1, 1, 0, [0, 0, 0, 0, 0]], 404],
+            'user, type active, visible'              => [[1, 1, 1, 1, 1, 0], 1, [1, 1, 0, [0, 0, 0, 0, 0]], 404],
+            'user, type inactive, visible'            => [[1, 1, 1, 0, 1, 0], 1, [1, 1, 0, [0, 0, 0, 0, 0]], 404],
+            'user, type active, hidden with key'      => [[1, 1, 1, 1, 0, 1], 1, [1, 1, 0, [0, 0, 0, 0, 0]], 200],
+            'user, type inactive, hidden with key'    => [[1, 1, 1, 0, 0, 1], 1, [1, 1, 0, [0, 0, 0, 0, 0]], 404],
+            'user, class inactive'                    => [[1, 0, 1, 1, 1, 0], 1, [1, 1, 0, [0, 0, 0, 0, 0]], 404],
+            'user, comms disabled'                    => [[0, 1, 1, 1, 1, 0], 1, [1, 1, 0, [0, 0, 0, 0, 0]], 404],
+
+            'with type with empty examples'          => [[1, 1, 1, 1, 0, 1], 0, [1, 1, 1, [0, 0, 0, 0, 0]], 200],
+            'visitor with type with visible example' => [[1, 1, 1, 1, 0, 1], 0, [1, 1, 1, [1, 1, 1, 0, 0]], 200],
+            'visitor with type with hidden example'  => [[1, 1, 1, 1, 0, 1], 0, [1, 1, 1, [1, 0, 1, 0, 0]], 200],
+            'user with type with visible example'    => [[1, 1, 1, 1, 0, 1], 1, [1, 1, 1, [1, 1, 1, 0, 0]], 200],
+            'user with type with hidden example'     => [[1, 1, 1, 1, 0, 1], 1, [1, 1, 1, [1, 0, 1, 0, 0]], 200],
         ];
     }
 
