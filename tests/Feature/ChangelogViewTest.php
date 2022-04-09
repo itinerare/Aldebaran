@@ -50,18 +50,16 @@ class ChangelogViewTest extends TestCase
 
         $response->assertStatus($status);
 
-        if ($changelogStatus[0]) {
+        if ($changelogStatus[0] && $status == 200) {
             // Test that the changelog is displayed or not depending on
             // auth status and piece visibility
-            if ($status == 200) {
-                $response->assertViewHas('changelogs', function ($changelogs) use ($user, $changelogStatus, $changelog) {
-                    if ($user || $changelogStatus[1]) {
-                        return $changelogs->contains($changelog);
-                    } else {
-                        return !$changelogs->contains($changelog);
-                    }
-                });
-            }
+            $response->assertViewHas('changelogs', function ($changelogs) use ($user, $changelogStatus, $changelog) {
+                if ($user || $changelogStatus[1]) {
+                    return $changelogs->contains($changelog);
+                } else {
+                    return !$changelogs->contains($changelog);
+                }
+            });
         }
     }
 
