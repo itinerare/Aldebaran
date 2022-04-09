@@ -241,7 +241,7 @@ class CommissionController extends Controller
             abort(404);
         }
         // check that the type is active and commissions of the global type are open,
-        if (!Settings::get($type->category->class->slug.'_comms_open')) {
+        if (!Settings::get($type->category->class->slug.'_comms_open') || !$type->category->class->is_active) {
             abort(404);
         }
         // and, if relevant, that the key is good.
