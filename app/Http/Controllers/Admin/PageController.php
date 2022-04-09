@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\TextPage;
 use App\Services\PageService;
-use Auth;
 use Illuminate\Http\Request;
 
 class PageController extends Controller
@@ -53,8 +52,7 @@ class PageController extends Controller
     /**
      * Edits a text page.
      *
-     * @param App\Services\PageService $service
-     * @param int|null                 $id
+     * @param int|null $id
      *
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -63,7 +61,7 @@ class PageController extends Controller
         $request->validate(TextPage::$updateRules);
         $data = $request->only(['text']);
 
-        if ($service->updatePage(TextPage::find($id), $data, Auth::user())) {
+        if ($service->updatePage(TextPage::find($id), $data, $request->user())) {
             flash('Page updated successfully.')->success();
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {

@@ -10,7 +10,7 @@
 
 <p>The following are all feeds offered by this site:</p>
 
-@foreach(Config::get('feed.feeds') as $feed)
+@foreach(config('feed.feeds') as $feed)
     <div class="card mb-4">
         <div class="card-header">
             <a href="feeds{{ $feed['url'] }}"><h4>{{ $feed['title'] }}</h4></a>

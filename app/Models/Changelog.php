@@ -2,13 +2,16 @@
 
 namespace App\Models;
 
+use App\Facades\Settings;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Settings;
 use Spatie\Feed\Feedable;
 use Spatie\Feed\FeedItem;
 
 class Changelog extends Model implements Feedable
 {
+    use HasFactory;
+
     /**
      * The attributes that are mass assignable.
      *

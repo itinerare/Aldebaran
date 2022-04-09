@@ -2,7 +2,11 @@
 
 @section('content')
 
-{!! $page->text !!}
+@if($page)
+    {!! $page->text !!}
+@else
+    <p>Please finish initial site setup!</p>
+@endif
 
 @if(config('aldebaran.settings.commissions.enabled'))
     @foreach($commissionClasses as $class)

@@ -117,16 +117,16 @@ function randomString($characters)
 function screenshot($url)
 {
     // Check that relevant ENV values are set
-    if (env('THUM_IO_KEY', false) && env('THUM_IO_ID', false)) {
+    if (config('aldebaran.settings.thum_io.key') && config('aldebaran.settings.thum_io.id')) {
         // Validate URL
         if (!empty($url) && filter_var($url, FILTER_VALIDATE_URL)) {
             // Set expiry five minutes in the future
             $expires = Carbon\Carbon::now()->valueOf() + (1000 * 300);
             // Hash key, expiry, and URL
-            $hash = md5(env('THUM_IO_KEY').$expires.$url);
+            $hash = md5(config('aldebaran.settings.thum_io.key').$expires.$url);
 
             // Return API call URL
-            return 'https://image.thum.io/get/png/auth/'.env('THUM_IO_ID').'-'.$expires.'-'.$hash.'/'.$url;
+            return 'https://image.thum.io/get/png/auth/'.config('aldebaran.settings.thum_io.id').'-'.$expires.'-'.$hash.'/'.$url;
         }
     } else {
         return false;

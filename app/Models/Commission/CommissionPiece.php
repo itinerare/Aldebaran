@@ -2,6 +2,7 @@
 
 namespace App\Models\Commission;
 
+use App\Models\Gallery\Piece;
 use Illuminate\Database\Eloquent\Model;
 
 class CommissionPiece extends Model
@@ -49,6 +50,6 @@ class CommissionPiece extends Model
      */
     public function piece()
     {
-        return $this->belongsTo('App\Models\Gallery\Piece', 'piece_id');
+        return $this->belongsTo(Piece::class, 'piece_id');
     }
 }

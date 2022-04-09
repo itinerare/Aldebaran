@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use DB;
+use Illuminate\Support\Facades\DB;
 
 class PageService extends Service
 {
