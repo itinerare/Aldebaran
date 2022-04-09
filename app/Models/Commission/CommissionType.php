@@ -2,13 +2,16 @@
 
 namespace App\Models\Commission;
 
+use App\Facades\Settings;
 use App\Models\Gallery\Piece;
 use App\Models\Gallery\PieceTag;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Settings;
 
 class CommissionType extends Model
 {
+    use HasFactory;
+
     /**
      * The attributes that are mass assignable.
      *
@@ -16,7 +19,7 @@ class CommissionType extends Model
      */
     protected $fillable = [
         'category_id', 'name', 'availability', 'description', 'data', 'key',
-        'is_active', 'is_visible', 'sort', 'data',
+        'is_active', 'is_visible', 'sort', 'show_examples',
     ];
 
     /**
@@ -25,6 +28,15 @@ class CommissionType extends Model
      * @var string
      */
     protected $table = 'commission_types';
+
+    /**
+     * The attributes that should be casted to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'data' => 'array',
+    ];
 
     /**
      * Whether the model contains timestamps to be saved and updated.
@@ -69,7 +81,7 @@ class CommissionType extends Model
      */
     public function category()
     {
-        return $this->belongsTo('App\Models\Commission\CommissionCategory', 'category_id');
+        return $this->belongsTo(CommissionCategory::class, 'category_id');
     }
 
     /**
@@ -77,7 +89,7 @@ class CommissionType extends Model
      */
     public function commissions()
     {
-        return $this->hasMany('App\Models\Commission\Commission', 'commission_type');
+        return $this->hasMany(Commission::class, 'commission_type');
     }
 
     /**********************************************************************************************
@@ -141,20 +153,6 @@ class CommissionType extends Model
     }
 
     /**
-     * Get the data attribute as an associative array.
-     *
-     * @return array
-     */
-    public function getDataAttribute()
-    {
-        if (!$this->id) {
-            return null;
-        }
-
-        return json_decode($this->attributes['data'], true);
-    }
-
-    /**
      * Get any extras information.
      *
      * @return string
@@ -177,6 +175,11 @@ class CommissionType extends Model
     {
         if (!$this->id) {
             return null;
+        }
+
+        // Fallback for testing
+        if (!is_array($this->data)) {
+            $this->data = json_decode($this->data, true);
         }
         $pricingData = $this->data['pricing'];
 
@@ -325,6 +328,10 @@ class CommissionType extends Model
      */
     public function getExamples($user = null, $all = false, $limit = 4)
     {
+        if (!is_array($this->data)) {
+            // Fallback for testing purposes
+            $this->data = json_decode($this->data, true);
+        }
         if (!isset($this->data['tags'])) {
             return null;
         }

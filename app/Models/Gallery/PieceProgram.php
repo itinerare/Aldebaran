@@ -2,10 +2,13 @@
 
 namespace App\Models\Gallery;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class PieceProgram extends Model
 {
+    use HasFactory;
+
     /**
      * The attributes that are mass assignable.
      *
@@ -49,7 +52,7 @@ class PieceProgram extends Model
      */
     public function program()
     {
-        return $this->belongsTo('App\Models\Gallery\Program', 'program_id');
+        return $this->belongsTo(Program::class, 'program_id');
     }
 
     /**********************************************************************************************

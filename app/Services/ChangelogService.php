@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use App\Models\Changelog;
-use DB;
+use Illuminate\Support\Facades\DB;
 
 class ChangelogService extends Service
 {

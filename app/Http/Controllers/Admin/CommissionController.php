@@ -10,7 +10,6 @@ use App\Models\Commission\CommissionPayment;
 use App\Models\Commission\CommissionType;
 use App\Models\Gallery\Piece;
 use App\Services\CommissionManager;
-use Auth;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -91,8 +90,7 @@ class CommissionController extends Controller
     /**
      * Submits a new commission request.
      *
-     * @param App\Services\CommissionManager $service
-     * @param int|null                       $id
+     * @param int|null $id
      *
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -157,9 +155,8 @@ class CommissionController extends Controller
     /**
      * Acts on a commission.
      *
-     * @param int                            $id
-     * @param string                         $action
-     * @param App\Services\CommissionManager $service
+     * @param int    $id
+     * @param string $action
      *
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -241,14 +238,13 @@ class CommissionController extends Controller
     /**
      * Accepts a commission.
      *
-     * @param int                            $id
-     * @param App\Services\CommissionManager $service
+     * @param int $id
      *
      * @return \Illuminate\Http\RedirectResponse
      */
     private function postAcceptCommission($id, Request $request, CommissionManager $service)
     {
-        if ($service->acceptCommission($id, $request->only(['comments']), Auth::user())) {
+        if ($service->acceptCommission($id, $request->only(['comments']), $request->user())) {
             flash('Commission accepted successfully.')->success();
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
@@ -262,8 +258,7 @@ class CommissionController extends Controller
     /**
      * Updates a commission.
      *
-     * @param int                            $id
-     * @param App\Services\CommissionManager $service
+     * @param int $id
      *
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -271,7 +266,7 @@ class CommissionController extends Controller
     {
         $request->validate(Commission::$updateRules);
         $data = $request->only(['pieces', 'paid_status', 'progress', 'comments', 'cost', 'tip', 'is_paid', 'is_intl', 'paid_at']);
-        if ($service->updateCommission($id, $data, Auth::user())) {
+        if ($service->updateCommission($id, $data, $request->user())) {
             flash('Commission updated successfully.')->success();
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
@@ -285,14 +280,13 @@ class CommissionController extends Controller
     /**
      * Marks a commission complete.
      *
-     * @param int                            $id
-     * @param App\Services\CommissionManager $service
+     * @param int $id
      *
      * @return \Illuminate\Http\RedirectResponse
      */
     private function postCompleteCommission($id, Request $request, CommissionManager $service)
     {
-        if ($service->completeCommission($id, $request->only(['comments']), Auth::user())) {
+        if ($service->completeCommission($id, $request->only(['comments']), $request->user())) {
             flash('Commission marked complete successfully.')->success();
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
@@ -306,14 +300,13 @@ class CommissionController extends Controller
     /**
      * Declines a commission.
      *
-     * @param int                            $id
-     * @param App\Services\CommissionManager $service
+     * @param int $id
      *
      * @return \Illuminate\Http\RedirectResponse
      */
     private function postDeclineCommission($id, Request $request, CommissionManager $service)
     {
-        if ($service->declineCommission($id, $request->only(['comments']), Auth::user())) {
+        if ($service->declineCommission($id, $request->only(['comments']), $request->user())) {
             flash('Commission declined successfully.')->success();
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
@@ -327,14 +320,13 @@ class CommissionController extends Controller
     /**
      * Accepts a commission.
      *
-     * @param int                            $id
-     * @param App\Services\CommissionManager $service
+     * @param int $id
      *
      * @return \Illuminate\Http\RedirectResponse
      */
     private function postBanCommissioner($id, Request $request, CommissionManager $service)
     {
-        if ($service->banCommissioner($id, $request->only(['comments']), Auth::user())) {
+        if ($service->banCommissioner($id, $request->only(['comments']), $request->user())) {
             flash('Commissioner banned successfully.')->success();
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {

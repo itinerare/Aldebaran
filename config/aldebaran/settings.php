@@ -66,4 +66,31 @@ return [
     */
 
     'version' => '2.0.0',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Miscellaneous Values
+    |--------------------------------------------------------------------------
+    |
+    | These are miscellaneous settings stored here for caching purposes.
+    | They are likely to be sensitive and should not be saved here directly,
+    | however, "storing" the .env values here helps with site performance.
+    |
+    | !! Do not change these !!
+    | Edit the corresponding value(s) in the .env file instead.
+    |
+    */
+
+    // The email information for the site.
+    // Used to send commission notifications if enabeled.
+    'admin_email' => [
+        'address'  => env('MAIL_USERNAME', false),
+        'password' => env('MAIL_PASSWORD', false),
+    ],
+
+    // thum.io info, used for generating meta tag preview images if enabled
+    'thum_io' => [
+        'key' => env('THUM_IO_KEY', false),
+        'id'  => env('THUM_IO_ID', false),
+    ],
 ];

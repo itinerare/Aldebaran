@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Changelog;
 use App\Services\ChangelogService;
-use Auth;
 use Illuminate\Http\Request;
 
 class ChangelogController extends Controller
@@ -65,8 +64,7 @@ class ChangelogController extends Controller
     /**
      * Creates or edits a changelog.
      *
-     * @param App\Services\ChangelogService $service
-     * @param int|null                      $id
+     * @param int|null $id
      *
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -76,9 +74,9 @@ class ChangelogController extends Controller
         $data = $request->only([
             'name', 'text', 'is_visible',
         ]);
-        if ($id && $service->updateLog(Changelog::find($id), $data, Auth::user())) {
+        if ($id && $service->updateLog(Changelog::find($id), $data, $request->user())) {
             flash('Entry updated successfully.')->success();
-        } elseif (!$id && $log = $service->createLog($data, Auth::user())) {
+        } elseif (!$id && $log = $service->createLog($data, $request->user())) {
             flash('Entry created successfully.')->success();
 
             return redirect()->to('admin/changelog/edit/'.$log->id);
@@ -110,8 +108,7 @@ class ChangelogController extends Controller
     /**
      * Deletes a changelog.
      *
-     * @param App\Services\PageService $service
-     * @param int                      $id
+     * @param int $id
      *
      * @return \Illuminate\Http\RedirectResponse
      */

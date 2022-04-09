@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Facades\Settings;
 use App\Mail\CommissionRequested;
 use App\Models\Commission\Commission;
 use App\Models\Commission\Commissioner;
@@ -12,9 +13,8 @@ use App\Models\Commission\CommissionType;
 use App\Models\Gallery\Piece;
 use App\Models\User;
 use Carbon\Carbon;
-use DB;
-use Mail;
-use Settings;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class CommissionManager extends Service
 {
@@ -99,7 +99,7 @@ class CommissionManager extends Service
                 'commissioner_id' => $commissioner->id,
                 'commission_type' => $type->id,
                 'status'          => 'Pending',
-                'data'            => json_encode($data['data']),
+                'data'            => $data['data'],
             ]);
 
             // Now that the commission has an ID, assign it a key incorporating it
@@ -109,7 +109,7 @@ class CommissionManager extends Service
 
             // If desired, send an email notification to the admin account
             // that a commission request was submitted
-            if (Settings::get('notif_emails') && !$manual && (env('MAIL_USERNAME', false) && env('MAIL_PASSWORD', false))) {
+            if (Settings::get('notif_emails') && !$manual && (config('aldebaran.settings.admin_email.address') && config('aldebaran.settings.admin_email.password'))) {
                 Mail::to(User::find(1))->send(new CommissionRequested($commission));
             }
 

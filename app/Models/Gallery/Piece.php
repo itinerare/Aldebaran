@@ -2,15 +2,16 @@
 
 namespace App\Models\Gallery;
 
+use App\Facades\Settings;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Settings;
 use Spatie\Feed\Feedable;
 use Spatie\Feed\FeedItem;
 
 class Piece extends Model implements Feedable
 {
-    use SoftDeletes;
+    use HasFactory, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -62,7 +63,7 @@ class Piece extends Model implements Feedable
      */
     public function project()
     {
-        return $this->belongsTo('App\Models\Gallery\Project', 'project_id');
+        return $this->belongsTo(Project::class, 'project_id');
     }
 
     /**
@@ -70,7 +71,7 @@ class Piece extends Model implements Feedable
      */
     public function images()
     {
-        return $this->hasMany('App\Models\Gallery\PieceImage', 'piece_id')->orderBy('is_primary_image', 'DESC')->orderBy('sort', 'DESC');
+        return $this->hasMany(PieceImage::class, 'piece_id')->orderBy('is_primary_image', 'DESC')->orderBy('sort', 'DESC');
     }
 
     /**
@@ -78,7 +79,7 @@ class Piece extends Model implements Feedable
      */
     public function primaryImages()
     {
-        return $this->hasMany('App\Models\Gallery\PieceImage', 'piece_id')->where('is_primary_image', 1)->orderBy('sort', 'DESC');
+        return $this->hasMany(PieceImage::class, 'piece_id')->where('is_primary_image', 1)->orderBy('sort', 'DESC');
     }
 
     /**
@@ -86,7 +87,7 @@ class Piece extends Model implements Feedable
      */
     public function otherImages()
     {
-        return $this->hasMany('App\Models\Gallery\PieceImage', 'piece_id')->where('is_primary_image', 0)->orderBy('sort', 'DESC');
+        return $this->hasMany(PieceImage::class, 'piece_id')->where('is_primary_image', 0)->orderBy('sort', 'DESC');
     }
 
     /**
@@ -94,7 +95,7 @@ class Piece extends Model implements Feedable
      */
     public function tags()
     {
-        return $this->hasMany('App\Models\Gallery\PieceTag', 'piece_id');
+        return $this->hasMany(PieceTag::class, 'piece_id');
     }
 
     /**
@@ -102,7 +103,7 @@ class Piece extends Model implements Feedable
      */
     public function programs()
     {
-        return $this->hasMany('App\Models\Gallery\PieceProgram', 'piece_id');
+        return $this->hasMany(PieceProgram::class, 'piece_id');
     }
 
     /**********************************************************************************************

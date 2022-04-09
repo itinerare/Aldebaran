@@ -1,4 +1,4 @@
-<div class="{{ Config::get('aldebaran.settings.gallery_arrangement') == 'rows' ? 'flex-fill' : '' }} img-fluid align-self-center text-center m-1">
+<div class="{{ config('aldebaran.settings.gallery_arrangement') == 'rows' ? 'flex-fill' : '' }} img-fluid align-self-center text-center m-1">
     <div class="container">
         <div class="content align-self-center" style="min-height:100px;">
             @if($piece->images->where('is_visible', 1)->count() > 1)
@@ -7,7 +7,7 @@
             <a class="align-self-center" href="{{ $piece->url.'?source='.$source }}">
                 <div class="content-overlay"></div>
                 <div class="text-center align-self-center">
-                    <img src="{{ $piece->thumbnailUrl }}" style="{{ Config::get('aldebaran.settings.gallery_arrangement') == 'rows' ? 'width: auto; height: '.Config::get('aldebaran.settings.thumbnail_height').'px' : 'height: auto; max-width: '.Config::get('aldebaran.settings.thumbnail_width').'px' }}" />
+                    <img src="{{ $piece->thumbnailUrl }}" style="{{ config('aldebaran.settings.gallery_arrangement') == 'rows' ? 'width: auto; height: '.config('aldebaran.settings.thumbnail_height').'px' : 'height: auto; max-width: '.config('aldebaran.settings.thumbnail_width').'px' }}" />
                 </div>
                 <div class="content-details align-self-center fadeIn-bottom">
                     <h5 style="width:100%;">{{ $piece->name }}</h5>

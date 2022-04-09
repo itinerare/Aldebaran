@@ -10,7 +10,6 @@ use App\Models\Gallery\Program;
 use App\Models\Gallery\Project;
 use App\Models\Gallery\Tag;
 use App\Services\GalleryService;
-use Auth;
 use Illuminate\Http\Request;
 
 class GalleryController extends Controller
@@ -74,8 +73,7 @@ class GalleryController extends Controller
     /**
      * Creates or edits a project.
      *
-     * @param App\Services\GalleryService $service
-     * @param int|null                    $id
+     * @param int|null $id
      *
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -85,9 +83,9 @@ class GalleryController extends Controller
         $data = $request->only([
             'name', 'description', 'is_visible',
         ]);
-        if ($id && $service->updateProject(Project::find($id), $data, Auth::user())) {
+        if ($id && $service->updateProject(Project::find($id), $data, $request->user())) {
             flash('Project updated successfully.')->success();
-        } elseif (!$id && $project = $service->createProject($data, Auth::user())) {
+        } elseif (!$id && $project = $service->createProject($data, $request->user())) {
             flash('Project created successfully.')->success();
 
             return redirect()->to('admin/data/projects/edit/'.$project->id);
@@ -119,8 +117,7 @@ class GalleryController extends Controller
     /**
      * Deletes a project.
      *
-     * @param App\Services\GalleryService $service
-     * @param int                         $id
+     * @param int $id
      *
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -139,8 +136,6 @@ class GalleryController extends Controller
 
     /**
      * Sorts projects.
-     *
-     * @param App\Services\GalleryService $service
      *
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -229,8 +224,7 @@ class GalleryController extends Controller
     /**
      * Creates or edits a piece.
      *
-     * @param App\Services\GalleryService $service
-     * @param int|null                    $id
+     * @param int|null $id
      *
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -240,9 +234,9 @@ class GalleryController extends Controller
         $data = $request->only([
             'name', 'project_id', 'description', 'is_visible', 'timestamp', 'tags', 'programs', 'good_example',
         ]);
-        if ($id && $service->updatePiece(Piece::find($id), $data, Auth::user())) {
+        if ($id && $service->updatePiece(Piece::find($id), $data, $request->user())) {
             flash('Piece updated successfully.')->success();
-        } elseif (!$id && $piece = $service->createPiece($data, Auth::user())) {
+        } elseif (!$id && $piece = $service->createPiece($data, $request->user())) {
             flash('Piece created successfully.')->success();
 
             return redirect()->to('admin/data/pieces/edit/'.$piece->id);
@@ -274,8 +268,7 @@ class GalleryController extends Controller
     /**
      * Deletes a piece.
      *
-     * @param App\Services\GalleryService $service
-     * @param int                         $id
+     * @param int $id
      *
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -295,8 +288,7 @@ class GalleryController extends Controller
     /**
      * Sorts piece images.
      *
-     * @param App\Services\GalleryService $service
-     * @param mixed                       $id
+     * @param mixed $id
      *
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -357,8 +349,7 @@ class GalleryController extends Controller
     /**
      * Creates and updates images.
      *
-     * @param App\Services\GalleryService $service
-     * @param int                         $id
+     * @param int $id
      *
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -371,9 +362,9 @@ class GalleryController extends Controller
             'regenerate_watermark', 'watermark_image', 'text_watermark', 'text_opacity',
         ]);
 
-        if ($id && $service->updateImage(PieceImage::find($id), $data, Auth::user())) {
+        if ($id && $service->updateImage(PieceImage::find($id), $data, $request->user())) {
             flash('Image updated successfully.')->success();
-        } elseif (!$id && $image = $service->createImage($data, Auth::user())) {
+        } elseif (!$id && $image = $service->createImage($data, $request->user())) {
             flash('Image created successfully.')->success();
 
             return redirect()->to('admin/data/pieces/images/edit/'.$image->id);
@@ -405,8 +396,7 @@ class GalleryController extends Controller
     /**
      * Deletes an image.
      *
-     * @param App\Services\GalleryService $service
-     * @param int                         $id
+     * @param int $id
      *
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -475,8 +465,7 @@ class GalleryController extends Controller
     /**
      * Creates or edits a tag.
      *
-     * @param App\Services\GalleryService $service
-     * @param int|null                    $id
+     * @param int|null $id
      *
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -486,9 +475,9 @@ class GalleryController extends Controller
         $data = $request->only([
             'name', 'description', 'is_active', 'is_visible',
         ]);
-        if ($id && $service->updateTag(Tag::find($id), $data, Auth::user())) {
+        if ($id && $service->updateTag(Tag::find($id), $data, $request->user())) {
             flash('Tag updated successfully.')->success();
-        } elseif (!$id && $tag = $service->createTag($data, Auth::user())) {
+        } elseif (!$id && $tag = $service->createTag($data, $request->user())) {
             flash('Tag created successfully.')->success();
 
             return redirect()->to('admin/data/tags/edit/'.$tag->id);
@@ -520,8 +509,7 @@ class GalleryController extends Controller
     /**
      * Deletes a tag.
      *
-     * @param App\Services\GalleryService $service
-     * @param int                         $id
+     * @param int $id
      *
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -588,8 +576,7 @@ class GalleryController extends Controller
     /**
      * Creates or edits a program.
      *
-     * @param App\Services\GalleryService $service
-     * @param int|null                    $id
+     * @param int|null $id
      *
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -597,11 +584,11 @@ class GalleryController extends Controller
     {
         $id ? $request->validate(Program::$updateRules) : $request->validate(Program::$createRules);
         $data = $request->only([
-            'name', 'image', 'is_visible',
+            'name', 'image', 'is_visible', 'remove_image',
         ]);
-        if ($id && $service->updateProgram(Program::find($id), $data, Auth::user())) {
+        if ($id && $service->updateProgram(Program::find($id), $data, $request->user())) {
             flash('Program updated successfully.')->success();
-        } elseif (!$id && $program = $service->createProgram($data, Auth::user())) {
+        } elseif (!$id && $program = $service->createProgram($data, $request->user())) {
             flash('Program created successfully.')->success();
 
             return redirect()->to('admin/data/programs/edit/'.$program->id);
@@ -633,8 +620,7 @@ class GalleryController extends Controller
     /**
      * Deletes a program.
      *
-     * @param App\Services\GalleryService $service
-     * @param int                         $id
+     * @param int $id
      *
      * @return \Illuminate\Http\RedirectResponse
      */
