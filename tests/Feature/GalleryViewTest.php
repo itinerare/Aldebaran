@@ -14,7 +14,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
-class GalleryTest extends TestCase
+class GalleryViewTest extends TestCase
 {
     use RefreshDatabase, WithFaker;
 
