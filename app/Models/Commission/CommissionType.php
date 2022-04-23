@@ -284,28 +284,43 @@ class CommissionType extends Model
     {
         $fields = [];
 
+        // Fallbacks for testing purposes
+        if (!is_array($this->data)) {
+            $this->data = json_decode($this->data, true);
+        }
+        if (!is_array($this->category->data)) {
+            $categoryData = json_decode($this->category->data, true);
+        } else {
+            $categoryData = $this->category->data;
+        }
+        if (!is_array($this->category->class->data)) {
+            $classData = json_decode($this->category->class->data, true);
+        } else {
+            $classData = $this->category->class->data;
+        }
+
         if ((isset($this->data['include']) && ((isset($this->data['include']['class']) && $this->data['include']['class']) || (isset($this->data['include']['category']) && $this->data['include']['category']))) || isset($this->data['fields'])) {
             // Collect fields for the commission type
             if (isset($this->data['include']['class']) && $this->data['include']['class']) {
-                $fields = $fields + $this->category->class->data['fields'];
+                $fields = $fields + $classData['fields'];
             }
             if (isset($this->data['include']['category']) && $this->data['include']['category']) {
-                $fields = $fields + $this->category->data['fields'];
+                $fields = $fields + $categoryData['fields'];
             }
             if (isset($this->data['fields'])) {
                 $fields = $fields + $this->data['fields'];
             }
-        } elseif ((isset($this->category->data['include']['class']) && $this->category->data['include']['class']) || isset($this->category->data['fields'])) {
+        } elseif ((isset($categoryData['include']['class']) && $categoryData['include']['class']) || isset($categoryData['fields'])) {
             // Failing that, collect fields from the commission category
-            if (isset($this->category->data['include']['class']) && $this->category->data['include']['class']) {
-                $fields = $fields + $this->category->class->data['fields'];
+            if (isset($categoryData['include']['class']) && $categoryData['include']['class']) {
+                $fields = $fields + $classData['fields'];
             }
-            if (isset($this->category->data['fields'])) {
-                $fields = $fields + $this->category->data['fields'];
+            if (isset($categoryData['fields'])) {
+                $fields = $fields + $categoryData['fields'];
             }
-        } elseif (isset($this->category->class->data['fields'])) {
+        } elseif (isset($classData['fields'])) {
             // Failing that, collect fields from the commission class
-            $fields = $fields + $this->category->class->data['fields'];
+            $fields = $fields + $classData['fields'];
         }
 
         return $fields;
