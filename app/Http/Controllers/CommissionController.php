@@ -316,9 +316,6 @@ class CommissionController extends Controller
      */
     public function getViewCommission($key)
     {
-        if (!config('aldebaran.settings.commissions.enabled')) {
-            abort(404);
-        }
         $commission = Commission::where('commission_key', $key)->first();
         if (!$commission) {
             abort(404);
