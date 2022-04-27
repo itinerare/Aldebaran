@@ -132,7 +132,7 @@ class DataCommissionTypeTest extends TestCase
      */
     public function testPostCreateType($withDescription, $pricing, $withExtras, $isActive, $isVisible, $slots, $withTag, $showExamples)
     {
-        $this
+        $response = $this
             ->actingAs($this->user)
             ->post('/admin/data/commission-types/create', [
                 'name'          => $this->name,
@@ -152,6 +152,7 @@ class DataCommissionTypeTest extends TestCase
                 'show_examples' => $showExamples,
             ]);
 
+        $response->assertSessionHasNoErrors();
         $this->assertDatabaseHas('commission_types', [
             'category_id'   => $this->type->category_id,
             'name'          => $this->name,
@@ -203,7 +204,7 @@ class DataCommissionTypeTest extends TestCase
      */
     public function testPostEditType($withDescription, $pricing, $withExtras, $isActive, $isVisible, $slots, $withTag, $showExamples, $includeClass, $includeCategory, $fieldData)
     {
-        $this
+        $response = $this
             ->actingAs($this->user)
             ->post('/admin/data/commission-types/edit/'.$this->type->id, [
                 'name'             => $this->name,
@@ -232,6 +233,7 @@ class DataCommissionTypeTest extends TestCase
                 'field_help'       => isset($fieldData) ? [0 => $fieldData[4]] : null,
             ]);
 
+        $response->assertSessionHasNoErrors();
         $this->assertDatabaseHas('commission_types', [
             'id'            => $this->type->id,
             'category_id'   => $this->type->category_id,
@@ -296,10 +298,11 @@ class DataCommissionTypeTest extends TestCase
      */
     public function testPostDeleteType()
     {
-        $this
+        $response = $this
             ->actingAs($this->user)
             ->post('/admin/data/commission-types/delete/'.$this->type->id);
 
+        $response->assertSessionHasNoErrors();
         $this->assertDeleted($this->type);
     }
 }

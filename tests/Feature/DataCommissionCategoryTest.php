@@ -73,7 +73,7 @@ class DataCommissionCategoryTest extends TestCase
      */
     public function testPostCreateCategory($isActive)
     {
-        $this
+        $response = $this
             ->actingAs($this->user)
             ->post('/admin/data/commission-categories/create', [
                 'name'      => $this->name,
@@ -81,6 +81,7 @@ class DataCommissionCategoryTest extends TestCase
                 'class_id'  => CommissionClass::factory()->create()->id,
             ]);
 
+        $response->assertSessionHasNoErrors();
         $this->assertDatabaseHas('commission_categories', [
             'name'      => $this->name,
             'is_active' => $isActive,
@@ -107,7 +108,7 @@ class DataCommissionCategoryTest extends TestCase
      */
     public function testPostEditCategory($hasData, $fieldData, $isActive, $include)
     {
-        $this
+        $response = $this
             ->actingAs($this->user)
             ->post('/admin/data/commission-categories/edit/'.($hasData ? $this->dataCategory->id : $this->category->id), [
                 'name'          => $this->name,
@@ -123,6 +124,7 @@ class DataCommissionCategoryTest extends TestCase
                 'field_help'    => isset($fieldData) ? [0 => $fieldData[4]] : null,
             ]);
 
+        $response->assertSessionHasNoErrors();
         $this->assertDatabaseHas('commission_categories', [
             'id'        => $hasData ? $this->dataCategory->id : $this->category->id,
             'name'      => $this->name,
@@ -180,13 +182,15 @@ class DataCommissionCategoryTest extends TestCase
             CommissionType::factory()->category($this->category->id)->create();
         }
 
-        $this
+        $response = $this
             ->actingAs($this->user)
             ->post('/admin/data/commission-categories/delete/'.$this->category->id);
 
         if ($expected) {
+            $response->assertSessionHasNoErrors();
             $this->assertDeleted($this->category);
         } else {
+            $response->assertSessionHasErrors();
             $this->assertModelExists($this->category);
         }
     }

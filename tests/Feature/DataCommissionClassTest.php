@@ -77,13 +77,14 @@ class DataCommissionClassTest extends TestCase
      */
     public function testPostCreateClass($isActive)
     {
-        $this
+        $response = $this
             ->actingAs($this->user)
             ->post('/admin/data/commission-classes/create', [
                 'name'      => $this->name,
                 'is_active' => $isActive,
             ]);
 
+        $response->assertSessionHasNoErrors();
         $this->assertDatabaseHas('commission_classes', [
             'name'      => $this->name,
             'is_active' => $isActive,
@@ -125,7 +126,7 @@ class DataCommissionClassTest extends TestCase
      */
     public function testPostEditClass($hasData, $hasPage, $fieldData, $isActive)
     {
-        $this
+        $response = $this
             ->actingAs($this->user)
             ->post('/admin/data/commission-classes/edit/'.($hasData ? $this->dataClass->id : $this->class->id), [
                 'name'          => $this->name,
@@ -144,6 +145,7 @@ class DataCommissionClassTest extends TestCase
 
         $page = TextPage::where('name', $this->pageName)->first();
 
+        $response->assertSessionHasNoErrors();
         $this->assertDatabaseHas('commission_classes', [
             'id'        => $hasData ? $this->dataClass->id : $this->class->id,
             'name'      => $this->name,
@@ -224,11 +226,12 @@ class DataCommissionClassTest extends TestCase
         $className = $this->class->name;
         $classSlug = $this->class->slug;
 
-        $this
+        $response = $this
             ->actingAs($this->user)
             ->post('/admin/data/commission-classes/delete/'.$this->class->id);
 
         if ($expected) {
+            $response->assertSessionHasNoErrors();
             $this->assertDeleted($this->class);
 
             // Verify that default commission class text pages are deleted
@@ -246,6 +249,7 @@ class DataCommissionClassTest extends TestCase
                 ]);
             }
         } else {
+            $response->assertSessionHasErrors();
             $this->assertModelExists($this->class);
         }
     }
