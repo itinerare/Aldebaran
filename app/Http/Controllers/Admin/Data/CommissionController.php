@@ -133,7 +133,7 @@ class CommissionController extends Controller
             return redirect()->to('admin/data/commission-classes/edit/'.$class->id);
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
-                flash($error)->error();
+                $service->addError($error);
             }
         }
 
@@ -172,7 +172,7 @@ class CommissionController extends Controller
             flash('Class deleted successfully.')->success();
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
-                flash($error)->error();
+                $service->addError($error);
             }
         }
 
@@ -190,7 +190,7 @@ class CommissionController extends Controller
             flash('Class order updated successfully.')->success();
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
-                flash($error)->error();
+                $service->addError($error);
             }
         }
 
@@ -309,7 +309,7 @@ class CommissionController extends Controller
             return redirect()->to('admin/data/commission-categories/edit/'.$category->id);
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
-                flash($error)->error();
+                $service->addError($error);
             }
         }
 
@@ -348,7 +348,7 @@ class CommissionController extends Controller
             flash('Category deleted successfully.')->success();
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
-                flash($error)->error();
+                $service->addError($error);
             }
         }
 
@@ -366,7 +366,7 @@ class CommissionController extends Controller
             flash('Category order updated successfully.')->success();
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
-                flash($error)->error();
+                $service->addError($error);
             }
         }
 
@@ -498,7 +498,7 @@ class CommissionController extends Controller
             return redirect()->to('admin/data/commission-types/edit/'.$type->id);
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
-                flash($error)->error();
+                $service->addError($error);
             }
         }
 
@@ -537,7 +537,7 @@ class CommissionController extends Controller
             flash('Commission type deleted successfully.')->success();
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
-                flash($error)->error();
+                $service->addError($error);
             }
         }
 
@@ -555,7 +555,7 @@ class CommissionController extends Controller
             flash('Type order updated successfully.')->success();
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
-                flash($error)->error();
+                $service->addError($error);
             }
         }
 

@@ -91,7 +91,7 @@ class GalleryController extends Controller
             return redirect()->to('admin/data/projects/edit/'.$project->id);
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
-                flash($error)->error();
+                $service->addError($error);
             }
         }
 
@@ -127,7 +127,7 @@ class GalleryController extends Controller
             flash('Project deleted successfully.')->success();
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
-                flash($error)->error();
+                $service->addError($error);
             }
         }
 
@@ -145,7 +145,7 @@ class GalleryController extends Controller
             flash('Project order updated successfully.')->success();
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
-                flash($error)->error();
+                $service->addError($error);
             }
         }
 
@@ -242,7 +242,7 @@ class GalleryController extends Controller
             return redirect()->to('admin/data/pieces/edit/'.$piece->id);
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
-                flash($error)->error();
+                $service->addError($error);
             }
         }
 
@@ -278,7 +278,7 @@ class GalleryController extends Controller
             flash('Piece deleted successfully.')->success();
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
-                flash($error)->error();
+                $service->addError($error);
             }
         }
 
@@ -298,7 +298,7 @@ class GalleryController extends Controller
             flash('Image order updated successfully.')->success();
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
-                flash($error)->error();
+                $service->addError($error);
             }
         }
 
@@ -370,7 +370,7 @@ class GalleryController extends Controller
             return redirect()->to('admin/data/pieces/images/edit/'.$image->id);
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
-                flash($error)->error();
+                $service->addError($error);
             }
         }
 
@@ -408,7 +408,7 @@ class GalleryController extends Controller
             flash('Image deleted successfully.')->success();
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
-                flash($error)->error();
+                $service->addError($error);
             }
         }
 
@@ -483,7 +483,7 @@ class GalleryController extends Controller
             return redirect()->to('admin/data/tags/edit/'.$tag->id);
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
-                flash($error)->error();
+                $service->addError($error);
             }
         }
 
@@ -519,7 +519,7 @@ class GalleryController extends Controller
             flash('Tag deleted successfully.')->success();
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
-                flash($error)->error();
+                $service->addError($error);
             }
         }
 
@@ -594,7 +594,7 @@ class GalleryController extends Controller
             return redirect()->to('admin/data/programs/edit/'.$program->id);
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
-                flash($error)->error();
+                $service->addError($error);
             }
         }
 
@@ -630,7 +630,7 @@ class GalleryController extends Controller
             flash('Program deleted successfully.')->success();
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
-                flash($error)->error();
+                $service->addError($error);
             }
         }
 

@@ -124,7 +124,7 @@ class CommissionController extends Controller
             return redirect()->to('admin/commissions/edit/'.$commission->id);
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
-                flash($error)->error();
+                $service->addError($error);
             }
         }
 
@@ -248,7 +248,7 @@ class CommissionController extends Controller
             flash('Commission accepted successfully.')->success();
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
-                flash($error)->error();
+                $service->addError($error);
             }
         }
 
@@ -270,7 +270,7 @@ class CommissionController extends Controller
             flash('Commission updated successfully.')->success();
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
-                flash($error)->error();
+                $service->addError($error);
             }
         }
 
@@ -290,7 +290,7 @@ class CommissionController extends Controller
             flash('Commission marked complete successfully.')->success();
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
-                flash($error)->error();
+                $service->addError($error);
             }
         }
 
@@ -310,7 +310,7 @@ class CommissionController extends Controller
             flash('Commission declined successfully.')->success();
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
-                flash($error)->error();
+                $service->addError($error);
             }
         }
 
@@ -330,7 +330,7 @@ class CommissionController extends Controller
             flash('Commissioner banned successfully.')->success();
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
-                flash($error)->error();
+                $service->addError($error);
             }
         }
 

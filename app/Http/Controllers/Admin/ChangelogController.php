@@ -82,7 +82,7 @@ class ChangelogController extends Controller
             return redirect()->to('admin/changelog/edit/'.$log->id);
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
-                flash($error)->error();
+                $service->addError($error);
             }
         }
 
@@ -118,7 +118,7 @@ class ChangelogController extends Controller
             flash('Entry deleted successfully.')->success();
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
-                flash($error)->error();
+                $service->addError($error);
             }
         }
 

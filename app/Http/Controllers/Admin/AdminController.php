@@ -109,7 +109,7 @@ class AdminController extends Controller
             flash('Image uploaded successfully.')->success();
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
-                flash($error)->error();
+                $service->addError($error);
             }
         }
 
@@ -130,7 +130,7 @@ class AdminController extends Controller
             flash('File uploaded successfully.')->success();
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
-                flash($error)->error();
+                $service->addError($error);
             }
         }
 
