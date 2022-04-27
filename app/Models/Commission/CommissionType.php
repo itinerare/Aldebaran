@@ -301,10 +301,10 @@ class CommissionType extends Model
 
         if ((isset($this->data['include']) && ((isset($this->data['include']['class']) && $this->data['include']['class']) || (isset($this->data['include']['category']) && $this->data['include']['category']))) || isset($this->data['fields'])) {
             // Collect fields for the commission type
-            if (isset($this->data['include']['class']) && $this->data['include']['class']) {
+            if (isset($this->data['include']['class']) && $this->data['include']['class'] && isset($classData['fields'])) {
                 $fields = $fields + $classData['fields'];
             }
-            if (isset($this->data['include']['category']) && $this->data['include']['category']) {
+            if (isset($this->data['include']['category']) && $this->data['include']['category'] && isset($categoryData['fields'])) {
                 $fields = $fields + $categoryData['fields'];
             }
             if (isset($this->data['fields'])) {
