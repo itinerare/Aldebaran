@@ -72,7 +72,7 @@ class AdminChangelogTest extends TestCase
      */
     public function testPostCreateChangelog($hasData, $title, $isVisible)
     {
-        $this
+        $response = $this
             ->actingAs($this->user)
             ->post('/admin/changelog/create', [
                 'name'       => $title ? $this->title : null,
@@ -80,6 +80,7 @@ class AdminChangelogTest extends TestCase
                 'is_visible' => $isVisible,
             ]);
 
+        $response->assertSessionHasNoErrors();
         $this->assertDatabaseHas('changelog_entries', [
             'name'       => null,
             'name'       => $title ? $this->title : null,
@@ -99,7 +100,7 @@ class AdminChangelogTest extends TestCase
      */
     public function testPostEditChangelog($hasData, $title, $isVisible)
     {
-        $this
+        $response = $this
             ->actingAs($this->user)
             ->post('/admin/changelog/edit/'.($hasData ? $this->dataLog->id : $this->log->id), [
                 'name'       => $title ? $this->title : null,
@@ -107,6 +108,7 @@ class AdminChangelogTest extends TestCase
                 'is_visible' => $isVisible,
             ]);
 
+        $response->assertSessionHasNoErrors();
         $this->assertDatabaseHas('changelog_entries', [
             'id'         => $hasData ? $this->dataLog->id : $this->log->id,
             'name'       => $title ? $this->title : null,

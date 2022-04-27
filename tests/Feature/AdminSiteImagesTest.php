@@ -48,13 +48,14 @@ class AdminSiteImagesTest extends TestCase
         }
 
         // Try to post data
-        $this
+        $response = $this
             ->actingAs($this->user)
             ->post('/admin/site-images/upload', [
                 'file' => $this->file,
                 'key'  => $key,
             ]);
 
+        $response->assertSessionHasNoErrors();
         // Check that the file is now present
         $this->
             assertTrue(File::exists(public_path('images/assets/'.$key.'.png')));
@@ -86,12 +87,13 @@ class AdminSiteImagesTest extends TestCase
         }
 
         // Try to post data
-        $this
+        $response = $this
             ->actingAs($this->user)
             ->post('/admin/site-images/upload/css', [
                 'file' => $file,
             ]);
 
+        $response->assertSessionHasNoErrors();
         // Check that the file is now present
         $this->
             assertTrue(File::exists(public_path('css/custom.css')));

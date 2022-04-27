@@ -45,10 +45,11 @@ class AdminSiteSettingsTest extends TestCase
         $this->artisan('add-site-settings');
 
         // Try to post data
-        $this
+        $response = $this
             ->actingAs($this->user)
             ->post('/admin/site-settings/'.$key, ['value' => isset($value) ? $value : $this->value]);
 
+        $response->assertSessionHasNoErrors();
         $this->assertDatabaseHas('site_settings', [
             'key'   => $key,
             'value' => isset($value) ? $value : $this->value,

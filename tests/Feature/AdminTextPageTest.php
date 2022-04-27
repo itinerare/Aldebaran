@@ -48,12 +48,13 @@ class AdminTextPageTest extends TestCase
         $page = TextPage::where('key', $key)->first();
 
         // Try to post data
-        $this
+        $response = $this
             ->actingAs($this->user)
             ->post('/admin/pages/edit/'.$page->id, [
                 'text' => $this->text,
             ]);
 
+        $response->assertSessionHasNoErrors();
         $this->assertDatabaseHas('text_pages', [
             'key'  => $key,
             'text' => $this->text,

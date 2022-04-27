@@ -30,11 +30,12 @@ class AdminAccountSettingsTest extends TestCase
         $email = $this->faker->unique()->safeEmail();
 
         // Attempt to post data
-        $this->actingAs($this->user)
+        $response = $this->actingAs($this->user)
             ->post('admin/account-settings/email', [
                 'email' => $email,
             ]);
 
+        $response->assertSessionHasNoErrors();
         $this->assertDatabaseHas('users', [
             'name'  => $this->user->name,
             'email' => $email,
@@ -58,6 +59,7 @@ class AdminAccountSettingsTest extends TestCase
                 'new_password_confirmation' => 'password',
             ]);
 
+        $response->assertSessionHasNoErrors();
         $this->
             assertTrue(Hash::check('password', $user->fresh()->password));
     }
