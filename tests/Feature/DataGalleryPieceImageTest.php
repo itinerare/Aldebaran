@@ -85,7 +85,7 @@ class DataGalleryPieceImageTest extends TestCase
      */
     public function testPostCreateImage($withDescription, $isVisible, $isPrimary)
     {
-        $this
+        $response = $this
             ->actingAs($this->user)
             ->post('/admin/data/pieces/images/create', [
                 'piece_id'           => $this->piece->id,
@@ -103,6 +103,7 @@ class DataGalleryPieceImageTest extends TestCase
 
         $image = PieceImage::where('piece_id', $this->piece->id)->whereNotIn('id', [$this->image->id, $this->dataImage->id])->where('is_visible', $isVisible)->where('is_primary_image', $isPrimary)->first();
 
+        $response->assertSessionHasNoErrors();
         $this->assertDatabaseHas('piece_images', [
             'description'      => $withDescription ? $this->caption : null,
             'is_visible'       => $isVisible,
@@ -140,7 +141,7 @@ class DataGalleryPieceImageTest extends TestCase
      */
     public function testPostEditImage($withData, $withDescription, $isVisible, $isPrimary)
     {
-        $this
+        $response = $this
             ->actingAs($this->user)
             ->post('/admin/data/pieces/images/edit/'.($withData ? $this->dataImage->id : $this->image->id), [
                 'description'      => $withDescription ? $this->caption : null,
@@ -148,6 +149,7 @@ class DataGalleryPieceImageTest extends TestCase
                 'is_primary_image' => $isPrimary,
             ]);
 
+        $response->assertSessionHasNoErrors();
         $this->assertDatabaseHas('piece_images', [
             'id'               => $withData ? $this->dataImage->id : $this->image->id,
             'description'      => $withDescription ? $this->caption : null,

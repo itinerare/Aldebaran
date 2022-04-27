@@ -79,7 +79,7 @@ class DataGalleryProgramTest extends TestCase
      */
     public function testPostCreateProgram($image, $isVisible)
     {
-        $this
+        $response = $this
             ->actingAs($this->user)
             ->post('/admin/data/programs/create', [
                 'name'       => $this->name,
@@ -87,6 +87,7 @@ class DataGalleryProgramTest extends TestCase
                 'is_visible' => $isVisible,
             ]);
 
+        $response->assertSessionHasNoErrors();
         $this->assertDatabaseHas('programs', [
             'name'       => $this->name,
             'has_image'  => $image,
@@ -124,7 +125,7 @@ class DataGalleryProgramTest extends TestCase
             $this->program->update(['has_image' => 1]);
         }
 
-        $this
+        $response = $this
             ->actingAs($this->user)
             ->post('/admin/data/programs/edit/'.$this->program->id, [
                 'name'         => $this->name,
@@ -133,6 +134,7 @@ class DataGalleryProgramTest extends TestCase
                 'remove_image' => $removeImage,
             ]);
 
+        $response->assertSessionHasNoErrors();
         $this->assertDatabaseHas('programs', [
             'id'         => $this->program->id,
             'name'       => $this->name,
@@ -180,13 +182,15 @@ class DataGalleryProgramTest extends TestCase
                 ->create();
         }
 
-        $this
+        $response = $this
             ->actingAs($this->user)
             ->post('/admin/data/programs/delete/'.$this->program->id);
 
         if ($expected) {
+            $response->assertSessionHasNoErrors();
             $this->assertDeleted($this->program);
         } else {
+            $response->assertSessionHasErrors();
             $this->assertModelExists($this->program);
         }
     }

@@ -132,7 +132,7 @@ class DataGalleryPieceTest extends TestCase
      */
     public function testPostCreatePiece($hasData, $description, $isVisible, $timestamp, $tag, $program, $goodExample)
     {
-        $this
+        $response = $this
             ->actingAs($this->user)
             ->post('/admin/data/pieces/create', [
                 'name'         => $this->name,
@@ -145,6 +145,7 @@ class DataGalleryPieceTest extends TestCase
                 'good_example' => $goodExample,
             ]);
 
+        $response->assertSessionHasNoErrors();
         $this->assertDatabaseHas('pieces', [
             'name'         => $this->name,
             'description'  => $description ? $this->text : null,
@@ -186,7 +187,7 @@ class DataGalleryPieceTest extends TestCase
      */
     public function testPostEditPiece($hasData, $description, $isVisible, $timestamp, $tag, $program, $goodExample)
     {
-        $this
+        $response = $this
             ->actingAs($this->user)
             ->post('/admin/data/pieces/edit/'.($hasData ? $this->dataPiece->id : $this->piece->id), [
                 'name'         => $this->name,
@@ -199,6 +200,7 @@ class DataGalleryPieceTest extends TestCase
                 'good_example' => $goodExample,
             ]);
 
+        $response->assertSessionHasNoErrors();
         $this->assertDatabaseHas('pieces', [
             'id'           => $hasData ? $this->dataPiece->id : $this->piece->id,
             'name'         => $this->name,
@@ -268,10 +270,11 @@ class DataGalleryPieceTest extends TestCase
      */
     public function testPostDeletePiece()
     {
-        $this
+        $response = $this
             ->actingAs($this->user)
             ->post('/admin/data/pieces/delete/'.$this->piece->id);
 
+        $response->assertSessionHasNoErrors();
         $this->assertSoftDeleted($this->piece);
     }
 }

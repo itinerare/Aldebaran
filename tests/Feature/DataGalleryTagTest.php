@@ -74,7 +74,7 @@ class DataGalleryTagTest extends TestCase
      */
     public function testPostCreateTag($hasData, $hasDescription, $isVisible, $isActive)
     {
-        $this
+        $response = $this
             ->actingAs($this->user)
             ->post('/admin/data/tags/create', [
                 'name'        => $this->name,
@@ -83,6 +83,7 @@ class DataGalleryTagTest extends TestCase
                 'is_active'   => $isActive,
             ]);
 
+        $response->assertSessionHasNoErrors();
         $this->assertDatabaseHas('tags', [
             'name'        => $this->name,
             'description' => $hasDescription ? $this->text : null,
@@ -103,7 +104,7 @@ class DataGalleryTagTest extends TestCase
      */
     public function testPostEditTag($hasData, $hasDescription, $isVisible, $isActive)
     {
-        $this
+        $response = $this
             ->actingAs($this->user)
             ->post('/admin/data/tags/edit/'.($hasData ? $this->dataTag->id : $this->tag->id), [
                 'name'        => $this->name,
@@ -112,6 +113,7 @@ class DataGalleryTagTest extends TestCase
                 'is_active'   => $isActive,
             ]);
 
+        $response->assertSessionHasNoErrors();
         $this->assertDatabaseHas('tags', [
             'id'          => $hasData ? $this->dataTag->id : $this->tag->id,
             'name'        => $this->name,
@@ -157,13 +159,15 @@ class DataGalleryTagTest extends TestCase
             CommissionType::factory()->testData(['type' => 'flat', 'cost' => 10], true, $this->tag->id, true, true, $this->faker->unique()->domainWord())->create();
         }
 
-        $this
+        $response = $this
             ->actingAs($this->user)
             ->post('/admin/data/tags/delete/'.$this->tag->id);
 
         if ($expected) {
+            $response->assertSessionHasNoErrors();
             $this->assertDeleted($this->tag);
         } else {
+            $response->assertSessionHasErrors();
             $this->assertModelExists($this->tag);
         }
     }
@@ -171,8 +175,8 @@ class DataGalleryTagTest extends TestCase
     public function tagDeleteProvider()
     {
         return [
-            'basic'               => [[0, 0], 1],
-            'with piece'          => [[1, 0], 0],
+            'basic'      => [[0, 0], 1],
+            'with piece' => [[1, 0], 0],
 
             // JSON searching may not work well in the test environment
             //'with type'           => [[0, 1], 0],

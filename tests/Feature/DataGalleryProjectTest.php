@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Gallery\Piece;
 use App\Models\Gallery\Project;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -70,7 +71,7 @@ class DataGalleryProjectTest extends TestCase
      */
     public function testPostCreateProject($hasData, $hasDescription, $isVisible)
     {
-        $this
+        $response = $this
             ->actingAs($this->user)
             ->post('/admin/data/projects/create', [
                 'name'        => $this->name,
@@ -78,6 +79,7 @@ class DataGalleryProjectTest extends TestCase
                 'is_visible'  => $isVisible,
             ]);
 
+        $response->assertSessionHasNoErrors();
         $this->assertDatabaseHas('projects', [
             'name'        => $this->name,
             'description' => $hasDescription ? $this->text : null,
@@ -96,7 +98,7 @@ class DataGalleryProjectTest extends TestCase
      */
     public function testPostEditProject($hasData, $hasDescription, $isVisible)
     {
-        $this
+        $response = $this
             ->actingAs($this->user)
             ->post('/admin/data/projects/edit/'.($hasData ? $this->dataProject->id : $this->project->id), [
                 'name'        => $this->name,
@@ -104,6 +106,7 @@ class DataGalleryProjectTest extends TestCase
                 'is_visible'  => $isVisible,
             ]);
 
+        $response->assertSessionHasNoErrors();
         $this->assertDatabaseHas('projects', [
             'id'          => $hasData ? $this->dataProject->id : $this->project->id,
             'name'        => $this->name,
@@ -129,13 +132,36 @@ class DataGalleryProjectTest extends TestCase
 
     /**
      * Test project deletion.
+     *
+     * @dataProvider projectDeleteProvider
+     *
+     * @param bool $withPiece
+     * @param bool $expected
      */
-    public function testPostDeleteProject()
+    public function testPostDeleteProject($withPiece, $expected)
     {
-        $this
+        if ($withPiece) {
+            $piece = Piece::factory()->project($this->project->id)->create();
+        }
+
+        $response = $this
             ->actingAs($this->user)
             ->post('/admin/data/projects/delete/'.$this->project->id);
 
-        $this->assertDeleted($this->project);
+        if ($expected) {
+            $response->assertSessionHasNoErrors();
+            $this->assertDeleted($this->project);
+        } else {
+            $response->assertSessionHasErrors();
+            $this->assertModelExists($this->project);
+        }
+    }
+
+    public function projectDeleteProvider()
+    {
+        return [
+            'basic'      => [0, 1],
+            'with piece' => [1, 0],
+        ];
     }
 }
