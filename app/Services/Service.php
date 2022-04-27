@@ -163,11 +163,12 @@ abstract class Service
     }
 
     /**
-     * Add an error to Laravel session $errors
+     * Add an error to Laravel session $errors.
+     *
      * @author Pavel Lint via https://stackoverflow.com/questions/58690463/best-way-to-store-error-messages-in-laravel-session-or-variable with modifications
      *
      * @param string $key
-     * @param bool $flash
+     * @param bool   $flash
      * @param string $error_msg
      */
     public function addError($error_msg, $flash = true, $key = 'default')
@@ -186,7 +187,7 @@ abstract class Service
             $errors->put('default', $bag)
         );
 
-        if($flash) {
+        if ($flash) {
             flash($error_msg)->error();
         }
     }
