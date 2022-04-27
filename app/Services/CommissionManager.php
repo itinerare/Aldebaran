@@ -50,6 +50,9 @@ class CommissionManager extends Service
                 throw new \Exception('The selected commission type is invalid.');
             }
             if (!$manual) {
+                if (!$type->category->class->is_active) {
+                    throw new \Exception('This class is inactive.');
+                }
                 // Check that commissions are open for this type and for the global type
                 if (!Settings::get($type->category->class->slug.'_comms_open')) {
                     throw new \Exception('Commissions are not open.');
