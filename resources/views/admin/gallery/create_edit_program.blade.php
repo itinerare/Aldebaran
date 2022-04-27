@@ -1,13 +1,13 @@
 @extends('admin.layout')
 
-@section('admin-title') Programs @endsection
+@section('admin-title') Media & Programs @endsection
 
 @section('admin-content')
-{!! breadcrumbs(['Admin Panel' => 'admin', 'Programs' => 'admin/data/programs', ($program->id ? 'Edit' : 'Add').' Program' => $program->id ? 'admin/data/programs/edit/'.$program->id : 'admin/data/programs/create']) !!}
+{!! breadcrumbs(['Admin Panel' => 'admin', 'Media & Programs' => 'admin/data/programs', ($program->id ? 'Edit' : 'Add').' Program' => $program->id ? 'admin/data/programs/edit/'.$program->id : 'admin/data/programs/create']) !!}
 
-<h1>{{ $program->id ? 'Edit' : 'Add' }} Program
+<h1>{{ $program->id ? 'Edit' : 'Add' }} Media/Program
     @if($program->id)
-        <a href="#" class="btn btn-danger float-right delete-program-button">Delete Program</a>
+        <a href="#" class="btn btn-danger float-right delete-program-button">Delete Media/Program</a>
     @endif
 </h1>
 
