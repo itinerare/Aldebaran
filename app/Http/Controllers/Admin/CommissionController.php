@@ -197,7 +197,7 @@ class CommissionController extends Controller
             abort(404);
         }
 
-        $yearCommissions = Commission::whereIn('status', ['Accepted', 'Complete'])->whereNotNull('cost_data')->orderBy('created_at', 'DESC')->get()->groupBy(function ($date) {
+        $yearCommissions = Commission::whereIn('status', ['Accepted', 'Complete'])->orderBy('created_at', 'DESC')->get()->groupBy(function ($date) {
             return Carbon::parse($date->created_at)->format('Y');
         });
 
