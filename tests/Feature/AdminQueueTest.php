@@ -88,12 +88,12 @@ class AdminQueueTest extends TestCase
                 ->status('Accepted')->create();
         }
 
-        if($pendingCommission) {
+        if ($pendingCommission) {
             // Create a commission, with payments, that will not appear in the ledger
             $pendingCommission = Commission::factory()->has(CommissionPayment::factory()->count(2), 'payments')->create();
         }
 
-        if($cancelledCommission) {
+        if ($cancelledCommission) {
             // Create a cancelled commission for which a payment will appear in the ledger due to being paid
             $cancelledCommission = Commission::factory()->has(CommissionPayment::factory()->paid()->count(1), 'payments')->status('Cancelled')->create();
         }
@@ -103,42 +103,42 @@ class AdminQueueTest extends TestCase
             ->assertStatus($status);
 
         if ($status == 200) {
-            if($withCommission) {
+            if ($withCommission) {
                 // Test that the commission is present
                 $response->assertViewHas('yearCommissions', function ($yearCommissions) use ($commission) {
                     return $yearCommissions[Carbon::today()->format('Y')]->contains($commission);
                 });
 
                 // Test that the payments are present
-                foreach($commission->payments as $payment) {
+                foreach ($commission->payments as $payment) {
                     $response->assertViewHas('yearPayments', function ($yearPayments) use ($payment) {
                         return $yearPayments[Carbon::today()->format('Y')]->contains($payment);
                     });
                 }
             }
 
-            if($pendingCommission) {
+            if ($pendingCommission) {
                 // Test that the pending commission is not present
                 $response->assertViewHas('yearCommissions', function ($yearCommissions) use ($pendingCommission) {
                     return !$yearCommissions->count() || !$yearCommissions[Carbon::today()->format('Y')]->contains($pendingCommission);
                 });
 
                 // Test that the payments are not present
-                foreach($pendingCommission->payments as $payment) {
+                foreach ($pendingCommission->payments as $payment) {
                     $response->assertViewHas('yearPayments', function ($yearPayments) use ($payment) {
                         return !$yearPayments->count() || !$yearPayments[Carbon::today()->format('Y')]->contains($payment);
                     });
                 }
             }
 
-            if($cancelledCommission) {
+            if ($cancelledCommission) {
                 // Test that the hidden commission is absent
                 $response->assertViewHas('yearCommissions', function ($yearCommissions) use ($cancelledCommission) {
                     return !$yearCommissions->count() || !$yearCommissions[Carbon::today()->format('Y')]->contains($cancelledCommission);
                 });
 
                 // Test that the payment is present
-                foreach($cancelledCommission->payments as $payment) {
+                foreach ($cancelledCommission->payments as $payment) {
                     $response->assertViewHas('yearPayments', function ($yearPayments) use ($payment) {
                         return $yearPayments[Carbon::today()->format('Y')]->contains($payment);
                     });
@@ -150,10 +150,10 @@ class AdminQueueTest extends TestCase
     public function ledgerProvider()
     {
         return [
-            'basic' => [1, 0, 0, 0, 200],
-            'with commission' => [1, 1, 0, 0, 200],
-            'commissions disabled' => [0, 0, 0, 0, 404],
-            'with pending commission' => [1, 0, 1, 0, 200],
+            'basic'                              => [1, 0, 0, 0, 200],
+            'with commission'                    => [1, 1, 0, 0, 200],
+            'commissions disabled'               => [0, 0, 0, 0, 404],
+            'with pending commission'            => [1, 0, 1, 0, 200],
             'with cancelled but paid commission' => [1, 0, 0, 1, 200],
         ];
     }
