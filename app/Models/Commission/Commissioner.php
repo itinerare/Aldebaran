@@ -2,10 +2,13 @@
 
 namespace App\Models\Commission;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Commissioner extends Model
 {
+    use HasFactory;
+
     /**
      * The attributes that are mass assignable.
      *

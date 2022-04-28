@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Commission\Commission;
 use App\Models\Commission\Commissioner;
 use App\Models\Commission\CommissionType;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -15,7 +16,7 @@ class CommissionTest extends TestCase
     use RefreshDatabase, WithFaker;
 
     /******************************************************************************
-        COMMISSIONS
+        PUBLIC: COMMISSIONS
     *******************************************************************************/
 
     protected function setUp(): void
@@ -147,9 +148,10 @@ class CommissionTest extends TestCase
      * @param array|null $data
      * @param bool       $extras
      * @param bool       $agree
+     * @param bool       $isBanned
      * @param int        $status
      */
-    public function testPostNewCommission($withName, $withEmail, $paymentAddr, $visibility, $data, $extras, $agree, $status)
+    public function testPostNewCommission($withName, $withEmail, $paymentAddr, $visibility, $data, $extras, $agree, $isBanned, $status)
     {
         // Adjust visibility settings
         config(['aldebaran.settings.commissions.enabled' => $visibility[0]]);
@@ -215,15 +217,19 @@ class CommissionTest extends TestCase
             }
         }
 
-        // Generate an email address to use for form submission and lookup
-        $email = $this->faker->unique()->safeEmail();
-        $paymentEmail = $this->faker->unique()->safeEmail();
+        if ($isBanned) {
+            $commissioner = Commissioner::factory()->banned()->create();
+        } else {
+            // Generate an email address to use for form submission and lookup
+            $email = $this->faker->unique()->safeEmail();
+            $paymentEmail = $this->faker->unique()->safeEmail();
+        }
 
         $response = $this
             ->post('/commissions/new', [
-                'name'                   => $withName ? $this->faker->unique()->domainWord() : null,
-                'email'                  => $withEmail ? $email : null,
-                'contact'                => $this->faker->unique()->domainWord(),
+                'name'                   => $withName ? ($isBanned ? $commissioner->name : $this->faker->unique())->domainWord() : null,
+                'email'                  => $withEmail ? ($isBanned ? $commissioner->email : $email) : null,
+                'contact'                => $isBanned ? $commissioner->contact : $this->faker->unique()->domainWord(),
                 'payment_address'        => $paymentAddr ?? 0,
                 'paypal'                 => $paymentAddr ? $paymentEmail : null,
                 'additional_information' => $extras ? $this->faker->domainWord() : null,
@@ -256,6 +262,7 @@ class CommissionTest extends TestCase
                 'data'            => $data ? '{'.($data[6] ? '"'.$fieldKeys[2].'":"test",' : '').($data[5] ? '"'.$fieldKeys[1].'":"test",' : '').'"'.$fieldKeys[0].'":'.($data[0] != 'multiple' ? '"'.$answer.'"' : '["'.$answer[0].'"]').'}' : null,
             ]);
             $response->assertSessionHasNoErrors();
+            $response->assertRedirectContains('commissions/view');
         } elseif ($status == 500) {
             $response->assertSessionHasErrors();
         }
@@ -267,37 +274,131 @@ class CommissionTest extends TestCase
 
         return [
             // Access testing
-            'visitor, type active, visible'           => [0, 1, 0, [1, 1, 1, 1, 1, 0], null, 0, 1, 302],
-            'visitor, type inactive, visible'         => [0, 1, 0, [1, 1, 1, 0, 1, 0], null, 0, 1, 500],
-            'visitor, type active, hidden'            => [0, 1, 0, [1, 1, 1, 1, 0, 0], null, 0, 1, 500],
-            'visitor, type inactive, hidden'          => [0, 1, 0, [1, 1, 1, 0, 0, 0], null, 0, 1, 500],
-            'visitor, type active, hidden with key'   => [0, 1, 0, [1, 1, 1, 1, 0, 1], null, 0, 1, 302],
-            'visitor, type inactive, hidden with key' => [0, 1, 0, [1, 1, 1, 0, 0, 1], null, 0, 1, 500],
-            'visitor, comms closed'                   => [0, 1, 0, [1, 1, 0, 1, 1, 0], null, 0, 1, 500],
-            'visitor, class inactive'                 => [0, 1, 0, [1, 0, 1, 1, 1, 0], null, 0, 1, 500],
-            'visitor, comms disabled'                 => [0, 1, 0, [0, 1, 1, 1, 1, 0], null, 0, 1, 500],
+            'visitor, type active, visible'           => [0, 1, 0, [1, 1, 1, 1, 1, 0], null, 0, 1, 0, 302],
+            'visitor, type inactive, visible'         => [0, 1, 0, [1, 1, 1, 0, 1, 0], null, 0, 1, 0, 500],
+            'visitor, type active, hidden'            => [0, 1, 0, [1, 1, 1, 1, 0, 0], null, 0, 1, 0, 500],
+            'visitor, type inactive, hidden'          => [0, 1, 0, [1, 1, 1, 0, 0, 0], null, 0, 1, 0, 500],
+            'visitor, type active, hidden with key'   => [0, 1, 0, [1, 1, 1, 1, 0, 1], null, 0, 1, 0, 302],
+            'visitor, type inactive, hidden with key' => [0, 1, 0, [1, 1, 1, 0, 0, 1], null, 0, 1, 0, 500],
+            'visitor, comms closed'                   => [0, 1, 0, [1, 1, 0, 1, 1, 0], null, 0, 1, 0, 500],
+            'visitor, class inactive'                 => [0, 1, 0, [1, 0, 1, 1, 1, 0], null, 0, 1, 0, 500],
+            'visitor, comms disabled'                 => [0, 1, 0, [0, 1, 1, 1, 1, 0], null, 0, 1, 0, 500],
 
             // Form testing
-            'basic'         => [0, 1, 0, [1, 1, 1, 1, 1, 0], null, 0, 1, 302],
-            'without email' => [0, 0, 0, [1, 1, 1, 1, 1, 0], null, 0, 1, 500],
-            'non-agreement' => [0, 1, 0, [1, 1, 1, 1, 1, 0], null, 0, 0, 500],
+            'basic'               => [0, 1, 0, [1, 1, 1, 1, 1, 0], null, 0, 1, 0, 302],
+            'without email'       => [0, 0, 0, [1, 1, 1, 1, 1, 0], null, 0, 1, 0, 500],
+            'non-agreement'       => [0, 1, 0, [1, 1, 1, 1, 1, 0], null, 0, 0, 0, 500],
+            'banned commissioner' => [0, 1, 0, [1, 1, 1, 1, 1, 0], null, 0, 1, 1, 500],
 
             // Form field testing
             // (string) type, (bool) rules, (bool) choices, value, (string) help, (bool) include category, (bool) include class
-            'text field'                   => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['text', 0, 0, null, null, 0, 0], 0, 1, 302],
-            'text field with rule'         => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['text', 1, 0, null, null, 0, 0], 0, 1, 302],
-            'text field with rule, empty'  => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['text', 1, 0, null, null, 0, 0], 0, 1, 500],
-            'text field with value'        => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['text', 0, 0, 'test', null, 0, 0], 0, 1, 302],
-            'text field with help'         => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['text', 0, 0, null, 'test', 0, 0], 0, 1, 302],
-            'textbox field'                => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['textarea', 0, 0, null, null, 0, 0], 0, 1, 302],
-            'number field'                 => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['number', 0, 0, null, null, 0, 0], 0, 1, 302],
-            'checkbox field'               => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['checkbox', 0, 0, null, null, 0, 0], 0, 1, 302],
-            'choose one field'             => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['choice', 0, 0, null, null, 0, 0], 0, 1, 302],
-            'choose multiple field'        => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['multiple', 0, 0, null, null, 0, 0], 0, 1, 302],
+            'text field'                  => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['text', 0, 0, null, null, 0, 0], 0, 1, 0, 302],
+            'text field with rule'        => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['text', 1, 0, null, null, 0, 0], 0, 1, 0, 302],
+            'text field with rule, empty' => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['text', 1, 0, null, null, 0, 0], 0, 1, 0, 500],
+            'text field with value'       => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['text', 0, 0, 'test', null, 0, 0], 0, 1, 0, 302],
+            'text field with help'        => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['text', 0, 0, null, 'test', 0, 0], 0, 1, 0, 302],
+            'textbox field'               => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['textarea', 0, 0, null, null, 0, 0], 0, 1, 0, 302],
+            'number field'                => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['number', 0, 0, null, null, 0, 0], 0, 1, 0, 302],
+            'checkbox field'              => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['checkbox', 0, 0, null, null, 0, 0], 0, 1, 0, 302],
+            'choose one field'            => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['choice', 0, 0, null, null, 0, 0], 0, 1, 0, 302],
+            'choose multiple field'       => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['multiple', 0, 0, null, null, 0, 0], 0, 1, 0, 302],
 
-            'include from category'           => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['text', 0, 0, null, null, 1, 0], 0, 1, 302],
-            'include from class'              => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['text', 0, 0, null, null, 0, 1], 0, 1, 302],
-            'include from category and class' => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['text', 0, 0, null, null, 1, 1], 0, 1, 302],
+            'include from category'           => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['text', 0, 0, null, null, 1, 0], 0, 1, 0, 302],
+            'include from class'              => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['text', 0, 0, null, null, 0, 1], 0, 1, 0, 302],
+            'include from category and class' => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['text', 0, 0, null, null, 1, 1], 0, 1, 0, 302],
+        ];
+    }
+
+    /**
+     * Test commission viewing.
+     *
+     * @dataProvider commissionViewProvider
+     *
+     * @param bool       $isValid
+     * @param array|null $data
+     * @param int        $status
+     */
+    public function testGetViewCommission($isValid, $data, $status)
+    {
+        if ($data) {
+            // Generate some keys so they can be referred back to later
+            $fieldKeys = [
+                $this->faker->unique()->domainWord(),
+                $this->faker->unique()->domainWord(),
+                $this->faker->unique()->domainWord(),
+            ];
+
+            $this->type->update([
+                'data' => '{"fields":{"'.Str::lower($fieldKeys[0]).'":{"label":"'.$this->faker->unique()->domainWord().'","type":"'.$data[0].'","rules":'.($data[1] ? '"required"' : 'null').',"choices":'.($data[2] ? '["option 1","option 2"]' : 'null').',"value":'.($data[3] ? '"'.$data[3].'"' : 'null').',"help":'.($data[4] ? '"'.$data[4].'"' : 'null').'}},"include":{"class":'.$data[6].',"category":'.$data[5].'},"pricing":{"type":"flat","cost":"10"},"extras":null,"tags":null}',
+            ]);
+
+            if ($data[5]) {
+                $this->type->category->update([
+                    'data' => '{"fields":{"'.Str::lower($fieldKeys[1]).'":{"label":"'.$this->faker->unique()->domainWord().'","type":"text","rules":null,"choices":null,"value":null,"help":null}},"include":{"class":0}}',
+                ]);
+            }
+
+            if ($data[6]) {
+                $this->type->category->class->update([
+                    'data' => '{"fields":{"'.Str::lower($fieldKeys[2]).'":{"label":"'.$this->faker->unique()->domainWord().'","type":"text","rules":null,"choices":null,"value":null,"help":null}}}',
+                ]);
+            }
+
+            switch ($data[0]) {
+                case 'text':
+                    $answer = $this->faker->domainWord();
+                    break;
+                case 'textarea':
+                    $answer = $this->faker->domainWord();
+                    break;
+                case 'number':
+                    $answer = (string) mt_rand(1, 10);
+                    break;
+                case 'checkbox':
+                    $answer = (string) 1;
+                    break;
+                case 'choice':
+                    $answer = (string) 0;
+                    break;
+                case 'multiple':
+                    $answer = [0 => (string) 0];
+                    break;
+            }
+        }
+
+        // Create a commission to view
+        $commission = Commission::factory()->type($this->type->id)->create([
+            'data' => $data ? '{'.($data[6] ? '"'.$fieldKeys[2].'":"test",' : '').($data[5] ? '"'.$fieldKeys[1].'":"test",' : '').'"'.$fieldKeys[0].'":'.($data[0] != 'multiple' ? '"'.$answer.'"' : '["'.$answer[0].'"]').'}' : null,
+        ]);
+
+        // Either take the commission's valid URL or generate a fake one
+        $url = $isValid ? $commission->url : mt_rand(1, 10).'_'.randomString(15);
+
+        $response = $this
+            ->get($url)
+            ->assertStatus($status);
+    }
+
+    public function commissionViewProvider()
+    {
+        return [
+            'basic'              => [1, null, 200],
+            'invalid commission' => [0, null, 404],
+
+            // Field testing
+            'text field'            => [1, ['text', 0, 0, null, null, 0, 0], 200],
+            'text field with rule'  => [1, ['text', 1, 0, null, null, 0, 0], 200],
+            'text field with value' => [1, ['text', 0, 0, 'test', null, 0, 0], 200],
+            'text field with help'  => [1, ['text', 0, 0, null, 'test', 0, 0], 200],
+            'textbox field'         => [1, ['textarea', 0, 0, null, null, 0, 0], 200],
+            'number field'          => [1, ['number', 0, 0, null, null, 0, 0], 200],
+            'checkbox field'        => [1, ['checkbox', 0, 0, null, null, 0, 0], 200],
+            'choose one field'      => [1, ['choice', 0, 0, null, null, 0, 0], 200],
+            'choose multiple field' => [1, ['multiple', 0, 0, null, null, 0, 0], 200],
+
+            'include from category'           => [1, ['text', 0, 0, null, null, 1, 0], 200],
+            'include from class'              => [1, ['text', 0, 0, null, null, 0, 1], 200],
+            'include from category and class' => [1, ['text', 0, 0, null, null, 1, 1], 200],
         ];
     }
 }
