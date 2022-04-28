@@ -12,8 +12,8 @@ class Commission extends Model
      * @var array
      */
     protected $fillable = [
-        'commission_key', 'commissioner_id', 'commission_type', 'paid_status', 'progress',
-        'status', 'description', 'data', 'comments', 'cost_data',
+        'commission_key', 'commissioner_id', 'commission_type', 'progress',
+        'status', 'description', 'data', 'comments',
     ];
 
     /**
