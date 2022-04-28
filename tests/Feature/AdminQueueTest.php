@@ -152,9 +152,10 @@ class AdminQueueTest extends TestCase
         return [
             'basic'                              => [1, 0, 0, 0, 200],
             'with commission'                    => [1, 1, 0, 0, 200],
-            'commissions disabled'               => [0, 0, 0, 0, 404],
             'with pending commission'            => [1, 0, 1, 0, 200],
             'with cancelled but paid commission' => [1, 0, 0, 1, 200],
+            'all commissions'                    => [1, 1, 1, 1, 200],
+            'commissions disabled'               => [0, 0, 0, 0, 404],
         ];
     }
 }
