@@ -174,29 +174,28 @@ class CommissionTest extends TestCase
                 $this->faker->unique()->domainWord(),
             ];
 
-            switch ($data[0]) {
-                case 'text':
-                    $answer = $this->faker->domainWord();
-                    break;
-                case 'textarea':
-                    $answer = $this->faker->domainWord();
-                    break;
-                case 'number':
-                    $answer = (string) mt_rand(1, 10);
-                    break;
-                case 'checkbox':
-                    $answer = (string) 1;
-                    break;
-                case 'choice':
-                    $answer = (string) 0;
-                    break;
-                case 'multiple':
-                    $answer = [0 => (string) 0];
-                    break;
-            }
-
-            // Unset to test validation rule use
-            if ($data[1] && $status == 500) {
+            if ($data[7]) {
+                switch ($data[0]) {
+                    case 'text':
+                        $answer = $this->faker->domainWord();
+                        break;
+                    case 'textarea':
+                        $answer = $this->faker->domainWord();
+                        break;
+                    case 'number':
+                        $answer = (string) mt_rand(1, 10);
+                        break;
+                    case 'checkbox':
+                        $answer = (string) 1;
+                        break;
+                    case 'choice':
+                        $answer = (string) 0;
+                        break;
+                    case 'multiple':
+                        $answer = [0 => (string) 0];
+                        break;
+                }
+            } else {
                 $answer = null;
             }
 
@@ -259,7 +258,7 @@ class CommissionTest extends TestCase
                 'commissioner_id' => $commissioner->id,
                 'status'          => 'Pending',
                 'commission_type' => $this->type->id,
-                'data'            => $data ? '{'.($data[6] ? '"'.$fieldKeys[2].'":"test",' : '').($data[5] ? '"'.$fieldKeys[1].'":"test",' : '').'"'.$fieldKeys[0].'":'.($data[0] != 'multiple' ? '"'.$answer.'"' : '["'.$answer[0].'"]').'}' : null,
+                'data'            => $data && (isset($answer) || $data[5] || $data[6]) ? '{'.($data[6] ? '"'.$fieldKeys[2].'":"test",' : '').($data[5] ? '"'.$fieldKeys[1].'":"test",' : '').'"'.$fieldKeys[0].'":'.(isset($answer) ? ($data[0] != 'multiple' ? '"'.$answer.'"' : '["'.$answer[0].'"]') : 'null').'}' : null,
             ]);
             $response->assertSessionHasNoErrors();
             $response->assertRedirectContains('commissions/view');
@@ -291,21 +290,27 @@ class CommissionTest extends TestCase
             'banned commissioner' => [0, 1, 0, [1, 1, 1, 1, 1, 0], null, 0, 1, 1, 500],
 
             // Form field testing
-            // (string) type, (bool) rules, (bool) choices, value, (string) help, (bool) include category, (bool) include class
-            'text field'                  => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['text', 0, 0, null, null, 0, 0], 0, 1, 0, 302],
-            'text field with rule'        => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['text', 1, 0, null, null, 0, 0], 0, 1, 0, 302],
-            'text field with rule, empty' => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['text', 1, 0, null, null, 0, 0], 0, 1, 0, 500],
-            'text field with value'       => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['text', 0, 0, 'test', null, 0, 0], 0, 1, 0, 302],
-            'text field with help'        => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['text', 0, 0, null, 'test', 0, 0], 0, 1, 0, 302],
-            'textbox field'               => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['textarea', 0, 0, null, null, 0, 0], 0, 1, 0, 302],
-            'number field'                => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['number', 0, 0, null, null, 0, 0], 0, 1, 0, 302],
-            'checkbox field'              => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['checkbox', 0, 0, null, null, 0, 0], 0, 1, 0, 302],
-            'choose one field'            => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['choice', 0, 0, null, null, 0, 0], 0, 1, 0, 302],
-            'choose multiple field'       => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['multiple', 0, 0, null, null, 0, 0], 0, 1, 0, 302],
+            // (string) type, (bool) rules, (bool) choices, value, (string) help, (bool) include category, (bool) include class, (bool) is empty
+            'text field'                   => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['text', 0, 0, null, null, 0, 0, 1], 0, 1, 0, 302],
+            'text field, empty'            => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['text', 0, 0, null, null, 0, 0, 0], 0, 1, 0, 302],
+            'text field with rule'         => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['text', 1, 0, null, null, 0, 0, 1], 0, 1, 0, 302],
+            'text field with rule, empty'  => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['text', 1, 0, null, null, 0, 0, 0], 0, 1, 0, 500],
+            'text field with value'        => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['text', 0, 0, 'test', null, 0, 0, 1], 0, 1, 0, 302],
+            'text field with help'         => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['text', 0, 0, null, 'test', 0, 0, 1], 0, 1, 0, 302],
+            'textbox field'                => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['textarea', 0, 0, null, null, 0, 0, 1], 0, 1, 0, 302],
+            'textbox field, empty'         => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['textarea', 0, 0, null, null, 0, 0, 0], 0, 1, 0, 302],
+            'number field'                 => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['number', 0, 0, null, null, 0, 0, 1], 0, 1, 0, 302],
+            'number field,empty'           => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['number', 0, 0, null, null, 0, 0, 0], 0, 1, 0, 302],
+            'checkbox field'               => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['checkbox', 0, 0, null, null, 0, 0, 1], 0, 1, 0, 302],
+            'checkbox field, empty'        => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['checkbox', 0, 0, null, null, 0, 0, 0], 0, 1, 0, 302],
+            'choose one field'             => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['choice', 0, 0, null, null, 0, 0, 1], 0, 1, 0, 302],
+            'choose one field, empty'      => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['choice', 0, 0, null, null, 0, 0, 0], 0, 1, 0, 302],
+            'choose multiple field'        => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['multiple', 0, 0, null, null, 0, 0, 1], 0, 1, 0, 302],
+            'choose multiple field, empty' => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['multiple', 0, 0, null, null, 0, 0, 0], 0, 1, 0, 302],
 
-            'include from category'           => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['text', 0, 0, null, null, 1, 0], 0, 1, 0, 302],
-            'include from class'              => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['text', 0, 0, null, null, 0, 1], 0, 1, 0, 302],
-            'include from category and class' => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['text', 0, 0, null, null, 1, 1], 0, 1, 0, 302],
+            'include from category'           => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['text', 0, 0, null, null, 1, 0, 1], 0, 1, 0, 302],
+            'include from class'              => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['text', 0, 0, null, null, 0, 1, 1], 0, 1, 0, 302],
+            'include from category and class' => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['text', 0, 0, null, null, 1, 1, 1], 0, 1, 0, 302],
         ];
     }
 
@@ -344,37 +349,41 @@ class CommissionTest extends TestCase
                 ]);
             }
 
-            switch ($data[0]) {
-                case 'text':
-                    $answer = $this->faker->domainWord();
-                    break;
-                case 'textarea':
-                    $answer = $this->faker->domainWord();
-                    break;
-                case 'number':
-                    $answer = (string) mt_rand(1, 10);
-                    break;
-                case 'checkbox':
-                    $answer = (string) 1;
-                    break;
-                case 'choice':
-                    $answer = (string) 0;
-                    break;
-                case 'multiple':
-                    $answer = [0 => (string) 0];
-                    break;
+            if ($data[7]) {
+                switch ($data[0]) {
+                    case 'text':
+                        $answer = $this->faker->domainWord();
+                        break;
+                    case 'textarea':
+                        $answer = $this->faker->domainWord();
+                        break;
+                    case 'number':
+                        $answer = (string) mt_rand(1, 10);
+                        break;
+                    case 'checkbox':
+                        $answer = (string) 1;
+                        break;
+                    case 'choice':
+                        $answer = (string) 0;
+                        break;
+                    case 'multiple':
+                        $answer = [0 => (string) 0];
+                        break;
+                }
+            } else {
+                $answer = null;
             }
         }
 
         // Create a commission to view
         $commission = Commission::factory()->type($this->type->id)->create([
-            'data' => $data ? '{'.($data[6] ? '"'.$fieldKeys[2].'":"test",' : '').($data[5] ? '"'.$fieldKeys[1].'":"test",' : '').'"'.$fieldKeys[0].'":'.($data[0] != 'multiple' ? '"'.$answer.'"' : '["'.$answer[0].'"]').'}' : null,
+            'data' => $data && (isset($answer) || $data[5] || $data[6]) ? '{'.($data[6] ? '"'.$fieldKeys[2].'":"test",' : '').($data[5] ? '"'.$fieldKeys[1].'":"test",' : '').'"'.$fieldKeys[0].'":'.(isset($answer) ? ($data[0] != 'multiple' ? '"'.$answer.'"' : '["'.$answer[0].'"]') : 'null').'}' : null,
         ]);
 
         // Either take the commission's valid URL or generate a fake one
         $url = $isValid ? $commission->url : mt_rand(1, 10).'_'.randomString(15);
 
-        $response = $this
+        $this
             ->get($url)
             ->assertStatus($status);
     }
@@ -386,19 +395,26 @@ class CommissionTest extends TestCase
             'invalid commission' => [0, null, 404],
 
             // Field testing
-            'text field'            => [1, ['text', 0, 0, null, null, 0, 0], 200],
-            'text field with rule'  => [1, ['text', 1, 0, null, null, 0, 0], 200],
-            'text field with value' => [1, ['text', 0, 0, 'test', null, 0, 0], 200],
-            'text field with help'  => [1, ['text', 0, 0, null, 'test', 0, 0], 200],
-            'textbox field'         => [1, ['textarea', 0, 0, null, null, 0, 0], 200],
-            'number field'          => [1, ['number', 0, 0, null, null, 0, 0], 200],
-            'checkbox field'        => [1, ['checkbox', 0, 0, null, null, 0, 0], 200],
-            'choose one field'      => [1, ['choice', 0, 0, null, null, 0, 0], 200],
-            'choose multiple field' => [1, ['multiple', 0, 0, null, null, 0, 0], 200],
+            // (string) type, (bool) rules, (bool) choices, value, (string) help, (bool) include category, (bool) include class, (bool) is empty
+            'text field'                   => [1, ['text', 0, 0, null, null, 0, 0, 1], 200],
+            'text field, empty'            => [1, ['text', 0, 0, null, null, 0, 0, 0], 200],
+            'text field with rule'         => [1, ['text', 1, 0, null, null, 0, 0, 1], 200],
+            'text field with value'        => [1, ['text', 0, 0, 'test', null, 0, 0, 1], 200],
+            'text field with help'         => [1, ['text', 0, 0, null, 'test', 0, 0, 1], 200],
+            'textbox field'                => [1, ['textarea', 0, 0, null, null, 0, 0, 1], 200],
+            'textbox field, empty'         => [1, ['textarea', 0, 0, null, null, 0, 0, 0], 200],
+            'number field'                 => [1, ['number', 0, 0, null, null, 0, 0, 1], 200],
+            'number field, empty'          => [1, ['number', 0, 0, null, null, 0, 0, 0], 200],
+            'checkbox field'               => [1, ['checkbox', 0, 0, null, null, 0, 0, 1], 200],
+            'checkbox field, empty'        => [1, ['checkbox', 0, 0, null, null, 0, 0, 0], 200],
+            'choose one field'             => [1, ['choice', 0, 0, null, null, 0, 0, 1], 200],
+            'choose one field, empty'      => [1, ['choice', 0, 0, null, null, 0, 0, 0], 200],
+            'choose multiple field'        => [1, ['multiple', 0, 0, null, null, 0, 0, 1], 200],
+            'choose multiple field, empty' => [1, ['multiple', 0, 0, null, null, 0, 0, 0], 200],
 
-            'include from category'           => [1, ['text', 0, 0, null, null, 1, 0], 200],
-            'include from class'              => [1, ['text', 0, 0, null, null, 0, 1], 200],
-            'include from category and class' => [1, ['text', 0, 0, null, null, 1, 1], 200],
+            'include from category'           => [1, ['text', 0, 0, null, null, 1, 0, 1], 200],
+            'include from class'              => [1, ['text', 0, 0, null, null, 0, 1, 1], 200],
+            'include from category and class' => [1, ['text', 0, 0, null, null, 1, 1, 1], 200],
         ];
     }
 }
