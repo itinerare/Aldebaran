@@ -34,6 +34,10 @@ class CommissionController extends Controller
      */
     public function getCommissionIndex(Request $request, $class, $status = null)
     {
+        if (!config('aldebaran.settings.commissions.enabled')) {
+            abort(404);
+        }
+
         $class = CommissionClass::where('slug', $class)->first();
         if (!$class) {
             abort(404);
@@ -74,6 +78,10 @@ class CommissionController extends Controller
      */
     public function getNewCommission($id)
     {
+        if (!config('aldebaran.settings.commissions.enabled')) {
+            abort(404);
+        }
+
         $type = CommissionType::where('id', $id)->first();
         if (!$type) {
             abort(404);
@@ -96,6 +104,10 @@ class CommissionController extends Controller
      */
     public function postNewCommission(Request $request, CommissionManager $service, $id = null)
     {
+        if (!config('aldebaran.settings.commissions.enabled')) {
+            abort(404);
+        }
+
         $type = CommissionType::where('id', $request->get('type'))->first();
         if (!$type) {
             abort(404);
