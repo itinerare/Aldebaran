@@ -5,9 +5,11 @@ namespace Tests\Feature;
 use App\Models\Commission\Commission;
 use App\Models\Commission\CommissionClass;
 use App\Models\Commission\CommissionPayment;
+use App\Models\Commission\CommissionType;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class AdminQueueTest extends TestCase
@@ -63,6 +65,84 @@ class AdminQueueTest extends TestCase
         return [
             'basic'           => [0],
             'with commission' => [1],
+        ];
+    }
+
+    /**
+     * Test commission queue access.
+     *
+     * @dataProvider queueProvider
+     *
+     * @param bool        $commsEnabled
+     * @param array       $commData
+     * @param array|null  $search
+     * @param int         $status
+     * @param string|null $queue
+     */
+    public function testGetQueue($commsEnabled, $commData, $search, $status, $queue = 'Pending')
+    {
+        config(['aldebaran.settings.commissions.enabled' => $commsEnabled]);
+
+        if ($commData[0]) {
+            // Create a commission
+            // This will automatically create the underlying objects
+            $commission = Commission::factory()->status($commData[1] ? $commData[1] : 'Pending')->create();
+        } else {
+            // Create a commission class without additional objects
+            $commission = CommissionClass::factory()->create();
+        }
+
+        if ($search && $search[0] && $commData[0]) {
+            if ($search[1]) {
+                $type = $commission->type;
+            } else {
+                $type = CommissionType::factory()->create();
+            }
+        }
+
+        $url = 'admin/commissions/'.($commData[0] ? $commission->type->category->class->slug : $commission->slug).($queue != 'Pending' ? '/'.Str::lower($queue) : '').(isset($type) ? '?commission_type='.$type->id : '');
+
+        $response = $this->actingAs($this->user)
+            ->get($url)
+            ->assertStatus($status);
+
+        if ($commData[0] && $status == 200) {
+            // If there is a commission and the queue should be visible,
+            // test that the commission is/isn't present dependent on queue
+            // being viewed and commission status
+            $response->assertViewHas('commissions', function ($commissions) use ($commData, $search, $queue, $commission) {
+                if (((!$commData[1] && $queue == 'Pending') || $commData[1] == $queue) && (!$search || ($search[1]))) {
+                    return $commissions->contains($commission);
+                } else {
+                    return !$commissions->contains($commission);
+                }
+            });
+        }
+    }
+
+    public function queueProvider()
+    {
+        return [
+            'basic'                       => [1, [0, null], null, 200],
+            'search (successful)'         => [1, [0, null], [1, 1], 200],
+            'search (unsuccessful)'       => [1, [0, null], [1, 0], 200],
+            'commissions disabled'        => [0, [0, null], null, 404],
+            'pending with pending comm'   => [1, [1, null], null, 200],
+            'pending with accepted comm'  => [1, [1, 'Accepted'], null, 200],
+            'pending with complete comm'  => [1, [1, 'Complete'], null, 200],
+            'pending with declined comm'  => [1, [1, 'Declined'], null, 200],
+            'accepted with accepted comm' => [1, [1, 'Accepted'], null, 200, 'Accepted'],
+            'accepted with pending comm'  => [1, [1, 'Pending'], null, 200, 'Accepted'],
+            'accepted with complete comm' => [1, [1, 'Complete'], null, 200, 'Accepted'],
+            'accepted with declined comm' => [1, [1, 'Declined'], null, 200, 'Accepted'],
+            'complete with complete comm' => [1, [1, 'Complete'], null, 200, 'Complete'],
+            'complete with pending comm'  => [1, [1, 'Pending'], null, 200, 'Complete'],
+            'complete with accepted comm' => [1, [1, 'Accepted'], null, 200, 'Complete'],
+            'complete with declined comm' => [1, [1, 'Declined'], null, 200, 'Complete'],
+            'declined with declined comm' => [1, [1, 'Declined'], null, 200, 'Declined'],
+            'declined with pending comm'  => [1, [1, 'Pending'], null, 200, 'Declined'],
+            'declined with accepted comm' => [1, [1, 'Accepted'], null, 200, 'Declined'],
+            'declined with complete comm' => [1, [1, 'Complete'], null, 200, 'Declined'],
         ];
     }
 
