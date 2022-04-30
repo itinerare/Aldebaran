@@ -321,9 +321,10 @@ class CommissionTest extends TestCase
      *
      * @param bool       $isValid
      * @param array|null $data
-     * @param int        $status
+     * @param int        $expected
+     * @param mixed      $status
      */
-    public function testGetViewCommission($isValid, $data, $status)
+    public function testGetViewCommission($isValid, $status, $data, $expected)
     {
         if ($data) {
             // Generate some keys so they can be referred back to later
@@ -376,45 +377,50 @@ class CommissionTest extends TestCase
         }
 
         // Create a commission to view
-        $commission = Commission::factory()->type($this->type->id)->create([
-            'data' => $data && (isset($answer) || $data[5] || $data[6]) ? '{'.($data[6] ? '"'.$fieldKeys[2].'":"test",' : '').($data[5] ? '"'.$fieldKeys[1].'":"test",' : '').'"'.$fieldKeys[0].'":'.(isset($answer) ? ($data[0] != 'multiple' ? '"'.$answer.'"' : '["'.$answer[0].'"]') : 'null').'}' : null,
-        ]);
+        $commission = Commission::factory()
+            ->type($this->type->id)->status($status)
+            ->create([
+                'data' => $data && (isset($answer) || $data[5] || $data[6]) ? '{'.($data[6] ? '"'.$fieldKeys[2].'":"test",' : '').($data[5] ? '"'.$fieldKeys[1].'":"test",' : '').'"'.$fieldKeys[0].'":'.(isset($answer) ? ($data[0] != 'multiple' ? '"'.$answer.'"' : '["'.$answer[0].'"]') : 'null').'}' : null,
+            ]);
 
         // Either take the commission's valid URL or generate a fake one
         $url = $isValid ? $commission->url : mt_rand(1, 10).'_'.randomString(15);
 
         $this
             ->get($url)
-            ->assertStatus($status);
+            ->assertStatus($expected);
     }
 
     public function commissionViewProvider()
     {
         return [
-            'basic'              => [1, null, 200],
-            'invalid commission' => [0, null, 404],
+            'basic'               => [1, 'Pending', null, 200],
+            'accepted commission' => [1, 'Accepted', null, 200],
+            'complete commission' => [1, 'Complete', null, 200],
+            'declined commission' => [1, 'Declined', null, 200],
+            'invalid commission'  => [0, 'Pending', null, 404],
 
             // Field testing
             // (string) type, (bool) rules, (bool) choices, value, (string) help, (bool) include category, (bool) include class, (bool) is empty
-            'text field'                   => [1, ['text', 0, 0, null, null, 0, 0, 1], 200],
-            'text field, empty'            => [1, ['text', 0, 0, null, null, 0, 0, 0], 200],
-            'text field with rule'         => [1, ['text', 1, 0, null, null, 0, 0, 1], 200],
-            'text field with value'        => [1, ['text', 0, 0, 'test', null, 0, 0, 1], 200],
-            'text field with help'         => [1, ['text', 0, 0, null, 'test', 0, 0, 1], 200],
-            'textbox field'                => [1, ['textarea', 0, 0, null, null, 0, 0, 1], 200],
-            'textbox field, empty'         => [1, ['textarea', 0, 0, null, null, 0, 0, 0], 200],
-            'number field'                 => [1, ['number', 0, 0, null, null, 0, 0, 1], 200],
-            'number field, empty'          => [1, ['number', 0, 0, null, null, 0, 0, 0], 200],
-            'checkbox field'               => [1, ['checkbox', 0, 0, null, null, 0, 0, 1], 200],
-            'checkbox field, empty'        => [1, ['checkbox', 0, 0, null, null, 0, 0, 0], 200],
-            'choose one field'             => [1, ['choice', 0, 0, null, null, 0, 0, 1], 200],
-            'choose one field, empty'      => [1, ['choice', 0, 0, null, null, 0, 0, 0], 200],
-            'choose multiple field'        => [1, ['multiple', 0, 0, null, null, 0, 0, 1], 200],
-            'choose multiple field, empty' => [1, ['multiple', 0, 0, null, null, 0, 0, 0], 200],
+            'text field'                   => [1, 'Pending', ['text', 0, 0, null, null, 0, 0, 1], 200],
+            'text field, empty'            => [1, 'Pending', ['text', 0, 0, null, null, 0, 0, 0], 200],
+            'text field with rule'         => [1, 'Pending', ['text', 1, 0, null, null, 0, 0, 1], 200],
+            'text field with value'        => [1, 'Pending', ['text', 0, 0, 'test', null, 0, 0, 1], 200],
+            'text field with help'         => [1, 'Pending', ['text', 0, 0, null, 'test', 0, 0, 1], 200],
+            'textbox field'                => [1, 'Pending', ['textarea', 0, 0, null, null, 0, 0, 1], 200],
+            'textbox field, empty'         => [1, 'Pending', ['textarea', 0, 0, null, null, 0, 0, 0], 200],
+            'number field'                 => [1, 'Pending', ['number', 0, 0, null, null, 0, 0, 1], 200],
+            'number field, empty'          => [1, 'Pending', ['number', 0, 0, null, null, 0, 0, 0], 200],
+            'checkbox field'               => [1, 'Pending', ['checkbox', 0, 0, null, null, 0, 0, 1], 200],
+            'checkbox field, empty'        => [1, 'Pending', ['checkbox', 0, 0, null, null, 0, 0, 0], 200],
+            'choose one field'             => [1, 'Pending', ['choice', 0, 0, null, null, 0, 0, 1], 200],
+            'choose one field, empty'      => [1, 'Pending', ['choice', 0, 0, null, null, 0, 0, 0], 200],
+            'choose multiple field'        => [1, 'Pending', ['multiple', 0, 0, null, null, 0, 0, 1], 200],
+            'choose multiple field, empty' => [1, 'Pending', ['multiple', 0, 0, null, null, 0, 0, 0], 200],
 
-            'include from category'           => [1, ['text', 0, 0, null, null, 1, 0, 1], 200],
-            'include from class'              => [1, ['text', 0, 0, null, null, 0, 1, 1], 200],
-            'include from category and class' => [1, ['text', 0, 0, null, null, 1, 1, 1], 200],
+            'include from category'           => [1, 'Pending', ['text', 0, 0, null, null, 1, 0, 1], 200],
+            'include from class'              => [1, 'Pending', ['text', 0, 0, null, null, 0, 1, 1], 200],
+            'include from category and class' => [1, 'Pending', ['text', 0, 0, null, null, 1, 1, 1], 200],
         ];
     }
 }
