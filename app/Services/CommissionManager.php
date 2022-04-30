@@ -371,7 +371,7 @@ class CommissionManager extends Service
             // Mark the commissioner as banned,
             $commissioner->update(['is_banned' => 1]);
             // and decline all current commission requests from them
-            Commission::where('commissioner_id', $commissioner->id)->whereIn('status', ['Pending', 'Accepted'])->update(['status' => 'Declined', 'comments' => '<p>Automatically declined due to ban.</p>']);
+            Commission::where('commissioner_id', $commissioner->id)->whereIn('status', ['Pending', 'Accepted'])->update(['status' => 'Declined', 'comments' => isset($data['comments']) ? $data['comments'] : '<p>Automatically declined due to ban.</p>']);
 
             return $this->commitReturn($commission);
         } catch (\Exception $e) {
