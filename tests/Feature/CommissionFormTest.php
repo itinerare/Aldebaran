@@ -147,11 +147,12 @@ class CommissionFormTest extends TestCase
      * @param array      $visibility
      * @param array|null $data
      * @param bool       $extras
+     * @param array|null $slotData
      * @param bool       $agree
      * @param bool       $isBanned
      * @param int        $status
      */
-    public function testPostNewCommission($withName, $withEmail, $paymentAddr, $visibility, $data, $extras, $agree, $isBanned, $status)
+    public function testPostNewCommission($withName, $withEmail, $paymentAddr, $visibility, $data, $extras, $slotData, $agree, $isBanned, $status)
     {
         // Adjust visibility settings
         config(['aldebaran.settings.commissions.enabled' => $visibility[0]]);
@@ -216,6 +217,34 @@ class CommissionFormTest extends TestCase
             }
         }
 
+        if ($slotData) {
+            // Handle filler commission info to test slot-related operations
+            $slotCommission = Commission::factory()->status($slotData[0])->create();
+
+            if ($slotData[1]) {
+                // Adjust settings for type slot tests
+                $slotCommission->update([
+                    'commission_type' => $this->type->id,
+                ]);
+
+                $this->type->update([
+                    'availability' => 1,
+                ]);
+            } else {
+                // Adjust settings for class slot tests
+                // as this is the only other relevant state
+                $type = CommissionType::factory()->category($this->type->category->id)->create();
+
+                $slotCommission->update([
+                    'commission_type' => $type->id,
+                ]);
+
+                DB::table('site_settings')->where('key', $this->type->category->class->slug.'_overall_slots')->update([
+                    'value' => 1,
+                ]);
+            }
+        }
+
         if ($isBanned) {
             $commissioner = Commissioner::factory()->banned()->create();
         } else {
@@ -273,44 +302,48 @@ class CommissionFormTest extends TestCase
 
         return [
             // Access testing
-            'visitor, type active, visible'           => [0, 1, 0, [1, 1, 1, 1, 1, 0], null, 0, 1, 0, 302],
-            'visitor, type inactive, visible'         => [0, 1, 0, [1, 1, 1, 0, 1, 0], null, 0, 1, 0, 500],
-            'visitor, type active, hidden'            => [0, 1, 0, [1, 1, 1, 1, 0, 0], null, 0, 1, 0, 500],
-            'visitor, type inactive, hidden'          => [0, 1, 0, [1, 1, 1, 0, 0, 0], null, 0, 1, 0, 500],
-            'visitor, type active, hidden with key'   => [0, 1, 0, [1, 1, 1, 1, 0, 1], null, 0, 1, 0, 302],
-            'visitor, type inactive, hidden with key' => [0, 1, 0, [1, 1, 1, 0, 0, 1], null, 0, 1, 0, 500],
-            'visitor, comms closed'                   => [0, 1, 0, [1, 1, 0, 1, 1, 0], null, 0, 1, 0, 500],
-            'visitor, class inactive'                 => [0, 1, 0, [1, 0, 1, 1, 1, 0], null, 0, 1, 0, 500],
-            'visitor, comms disabled'                 => [0, 1, 0, [0, 1, 1, 1, 1, 0], null, 0, 1, 0, 500],
+            'visitor, type active, visible'           => [0, 1, 0, [1, 1, 1, 1, 1, 0], null, 0, null, 1, 0, 302],
+            'visitor, type inactive, visible'         => [0, 1, 0, [1, 1, 1, 0, 1, 0], null, 0, null, 1, 0, 500],
+            'visitor, type active, hidden'            => [0, 1, 0, [1, 1, 1, 1, 0, 0], null, 0, null, 1, 0, 500],
+            'visitor, type inactive, hidden'          => [0, 1, 0, [1, 1, 1, 0, 0, 0], null, 0, null, 1, 0, 500],
+            'visitor, type active, hidden with key'   => [0, 1, 0, [1, 1, 1, 1, 0, 1], null, 0, null, 1, 0, 302],
+            'visitor, type inactive, hidden with key' => [0, 1, 0, [1, 1, 1, 0, 0, 1], null, 0, null, 1, 0, 500],
+            'visitor, comms closed'                   => [0, 1, 0, [1, 1, 0, 1, 1, 0], null, 0, null, 1, 0, 500],
+            'visitor, class inactive'                 => [0, 1, 0, [1, 0, 1, 1, 1, 0], null, 0, null, 1, 0, 500],
+            'visitor, comms disabled'                 => [0, 1, 0, [0, 1, 1, 1, 1, 0], null, 0, null, 1, 0, 500],
 
             // Form testing
-            'basic'               => [0, 1, 0, [1, 1, 1, 1, 1, 0], null, 0, 1, 0, 302],
-            'without email'       => [0, 0, 0, [1, 1, 1, 1, 1, 0], null, 0, 1, 0, 500],
-            'non-agreement'       => [0, 1, 0, [1, 1, 1, 1, 1, 0], null, 0, 0, 0, 500],
-            'banned commissioner' => [0, 1, 0, [1, 1, 1, 1, 1, 0], null, 0, 1, 1, 500],
+            'basic'               => [0, 1, 0, [1, 1, 1, 1, 1, 0], null, 0, null, 1, 0, 302],
+            'without email'       => [0, 0, 0, [1, 1, 1, 1, 1, 0], null, 0, null, 1, 0, 500],
+            'non-agreement'       => [0, 1, 0, [1, 1, 1, 1, 1, 0], null, 0, null, 0, 0, 500],
+            'banned commissioner' => [0, 1, 0, [1, 1, 1, 1, 1, 0], null, 0, null, 1, 1, 500],
+
+            // Slot testing
+            'with full type' => [0, 1, 0, [1, 1, 1, 1, 1, 0], null, 0, ['Accepted', 1, 1], 1, 0, 500],
+            'with full class' => [0, 1, 0, [1, 1, 1, 1, 1, 0], null, 0, ['Accepted', 0, 1], 1, 0, 500],
 
             // Form field testing
             // (string) type, (bool) rules, (bool) choices, value, (string) help, (bool) include category, (bool) include class, (bool) is empty
-            'text field'                   => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['text', 0, 0, null, null, 0, 0, 1], 0, 1, 0, 302],
-            'text field, empty'            => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['text', 0, 0, null, null, 0, 0, 0], 0, 1, 0, 302],
-            'text field with rule'         => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['text', 1, 0, null, null, 0, 0, 1], 0, 1, 0, 302],
-            'text field with rule, empty'  => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['text', 1, 0, null, null, 0, 0, 0], 0, 1, 0, 500],
-            'text field with value'        => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['text', 0, 0, 'test', null, 0, 0, 1], 0, 1, 0, 302],
-            'text field with help'         => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['text', 0, 0, null, 'test', 0, 0, 1], 0, 1, 0, 302],
-            'textbox field'                => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['textarea', 0, 0, null, null, 0, 0, 1], 0, 1, 0, 302],
-            'textbox field, empty'         => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['textarea', 0, 0, null, null, 0, 0, 0], 0, 1, 0, 302],
-            'number field'                 => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['number', 0, 0, null, null, 0, 0, 1], 0, 1, 0, 302],
-            'number field,empty'           => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['number', 0, 0, null, null, 0, 0, 0], 0, 1, 0, 302],
-            'checkbox field'               => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['checkbox', 0, 0, null, null, 0, 0, 1], 0, 1, 0, 302],
-            'checkbox field, empty'        => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['checkbox', 0, 0, null, null, 0, 0, 0], 0, 1, 0, 302],
-            'choose one field'             => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['choice', 0, 0, null, null, 0, 0, 1], 0, 1, 0, 302],
-            'choose one field, empty'      => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['choice', 0, 0, null, null, 0, 0, 0], 0, 1, 0, 302],
-            'choose multiple field'        => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['multiple', 0, 0, null, null, 0, 0, 1], 0, 1, 0, 302],
-            'choose multiple field, empty' => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['multiple', 0, 0, null, null, 0, 0, 0], 0, 1, 0, 302],
+            'text field'                   => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['text', 0, 0, null, null, 0, 0, 1], 0, null, 1, 0, 302],
+            'text field, empty'            => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['text', 0, 0, null, null, 0, 0, 0], 0, null, 1, 0, 302],
+            'text field with rule'         => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['text', 1, 0, null, null, 0, 0, 1], 0, null, 1, 0, 302],
+            'text field with rule, empty'  => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['text', 1, 0, null, null, 0, 0, 0], 0, null, 1, 0, 500],
+            'text field with value'        => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['text', 0, 0, 'test', null, 0, 0, 1], 0, null, 1, 0, 302],
+            'text field with help'         => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['text', 0, 0, null, 'test', 0, 0, 1], 0, null, 1, 0, 302],
+            'textbox field'                => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['textarea', 0, 0, null, null, 0, 0, 1], 0, null, 1, 0, 302],
+            'textbox field, empty'         => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['textarea', 0, 0, null, null, 0, 0, 0], 0, null, 1, 0, 302],
+            'number field'                 => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['number', 0, 0, null, null, 0, 0, 1], 0, null, 1, 0, 302],
+            'number field,empty'           => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['number', 0, 0, null, null, 0, 0, 0], 0, null, 1, 0, 302],
+            'checkbox field'               => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['checkbox', 0, 0, null, null, 0, 0, 1], 0, null, 1, 0, 302],
+            'checkbox field, empty'        => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['checkbox', 0, 0, null, null, 0, 0, 0], 0, null, 1, 0, 302],
+            'choose one field'             => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['choice', 0, 0, null, null, 0, 0, 1], 0, null, 1, 0, 302],
+            'choose one field, empty'      => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['choice', 0, 0, null, null, 0, 0, 0], 0, null, 1, 0, 302],
+            'choose multiple field'        => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['multiple', 0, 0, null, null, 0, 0, 1], 0, null, 1, 0, 302],
+            'choose multiple field, empty' => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['multiple', 0, 0, null, null, 0, 0, 0], 0, null, 1, 0, 302],
 
-            'include from category'           => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['text', 0, 0, null, null, 1, 0, 1], 0, 1, 0, 302],
-            'include from class'              => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['text', 0, 0, null, null, 0, 1, 1], 0, 1, 0, 302],
-            'include from category and class' => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['text', 0, 0, null, null, 1, 1, 1], 0, 1, 0, 302],
+            'include from category'           => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['text', 0, 0, null, null, 1, 0, 1], 0, null, 1, 0, 302],
+            'include from class'              => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['text', 0, 0, null, null, 0, 1, 1], 0, null, 1, 0, 302],
+            'include from category and class' => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['text', 0, 0, null, null, 1, 1, 1], 0, null, 1, 0, 302],
         ];
     }
 
