@@ -153,7 +153,7 @@ class CommissionManager extends Service
                     throw new \Exception('There are no overall slots of this commission type remaining.');
                 }
                 if ($commission->type->availability > 0 && $commission->type->currentSlots == 0) {
-                    throw new \Exception('This commission  type\'s slots are full.');
+                    throw new \Exception('This commission type\'s slots are full.');
                 }
             }
 
