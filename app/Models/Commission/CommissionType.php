@@ -404,7 +404,7 @@ class CommissionType extends Model
      */
     public function getSlots($class)
     {
-        $cap = Settings::get('overall_'.$class->slug.'_slots');
+        $cap = Settings::get($class->slug.'_overall_slots');
         if ($cap == 0) {
             return null;
         }

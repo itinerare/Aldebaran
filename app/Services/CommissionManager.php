@@ -148,7 +148,7 @@ class CommissionManager extends Service
                 throw new \Exception('Invalid commission selected.');
             }
             // Check that this commission will not be in excess of any slot limitations
-            if (Settings::get('overall_'.$commission->type->category->class->slug.'_slots') > 0 || $commission->type->slots != null) {
+            if (Settings::get($commission->type->category->class->slug.'_overall_slots') > 0 || $commission->type->slots != null) {
                 if (is_int($commission->type->getSlots($commission->type->category->class)) && $commission->type->getSlots($commission->type->category->class) == 0) {
                     throw new \Exception('There are no overall slots of this commission type remaining.');
                 }
@@ -165,7 +165,7 @@ class CommissionManager extends Service
 
             // If this is the last available commission slot overall or for this type,
             // automatically decline any remaining pending requests
-            if (Settings::get('overall_'.$commission->type->category->class->slug.'_slots') > 0 || $commission->type->slots != null) {
+            if (Settings::get($commission->type->category->class->slug.'_overall_slots') > 0 || $commission->type->slots != null) {
                 // Overall slots filled
                 if (is_int($commission->type->getSlots($commission->type->category->class)) && $commission->type->getSlots($commission->type->category->class) == 0) {
                     Commission::class($commission->type->category->class->id)->where('status', 'Pending')->update(['status' => 'Declined', 'comments' => '<p>Sorry, all slots have been filled! '.Settings::get($commission->type->category->class->slug.'_full').'</p>']);
