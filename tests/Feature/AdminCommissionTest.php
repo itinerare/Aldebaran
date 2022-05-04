@@ -262,8 +262,8 @@ class AdminCommissionTest extends TestCase
             'decline pending'                => ['Pending', 'decline', 0, null, 1],
             'decline pending with comments'  => ['Pending', 'decline', 1, null, 1],
             'complete pending'               => ['Pending', 'complete', 0, null, 0],
-            'accept pending when type full'  => ['Pending', 'accept', 0, ['Accepted', 1, 1], 0],
-            'accept pending when class full' => ['Pending', 'accept', 0, ['Accepted', 0, 1], 0],
+            'accept pending with full type'  => ['Pending', 'accept', 0, ['Accepted', 1, 1], 0],
+            'accept pending with full class' => ['Pending', 'accept', 0, ['Accepted', 0, 1], 0],
             'accept pending, filling type'   => ['Pending', 'accept', 0, ['Pending', 1, 0], 1],
             'accept pending, filling class'  => ['Pending', 'accept', 0, ['Pending', 0, 0], 1],
 
