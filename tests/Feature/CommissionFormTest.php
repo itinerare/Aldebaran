@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Tests\TestCase;
 
-class CommissionTest extends TestCase
+class CommissionFormTest extends TestCase
 {
     use RefreshDatabase, WithFaker;
 
