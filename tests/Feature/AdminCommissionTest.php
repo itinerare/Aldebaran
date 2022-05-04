@@ -2,11 +2,13 @@
 
 namespace Tests\Feature;
 
+use App\Facades\Settings;
 use App\Models\Commission\Commission;
 use App\Models\Commission\CommissionPayment;
 use App\Models\Commission\CommissionType;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Tests\TestCase;
 
@@ -147,15 +149,47 @@ class AdminCommissionTest extends TestCase
      *
      * @dataProvider commissionStateProvider
      *
-     * @param string $status
-     * @param string $operation
-     * @param bool   $expected
-     * @param mixed  $withComments
+     * @param string     $status
+     * @param string     $operation
+     * @param bool       $withComments
+     * @param array|null $slotData
+     * @param bool       $expected
      */
-    public function testPostEditCommissionState($status, $operation, $withComments, $expected)
+    public function testPostEditCommissionState($status, $operation, $withComments, $slotData, $expected)
     {
         $commission = Commission::factory()->status($status)->create();
         $comments = $withComments ? $this->faker->domainWord() : null;
+
+        if ($slotData) {
+            // Handle filler commission info to test slot-related operations
+            $slotCommission = Commission::factory()->status($slotData[0])->create();
+
+            if ($slotData[1]) {
+                // Adjust settings for same-type tests
+                $slotCommission->update([
+                    'commission_type' => $commission->type->id,
+                ]);
+
+                $commission->type->update([
+                    'availability' => 1,
+                ]);
+            } else {
+                // Adjust settings for same-class tests
+                // as this is the only other relevant state
+
+                // To be safe, assign the commission to a different type
+                // in the same category
+                $type = CommissionType::factory()->category($commission->type->category->id)->create();
+
+                $slotCommission->update([
+                    'commission_type' => $type->id,
+                ]);
+
+                DB::table('site_settings')->where('key', $commission->type->category->class->slug.'_overall_slots')->update([
+                    'value' => 1,
+                ]);
+            }
+        }
 
         $response = $this
             ->actingAs($this->user)
@@ -174,6 +208,14 @@ class AdminCommissionTest extends TestCase
                         'status'   => 'Accepted',
                         'comments' => $comments ?? null,
                     ]);
+
+                    if ($slotData) {
+                        $this->assertDatabaseHas('commissions', [
+                            'id'       => $slotCommission->id,
+                            'status'   => $slotData[2] ? 'Accepted' : 'Declined',
+                            'comments' => $slotData[2] ? null : ($slotData[1] ? '<p>Sorry, all slots for this commission type have been filled! '.Settings::get($commission->type->category->class->slug.'_full').'</p>' : '<p>Sorry, all slots have been filled! '.Settings::get($commission->type->category->class->slug.'_full').'</p>'),
+                        ]);
+                    }
                     break;
                 case 'complete':
                     $this->assertDatabaseHas('commissions', [
@@ -212,25 +254,31 @@ class AdminCommissionTest extends TestCase
 
     public function commissionStateProvider()
     {
+        // $slotData = (string) status, (bool) sameType, (bool) expected
+
         return [
-            'accept pending'                => ['Pending', 'accept', 0, 1],
-            'accept pending with comments'  => ['Pending', 'accept', 1, 1],
-            'decline pending'               => ['Pending', 'decline', 0, 1],
-            'decline pending with comments' => ['Pending', 'decline', 1, 1],
-            'complete pending'              => ['Pending', 'complete', 0, 0],
+            'accept pending'                 => ['Pending', 'accept', 0, null, 1],
+            'accept pending with comments'   => ['Pending', 'accept', 1, null, 1],
+            'decline pending'                => ['Pending', 'decline', 0, null, 1],
+            'decline pending with comments'  => ['Pending', 'decline', 1, null, 1],
+            'complete pending'               => ['Pending', 'complete', 0, null, 0],
+            'accept pending when type full'  => ['Pending', 'accept', 0, ['Accepted', 1, 1], 0],
+            'accept pending when class full' => ['Pending', 'accept', 0, ['Accepted', 0, 1], 0],
+            'accept pending, filling type'   => ['Pending', 'accept', 0, ['Pending', 1, 0], 1],
+            'accept pending, filling class'  => ['Pending', 'accept', 0, ['Pending', 0, 0], 1],
 
-            'accept accepted'                 => ['Accepted', 'accept', 0, 0],
-            'decline accepted'                => ['Accepted', 'decline', 0, 1],
-            'decline accepted with comments'  => ['Accepted', 'decline', 1, 1],
-            'complete accepted'               => ['Accepted', 'complete', 0, 1],
-            'complete accepted with comments' => ['Accepted', 'complete', 1, 1],
+            'accept accepted'                 => ['Accepted', 'accept', 0, null, 0],
+            'decline accepted'                => ['Accepted', 'decline', 0, null, 1],
+            'decline accepted with comments'  => ['Accepted', 'decline', 1, null, 1],
+            'complete accepted'               => ['Accepted', 'complete', 0, null, 1],
+            'complete accepted with comments' => ['Accepted', 'complete', 1, null, 1],
 
-            'ban, pending'                => ['Pending', 'ban', 0, 1],
-            'ban, pending with comments'  => ['Pending', 'ban', 1, 1],
-            'ban, accepted'               => ['Accepted', 'ban', 0, 1],
-            'ban, accepted with comments' => ['Accepted', 'ban', 1, 1],
-            'ban, complete'               => ['Complete', 'ban', 0, 0],
-            'ban, declined'               => ['Declined', 'ban', 0, 0],
+            'ban, pending'                => ['Pending', 'ban', 0, null, 1],
+            'ban, pending with comments'  => ['Pending', 'ban', 1, null, 1],
+            'ban, accepted'               => ['Accepted', 'ban', 0, null, 1],
+            'ban, accepted with comments' => ['Accepted', 'ban', 1, null, 1],
+            'ban, complete'               => ['Complete', 'ban', 0, null, 0],
+            'ban, declined'               => ['Declined', 'ban', 0, null, 0],
         ];
     }
 }
