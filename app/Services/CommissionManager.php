@@ -53,7 +53,7 @@ class CommissionManager extends Service
                 if (!$type->category->class->is_active) {
                     throw new \Exception('This class is inactive.');
                 }
-                // Check that commissions are open for this type and for the global type
+                // Check that commissions are open for this type and for the class
                 if (!Settings::get($type->category->class->slug.'_comms_open')) {
                     throw new \Exception('Commissions are not open.');
                 }
@@ -67,6 +67,13 @@ class CommissionManager extends Service
                 // the key, and if so, check it
                 if (!$type->is_visible && (!isset($data['key']) || $type->key != $data['key'])) {
                     throw new \Exception('Commissions are not open for this type.');
+                }
+                if($type->availability > 0 && $type->currentSlots == 0) {
+                    throw new \Exception('Commission slots for this type are full.');
+                }
+                // Check that there is a free slot for the type and/or class
+                if(is_int($type->getSlots($type->category->class)) && $type->getSlots($type->category->class) == 0) {
+                    throw new \Exception('Overall commission slots are full.');
                 }
             }
 
