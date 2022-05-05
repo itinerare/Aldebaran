@@ -238,4 +238,36 @@ class AdminQueueTest extends TestCase
             'commissions disabled'               => [0, 0, 0, 0, 404],
         ];
     }
+
+    /**
+     * Test PayPal fee calculation.
+     *
+     * @dataProvider feeCalcProvider
+     *
+     * @param bool  $isIntl
+     * @param mixed $expected
+     */
+    public function testFeeCalculation($isIntl, $expected)
+    {
+        // Create a commission with payment to calculate for, with a known cost
+        // and tip
+        $commission = Commission::factory()->has(CommissionPayment::factory()->count(1)->state(function (array $attributes) use ($isIntl) {
+            return [
+                'cost'    => 100.00,
+                'tip'     => 5.00,
+                'is_intl' => $isIntl,
+            ];
+        }), 'payments')->create();
+        $payment = $commission->payments->first();
+
+        $this->assertTrue($expected == $commission->paymentWithFees($payment));
+    }
+
+    public function feeCalcProvider()
+    {
+        return [
+            'non intl' => [0, 100.85],
+            'intl'     => [1, 99.27],
+        ];
+    }
 }
