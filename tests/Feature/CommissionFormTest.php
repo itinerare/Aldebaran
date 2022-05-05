@@ -4,7 +4,11 @@ namespace Tests\Feature;
 
 use App\Models\Commission\Commission;
 use App\Models\Commission\Commissioner;
+use App\Models\Commission\CommissionPiece;
 use App\Models\Commission\CommissionType;
+use App\Models\Gallery\Piece;
+use App\Models\Gallery\PieceImage;
+use App\Services\GalleryService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\DB;
@@ -26,6 +30,9 @@ class CommissionFormTest extends TestCase
         // Set up testing type and default pages (necessary to view new commission page)
         $this->type = CommissionType::factory()->testData(['type' => 'flat', 'cost' => 10])->create();
         $this->artisan('add-text-pages');
+
+        // Set up gallery service for image processing
+        $this->service = new GalleryService;
     }
 
     /**
@@ -355,9 +362,10 @@ class CommissionFormTest extends TestCase
      * @param bool       $isValid
      * @param array|null $data
      * @param int        $expected
+     * @param array|null $pieceData
      * @param mixed      $status
      */
-    public function testGetViewCommission($isValid, $status, $data, $expected)
+    public function testGetViewCommission($isValid, $status, $data, $pieceData, $expected)
     {
         if ($data) {
             // Generate some keys so they can be referred back to later
@@ -416,44 +424,80 @@ class CommissionFormTest extends TestCase
                 'data' => $data && (isset($answer) || $data[5] || $data[6]) ? '{'.($data[6] ? '"'.$fieldKeys[2].'":"test",' : '').($data[5] ? '"'.$fieldKeys[1].'":"test",' : '').'"'.$fieldKeys[0].'":'.(isset($answer) ? ($data[0] != 'multiple' ? '"'.$answer.'"' : '["'.$answer[0].'"]') : 'null').'}' : null,
             ]);
 
+        if ($pieceData) {
+            // Create a piece and link to the commission
+            $piece = Piece::factory()->create([
+                'is_visible' => $pieceData[1],
+            ]);
+            CommissionPiece::factory()->piece($piece->id)->commission($commission->id)->create();
+
+            if ($pieceData[0]) {
+                // Create images and test files
+                $image = PieceImage::factory()->piece($piece->id)->create();
+                $this->service->testImages($image);
+            }
+        }
+
         // Either take the commission's valid URL or generate a fake one
         $url = $isValid ? $commission->url : mt_rand(1, 10).'_'.randomString(15);
 
-        $this
+        $response = $this
             ->get($url)
             ->assertStatus($expected);
+
+        if ($pieceData) {
+            if ($expected) {
+                // Check that the piece is displayed in some fashion
+                $response->assertSee($piece->name);
+
+                if ($pieceData[0]) {
+                    // Check that the image's thumbnail is present/displayed
+                    $response->assertSee($image->thumbnailUrl);
+                }
+            }
+
+            if ($pieceData[0]) {
+                // Clean up test images
+                $this->service->testImages($image, false);
+            }
+        }
     }
 
     public function commissionViewProvider()
     {
         return [
-            'basic'               => [1, 'Pending', null, 200],
-            'accepted commission' => [1, 'Accepted', null, 200],
-            'complete commission' => [1, 'Complete', null, 200],
-            'declined commission' => [1, 'Declined', null, 200],
-            'invalid commission'  => [0, 'Pending', null, 404],
+            'basic'               => [1, 'Pending', null, null, 200],
+            'accepted commission' => [1, 'Accepted', null, null, 200],
+            'complete commission' => [1, 'Complete', null, null, 200],
+            'declined commission' => [1, 'Declined', null, null, 200],
+            'invalid commission'  => [0, 'Pending', null, null, 404],
+
+            // $pieceData = [(bool) withImage, (bool) isVisible]
+            'with piece'            => [1, 'Accepted', null, [0, 1], 200],
+            'with hidden piece'     => [1, 'Accepted', null, [0, 0], 200],
+            'with piece with image' => [1, 'Accepted', null, [1, 1], 200],
 
             // Field testing
             // (string) type, (bool) rules, (bool) choices, value, (string) help, (bool) include category, (bool) include class, (bool) is empty
-            'text field'                   => [1, 'Pending', ['text', 0, 0, null, null, 0, 0, 1], 200],
-            'text field, empty'            => [1, 'Pending', ['text', 0, 0, null, null, 0, 0, 0], 200],
-            'text field with rule'         => [1, 'Pending', ['text', 1, 0, null, null, 0, 0, 1], 200],
-            'text field with value'        => [1, 'Pending', ['text', 0, 0, 'test', null, 0, 0, 1], 200],
-            'text field with help'         => [1, 'Pending', ['text', 0, 0, null, 'test', 0, 0, 1], 200],
-            'textbox field'                => [1, 'Pending', ['textarea', 0, 0, null, null, 0, 0, 1], 200],
-            'textbox field, empty'         => [1, 'Pending', ['textarea', 0, 0, null, null, 0, 0, 0], 200],
-            'number field'                 => [1, 'Pending', ['number', 0, 0, null, null, 0, 0, 1], 200],
-            'number field, empty'          => [1, 'Pending', ['number', 0, 0, null, null, 0, 0, 0], 200],
-            'checkbox field'               => [1, 'Pending', ['checkbox', 0, 0, null, null, 0, 0, 1], 200],
-            'checkbox field, empty'        => [1, 'Pending', ['checkbox', 0, 0, null, null, 0, 0, 0], 200],
-            'choose one field'             => [1, 'Pending', ['choice', 0, 0, null, null, 0, 0, 1], 200],
-            'choose one field, empty'      => [1, 'Pending', ['choice', 0, 0, null, null, 0, 0, 0], 200],
-            'choose multiple field'        => [1, 'Pending', ['multiple', 0, 0, null, null, 0, 0, 1], 200],
-            'choose multiple field, empty' => [1, 'Pending', ['multiple', 0, 0, null, null, 0, 0, 0], 200],
+            'text field'                   => [1, 'Pending', ['text', 0, 0, null, null, 0, 0, 1], null, 200],
+            'text field, empty'            => [1, 'Pending', ['text', 0, 0, null, null, 0, 0, 0], null, 200],
+            'text field with rule'         => [1, 'Pending', ['text', 1, 0, null, null, 0, 0, 1], null, 200],
+            'text field with value'        => [1, 'Pending', ['text', 0, 0, 'test', null, 0, 0, 1], null, 200],
+            'text field with help'         => [1, 'Pending', ['text', 0, 0, null, 'test', 0, 0, 1], null, 200],
+            'textbox field'                => [1, 'Pending', ['textarea', 0, 0, null, null, 0, 0, 1], null, 200],
+            'textbox field, empty'         => [1, 'Pending', ['textarea', 0, 0, null, null, 0, 0, 0], null, 200],
+            'number field'                 => [1, 'Pending', ['number', 0, 0, null, null, 0, 0, 1], null, 200],
+            'number field, empty'          => [1, 'Pending', ['number', 0, 0, null, null, 0, 0, 0], null, 200],
+            'checkbox field'               => [1, 'Pending', ['checkbox', 0, 0, null, null, 0, 0, 1], null, 200],
+            'checkbox field, empty'        => [1, 'Pending', ['checkbox', 0, 0, null, null, 0, 0, 0], null, 200],
+            'choose one field'             => [1, 'Pending', ['choice', 0, 0, null, null, 0, 0, 1], null, 200],
+            'choose one field, empty'      => [1, 'Pending', ['choice', 0, 0, null, null, 0, 0, 0], null, 200],
+            'choose multiple field'        => [1, 'Pending', ['multiple', 0, 0, null, null, 0, 0, 1], null, 200],
+            'choose multiple field, empty' => [1, 'Pending', ['multiple', 0, 0, null, null, 0, 0, 0], null, 200],
 
-            'include from category'           => [1, 'Pending', ['text', 0, 0, null, null, 1, 0, 1], 200],
-            'include from class'              => [1, 'Pending', ['text', 0, 0, null, null, 0, 1, 1], 200],
-            'include from category and class' => [1, 'Pending', ['text', 0, 0, null, null, 1, 1, 1], 200],
+            'include from category'           => [1, 'Pending', ['text', 0, 0, null, null, 1, 0, 1], null, 200],
+            'include from class'              => [1, 'Pending', ['text', 0, 0, null, null, 0, 1, 1], null, 200],
+            'include from category and class' => [1, 'Pending', ['text', 0, 0, null, null, 1, 1, 1], null, 200],
         ];
     }
 }
