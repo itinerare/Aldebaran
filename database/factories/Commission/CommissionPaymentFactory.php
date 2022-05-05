@@ -2,6 +2,7 @@
 
 namespace Database\Factories\Commission;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class CommissionPaymentFactory extends Factory
@@ -30,6 +31,7 @@ class CommissionPaymentFactory extends Factory
         return $this->state(function (array $attributes) {
             return [
                 'is_paid' => 1,
+                'paid_at' => Carbon::now(),
             ];
         });
     }
