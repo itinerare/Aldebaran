@@ -6,6 +6,7 @@ use App\Facades\Settings;
 use App\Models\Commission\Commission;
 use App\Models\Commission\CommissionPayment;
 use App\Models\Commission\CommissionType;
+use App\Models\Gallery\Piece;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\DB;
@@ -279,6 +280,116 @@ class AdminCommissionTest extends TestCase
             'ban, accepted with comments' => ['Accepted', 'ban', 1, null, 1],
             'ban, complete'               => ['Complete', 'ban', 0, null, 0],
             'ban, declined'               => ['Declined', 'ban', 0, null, 0],
+        ];
+    }
+
+    /**
+     * Test commission updating.
+     *
+     * @dataProvider commissionUpdateProvider
+     *
+     * @param string     $status
+     * @param bool       $withPiece
+     * @param array|null $paymentData
+     * @param string     $progress
+     * @param bool       $withComments
+     * @param bool       $expected
+     */
+    public function testPostUpdateCommission($status, $withPiece, $paymentData, $progress, $withComments, $expected)
+    {
+        $commission = Commission::factory()->status($status)->create();
+        $comments = $withComments ? $this->faker->domainWord() : null;
+
+        if ($withPiece) {
+            // Create a piece to attach
+            $piece = Piece::factory()->create();
+        }
+
+        if ($paymentData) {
+            // Set up some payment info such that it can be retrieved later
+            $costData = [
+                'cost' => mt_rand(1.00, 50.00),
+                'tip'  => mt_rand(1.00, 50.00),
+            ];
+
+            if ($paymentData[0]) {
+                // If needed, generate an existing payment entry to modify
+                $payment = CommissionPayment::factory()->create([
+                    'commission_id' => $commission->id,
+                ]);
+            }
+        }
+
+        $response = $this
+            ->actingAs($this->user)
+            ->post('/admin/commissions/edit/'.$commission->id.'/update', [
+                'pieces'   => $withPiece ? [0 => $piece->id] : null,
+                'progress' => $progress,
+                'comments' => $comments,
+                'cost'     => $paymentData ? [$paymentData[0] ? $payment->id : 0 => $costData['cost']] : null,
+                'tip'      => $paymentData ? [$paymentData[0] ? $payment->id : 0 => $costData['tip']] : null,
+                'is_intl'  => isset($payment) ? [$payment->id => $paymentData[2]] : null,
+                'is_paid'  => isset($payment) ? [$payment->id => $paymentData[1]] : null,
+                'paid_at'  => isset($payment) ? [$payment->id => $paymentData[1] ? $payment->paid_at : null] : null,
+            ]);
+
+        if ($expected) {
+            $response->assertSessionHasNoErrors();
+            $this->assertDatabaseHas('commissions', [
+                'id'       => $commission->id,
+                'comments' => $comments,
+                'progress' => $progress,
+            ]);
+
+            if ($withPiece) {
+                // Check that the link to the piece has been created
+                $this->assertDatabaseHas('commission_pieces', [
+                    'commission_id' => $commission->id,
+                    'piece_id'      => $piece->id,
+                ]);
+            }
+
+            if ($paymentData) {
+                // Check that the payment has been added or updated appropriately
+                $this->assertDatabaseHas('commission_payments', [
+                    'commission_id' => $commission->id,
+                    'cost'          => $costData['cost'],
+                    'tip'           => $costData['tip'],
+                    'is_paid'       => isset($payment) && $paymentData[1] ? $paymentData[1] : 0,
+                    'is_intl'       => isset($payment) && $paymentData[2] ? $paymentData[2] : 0,
+                ]);
+
+                if ($paymentData[1]) {
+                    // If relevant, check that paid_at is now set for the payment
+                    // This is a bit of a hackneyed workaround for retrieving
+                    // casted info being janky in a test environment at present
+                    $this->assertDatabaseMissing('commission_payments', [
+                        'commission_id' => $commission->id,
+                        'paid_at'       => null,
+                    ]);
+                }
+            }
+        } else {
+            $response->assertSessionHasErrors();
+        }
+    }
+
+    public function commissionUpdateProvider()
+    {
+        return [
+            'basic'         => ['Accepted', 0, null, 'Not Started', 0, 1],
+            'with piece'    => ['Accepted', 1, null, 'Not Started', 0, 1],
+            'with progress' => ['Accepted', 0, null, 'Working On', 0, 1],
+            'with comments' => ['Accepted', 0, null, 'Not Started', 1, 1],
+
+            // $paymentData = [(bool) existingPayment, (bool) isPaid, (bool) isIntl]
+            'mark payment intl'      => ['Accepted', 0, [1, 0, 1], 'Not Started', 0, 1],
+            'mark payment paid'      => ['Accepted', 0, [1, 1, 0], 'Not Started', 0, 1],
+            'mark intl payment paid' => ['Accepted', 0, [1, 1, 1], 'Not Started', 0, 1],
+
+            'update pending'  => ['Pending', 0, null, 'Not Started', 0, 0],
+            'update declined' => ['Declined', 0, null, 'Not Started', 0, 0],
+            'update complete' => ['Complete', 0, null, 'Not Started', 0, 0],
         ];
     }
 }
