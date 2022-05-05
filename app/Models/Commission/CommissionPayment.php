@@ -26,18 +26,20 @@ class CommissionPayment extends Model
     protected $table = 'commission_payments';
 
     /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'paid_at' => 'datetime',
+    ];
+
+    /**
      * Whether the model contains timestamps to be saved and updated.
      *
      * @var string
      */
     public $timestamps = true;
-
-    /**
-     * Dates on the model to convert to Carbon instances.
-     *
-     * @var array
-     */
-    public $dates = ['paid_at'];
 
     /**********************************************************************************************
 

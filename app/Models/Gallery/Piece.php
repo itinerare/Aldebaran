@@ -30,11 +30,13 @@ class Piece extends Model implements Feedable
     protected $table = 'pieces';
 
     /**
-     * Dates on the model to convert to Carbon instances.
+     * The attributes that should be cast.
      *
      * @var array
      */
-    public $dates = ['timestamp'];
+    protected $casts = [
+        'timestamp' => 'datetime',
+    ];
 
     /**
      * Whether the model contains timestamps to be saved and updated.
