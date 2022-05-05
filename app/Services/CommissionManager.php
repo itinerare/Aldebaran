@@ -68,11 +68,11 @@ class CommissionManager extends Service
                 if (!$type->is_visible && (!isset($data['key']) || $type->key != $data['key'])) {
                     throw new \Exception('Commissions are not open for this type.');
                 }
-                if($type->availability > 0 && $type->currentSlots == 0) {
+                if ($type->availability > 0 && $type->currentSlots == 0) {
                     throw new \Exception('Commission slots for this type are full.');
                 }
                 // Check that there is a free slot for the type and/or class
-                if(is_int($type->getSlots($type->category->class)) && $type->getSlots($type->category->class) == 0) {
+                if (is_int($type->getSlots($type->category->class)) && $type->getSlots($type->category->class) == 0) {
                     throw new \Exception('Overall commission slots are full.');
                 }
             }
