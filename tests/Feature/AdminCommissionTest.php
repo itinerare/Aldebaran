@@ -5,8 +5,11 @@ namespace Tests\Feature;
 use App\Facades\Settings;
 use App\Models\Commission\Commission;
 use App\Models\Commission\CommissionPayment;
+use App\Models\Commission\CommissionPiece;
 use App\Models\Commission\CommissionType;
 use App\Models\Gallery\Piece;
+use App\Models\Gallery\PieceImage;
+use App\Services\GalleryService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\DB;
@@ -26,6 +29,9 @@ class AdminCommissionTest extends TestCase
         parent::setUp();
 
         $this->type = CommissionType::factory()->testData(['type' => 'flat', 'cost' => 10])->create();
+
+        // Set up gallery service for image processing
+        $this->service = new GalleryService;
     }
 
     /**
@@ -33,14 +39,15 @@ class AdminCommissionTest extends TestCase
      *
      * @dataProvider commissionViewProvider
      *
+     * @param array|null $pieceData
      * @param bool       $withPayment
      * @param string     $status
-     * @param array|null $data
+     * @param array|null $fieldData
      * @param int        $expected
      */
-    public function testGetViewCommission($withPayment, $status, $data, $expected)
+    public function testGetViewCommission($pieceData, $withPayment, $status, $fieldData, $expected)
     {
-        if ($data) {
+        if ($fieldData) {
             // Generate some keys so they can be referred back to later
             $fieldKeys = [
                 $this->faker->unique()->domainWord(),
@@ -49,23 +56,23 @@ class AdminCommissionTest extends TestCase
             ];
 
             $this->type->update([
-                'data' => '{"fields":{"'.Str::lower($fieldKeys[0]).'":{"label":"'.$this->faker->unique()->domainWord().'","type":"'.$data[0].'","rules":'.($data[1] ? '"required"' : 'null').',"choices":'.($data[2] ? '["option 1","option 2"]' : 'null').',"value":'.($data[3] ? '"'.$data[3].'"' : 'null').',"help":'.($data[4] ? '"'.$data[4].'"' : 'null').'}},"include":{"class":'.$data[6].',"category":'.$data[5].'},"pricing":{"type":"flat","cost":"10"},"extras":null,"tags":null}',
+                'data' => '{"fields":{"'.Str::lower($fieldKeys[0]).'":{"label":"'.$this->faker->unique()->domainWord().'","type":"'.$fieldData[0].'","rules":'.($fieldData[1] ? '"required"' : 'null').',"choices":'.($fieldData[2] ? '["option 1","option 2"]' : 'null').',"value":'.($fieldData[3] ? '"'.$fieldData[3].'"' : 'null').',"help":'.($fieldData[4] ? '"'.$fieldData[4].'"' : 'null').'}},"include":{"class":'.$fieldData[6].',"category":'.$fieldData[5].'},"pricing":{"type":"flat","cost":"10"},"extras":null,"tags":null}',
             ]);
 
-            if ($data[5]) {
+            if ($fieldData[5]) {
                 $this->type->category->update([
                     'data' => '{"fields":{"'.Str::lower($fieldKeys[1]).'":{"label":"'.$this->faker->unique()->domainWord().'","type":"text","rules":null,"choices":null,"value":null,"help":null}},"include":{"class":0}}',
                 ]);
             }
 
-            if ($data[6]) {
+            if ($fieldData[6]) {
                 $this->type->category->class->update([
                     'data' => '{"fields":{"'.Str::lower($fieldKeys[2]).'":{"label":"'.$this->faker->unique()->domainWord().'","type":"text","rules":null,"choices":null,"value":null,"help":null}}}',
                 ]);
             }
 
-            if ($data[7]) {
-                switch ($data[0]) {
+            if ($fieldData[7]) {
+                switch ($fieldData[0]) {
                     case 'text':
                         $answer = $this->faker->domainWord();
                         break;
@@ -101,46 +108,82 @@ class AdminCommissionTest extends TestCase
                 ->create();
         }
 
+        if ($pieceData) {
+            // Create a piece and link to the commission
+            $piece = Piece::factory()->create([
+                'is_visible' => $pieceData[1],
+            ]);
+            CommissionPiece::factory()->piece($piece->id)->commission($commission->id)->create();
+
+            if ($pieceData[0]) {
+                // Create images and test files
+                $image = PieceImage::factory()->piece($piece->id)->create();
+                $this->service->testImages($image);
+            }
+        }
+
         // Adjust commission data as necessary
         $commission->update([
-            'data' => $data && (isset($answer) || $data[5] || $data[6]) ? '{'.($data[6] ? '"'.$fieldKeys[2].'":"test",' : '').($data[5] ? '"'.$fieldKeys[1].'":"test",' : '').'"'.$fieldKeys[0].'":'.(isset($answer) ? ($data[0] != 'multiple' ? '"'.$answer.'"' : '["'.$answer[0].'"]') : 'null').'}' : null,
+            'data' => $fieldData && (isset($answer) || $fieldData[5] || $fieldData[6]) ? '{'.($fieldData[6] ? '"'.$fieldKeys[2].'":"test",' : '').($fieldData[5] ? '"'.$fieldKeys[1].'":"test",' : '').'"'.$fieldKeys[0].'":'.(isset($answer) ? ($fieldData[0] != 'multiple' ? '"'.$answer.'"' : '["'.$answer[0].'"]') : 'null').'}' : null,
         ]);
 
-        $this->actingAs($this->user)
+        $response = $this->actingAs($this->user)
             ->get('admin/commissions/edit/'.$commission->id)
             ->assertStatus($expected);
+
+        if ($pieceData) {
+            if ($expected) {
+                // Check that the piece is displayed in some fashion
+                $response->assertSee($piece->name);
+
+                if ($pieceData[0]) {
+                    // Check that the image's thumbnail is present/displayed
+                    $response->assertSee($image->thumbnailUrl);
+                }
+            }
+
+            if ($pieceData[0]) {
+                // Clean up test images
+                $this->service->testImages($image, false);
+            }
+        }
     }
 
     public function commissionViewProvider()
     {
         return [
-            'basic'        => [0, 'Pending', null, 200],
-            'with payment' => [1, 'Pending', null, 200],
-            'accepted'     => [0, 'Accepted', null, 200],
-            'declined'     => [0, 'Declined', null, 200],
-            'complete'     => [0, 'Complete', null, 200],
+            'basic'        => [null, 0, 'Pending', null, 200],
+            'with payment' => [null, 1, 'Pending', null, 200],
+            'accepted'     => [null, 0, 'Accepted', null, 200],
+            'declined'     => [null, 0, 'Declined', null, 200],
+            'complete'     => [null, 0, 'Complete', null, 200],
+
+            // $pieceData = [(bool) withImage, (bool) isVisible]
+            'with piece'            => [[0, 1], 0, 'Accepted', null, 200],
+            'with hidden piece'     => [[0, 0], 0, 'Accepted', null, 200],
+            'with piece with image' => [[1, 1], 0, 'Accepted', null, 200],
 
             // Field testing
             // (string) type, (bool) rules, (bool) choices, value, (string) help, (bool) include category, (bool) include class, (bool) is empty
-            'text field'                   => [0, 'Pending', ['text', 0, 0, null, null, 0, 0, 1], 200],
-            'text field, empty'            => [0, 'Pending', ['text', 0, 0, null, null, 0, 0, 0], 200],
-            'text field with rule'         => [0, 'Pending', ['text', 1, 0, null, null, 0, 0, 1], 200],
-            'text field with value'        => [0, 'Pending', ['text', 0, 0, 'test', null, 0, 0, 1], 200],
-            'text field with help'         => [0, 'Pending', ['text', 0, 0, null, 'test', 0, 0, 1], 200],
-            'textbox field'                => [0, 'Pending', ['textarea', 0, 0, null, null, 0, 0, 1], 200],
-            'textbox field, empty'         => [0, 'Pending', ['textarea', 0, 0, null, null, 0, 0, 0], 200],
-            'number field'                 => [0, 'Pending', ['number', 0, 0, null, null, 0, 0, 1], 200],
-            'number field, empty'          => [0, 'Pending', ['number', 0, 0, null, null, 0, 0, 0], 200],
-            'checkbox field'               => [0, 'Pending', ['checkbox', 0, 0, null, null, 0, 0, 1], 200],
-            'checkbox field, empty'        => [0, 'Pending', ['checkbox', 0, 0, null, null, 0, 0, 0], 200],
-            'choose one field'             => [0, 'Pending', ['choice', 0, 0, null, null, 0, 0, 1], 200],
-            'choose one field, empty'      => [0, 'Pending', ['choice', 0, 0, null, null, 0, 0, 0], 200],
-            'choose multiple field'        => [0, 'Pending', ['multiple', 0, 0, null, null, 0, 0, 1], 200],
-            'choose multiple field, empty' => [0, 'Pending', ['multiple', 0, 0, null, null, 0, 0, 0], 200],
+            'text field'                   => [null, 0, 'Pending', ['text', 0, 0, null, null, 0, 0, 1], 200],
+            'text field, empty'            => [null, 0, 'Pending', ['text', 0, 0, null, null, 0, 0, 0], 200],
+            'text field with rule'         => [null, 0, 'Pending', ['text', 1, 0, null, null, 0, 0, 1], 200],
+            'text field with value'        => [null, 0, 'Pending', ['text', 0, 0, 'test', null, 0, 0, 1], 200],
+            'text field with help'         => [null, 0, 'Pending', ['text', 0, 0, null, 'test', 0, 0, 1], 200],
+            'textbox field'                => [null, 0, 'Pending', ['textarea', 0, 0, null, null, 0, 0, 1], 200],
+            'textbox field, empty'         => [null, 0, 'Pending', ['textarea', 0, 0, null, null, 0, 0, 0], 200],
+            'number field'                 => [null, 0, 'Pending', ['number', 0, 0, null, null, 0, 0, 1], 200],
+            'number field, empty'          => [null, 0, 'Pending', ['number', 0, 0, null, null, 0, 0, 0], 200],
+            'checkbox field'               => [null, 0, 'Pending', ['checkbox', 0, 0, null, null, 0, 0, 1], 200],
+            'checkbox field, empty'        => [null, 0, 'Pending', ['checkbox', 0, 0, null, null, 0, 0, 0], 200],
+            'choose one field'             => [null, 0, 'Pending', ['choice', 0, 0, null, null, 0, 0, 1], 200],
+            'choose one field, empty'      => [null, 0, 'Pending', ['choice', 0, 0, null, null, 0, 0, 0], 200],
+            'choose multiple field'        => [null, 0, 'Pending', ['multiple', 0, 0, null, null, 0, 0, 1], 200],
+            'choose multiple field, empty' => [null, 0, 'Pending', ['multiple', 0, 0, null, null, 0, 0, 0], 200],
 
-            'include from category'           => [0, 'Pending', ['text', 0, 0, null, null, 1, 0, 1], 200],
-            'include from class'              => [0, 'Pending', ['text', 0, 0, null, null, 0, 1, 1], 200],
-            'include from category and class' => [0, 'Pending', ['text', 0, 0, null, null, 1, 1, 1], 200],
+            'include from category'           => [null, 0, 'Pending', ['text', 0, 0, null, null, 1, 0, 1], 200],
+            'include from class'              => [null, 0, 'Pending', ['text', 0, 0, null, null, 0, 1, 1], 200],
+            'include from category and class' => [null, 0, 'Pending', ['text', 0, 0, null, null, 1, 1, 1], 200],
         ];
     }
 

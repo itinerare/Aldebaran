@@ -3,10 +3,13 @@
 namespace App\Models\Commission;
 
 use App\Models\Gallery\Piece;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class CommissionPiece extends Model
 {
+    use HasFactory;
+
     /**
      * The attributes that are mass assignable.
      *
