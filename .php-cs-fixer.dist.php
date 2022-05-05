@@ -48,9 +48,7 @@ $rules = [
     'lowercase_static_reference' => true,
     'magic_method_casing' => true,
     'magic_constant_casing' => true,
-    'method_argument_space' => [
-        'on_multiline' => 'ensure_single_line'
-    ],
+    'method_argument_space' => true,
     'native_function_casing' => true,
     'no_alias_functions' => true,
     'no_extra_blank_lines' => [
@@ -175,6 +173,7 @@ $rules = [
     ],
     'whitespace_after_comma_in_array' => true,
     'no_unused_imports' => true,
+    'php_unit_method_casing' => ['case' => 'camel_case'],
 ];
 
 $finder = Finder::create()

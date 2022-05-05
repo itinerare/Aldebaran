@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Facades\Settings;
 use App\Http\Controllers\Controller;
-use App\Services\FileManager;
-use Config;
-use DB;
+use App\Models\Commission\Commission;
+use App\Services\FileService;
 use Illuminate\Http\Request;
-use Settings;
+use Illuminate\Support\Facades\DB;
 
 class AdminController extends Controller
 {
@@ -27,7 +27,17 @@ class AdminController extends Controller
      */
     public function getIndex()
     {
-        return view('admin.index');
+        $pendingCount = [];
+        $acceptedCount = [];
+        foreach ($this->commissionClasses as $class) {
+            $pendingCount[$class->id] = Commission::where('status', 'Pending')->class($class->id)->count();
+            $acceptedCount[$class->id] = Commission::where('status', 'Accepted')->class($class->id)->count();
+        }
+
+        return view('admin.index', [
+            'pendingCount'  => $pendingCount,
+            'acceptedCount' => $acceptedCount,
+        ]);
     }
 
     /******************************************************************************
@@ -79,29 +89,27 @@ class AdminController extends Controller
     public function getSiteImages()
     {
         return view('admin.images', [
-            'images' => Config::get('aldebaran.image_files'),
+            'images' => config('aldebaran.image_files'),
         ]);
     }
 
     /**
      * Uploads a site image file.
      *
-     * @param App\Services\FileManager $service
-     *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function postUploadImage(Request $request, FileManager $service)
+    public function postUploadImage(Request $request, FileService $service)
     {
         $request->validate(['file' => 'required|file']);
         $file = $request->file('file');
         $key = $request->get('key');
-        $filename = Config::get('aldebaran.image_files.'.$key)['filename'];
+        $filename = config('aldebaran.image_files.'.$key)['filename'];
 
         if ($service->uploadFile($file, null, $filename, false)) {
             flash('Image uploaded successfully.')->success();
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
-                flash($error)->error();
+                $service->addError($error);
             }
         }
 
@@ -111,11 +119,9 @@ class AdminController extends Controller
     /**
      * Uploads a custom site CSS file.
      *
-     * @param App\Services\FileManager $service
-     *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function postUploadCss(Request $request, FileManager $service)
+    public function postUploadCss(Request $request, FileService $service)
     {
         $request->validate(['file' => 'required|file']);
         $file = $request->file('file');
@@ -124,7 +130,7 @@ class AdminController extends Controller
             flash('File uploaded successfully.')->success();
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
-                flash($error)->error();
+                $service->addError($error);
             }
         }
 

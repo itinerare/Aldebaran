@@ -11,7 +11,6 @@ use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\View;
 
 class Controller extends BaseController
@@ -21,13 +20,13 @@ class Controller extends BaseController
     /**
      * Create a new controller instance.
      */
-    public function __construct()
+    public function __construct(Request $request)
     {
-        View::share('visibleProjects', Project::visible()->orderBy('sort', 'DESC')->get());
-        view()->composer('*', function ($view) {
-            $commissionClasses = CommissionClass::active(Auth::check() ? Auth::user() : null)->orderBy('sort', 'DESC')->get();
+        $this->commissionClasses = CommissionClass::orderBy('sort', 'DESC')->get();
 
-            $view->with('commissionClasses', $commissionClasses);
+        View::share('visibleProjects', Project::visible()->orderBy('sort', 'DESC')->get());
+        view()->composer('*', function ($view) use ($request) {
+            $view->with('commissionClasses', CommissionClass::active($request->user() ?? null)->orderBy('sort', 'DESC')->get());
         });
     }
 
@@ -39,9 +38,6 @@ class Controller extends BaseController
     public function getIndex()
     {
         $page = TextPage::where('key', 'index')->first();
-        if (!$page) {
-            abort(404);
-        }
 
         return view('index', [
             'page' => $page,

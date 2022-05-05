@@ -2,10 +2,13 @@
 
 namespace App\Models\Gallery;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class PieceTag extends Model
 {
+    use HasFactory;
+
     /**
      * The attributes that are mass assignable.
      *
@@ -49,7 +52,7 @@ class PieceTag extends Model
      */
     public function tag()
     {
-        return $this->belongsTo('App\Models\Gallery\Tag', 'tag_id');
+        return $this->belongsTo(Tag::class, 'tag_id');
     }
 
     /**********************************************************************************************

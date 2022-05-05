@@ -3,9 +3,9 @@
 namespace App\Console\Commands;
 
 use Carbon\Carbon;
-use Config;
-use DB;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\DB;
 
 class AddTextPages extends Command
 {
@@ -39,7 +39,7 @@ class AddTextPages extends Command
     public function handle()
     {
         //
-        $pages = Config::get('aldebaran.text_pages');
+        $pages = config('aldebaran.text_pages');
 
         $this->info('******************');
         $this->info('* ADD TEXT PAGES *');

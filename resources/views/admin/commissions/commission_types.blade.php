@@ -19,7 +19,7 @@
             {!! Form::text('name', Request::get('name'), ['class' => 'form-control', 'placeholder' => 'Name']) !!}
         </div>
         <div class="form-group mr-3 mb-3">
-            {!! Form::select('category_id', $categories, Request::get('name'), ['class' => 'form-control']) !!}
+            {!! Form::select('category_id', $categories, Request::get('category_id'), ['class' => 'form-control']) !!}
         </div>
         <div class="form-group mb-3">
             {!! Form::submit('Search', ['class' => 'btn btn-primary']) !!}

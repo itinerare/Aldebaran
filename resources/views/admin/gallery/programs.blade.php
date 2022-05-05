@@ -1,15 +1,15 @@
 @extends('admin.layout')
 
-@section('admin-title') Programs @endsection
+@section('admin-title') Media & Programs @endsection
 
 @section('admin-content')
-{!! breadcrumbs(['Admin Panel' => 'admin', 'Programs' => 'admin/data/programs']) !!}
+{!! breadcrumbs(['Admin Panel' => 'admin', 'Media & Programs' => 'admin/data/programs']) !!}
 
-<h1>Programs</h1>
+<h1>Media & Programs</h1>
 
-<p>This is a list of programs that can be used associated with pieces to show what media was used in their creation. While it is intended for software, this can also be used for other media. Adding programs is fully optional.</p>
+<p>This is a list of media and programs that can be used associated with pieces to show what media was used in their creation. Adding these is fully optional.</p>
 
-<div class="text-right mb-3"><a class="btn btn-primary" href="{{ url('admin/data/programs/create') }}"><i class="fas fa-plus"></i> Add New Program</a></div>
+<div class="text-right mb-3"><a class="btn btn-primary" href="{{ url('admin/data/programs/create') }}"><i class="fas fa-plus"></i> Add New Media/Program</a></div>
 
 @if(!count($programs))
     <p>No programs found.</p>

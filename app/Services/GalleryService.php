@@ -2,7 +2,9 @@
 
 namespace App\Services;
 
+use App\Facades\Settings;
 use App\Models\Commission\CommissionPiece;
+use App\Models\Commission\CommissionType;
 use App\Models\Gallery\Piece;
 use App\Models\Gallery\PieceImage;
 use App\Models\Gallery\PieceProgram;
@@ -10,10 +12,9 @@ use App\Models\Gallery\PieceTag;
 use App\Models\Gallery\Program;
 use App\Models\Gallery\Project;
 use App\Models\Gallery\Tag;
-use Config;
-use DB;
-use Image;
-use Settings;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\DB;
+use Intervention\Image\Facades\Image;
 
 class GalleryService extends Service
 {
@@ -120,7 +121,7 @@ class GalleryService extends Service
     /**
      * Sorts project order.
      *
-     * @param array $data
+     * @param string $data
      *
      * @return bool
      */
@@ -169,13 +170,9 @@ class GalleryService extends Service
             $piece = Piece::create($data);
 
             // If tags are selected, validate and create data for them
-            if (isset($data['tags']) && $piece->id) {
-                $data = $this->processTags($data, $piece);
-            }
+            $data = $this->processTags($data, $piece);
             // If programs are selected, validate and create data for them
-            if (isset($data['programs']) && $piece->id) {
-                $data = $this->processPrograms($data, $piece);
-            }
+            $data = $this->processPrograms($data, $piece);
 
             return $this->commitReturn($piece);
         } catch (\Exception $e) {
@@ -208,13 +205,9 @@ class GalleryService extends Service
 
             $data = $this->populateData($data);
             // If tags are selected, validate and create data for them
-            if (isset($data['tags']) && $piece->id) {
-                $data = $this->processTags($data, $piece);
-            }
+            $data = $this->processTags($data, $piece);
             // If programs are selected, validate and create data for them
-            if (isset($data['programs']) && $piece->id) {
-                $data = $this->processPrograms($data, $piece);
-            }
+            $data = $this->processPrograms($data, $piece);
 
             $piece->update($data);
 
@@ -263,8 +256,8 @@ class GalleryService extends Service
     /**
      * Sorts project order.
      *
-     * @param int   $id
-     * @param array $data
+     * @param int    $id
+     * @param string $data
      *
      * @return bool
      */
@@ -322,7 +315,6 @@ class GalleryService extends Service
                 'text_watermark' => isset($data['text_watermark']) ? $data['text_watermark'] : null,
                 'text_opacity'   => isset($data['text_opacity']) ? $data['text_opacity'] : null,
             ];
-            $data['data'] = json_encode($data['data']);
 
             // Record data for the image
             $image = PieceImage::create([
@@ -499,6 +491,9 @@ class GalleryService extends Service
             if (PieceTag::where('tag_id', $tag->id)->exists()) {
                 throw new \Exception('A piece with this tag exists. Please remove the tag first.');
             }
+            if (CommissionType::whereJsonContains('data->tags', (string) $tag->id)->exists()) {
+                throw new \Exception('A commission type using this tag exists. Please remove the tag first.');
+            }
 
             PieceTag::where('tag_id', $tag->id)->delete();
             $tag->delete();
@@ -528,6 +523,7 @@ class GalleryService extends Service
         DB::beginTransaction();
 
         try {
+            $image = null;
             if (isset($data['image']) && $data['image']) {
                 $data['has_image'] = 1;
                 $image = $data['image'];
@@ -535,6 +531,7 @@ class GalleryService extends Service
             } else {
                 $data['has_image'] = 0;
             }
+
             if (!isset($data['is_visible'])) {
                 $data['is_visible'] = 0;
             }
@@ -542,7 +539,7 @@ class GalleryService extends Service
             $program = Program::create($data);
 
             if ($image) {
-                $this->handleImage($image, $program->imageDirectory, $program->imageFileName);
+                $this->handleImage($image, $program->imagePath, $program->imageFileName);
             }
 
             return $this->commitReturn($program);
@@ -573,7 +570,7 @@ class GalleryService extends Service
             }
 
             if (isset($data['remove_image']) && !isset($data['image'])) {
-                if ($program && $program->has_image && $data['remove_image']) {
+                if ($program->has_image && $data['remove_image']) {
                     $data['has_image'] = 0;
                     $this->deleteImage($program->imagePath, $program->imageFileName);
                 }
@@ -585,9 +582,8 @@ class GalleryService extends Service
                 $data['has_image'] = 1;
                 $image = $data['image'];
                 unset($data['image']);
-            } else {
-                $data['has_image'] = 0;
             }
+
             if (!isset($data['is_visible'])) {
                 $data['is_visible'] = 0;
             }
@@ -595,7 +591,7 @@ class GalleryService extends Service
             $program->update($data);
 
             if ($image) {
-                $this->handleImage($image, $program->imageDirectory, $program->imageFileName);
+                $this->handleImage($image, $program->imagePath, $program->imageFileName);
             }
 
             return $this->commitReturn($program);
@@ -635,6 +631,36 @@ class GalleryService extends Service
     }
 
     /**
+     * Generates and saves test images for page image test purposes.
+     * This is a workaround for normal image processing depending on Intervention.
+     *
+     * @param \App\Models\Gallery\PieceImage $image
+     * @param bool                           $create
+     *
+     * @return bool
+     */
+    public function testImages($image, $create = true)
+    {
+        if ($create) {// Generate the fake files to save
+            $file['fullsize'] = UploadedFile::fake()->image('test_image.png');
+            $file['image'] = UploadedFile::fake()->image('test_watermarked.png');
+            $file['thumbnail'] = UploadedFile::fake()->image('test_thumb.png');
+
+            // Save the files in line with usual image handling.
+            $this->handleImage($file['fullsize'], $image->imagePath, $image->fullsizeFileName);
+            $this->handleImage($file['image'], $image->imagePath, $image->imageFileName);
+            $this->handleImage($file['thumbnail'], $image->imagePath, $image->thumbnailFileName);
+        } elseif (!$create) {
+            // Remove test files
+            unlink($image->imagePath.'/'.$image->thumbnailFileName);
+            unlink($image->imagePath.'/'.$image->imageFileName);
+            unlink($image->imagePath.'/'.$image->fullsizeFileName);
+        }
+
+        return true;
+    }
+
+    /**
      * Processes user input for creating/updating a piece.
      *
      * @param array                   $data
@@ -671,15 +697,17 @@ class GalleryService extends Service
             PieceTag::where('piece_id', $piece->id)->delete();
         }
 
-        foreach ($data['tags'] as $tag) {
-            if (!Tag::where('id', $tag)->exists()) {
-                throw new \Exception('One or more of the selected tags is invalid.');
-            }
+        if (isset($data['tags'])) {
+            foreach ($data['tags'] as $tag) {
+                if (!Tag::where('id', $tag)->exists()) {
+                    throw new \Exception('One or more of the selected tags is invalid.');
+                }
 
-            PieceTag::create([
+                PieceTag::create([
                 'piece_id' => $piece->id,
                 'tag_id'   => $tag,
-            ]);
+                ]);
+            }
         }
 
         return $data;
@@ -701,15 +729,17 @@ class GalleryService extends Service
             PieceProgram::where('piece_id', $piece->id)->delete();
         }
 
-        foreach ($data['programs'] as $program) {
-            if (!Program::where('id', $program)->exists()) {
-                throw new \Exception('One or more of the selected programs is invalid.');
-            }
+        if (isset($data['programs'])) {
+            foreach ($data['programs'] as $program) {
+                if (!Program::where('id', $program)->exists()) {
+                    throw new \Exception('One or more of the selected programs is invalid.');
+                }
 
-            PieceProgram::create([
+                PieceProgram::create([
                 'piece_id'   => $piece->id,
                 'program_id' => $program,
-            ]);
+                ]);
+            }
         }
 
         return $data;
@@ -746,19 +776,19 @@ class GalleryService extends Service
 
         // Save fullsize image before doing any processing
         if (!$regen) {
-            $this->handleImage($data['image'], $image->imageDirectory, $image->fullsizeFileName);
+            $this->handleImage($data['image'], $image->imagePath, $image->fullsizeFileName);
         }
 
         // Process and save thumbnail from the fullsize image
         $thumbnail = Image::make($image->imagePath.'/'.$image->fullsizeFileName);
         // Resize and save thumbnail
-        if (Config::get('aldebaran.settings.gallery_arrangement') == 'columns') {
-            $thumbnail->resize(Config::get('aldebaran.settings.thumbnail_width'), null, function ($constraint) {
+        if (config('aldebaran.settings.gallery_arrangement') == 'columns') {
+            $thumbnail->resize(config('aldebaran.settings.thumbnail_width'), null, function ($constraint) {
                 $constraint->aspectRatio();
                 $constraint->upsize();
             });
         } else {
-            $thumbnail->resize(null, Config::get('aldebaran.settings.thumbnail_height'), function ($constraint) {
+            $thumbnail->resize(null, config('aldebaran.settings.thumbnail_height'), function ($constraint) {
                 $constraint->aspectRatio();
                 $constraint->upsize();
             });
@@ -770,7 +800,7 @@ class GalleryService extends Service
         $processImage = Image::make($image->imagePath.'/'.$image->fullsizeFileName);
 
         // Resize image if either dimension is larger than 2k px
-        $adjustedCap = isset($data['image_scale']) ? min((max($processImage->height(), $processImage->width()) * $data['image_scale']), Config::get('aldebaran.settings.display_image_size')) : Config::get('aldebaran.settings.display_image_size');
+        $adjustedCap = isset($data['image_scale']) ? min((max($processImage->height(), $processImage->width()) * $data['image_scale']), config('aldebaran.settings.display_image_size')) : config('aldebaran.settings.display_image_size');
 
         if (max($processImage->height(), $processImage->width()) > $adjustedCap) {
             if ($processImage->width() > $processImage->height()) {
@@ -792,6 +822,8 @@ class GalleryService extends Service
 
             // Add text watermark if necessary
             if (isset($data['text_watermark']) && $data['text_watermark']) {
+                $watermarkText = null;
+
                 // Set text based on form input
                 switch ($data['text_watermark']) {
                     case 'generic':
@@ -819,7 +851,7 @@ class GalleryService extends Service
                     while ($x < $processImage->width() + 150) {
                         foreach ($watermarkText as $key=>$text) {
                             $processImage->text($text, $key == 0 && count($watermarkText) > 1 ? $x + (22 + ($offset * 5)) : $x, $key > 0 ? $y + $i : $y, function ($font) use ($data) {
-                                $font->file(public_path('webfonts/Forum-Regular.ttf'));
+                                $font->file(public_path('webfonts/RobotoCondensed-Regular.ttf'));
                                 $font->size(24);
                                 $font->color([255, 255, 255, $data['text_opacity']]);
                                 $font->valign(500);
@@ -872,7 +904,7 @@ class GalleryService extends Service
                 'text_watermark' => isset($data['text_watermark']) ? $data['text_watermark'] : null,
                 'text_opacity'   => isset($data['text_opacity']) ? $data['text_opacity'] : null,
             ];
-            $image->update(['data' => json_encode($data['data'])]);
+            $image->update(['data' => $data['data']]);
         }
 
         return $image;

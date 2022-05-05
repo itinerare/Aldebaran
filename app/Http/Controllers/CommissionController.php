@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Facades\Settings;
 use App\Models\Commission\Commission;
 use App\Models\Commission\CommissionCategory;
 use App\Models\Commission\CommissionClass;
@@ -10,9 +11,7 @@ use App\Models\Gallery\Piece;
 use App\Models\Gallery\Project;
 use App\Models\TextPage;
 use App\Services\CommissionManager;
-use Auth;
 use Illuminate\Http\Request;
-use Settings;
 
 class CommissionController extends Controller
 {
@@ -32,12 +31,12 @@ class CommissionController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getInfo($class)
+    public function getInfo($class, Request $request)
     {
         if (!config('aldebaran.settings.commissions.enabled')) {
             abort(404);
         }
-        $class = CommissionClass::active()->where('slug', $class)->first();
+        $class = CommissionClass::active($request->user() ?? null)->where('slug', $class)->first();
         if (!$class) {
             abort(404);
         }
@@ -57,12 +56,12 @@ class CommissionController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getTos($class)
+    public function getTos($class, Request $request)
     {
         if (!config('aldebaran.settings.commissions.enabled')) {
             abort(404);
         }
-        $class = CommissionClass::active()->where('slug', $class)->first();
+        $class = CommissionClass::active($request->user() ?? null)->where('slug', $class)->first();
         if (!$class) {
             abort(404);
         }
@@ -81,15 +80,24 @@ class CommissionController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getClassPage($class, $key)
+    public function getClassPage($class, $key, Request $request)
     {
         if (!config('aldebaran.settings.commissions.enabled')) {
             abort(404);
         }
-        $class = CommissionClass::active()->where('slug', $class)->first();
+        $class = CommissionClass::active($request->user() ?? null)->where('slug', $class)->first();
         $page = TextPage::where('key', $key)->first();
 
-        if (!$class || !$page || !isset($class->data['pages'][$page->id])) {
+        if (!$class || !$page) {
+            abort(404);
+        }
+
+        // Fallback for testing purposes
+        if (!is_array($class->data)) {
+            $class->data = json_decode($class->data, true);
+        }
+
+        if (!isset($class->data['pages'][$page->id])) {
             abort(404);
         }
 
@@ -106,12 +114,12 @@ class CommissionController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getQueue($class)
+    public function getQueue($class, Request $request)
     {
         if (!config('aldebaran.settings.commissions.enabled')) {
             abort(404);
         }
-        $class = CommissionClass::active()->where('slug', $class)->first();
+        $class = CommissionClass::active($request->user() ?? null)->where('slug', $class)->first();
         if (!$class) {
             abort(404);
         }
@@ -129,13 +137,13 @@ class CommissionController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getType($key)
+    public function getType($key, Request $request)
     {
         if (!config('aldebaran.settings.commissions.enabled')) {
             abort(404);
         }
-        $type = CommissionType::active()->where('key', $key)->first();
-        if (!$type) {
+        $type = CommissionType::active()->where('key', $key)->where('is_visible', 0)->first();
+        if (!$type || !$type->category->class->is_active) {
             abort(404);
         }
 
@@ -166,16 +174,12 @@ class CommissionController extends Controller
             $type = CommissionType::active()->where('key', $key)->first();
             $source = 'key';
         }
-        if (!$type) {
-            abort(404);
-        }
-
-        if (!$type->data['show_examples']) {
+        if (!$type || (!$request->user() && !$type->category->class->is_active) || !$type->show_examples) {
             abort(404);
         }
 
         // Fetch visible examples
-        $query = Piece::visible(Auth::check() ? Auth::user() : null)->whereIn('id', $type->getExamples(Auth::check() ? Auth::user() : null, true)->pluck('id')->toArray());
+        $query = Piece::visible($request->user() ?? null)->whereIn('id', $type->getExamples($request->user() ?? null, true)->pluck('id')->toArray());
 
         // Perform any filtering/sorting
         $data = $request->only(['project_id', 'name', 'sort']);
@@ -237,7 +241,7 @@ class CommissionController extends Controller
             abort(404);
         }
         // check that the type is active and commissions of the global type are open,
-        if (!Settings::get($type->category->class->slug.'_comms_open')) {
+        if (!Settings::get($type->category->class->slug.'_comms_open') || !$type->category->class->is_active) {
             abort(404);
         }
         // and, if relevant, that the key is good.
@@ -254,8 +258,7 @@ class CommissionController extends Controller
     /**
      * Submits a new commission request.
      *
-     * @param App\Services\CommissionManager $service
-     * @param int|null                       $id
+     * @param int|null $id
      *
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -297,7 +300,7 @@ class CommissionController extends Controller
             return redirect()->to('commissions/view/'.$commission->commission_key);
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
-                flash($error)->error();
+                $service->addError($error);
             }
         }
 
@@ -313,9 +316,6 @@ class CommissionController extends Controller
      */
     public function getViewCommission($key)
     {
-        if (!config('aldebaran.settings.commissions.enabled')) {
-            abort(404);
-        }
         $commission = Commission::where('commission_key', $key)->first();
         if (!$commission) {
             abort(404);

@@ -32,7 +32,7 @@
                     <a href="{{ url('admin/data/projects') }}">Projects</a> ・
                     <a href="{{ url('admin/data/pieces') }}">Pieces</a> ・
                     <a href="{{ url('admin/data/tags') }}">Tags</a> ・
-                    <a href="{{ url('admin/data/programs') }}">Programs</a><br/>
+                    <a href="{{ url('admin/data/programs') }}">Media/Programs</a><br/>
                     @if(config('aldebaran.settings.commissions.enabled'))
                         Commission Data:
                         <a href="{{ url('admin/data/commission-categories') }}">Commission Categories</a> ・

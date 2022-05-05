@@ -2,7 +2,6 @@
 
 namespace App\Console\Commands;
 
-use Config;
 use Illuminate\Console\Command;
 
 class CopyDefaultImages extends Command
@@ -41,7 +40,7 @@ class CopyDefaultImages extends Command
         $this->info('* COPY DEFAULT IMAGES *');
         $this->info('***********************'."\n");
 
-        $images = Config::get('aldebaran.image_files');
+        $images = config('aldebaran.image_files');
 
         $sourceDir = base_path().'/data/assets/';
         $destDir = public_path().'/images/assets/';

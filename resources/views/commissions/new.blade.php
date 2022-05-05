@@ -14,7 +14,7 @@
 </h1>
 </div>
 
-{!! $page->text !!}
+{!! $page ? $page->text : 'Please finish site setup!' !!}
 
 <div class="card card-body mb-4">
     <h2>Selected Commission Type: {{ $type->name }}</h2>

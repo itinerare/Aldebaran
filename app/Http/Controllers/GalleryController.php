@@ -7,8 +7,8 @@ use App\Models\Gallery\PieceTag;
 use App\Models\Gallery\Project;
 use App\Models\Gallery\Tag;
 use App\Models\TextPage;
-use Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class GalleryController extends Controller
 {
@@ -32,7 +32,7 @@ class GalleryController extends Controller
             abort(404);
         }
 
-        $query = Piece::visible(Auth::check() ? Auth::user() : null)->gallery();
+        $query = Piece::visible($request->user() ?? null)->gallery();
 
         $data = $request->only(['project_id', 'name', 'tags', 'sort']);
         if (isset($data['project_id']) && $data['project_id'] != 'none') {
@@ -91,7 +91,7 @@ class GalleryController extends Controller
             abort(404);
         }
 
-        $query = Piece::visible(Auth::check() ? Auth::user() : null)->where('project_id', $project->id);
+        $query = Piece::visible($request->user() ?? null)->where('project_id', $project->id);
 
         $data = $request->only(['project_id', 'name', 'tags', 'sort']);
         if (isset($data['name'])) {

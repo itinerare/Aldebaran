@@ -2,19 +2,21 @@
 
 namespace App\Models\Commission;
 
-use Config;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Commission extends Model
 {
+    use HasFactory;
+
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
     protected $fillable = [
-        'commission_key', 'commissioner_id', 'commission_type', 'paid_status', 'progress',
-        'status', 'description', 'data', 'comments', 'cost_data',
+        'commission_key', 'commissioner_id', 'commission_type', 'progress',
+        'status', 'description', 'data', 'comments',
     ];
 
     /**
@@ -23,6 +25,17 @@ class Commission extends Model
      * @var string
      */
     protected $table = 'commissions';
+
+    /**
+     * The attributes that should be casted to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'data'        => 'array',
+        'cost_data'   => 'array',
+        'description' => 'array',
+    ];
 
     /**
      * Whether the model contains timestamps to be saved and updated.
@@ -80,7 +93,7 @@ class Commission extends Model
      */
     public function type()
     {
-        return $this->belongsTo('App\Models\Commission\CommissionType', 'commission_type');
+        return $this->belongsTo(CommissionType::class, 'commission_type');
     }
 
     /**
@@ -88,7 +101,7 @@ class Commission extends Model
      */
     public function commissioner()
     {
-        return $this->belongsTo('App\Models\Commission\Commissioner', 'commissioner_id');
+        return $this->belongsTo(Commissioner::class, 'commissioner_id');
     }
 
     /**
@@ -104,7 +117,7 @@ class Commission extends Model
      */
     public function pieces()
     {
-        return $this->hasMany('App\Models\Commission\CommissionPiece', 'commission_id');
+        return $this->hasMany(CommissionPiece::class, 'commission_id');
     }
 
     /**********************************************************************************************
@@ -174,16 +187,6 @@ class Commission extends Model
     }
 
     /**
-     * Get the data attribute as an associative array.
-     *
-     * @return array
-     */
-    public function getCostDataAttribute()
-    {
-        return json_decode($this->attributes['cost_data'], true);
-    }
-
-    /**
      * Get overall cost.
      *
      * @return int
@@ -246,26 +249,6 @@ class Commission extends Model
     }
 
     /**
-     * Get the data attribute as an associative array.
-     *
-     * @return array
-     */
-    public function getDataAttribute()
-    {
-        return json_decode($this->attributes['data'], true);
-    }
-
-    /**
-     * Get the description attribute as an associative array.
-     *
-     * @return array
-     */
-    public function getDescriptionAttribute()
-    {
-        return json_decode($this->attributes['description'], true);
-    }
-
-    /**
      * Get the position of the commission in the queue.
      *
      * @return int
@@ -306,7 +289,7 @@ class Commission extends Model
 
         // Calculate fee and round
         $fee =
-            ($total * ((isset($payment->isIntl) && $payment->isIntl ? Config::get('aldebaran.settings.commissions.fee.percent_intl') : Config::get('aldebaran.settings.commissions.fee.percent')) / 100)) + Config::get('aldebaran.settings.commissions.fee.base');
+            ($total * ((isset($payment->is_intl) && $payment->is_intl ? config('aldebaran.settings.commissions.fee.percent_intl') : config('aldebaran.settings.commissions.fee.percent')) / 100)) + config('aldebaran.settings.commissions.fee.base');
         $fee = round($fee, 2);
 
         return $total - $fee;
