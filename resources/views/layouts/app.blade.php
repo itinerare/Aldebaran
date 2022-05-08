@@ -96,12 +96,14 @@
         <main class="container-fluid">
             <div class="row">
 
-                <div class="sidebar col-lg-2" id="sidebar">
-                    @if(View::hasSection('sidebar'))
-                        @yield('sidebar')
-                    @endif
-                </div>
-                <div class="main-content col-lg-8 p-4">
+                @if(!config('aldebaran.settings.layout.full_width') || View::hasSection('sidebar'))
+                    <div class="sidebar col-lg-2" id="sidebar">
+                        @if(View::hasSection('sidebar'))
+                            @yield('sidebar')
+                        @endif
+                    </div>
+                @endif
+                <div class="main-content {{ config('aldebaran.settings.layout.full_width') ? (View::hasSection('sidebar') ? 'col-lg-10' : 'col-lg-12') : 'col-lg-8' }} p-4">
                     <div>
                         @include('flash::message')
                         @yield('content')

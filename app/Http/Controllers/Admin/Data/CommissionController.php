@@ -8,11 +8,9 @@ use App\Models\Commission\CommissionClass;
 use App\Models\Commission\CommissionType;
 use App\Models\Gallery\Tag;
 use App\Services\CommissionService;
-use Auth;
 use Illuminate\Http\Request;
-use Settings;
+use Illuminate\Support\Facades\Validator;
 use Spatie\ValidationRules\Rules\Delimited;
-use Validator;
 
 class CommissionController extends Controller
 {
@@ -36,7 +34,7 @@ class CommissionController extends Controller
      */
     public function getCommissionClassIndex()
     {
-        if (!Settings::get('commissions_on')) {
+        if (!config('aldebaran.settings.commissions.enabled')) {
             abort(404);
         }
 
@@ -52,7 +50,7 @@ class CommissionController extends Controller
      */
     public function getCreateCommissionClass()
     {
-        if (!Settings::get('commissions_on')) {
+        if (!config('aldebaran.settings.commissions.enabled')) {
             abort(404);
         }
 
@@ -71,7 +69,7 @@ class CommissionController extends Controller
      */
     public function getEditCommissionClass($id)
     {
-        if (!Settings::get('commissions_on')) {
+        if (!config('aldebaran.settings.commissions.enabled')) {
             abort(404);
         }
         $class = CommissionClass::find($id);
@@ -88,8 +86,7 @@ class CommissionController extends Controller
     /**
      * Creates or edits an commission class.
      *
-     * @param App\Services\CommissionService $service
-     * @param int|null                       $id
+     * @param int|null $id
      *
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -128,15 +125,15 @@ class CommissionController extends Controller
             }
         }
 
-        if ($id && $service->updateCommissionClass(CommissionClass::find($id), $data, Auth::user())) {
+        if ($id && $service->updateCommissionClass(CommissionClass::find($id), $data, $request->user())) {
             flash('Class updated successfully.')->success();
-        } elseif (!$id && $class = $service->createCommissionClass($data, Auth::user())) {
+        } elseif (!$id && $class = $service->createCommissionClass($data, $request->user())) {
             flash('Class created successfully.')->success();
 
             return redirect()->to('admin/data/commission-classes/edit/'.$class->id);
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
-                flash($error)->error();
+                $service->addError($error);
             }
         }
 
@@ -152,7 +149,7 @@ class CommissionController extends Controller
      */
     public function getDeleteCommissionClass($id)
     {
-        if (!Settings::get('commissions_on')) {
+        if (!config('aldebaran.settings.commissions.enabled')) {
             abort(404);
         }
         $class = CommissionClass::find($id);
@@ -165,8 +162,7 @@ class CommissionController extends Controller
     /**
      * Deletes an commission class.
      *
-     * @param App\Services\CommissionService $service
-     * @param int                            $id
+     * @param int $id
      *
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -176,7 +172,7 @@ class CommissionController extends Controller
             flash('Class deleted successfully.')->success();
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
-                flash($error)->error();
+                $service->addError($error);
             }
         }
 
@@ -186,8 +182,6 @@ class CommissionController extends Controller
     /**
      * Sorts commission classes.
      *
-     * @param App\Services\CommissionService $service
-     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function postSortCommissionClass(Request $request, CommissionService $service)
@@ -196,7 +190,7 @@ class CommissionController extends Controller
             flash('Class order updated successfully.')->success();
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
-                flash($error)->error();
+                $service->addError($error);
             }
         }
 
@@ -214,7 +208,7 @@ class CommissionController extends Controller
      */
     public function getIndex()
     {
-        if (!Settings::get('commissions_on')) {
+        if (!config('aldebaran.settings.commissions.enabled')) {
             abort(404);
         }
 
@@ -230,7 +224,7 @@ class CommissionController extends Controller
      */
     public function getCreateCommissionCategory()
     {
-        if (!Settings::get('commissions_on')) {
+        if (!config('aldebaran.settings.commissions.enabled')) {
             abort(404);
         }
 
@@ -250,7 +244,7 @@ class CommissionController extends Controller
      */
     public function getEditCommissionCategory($id)
     {
-        if (!Settings::get('commissions_on')) {
+        if (!config('aldebaran.settings.commissions.enabled')) {
             abort(404);
         }
         $category = CommissionCategory::find($id);
@@ -268,8 +262,7 @@ class CommissionController extends Controller
     /**
      * Creates or edits an commission category.
      *
-     * @param App\Services\CommissionService $service
-     * @param int|null                       $id
+     * @param int|null $id
      *
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -308,15 +301,15 @@ class CommissionController extends Controller
             }
         }
 
-        if ($id && $service->updateCommissionCategory(CommissionCategory::find($id), $data, Auth::user())) {
+        if ($id && $service->updateCommissionCategory(CommissionCategory::find($id), $data, $request->user())) {
             flash('Category updated successfully.')->success();
-        } elseif (!$id && $category = $service->createCommissionCategory($data, Auth::user())) {
+        } elseif (!$id && $category = $service->createCommissionCategory($data, $request->user())) {
             flash('Category created successfully.')->success();
 
             return redirect()->to('admin/data/commission-categories/edit/'.$category->id);
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
-                flash($error)->error();
+                $service->addError($error);
             }
         }
 
@@ -332,7 +325,7 @@ class CommissionController extends Controller
      */
     public function getDeleteCommissionCategory($id)
     {
-        if (!Settings::get('commissions_on')) {
+        if (!config('aldebaran.settings.commissions.enabled')) {
             abort(404);
         }
         $category = CommissionCategory::find($id);
@@ -345,8 +338,7 @@ class CommissionController extends Controller
     /**
      * Deletes an commission category.
      *
-     * @param App\Services\CommissionService $service
-     * @param int                            $id
+     * @param int $id
      *
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -356,7 +348,7 @@ class CommissionController extends Controller
             flash('Category deleted successfully.')->success();
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
-                flash($error)->error();
+                $service->addError($error);
             }
         }
 
@@ -366,8 +358,6 @@ class CommissionController extends Controller
     /**
      * Sorts commission categories.
      *
-     * @param App\Services\CommissionService $service
-     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function postSortCommissionCategory(Request $request, CommissionService $service)
@@ -376,7 +366,7 @@ class CommissionController extends Controller
             flash('Category order updated successfully.')->success();
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
-                flash($error)->error();
+                $service->addError($error);
             }
         }
 
@@ -394,11 +384,11 @@ class CommissionController extends Controller
      */
     public function getCommissionTypeIndex(Request $request)
     {
-        if (!Settings::get('commissions_on')) {
+        if (!config('aldebaran.settings.commissions.enabled')) {
             abort(404);
         }
         $query = CommissionType::query();
-        $data = $request->only(['commission_category_id', 'name']);
+        $data = $request->only(['category_id', 'name']);
         if (isset($data['category_id']) && $data['category_id'] != 'none') {
             $query->where('category_id', $data['category_id']);
         }
@@ -419,7 +409,7 @@ class CommissionController extends Controller
      */
     public function getCreateCommissionType()
     {
-        if (!Settings::get('commissions_on')) {
+        if (!config('aldebaran.settings.commissions.enabled')) {
             abort(404);
         }
 
@@ -440,7 +430,7 @@ class CommissionController extends Controller
      */
     public function getEditCommissionType($id)
     {
-        if (!Settings::get('commissions_on')) {
+        if (!config('aldebaran.settings.commissions.enabled')) {
             abort(404);
         }
         $commissionType = CommissionType::find($id);
@@ -459,8 +449,7 @@ class CommissionController extends Controller
     /**
      * Creates or edits a commission type.
      *
-     * @param App\Services\CommissionService $service
-     * @param int|null                       $id
+     * @param int|null $id
      *
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -501,15 +490,15 @@ class CommissionController extends Controller
             }
         }
 
-        if ($id && $service->updateCommissionType(CommissionType::find($id), $data, Auth::user())) {
+        if ($id && $service->updateCommissionType(CommissionType::find($id), $data, $request->user())) {
             flash('Commission type updated successfully.')->success();
-        } elseif (!$id && $type = $service->createCommissionType($data, Auth::user())) {
+        } elseif (!$id && $type = $service->createCommissionType($data, $request->user())) {
             flash('Commission type created successfully.')->success();
 
             return redirect()->to('admin/data/commission-types/edit/'.$type->id);
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
-                flash($error)->error();
+                $service->addError($error);
             }
         }
 
@@ -525,7 +514,7 @@ class CommissionController extends Controller
      */
     public function getDeleteCommissionType($id)
     {
-        if (!Settings::get('commissions_on')) {
+        if (!config('aldebaran.settings.commissions.enabled')) {
             abort(404);
         }
         $commissionType = CommissionType::find($id);
@@ -538,8 +527,7 @@ class CommissionController extends Controller
     /**
      * Deletes a commission type.
      *
-     * @param App\Services\CommissionService $service
-     * @param int                            $id
+     * @param int $id
      *
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -549,7 +537,7 @@ class CommissionController extends Controller
             flash('Commission type deleted successfully.')->success();
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
-                flash($error)->error();
+                $service->addError($error);
             }
         }
 
@@ -559,8 +547,6 @@ class CommissionController extends Controller
     /**
      * Sorts commission types.
      *
-     * @param App\Services\CommissionService $service
-     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function postSortCommissionType(Request $request, CommissionService $service)
@@ -569,7 +555,7 @@ class CommissionController extends Controller
             flash('Type order updated successfully.')->success();
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
-                flash($error)->error();
+                $service->addError($error);
             }
         }
 

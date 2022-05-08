@@ -2,19 +2,21 @@
 
 namespace App\Models\Commission;
 
-use Config;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Commission extends Model
 {
+    use HasFactory;
+
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
     protected $fillable = [
-        'commission_key', 'commissioner_id', 'commission_type', 'paid_status', 'progress',
-        'status', 'description', 'data', 'comments', 'cost_data',
+        'commission_key', 'commissioner_id', 'commission_type', 'progress',
+        'status', 'description', 'data', 'comments',
     ];
 
     /**
@@ -23,6 +25,17 @@ class Commission extends Model
      * @var string
      */
     protected $table = 'commissions';
+
+    /**
+     * The attributes that should be casted to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'data'        => 'array',
+        'cost_data'   => 'array',
+        'description' => 'array',
+    ];
 
     /**
      * Whether the model contains timestamps to be saved and updated.
@@ -44,8 +57,7 @@ class Commission extends Model
         'paypal'  => 'email|nullable|min:3|max:191',
 
         // Other
-        'terms'                => 'accepted',
-        'g-recaptcha-response' => 'required|recaptchav3:submit,0.5',
+        'terms' => 'accepted',
     ];
 
     /**
@@ -81,7 +93,7 @@ class Commission extends Model
      */
     public function type()
     {
-        return $this->belongsTo('App\Models\Commission\CommissionType', 'commission_type');
+        return $this->belongsTo(CommissionType::class, 'commission_type');
     }
 
     /**
@@ -89,7 +101,15 @@ class Commission extends Model
      */
     public function commissioner()
     {
-        return $this->belongsTo('App\Models\Commission\Commissioner', 'commissioner_id');
+        return $this->belongsTo(Commissioner::class, 'commissioner_id');
+    }
+
+    /**
+     * Get the payments associated with this commission.
+     */
+    public function payments()
+    {
+        return $this->hasMany(CommissionPayment::class, 'commission_id');
     }
 
     /**
@@ -97,7 +117,7 @@ class Commission extends Model
      */
     public function pieces()
     {
-        return $this->hasMany('App\Models\Commission\CommissionPiece', 'commission_id');
+        return $this->hasMany(CommissionPiece::class, 'commission_id');
     }
 
     /**********************************************************************************************
@@ -116,10 +136,7 @@ class Commission extends Model
      */
     public function scopeClass($query, $class)
     {
-        return $query->whereIn(
-            'commission_type',
-            CommissionType::whereIn('category_id', CommissionCategory::byClass($class)->pluck('id')->toArray())->pluck('id')->toArray()
-        );
+        return $query->whereIn('commission_type', CommissionType::whereIn('category_id', CommissionCategory::byClass($class)->pluck('id')->toArray())->pluck('id')->toArray());
     }
 
     /**********************************************************************************************
@@ -145,11 +162,11 @@ class Commission extends Model
      */
     public function getPaidStatusAttribute()
     {
-        if (!isset($this->costData)) {
+        if (!$this->payments->count()) {
             return 0;
         }
-        foreach ($this->costData as $payment) {
-            if ($payment['paid'] == 0) {
+        foreach ($this->payments as $payment) {
+            if ($payment->is_paid == 0) {
                 return 0;
             }
         }
@@ -164,23 +181,9 @@ class Commission extends Model
      */
     public function getIsPaidAttribute()
     {
-        if (!isset($this->costData)) {
-            return '-';
-        }
-
         return $this->paidStatus ?
             '<span class="text-success">Paid</span>' :
             ($this->status == 'Accepted' ? '<span class="text-danger"><strong>Unpaid</strong></span>' : '<s>Unpaid</s>');
-    }
-
-    /**
-     * Get the data attribute as an associative array.
-     *
-     * @return array
-     */
-    public function getCostDataAttribute()
-    {
-        return json_decode($this->attributes['cost_data'], true);
     }
 
     /**
@@ -191,9 +194,9 @@ class Commission extends Model
     public function getCostAttribute()
     {
         $total = 0;
-        if (isset($this->costData)) {
-            foreach ($this->costData as $payment) {
-                $total += $payment['cost'];
+        if ($this->payments->count()) {
+            foreach ($this->payments as $payment) {
+                $total += $payment->cost;
             }
         }
 
@@ -208,9 +211,9 @@ class Commission extends Model
     public function getTipAttribute()
     {
         $total = 0;
-        if (isset($this->costData)) {
-            foreach ($this->costData as $payment) {
-                $total += (isset($payment['tip']) ? $payment['tip'] : 0);
+        if ($this->payments->count()) {
+            foreach ($this->payments as $payment) {
+                $total += $payment->tip;
             }
         }
 
@@ -236,33 +239,13 @@ class Commission extends Model
     {
         $total = 0;
         // Cycle through payments, getting their total with fees
-        if (isset($this->costData)) {
-            foreach ($this->costData as $payment) {
+        if ($this->payments->count()) {
+            foreach ($this->payments as $payment) {
                 $total += $this->paymentWithFees($payment);
             }
         }
 
         return $total;
-    }
-
-    /**
-     * Get the data attribute as an associative array.
-     *
-     * @return array
-     */
-    public function getDataAttribute()
-    {
-        return json_decode($this->attributes['data'], true);
-    }
-
-    /**
-     * Get the description attribute as an associative array.
-     *
-     * @return array
-     */
-    public function getDescriptionAttribute()
-    {
-        return json_decode($this->attributes['description'], true);
     }
 
     /**
@@ -296,17 +279,17 @@ class Commission extends Model
     /**
      * Calculate the total for a payment after fees.
      *
-     * @param array $payment
+     * @param \App\Models\Commission\CommissionPayment $payment
      *
      * @return int
      */
     public function paymentWithFees($payment)
     {
-        $total = $payment['cost'] + (isset($payment['tip']) && $payment['tip'] ? $payment['tip'] : 0);
+        $total = $payment->cost + (isset($payment->tip) && $payment->tip ? $payment->tip : 0);
 
         // Calculate fee and round
         $fee =
-            ($total * ((isset($payment['intl']) && $payment['intl'] ? Config::get('aldebaran.settings.fee.percent_intl') : Config::get('aldebaran.settings.fee.percent')) / 100)) + Config::get('aldebaran.settings.fee.base');
+            ($total * ((isset($payment->is_intl) && $payment->is_intl ? config('aldebaran.settings.commissions.fee.percent_intl') : config('aldebaran.settings.commissions.fee.percent')) / 100)) + config('aldebaran.settings.commissions.fee.base');
         $fee = round($fee, 2);
 
         return $total - $fee;

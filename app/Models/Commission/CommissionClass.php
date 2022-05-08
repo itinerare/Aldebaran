@@ -2,10 +2,13 @@
 
 namespace App\Models\Commission;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class CommissionClass extends Model
 {
+    use HasFactory;
+
     /**
      * The attributes that are mass assignable.
      *
@@ -21,6 +24,15 @@ class CommissionClass extends Model
      * @var string
      */
     protected $table = 'commission_classes';
+
+    /**
+     * The attributes that should be casted to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'data' => 'json',
+    ];
 
     /**
      * Whether the model contains timestamps to be saved and updated.
@@ -79,21 +91,5 @@ class CommissionClass extends Model
         } else {
             return $query->where('is_active', 1);
         }
-    }
-
-    /**********************************************************************************************
-
-        ACCESSORS
-
-    **********************************************************************************************/
-
-    /**
-     * Get the data attribute as an associative array.
-     *
-     * @return array
-     */
-    public function getDataAttribute()
-    {
-        return json_decode($this->attributes['data'], true);
     }
 }

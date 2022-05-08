@@ -2,13 +2,13 @@
 
 namespace App\Services;
 
+use App\Facades\Settings;
 use App\Models\Commission\CommissionCategory;
 use App\Models\Commission\CommissionClass;
 use App\Models\Commission\CommissionType;
 use App\Models\TextPage;
 use Carbon\Carbon;
-use DB;
-use Settings;
+use Illuminate\Support\Facades\DB;
 
 class CommissionService extends Service
 {
@@ -94,21 +94,13 @@ class CommissionService extends Service
                 $data['pages_old'] = $class->data['pages'];
             }
 
-            $class->update($data);
-
             // Process fields, site settings, and pages
             if (isset($data['field_key'])) {
                 $data = $this->processFormFields($data);
             }
             $data = $this->processClassSettings($class, $data);
 
-            // Encode and save data
-            if (isset($data['data'])) {
-                $class->data = json_encode($data['data']);
-            } else {
-                $class->data = null;
-            }
-            $class->save();
+            $class->update($data);
 
             return $this->commitReturn($class);
         } catch (\Exception $e) {
@@ -135,6 +127,27 @@ class CommissionService extends Service
                 throw new \Exception('A commission category with this class exists. Please change its class first.');
             }
 
+            // Clean up automatically generated pages
+            foreach (['tos', 'info'] as $page) {
+                if (TextPage::where('key', $class->slug.$page)->first()) {
+                    TextPage::where('key', $class->slug.$page)->first()->delete();
+                }
+            }
+
+            // Clean up custom pages
+            if (isset($class->data) && isset($class->data['pages'])) {
+                foreach ($class->data['pages'] as $id=>$page) {
+                    TextPage::where('id', $id)->first()->delete();
+                }
+            }
+
+            // Clean up settings
+            foreach (['comms_open', 'overall_slots', 'full', 'status'] as $setting) {
+                if (DB::table('site_settings')->where('key', $class->slug.'_'.$setting)->exists()) {
+                    DB::table('site_settings')->where('key', $class->slug.'_'.$setting)->delete();
+                }
+            }
+
             $class->delete();
 
             return $this->commitReturn(true);
@@ -148,7 +161,7 @@ class CommissionService extends Service
     /**
      * Sorts class order.
      *
-     * @param array $data
+     * @param string $data
      *
      * @return bool
      */
@@ -189,6 +202,11 @@ class CommissionService extends Service
         DB::beginTransaction();
 
         try {
+            $class = CommissionClass::find($data['class_id']);
+            if (!$class) {
+                throw new \Exception('Invalid commission class selected.');
+            }
+
             if (!isset($data['is_active'])) {
                 $data['is_active'] = 0;
             }
@@ -217,6 +235,11 @@ class CommissionService extends Service
         DB::beginTransaction();
 
         try {
+            $class = CommissionClass::find($data['class_id']);
+            if (!$class) {
+                throw new \Exception('Invalid commission class selected.');
+            }
+
             // More specific validation
             if (CommissionCategory::where('name', $data['name'])->where('id', '!=', $category->id)->exists()) {
                 throw new \Exception('The name has already been taken.');
@@ -232,13 +255,7 @@ class CommissionService extends Service
             if (!isset($data['include_class'])) {
                 $data['data']['include']['class'] = 0;
             } else {
-                $data['data']['include']['class'] = 1;
-            }
-
-            if (isset($data['data'])) {
-                $data['data'] = json_encode($data['data']);
-            } else {
-                $data['data'] = null;
+                $data['data']['include']['class'] = $data['include_class'];
             }
 
             $category->update($data);
@@ -281,7 +298,7 @@ class CommissionService extends Service
     /**
      * Sorts category order.
      *
-     * @param array $data
+     * @param string $data
      *
      * @return bool
      */
@@ -362,7 +379,6 @@ class CommissionService extends Service
                 $data = $this->processFormFields($data);
             }
             $data = $this->populateData($data, $type);
-            $data['data'] = json_encode($data['data']);
 
             $type->update($data);
 
@@ -391,7 +407,7 @@ class CommissionService extends Service
                 throw new \Exception('A commission of this type exists. Consider making the type unavailable instead.');
             }
 
-            $commission->delete();
+            $type->delete();
 
             return $this->commitReturn(true);
         } catch (\Exception $e) {
@@ -404,7 +420,7 @@ class CommissionService extends Service
     /**
      * Sorts type order.
      *
-     * @param array $data
+     * @param string $data
      *
      * @return bool
      */
@@ -441,7 +457,7 @@ class CommissionService extends Service
         // Add and/or modify site settings
         // If the slug has been changed, check for existing settings and save their values
         if (isset($data['slug_old'])) {
-            foreach ([$data['slug_old'].'_comms_open', 'overall_'.$data['slug_old'].'_slots'] as $setting) {
+            foreach ([$data['slug_old'].'_comms_open', $data['slug_old'].'_overall_slots', $data['slug_old'].'_full', $data['slug_old'].'_status'] as $setting) {
                 if (DB::table('site_settings')->where('key', $setting)->exists()) {
                     $data['settings'][$setting] = Settings::get($setting);
                     DB::table('site_settings')->where('key', $setting)->delete();
@@ -460,11 +476,11 @@ class CommissionService extends Service
             ]);
         }
 
-        if (!DB::table('site_settings')->where('key', 'overall_'.$class->slug.'_slots')->exists()) {
+        if (!DB::table('site_settings')->where('key', $class->slug.'_overall_slots')->exists()) {
             DB::table('site_settings')->insert([
                 [
-                    'key'         => 'overall_'.$class->slug.'_slots',
-                    'value'       => isset($data['slug_old']) && isset($data['settings']['overall_'.$data['slug_old'].'_slots']) ? $data['settings']['overall_'.$data['slug_old'].'_slots'] : 0,
+                    'key'         => $class->slug.'_overall_slots',
+                    'value'       => isset($data['slug_old']) && isset($data['settings'][$data['slug_old'].'_overall_slots']) ? $data['settings'][$data['slug_old'].'_overall_slots'] : 0,
                     'description' => 'Overall number of availabile commission slots. Set to 0 to disable limits.',
                 ],
             ]);
@@ -654,12 +670,12 @@ class CommissionService extends Service
         if (!isset($data['include_class'])) {
             $data['data']['include']['class'] = 0;
         } else {
-            $data['data']['include']['class'] = 1;
+            $data['data']['include']['class'] = $data['include_class'];
         }
         if (!isset($data['include_category'])) {
             $data['data']['include']['category'] = 0;
         } else {
-            $data['data']['include']['category'] = 1;
+            $data['data']['include']['category'] = $data['include_category'];
         }
 
         // Assemble and encode data
@@ -684,7 +700,6 @@ class CommissionService extends Service
 
         $data['data']['pricing'] = $data['pricing'];
         $data['data']['extras'] = isset($data['extras']) ? $data['extras'] : null;
-        $data['data']['show_examples'] = $data['show_examples'];
         $data['data']['tags'] = isset($data['tags']) ? $data['tags'] : null;
 
         // Generate a key if the type is being created or if
@@ -692,9 +707,6 @@ class CommissionService extends Service
         if (!$type || $data['regenerate_key']) {
             $data['key'] = randomString(10);
         }
-
-        // Encode data
-        $data['data'] = json_encode($data['data']);
 
         return $data;
     }

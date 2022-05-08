@@ -2,17 +2,19 @@
 
 namespace App\Services;
 
+use App\Facades\Settings;
 use App\Mail\CommissionRequested;
 use App\Models\Commission\Commission;
 use App\Models\Commission\Commissioner;
 use App\Models\Commission\CommissionerIp;
+use App\Models\Commission\CommissionPayment;
 use App\Models\Commission\CommissionPiece;
 use App\Models\Commission\CommissionType;
 use App\Models\Gallery\Piece;
 use App\Models\User;
-use DB;
-use Mail;
-use Settings;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class CommissionManager extends Service
 {
@@ -38,7 +40,7 @@ class CommissionManager extends Service
         DB::beginTransaction();
 
         try {
-            if (!Settings::get('commissions_on')) {
+            if (!config('aldebaran.settings.commissions.enabled')) {
                 throw new \Exception('Commissions are not enabled for this site.');
             }
 
@@ -48,7 +50,10 @@ class CommissionManager extends Service
                 throw new \Exception('The selected commission type is invalid.');
             }
             if (!$manual) {
-                // Check that commissions are open for this type and for the global type
+                if (!$type->category->class->is_active) {
+                    throw new \Exception('This class is inactive.');
+                }
+                // Check that commissions are open for this type and for the class
                 if (!Settings::get($type->category->class->slug.'_comms_open')) {
                     throw new \Exception('Commissions are not open.');
                 }
@@ -62,6 +67,13 @@ class CommissionManager extends Service
                 // the key, and if so, check it
                 if (!$type->is_visible && (!isset($data['key']) || $type->key != $data['key'])) {
                     throw new \Exception('Commissions are not open for this type.');
+                }
+                if ($type->availability > 0 && $type->currentSlots == 0) {
+                    throw new \Exception('Commission slots for this type are full.');
+                }
+                // Check that there is a free slot for the type and/or class
+                if (is_int($type->getSlots($type->category->class)) && $type->getSlots($type->category->class) == 0) {
+                    throw new \Exception('Overall commission slots are full.');
                 }
             }
 
@@ -97,7 +109,7 @@ class CommissionManager extends Service
                 'commissioner_id' => $commissioner->id,
                 'commission_type' => $type->id,
                 'status'          => 'Pending',
-                'data'            => json_encode($data['data']),
+                'data'            => $data['data'],
             ]);
 
             // Now that the commission has an ID, assign it a key incorporating it
@@ -107,7 +119,7 @@ class CommissionManager extends Service
 
             // If desired, send an email notification to the admin account
             // that a commission request was submitted
-            if (Settings::get('notif_emails') && !$manual && (env('MAIL_USERNAME', false) && env('MAIL_PASSWORD', false))) {
+            if (Settings::get('notif_emails') && !$manual && (config('aldebaran.settings.admin_email.address') && config('aldebaran.settings.admin_email.password'))) {
                 Mail::to(User::find(1))->send(new CommissionRequested($commission));
             }
 
@@ -143,12 +155,12 @@ class CommissionManager extends Service
                 throw new \Exception('Invalid commission selected.');
             }
             // Check that this commission will not be in excess of any slot limitations
-            if (Settings::get('overall_'.$commission->type->category->class->slug.'_slots') > 0 || $commission->type->slots != null) {
+            if (Settings::get($commission->type->category->class->slug.'_overall_slots') > 0 || $commission->type->slots != null) {
                 if (is_int($commission->type->getSlots($commission->type->category->class)) && $commission->type->getSlots($commission->type->category->class) == 0) {
                     throw new \Exception('There are no overall slots of this commission type remaining.');
                 }
                 if ($commission->type->availability > 0 && $commission->type->currentSlots == 0) {
-                    throw new \Exception('This commission  type\'s slots are full.');
+                    throw new \Exception('This commission type\'s slots are full.');
                 }
             }
 
@@ -160,7 +172,7 @@ class CommissionManager extends Service
 
             // If this is the last available commission slot overall or for this type,
             // automatically decline any remaining pending requests
-            if (Settings::get('overall_'.$commission->type->category->class->slug.'_slots') > 0 || $commission->type->slots != null) {
+            if (Settings::get($commission->type->category->class->slug.'_overall_slots') > 0 || $commission->type->slots != null) {
                 // Overall slots filled
                 if (is_int($commission->type->getSlots($commission->type->category->class)) && $commission->type->getSlots($commission->type->category->class) == 0) {
                     Commission::class($commission->type->category->class->id)->where('status', 'Pending')->update(['status' => 'Declined', 'comments' => '<p>Sorry, all slots have been filled! '.Settings::get($commission->type->category->class->slug.'_full').'</p>']);
@@ -228,18 +240,23 @@ class CommissionManager extends Service
 
             // Process payment data
             if (isset($data['cost'])) {
-                foreach ($data['cost'] as $key=>$cost) {
-                    $data['cost_data'][$key] = [
-                        'cost' => $cost,
-                        'tip'  => isset($data['tip'][$key]) ? $data['tip'][$key] : null,
-                        'paid' => isset($data['paid'][$key]) ? $data['paid'][$key] : 0,
-                        'intl' => isset($data['intl'][$key]) ? $data['intl'][$key] : 0,
-                    ];
-                }
+                // Clear old payments
+                CommissionPayment::where('commission_id', $commission->id)->delete();
 
-                $data['cost_data'] = json_encode($data['cost_data']);
-            } else {
-                $data['cost_data'] = null;
+                // Create payment record for each
+                foreach ($data['cost'] as $key=>$cost) {
+                    CommissionPayment::create([
+                        'commission_id' => $commission->id,
+                        'cost'          => $cost,
+                        'tip'           => isset($data['tip'][$key]) ? $data['tip'][$key] : null,
+                        'is_paid'       => isset($data['is_paid'][$key]) ? $data['is_paid'][$key] : 0,
+                        'is_intl'       => isset($data['is_intl'][$key]) ? $data['is_intl'][$key] : 0,
+                        'paid_at'       => isset($data['is_paid'][$key]) && $data['is_paid'][$key] ? (isset($data['paid_at'][$key]) ? $data['paid_at'][$key] : Carbon::now()) : null,
+                    ]);
+                }
+            } elseif ($commission->payments->count()) {
+                // Clear old payment records
+                CommissionPayment::where('commission_id', $commission->id)->delete();
             }
 
             // Update the commission
@@ -361,7 +378,7 @@ class CommissionManager extends Service
             // Mark the commissioner as banned,
             $commissioner->update(['is_banned' => 1]);
             // and decline all current commission requests from them
-            Commission::where('commissioner_id', $commissioner->id)->whereIn('status', ['Pending', 'Accepted'])->update(['status' => 'Declined', 'comments' => '<p>Automatically declined due to ban.</p>']);
+            Commission::where('commissioner_id', $commissioner->id)->whereIn('status', ['Pending', 'Accepted'])->update(['status' => 'Declined', 'comments' => isset($data['comments']) ? $data['comments'] : '<p>Automatically declined due to ban.</p>']);
 
             return $this->commitReturn($commission);
         } catch (\Exception $e) {

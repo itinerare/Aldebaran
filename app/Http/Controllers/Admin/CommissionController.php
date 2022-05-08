@@ -6,10 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\Commission\Commission;
 use App\Models\Commission\CommissionClass;
 use App\Models\Commission\Commissioner;
+use App\Models\Commission\CommissionPayment;
 use App\Models\Commission\CommissionType;
 use App\Models\Gallery\Piece;
 use App\Services\CommissionManager;
-use Auth;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -34,6 +34,10 @@ class CommissionController extends Controller
      */
     public function getCommissionIndex(Request $request, $class, $status = null)
     {
+        if (!config('aldebaran.settings.commissions.enabled')) {
+            abort(404);
+        }
+
         $class = CommissionClass::where('slug', $class)->first();
         if (!$class) {
             abort(404);
@@ -74,6 +78,10 @@ class CommissionController extends Controller
      */
     public function getNewCommission($id)
     {
+        if (!config('aldebaran.settings.commissions.enabled')) {
+            abort(404);
+        }
+
         $type = CommissionType::where('id', $id)->first();
         if (!$type) {
             abort(404);
@@ -81,25 +89,25 @@ class CommissionController extends Controller
 
         $commissioners = Commissioner::where('is_banned', 0)->get()->pluck('fullName', 'id')->sort()->toArray();
 
-        return view(
-            'admin.queues.new',
-            [
+        return view('admin.queues.new', [
             'type'          => $type,
             'commissioners' => $commissioners,
-        ]
-        );
+        ]);
     }
 
     /**
      * Submits a new commission request.
      *
-     * @param App\Services\CommissionManager $service
-     * @param int|null                       $id
+     * @param int|null $id
      *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function postNewCommission(Request $request, CommissionManager $service, $id = null)
     {
+        if (!config('aldebaran.settings.commissions.enabled')) {
+            abort(404);
+        }
+
         $type = CommissionType::where('id', $request->get('type'))->first();
         if (!$type) {
             abort(404);
@@ -128,7 +136,7 @@ class CommissionController extends Controller
             return redirect()->to('admin/commissions/edit/'.$commission->id);
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
-                flash($error)->error();
+                $service->addError($error);
             }
         }
 
@@ -159,9 +167,8 @@ class CommissionController extends Controller
     /**
      * Acts on a commission.
      *
-     * @param int                            $id
-     * @param string                         $action
-     * @param App\Services\CommissionManager $service
+     * @param int    $id
+     * @param string $action
      *
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -198,41 +205,62 @@ class CommissionController extends Controller
      */
     public function getLedger(Request $request)
     {
-        $yearCommissions = Commission::whereIn('status', ['Accepted', 'Complete'])->whereNotNull('cost_data')->orderBy('created_at', 'DESC')->get()->groupBy(function ($date) {
+        if (!config('aldebaran.settings.commissions.enabled')) {
+            abort(404);
+        }
+
+        $yearCommissions = Commission::whereIn('status', ['Accepted', 'Complete'])->orderBy('created_at', 'DESC')->get()->groupBy(function ($date) {
             return Carbon::parse($date->created_at)->format('Y');
         });
 
-        $groupedCommissions = $yearCommissions->map(function ($year) {
-            return $year->groupBy(function ($commission) {
-                return Carbon::parse($commission->created_at)->format('F Y');
-            });
+        $yearPayments = CommissionPayment::orderBy('created_at', 'DESC')->get()->filter(function ($payment) {
+            if ($payment->is_paid) {
+                return 1;
+            } elseif ($payment->commission->status == 'Accepted' || $payment->commission->status == 'Complete') {
+                return 1;
+            }
+
+            return 0;
+        })->groupBy(function ($date) {
+            if (isset($date->paid_at)) {
+                return Carbon::parse($date->paid_at)->format('Y');
+            }
+
+            return Carbon::now()->format('Y');
         });
 
-        return view(
-            'admin.queues.ledger',
-            [
-            'years'           => $groupedCommissions->paginate(1)->appends($request->query()),
+        $groupedPayments = $yearPayments->map(function ($year) {
+            return $year->groupBy(function ($payment) {
+                if (isset($payment->paid_at)) {
+                    return Carbon::parse($payment->paid_at)->format('F Y');
+                }
+
+                return Carbon::parse($payment->created_at)->format('F Y');
+            });
+        })->sort();
+
+        return view('admin.queues.ledger', [
+            'years'           => $groupedPayments->paginate(1)->appends($request->query()),
+            'yearPayments'    => $yearPayments,
             'yearCommissions' => $yearCommissions,
-            'year'            => $groupedCommissions->keys()->skip(($request->get('page') ? $request->get('page') : 1) - 1)->first(),
-        ]
-        );
+            'year'            => $groupedPayments->keys()->skip(($request->get('page') ? $request->get('page') : 1) - 1)->first(),
+        ]);
     }
 
     /**
      * Accepts a commission.
      *
-     * @param int                            $id
-     * @param App\Services\CommissionManager $service
+     * @param int $id
      *
      * @return \Illuminate\Http\RedirectResponse
      */
     private function postAcceptCommission($id, Request $request, CommissionManager $service)
     {
-        if ($service->acceptCommission($id, $request->only(['comments']), Auth::user())) {
+        if ($service->acceptCommission($id, $request->only(['comments']), $request->user())) {
             flash('Commission accepted successfully.')->success();
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
-                flash($error)->error();
+                $service->addError($error);
             }
         }
 
@@ -242,20 +270,19 @@ class CommissionController extends Controller
     /**
      * Updates a commission.
      *
-     * @param int                            $id
-     * @param App\Services\CommissionManager $service
+     * @param int $id
      *
      * @return \Illuminate\Http\RedirectResponse
      */
     private function postUpdateCommission($id, Request $request, CommissionManager $service)
     {
         $request->validate(Commission::$updateRules);
-        $data = $request->only(['pieces', 'paid_status', 'progress', 'comments', 'cost', 'tip', 'paid', 'intl']);
-        if ($service->updateCommission($id, $data, Auth::user())) {
+        $data = $request->only(['pieces', 'paid_status', 'progress', 'comments', 'cost', 'tip', 'is_paid', 'is_intl', 'paid_at']);
+        if ($service->updateCommission($id, $data, $request->user())) {
             flash('Commission updated successfully.')->success();
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
-                flash($error)->error();
+                $service->addError($error);
             }
         }
 
@@ -265,18 +292,17 @@ class CommissionController extends Controller
     /**
      * Marks a commission complete.
      *
-     * @param int                            $id
-     * @param App\Services\CommissionManager $service
+     * @param int $id
      *
      * @return \Illuminate\Http\RedirectResponse
      */
     private function postCompleteCommission($id, Request $request, CommissionManager $service)
     {
-        if ($service->completeCommission($id, $request->only(['comments']), Auth::user())) {
+        if ($service->completeCommission($id, $request->only(['comments']), $request->user())) {
             flash('Commission marked complete successfully.')->success();
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
-                flash($error)->error();
+                $service->addError($error);
             }
         }
 
@@ -286,18 +312,17 @@ class CommissionController extends Controller
     /**
      * Declines a commission.
      *
-     * @param int                            $id
-     * @param App\Services\CommissionManager $service
+     * @param int $id
      *
      * @return \Illuminate\Http\RedirectResponse
      */
     private function postDeclineCommission($id, Request $request, CommissionManager $service)
     {
-        if ($service->declineCommission($id, $request->only(['comments']), Auth::user())) {
+        if ($service->declineCommission($id, $request->only(['comments']), $request->user())) {
             flash('Commission declined successfully.')->success();
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
-                flash($error)->error();
+                $service->addError($error);
             }
         }
 
@@ -307,18 +332,17 @@ class CommissionController extends Controller
     /**
      * Accepts a commission.
      *
-     * @param int                            $id
-     * @param App\Services\CommissionManager $service
+     * @param int $id
      *
      * @return \Illuminate\Http\RedirectResponse
      */
     private function postBanCommissioner($id, Request $request, CommissionManager $service)
     {
-        if ($service->banCommissioner($id, $request->only(['comments']), Auth::user())) {
+        if ($service->banCommissioner($id, $request->only(['comments']), $request->user())) {
             flash('Commissioner banned successfully.')->success();
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
-                flash($error)->error();
+                $service->addError($error);
             }
         }
 

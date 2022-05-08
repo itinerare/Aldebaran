@@ -5,14 +5,10 @@
 @section('admin-content')
 {!! breadcrumbs(['Admin Panel' => 'admin']) !!}
 
-@if(Settings::get('commissions_on'))
+@if(config('aldebaran.settings.commissions.enabled'))
     @if(isset($commissionClasses) && $commissionClasses->count())
         <div class="row">
             @foreach($commissionClasses as $class)
-                @php
-                    $pendingCount[$class->id] = App\Models\Commission\Commission::where('status', 'Pending')->class($class->id)->count();
-                    $acceptedCount[$class->id] = App\Models\Commission\Commission::where('status', 'Accepted')->class($class->id)->count();
-                @endphp
                 <div class="col-sm mb-3">
                     <div class="card h-100">
                         <div class="card-body">

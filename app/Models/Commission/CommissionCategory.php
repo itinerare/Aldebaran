@@ -2,10 +2,13 @@
 
 namespace App\Models\Commission;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class CommissionCategory extends Model
 {
+    use HasFactory;
+
     /**
      * The attributes that are mass assignable.
      *
@@ -23,6 +26,15 @@ class CommissionCategory extends Model
     protected $table = 'commission_categories';
 
     /**
+     * The attributes that should be casted to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'data' => 'array',
+    ];
+
+    /**
      * Whether the model contains timestamps to be saved and updated.
      *
      * @var string
@@ -36,7 +48,8 @@ class CommissionCategory extends Model
      */
     public static $createRules = [
         //
-        'name' => 'required|unique:commission_categories',
+        'name'     => 'required|unique:commission_categories',
+        'class_id' => 'required',
     ];
 
     /**
@@ -47,6 +60,7 @@ class CommissionCategory extends Model
     public static $updateRules = [
         //
         'name'            => 'required',
+        'class_id'        => 'required',
         'field_key.*'     => 'nullable|between:3,25|alpha_dash',
         'field_type.*'    => 'nullable|required_with:field_key.*',
         'field_label.*'   => 'nullable|string|required_with:field_key.*',
@@ -67,7 +81,7 @@ class CommissionCategory extends Model
      */
     public function class()
     {
-        return $this->belongsTo('App\Models\Commission\CommissionClass', 'class_id');
+        return $this->belongsTo(CommissionClass::class, 'class_id');
     }
 
     /**
@@ -75,7 +89,7 @@ class CommissionCategory extends Model
      */
     public function types()
     {
-        return $this->hasMany('App\Models\Commission\CommissionType', 'category_id')->orderBy('sort', 'DESC');
+        return $this->hasMany(CommissionType::class, 'category_id')->orderBy('sort', 'DESC');
     }
 
     /**********************************************************************************************
@@ -123,15 +137,5 @@ class CommissionCategory extends Model
     public function getFullNameAttribute()
     {
         return ucfirst($this->class->name).' ・ '.$this->name;
-    }
-
-    /**
-     * Get the data attribute as an associative array.
-     *
-     * @return array
-     */
-    public function getDataAttribute()
-    {
-        return json_decode($this->attributes['data'], true);
     }
 }

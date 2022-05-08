@@ -140,21 +140,24 @@
 
     <div class="form-group">
         <div id="paymentList">
-            @if(isset($commission->costData))
-                @foreach($commission->costData as $key=>$payment)
+            @if($commission->payments->count())
+                @foreach($commission->payments as $payment)
                     <div class="input-group mb-2">
                         <div class="input-group-prepend">
                             <span class="input-group-text">Cost & Tip (USD)</span>
                         </div>
-                        {!! Form::number('cost['.$key.']', $payment['cost'], ['class' => 'form-control', 'aria-label' => 'Cost', 'placeholder' => 'Cost']) !!}
-                        {!! Form::number('tip['.$key.']', $payment['tip'], ['class' => 'form-control', 'aria-label' => 'Tip', 'placeholder' => 'Tip']) !!}
+                        {!! Form::number('cost['.$payment->id.']', $payment->cost, ['class' => 'form-control', 'aria-label' => 'Cost', 'placeholder' => 'Cost']) !!}
+                        {!! Form::number('tip['.$payment->id.']', $payment->tip, ['class' => 'form-control', 'aria-label' => 'Tip', 'placeholder' => 'Tip']) !!}
+                        {!! Form::hidden('paid_at['.$payment->id.']', $payment->paid_at) !!}
                         <div class="input-group-append">
                             <div class="input-group-text">
-                                {!! Form::checkbox('paid['.$key.']', 1, $payment['paid'], ['aria-label' => 'Whether or not this invoice has been paid']) !!}
-                                <span class="ml-1">Is Paid</span>
+                                {!! Form::checkbox('is_paid['.$payment->id.']', 1, $payment->is_paid, ['aria-label' => 'Whether or not this invoice has been paid']) !!}
+                                <span class="ml-1">
+                                    Paid{!! $payment->is_paid ? ' '.pretty_date($payment->paid_at) : '' !!}
+                                </span>
                             </div>
                             <div class="input-group-text">
-                                {!! Form::checkbox('intl['.$key.']', 1, $payment['intl'], ['aria-label' => 'Whether or not this commissioner is international']) !!}
+                                {!! Form::checkbox('is_intl['.$payment->id.']', 1, $payment->is_intl, ['aria-label' => 'Whether or not this commissioner is international']) !!}
                                 <span class="ml-1">Intl.</span>
                             </div>
                             <span class="input-group-text">After Fees: ${{ $commission->paymentWithFees($payment) }}</span>
@@ -206,11 +209,11 @@
         {!! Form::number('tip[]', null, ['class' => 'form-control', 'aria-label' => 'Tip', 'placeholder' => 'Tip']) !!}
         <div class="input-group-append">
             <div class="input-group-text">
-                {!! Form::checkbox('paid[]', 1, 0, ['aria-label' => 'Whether or not this invoice has been paid', 'disabled']) !!}
+                {!! Form::checkbox('is_paid[]', 1, 0, ['aria-label' => 'Whether or not this invoice has been paid', 'disabled']) !!}
                 <span class="ml-1">Is Paid</span>
             </div>
             <div class="input-group-text">
-                {!! Form::checkbox('intl[]', 1, 0, ['aria-label' => 'Whether or not this invoice has been paid', 'disabled']) !!}
+                {!! Form::checkbox('is_intl[]', 1, 0, ['aria-label' => 'Whether or not this invoice has been paid', 'disabled']) !!}
                 <span class="ml-1">Intl.</span>
             </div>
             <button class="remove-payment btn btn-outline-danger" type="button" id="button-addon2">X</button>

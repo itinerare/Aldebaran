@@ -24,6 +24,7 @@ $rules = [
         'elements' => ['method' => 'one']
     ],
     'class_definition' => true,
+    'class_reference_name_casing' => true,
     'concat_space' => [
         'spacing' => 'none'
     ],
@@ -172,6 +173,7 @@ $rules = [
     ],
     'whitespace_after_comma_in_array' => true,
     'no_unused_imports' => true,
+    'php_unit_method_casing' => ['case' => 'camel_case'],
 ];
 
 $finder = Finder::create()

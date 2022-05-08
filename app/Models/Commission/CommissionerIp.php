@@ -49,6 +49,6 @@ class CommissionerIp extends Model
      */
     public function commissioner()
     {
-        return $this->belongsTo('App\Models\Commission\Commissioner', 'commissioner_id');
+        return $this->belongsTo(Commissioner::class, 'commissioner_id');
     }
 }

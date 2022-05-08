@@ -38,11 +38,15 @@
                     {!! isset($commission->data[$key]) ? ($commission->data[$key] ? '<i class="fas fa-check text-success"></i>' : '<i class="fas fa-times text-danger"></i>') : '-' !!}
                 @elseif(($field['type'] == 'multiple' || $field['type'] == 'choice') && isset($field['choices']))
                     @if($field['type'] == 'multiple')
-                        @foreach($commission->data[$key] as $answer)
-                            {{ isset($field['choices'][$answer]) ? $field['choices'][$answer] : $answer }}{{ !$loop->last ? ',' : '' }}
-                        @endforeach
+                        @if(isset($commission->data[$key]))
+                            @foreach($commission->data[$key] as $answer)
+                                {{ isset($field['choices'][$answer]) ? $field['choices'][$answer] : $answer }}{{ !$loop->last ? ',' : '' }}
+                            @endforeach
+                        @else
+                            -
+                        @endif
                     @else
-                        {{ isset($commission->data[$key]) ? $field['choices'][$commission->data[$key]] : $commission->data[$key] }}
+                        {{ isset($commission->data[$key]) ? $field['choices'][$commission->data[$key]] : '-' }}
                     @endif
                 @elseif($field['type'] != 'checkbox')
                     {!! isset($commission->data[$key]) ? nl2br(htmlentities($commission->data[$key])) : '-' !!}

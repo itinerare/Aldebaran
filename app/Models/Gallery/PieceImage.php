@@ -2,10 +2,13 @@
 
 namespace App\Models\Gallery;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class PieceImage extends Model
 {
+    use HasFactory;
+
     /**
      * The attributes that are mass assignable.
      *
@@ -22,6 +25,15 @@ class PieceImage extends Model
      * @var string
      */
     protected $table = 'piece_images';
+
+    /**
+     * The attributes that should be casted to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'data' => 'array',
+    ];
 
     /**
      * Whether the model contains timestamps to be saved and updated.
@@ -73,7 +85,7 @@ class PieceImage extends Model
      */
     public function piece()
     {
-        return $this->belongsTo('App\Models\Gallery\Piece', 'piece_id');
+        return $this->belongsTo(Piece::class, 'piece_id');
     }
 
     /**********************************************************************************************
@@ -193,15 +205,5 @@ class PieceImage extends Model
     public function getFullsizeUrlAttribute()
     {
         return asset($this->imageDirectory.'/'.$this->fullsizeFileName);
-    }
-
-    /**
-     * Get the data attribute as an associative array.
-     *
-     * @return array
-     */
-    public function getDataAttribute()
-    {
-        return json_decode($this->attributes['data'], true);
     }
 }

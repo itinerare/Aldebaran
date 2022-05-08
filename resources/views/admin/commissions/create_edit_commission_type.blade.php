@@ -103,7 +103,7 @@
 
 <div class="row">
     <div class="col-md form-group">
-        {!! Form::checkbox('show_examples', 1, $type->id && isset($type->data['show_examples']) ? $type->data['show_examples'] : 1, ['class' => 'form-check-input', 'data-toggle' => 'toggle']) !!}
+        {!! Form::checkbox('show_examples', 1, $type->id ? $type->show_examples : 1, ['class' => 'form-check-input', 'data-toggle' => 'toggle']) !!}
         {!! Form::label('show_examples', 'Show Examples', ['class' => 'form-check-label ml-3']) !!} {!! add_help('Whether or not a gallery of examples should be displayed for this type.') !!}
     </div>
     @if($type->id)
