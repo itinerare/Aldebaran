@@ -19,19 +19,25 @@
             <div class="card-body inventory-body collapse" id="mobileNav">
                 <h5>
                     <a href="{{ url('admin') }}">Admin Home</a><br/>
-                    Queues:
-                    @foreach(Config::get('itinerare.comm_types') as $type=>$values)
-                        <a href="{{ url('admin/commissions/'.$type) }}">{{ ucfirst($type) }} Queue</a> ・
-                    @endforeach
-                    <a href="{{ url('admin/ledger') }}">Ledger</a><br/>
+                    @if(config('aldebaran.settings.commissions.enabled'))
+                        @if(isset($commissionClasses) && $commissionClasses->count())
+                            Queues:
+                            @foreach($commissionClasses as $class)
+                                <a href="{{ url('admin/commissions/'.$class->slug) }}">{{ $class->name }} Queue</a> ・
+                            @endforeach
+                        @endif
+                        <a href="{{ url('admin/ledger') }}">Ledger</a><br/>
+                    @endif
                     Gallery Data:
                     <a href="{{ url('admin/data/projects') }}">Projects</a> ・
                     <a href="{{ url('admin/data/pieces') }}">Pieces</a> ・
                     <a href="{{ url('admin/data/tags') }}">Tags</a> ・
-                    <a href="{{ url('admin/data/programs') }}">Programs</a><br/>
-                    Commission Data:
-                    <a href="{{ url('admin/data/commission-categories') }}">Commission Categories</a> ・
-                    <a href="{{ url('admin/data/commission-types') }}">Commission Types</a><br/>
+                    <a href="{{ url('admin/data/programs') }}">Media/Programs</a><br/>
+                    @if(config('aldebaran.settings.commissions.enabled'))
+                        Commission Data:
+                        <a href="{{ url('admin/data/commission-categories') }}">Commission Categories</a> ・
+                        <a href="{{ url('admin/data/commission-types') }}">Commission Types</a><br/>
+                    @endif
                     Maintenance:
                     <a href="{{ url('admin/pages') }}">Text Pages</a> ・
                     <a href="{{ url('admin/changelog') }}">Changelog</a> ・

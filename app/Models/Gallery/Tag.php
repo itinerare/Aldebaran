@@ -2,17 +2,20 @@
 
 namespace App\Models\Gallery;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Tag extends Model
 {
+    use HasFactory;
+
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
     protected $fillable = [
-        'name', 'description', 'is_active', 'sort', 'is_visible'
+        'name', 'description', 'is_active', 'sort', 'is_visible',
     ];
 
     /**
@@ -36,7 +39,7 @@ class Tag extends Model
      */
     public static $createRules = [
         //
-        'name' => 'required|unique:tags'
+        'name' => 'required|unique:tags',
     ];
 
     /**
@@ -46,7 +49,7 @@ class Tag extends Model
      */
     public static $updateRules = [
         //
-        'name' => 'required'
+        'name' => 'required',
     ];
 
     /**********************************************************************************************
@@ -58,7 +61,8 @@ class Tag extends Model
     /**
      * Scope a query to only include visible tags.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     *
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeVisible($query)
@@ -75,6 +79,8 @@ class Tag extends Model
     /**
      * Get the piece's url.
      *
+     * @param mixed|null $source
+     *
      * @return string
      */
     public function getUrl($source = null)
@@ -84,6 +90,8 @@ class Tag extends Model
 
     /**
      * Get the piece's display name.
+     *
+     * @param mixed|null $source
      *
      * @return string
      */

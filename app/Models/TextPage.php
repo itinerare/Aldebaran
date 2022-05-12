@@ -2,17 +2,20 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class TextPage extends Model
 {
+    use HasFactory;
+
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
     protected $fillable = [
-        'key', 'name', 'text'
+        'key', 'name', 'text',
     ];
 
     /**
@@ -35,7 +38,7 @@ class TextPage extends Model
      * @var array
      */
     public static $createRules = [
-        'text' => 'required'
+        'text' => 'required',
     ];
 
     /**
@@ -44,6 +47,6 @@ class TextPage extends Model
      * @var array
      */
     public static $updateRules = [
-        'text' => 'required'
+        'text' => 'required',
     ];
 }

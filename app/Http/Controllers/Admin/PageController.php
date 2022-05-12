@@ -2,13 +2,10 @@
 
 namespace App\Http\Controllers\Admin;
 
-use Auth;
-
+use App\Http\Controllers\Controller;
 use App\Models\TextPage;
 use App\Services\PageService;
-
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 
 class PageController extends Controller
 {
@@ -26,34 +23,37 @@ class PageController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getIndex()
+    public function getPagesIndex(Request $request)
     {
         return view('admin.pages.index', [
-            'pages' => TextPage::orderBy('key')->paginate(20)
+            'pages' => TextPage::orderBy('key')->paginate(20)->appends($request->query()),
         ]);
     }
 
     /**
      * Shows the edit text page page.
      *
-     * @param  int  $id
+     * @param int $id
+     *
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function getEditPage($id)
     {
         $page = TextPage::find($id);
-        if(!$page) abort(404);
+        if (!$page) {
+            abort(404);
+        }
+
         return view('admin.pages.edit_page', [
-            'page' => $page
+            'page' => $page,
         ]);
     }
 
     /**
      * Edits a text page.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  App\Services\PageService  $service
-     * @param  int|null                  $id
+     * @param int|null $id
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function postEditPage(Request $request, PageService $service, $id = null)
@@ -61,10 +61,14 @@ class PageController extends Controller
         $request->validate(TextPage::$updateRules);
         $data = $request->only(['text']);
 
-        if($service->updatePage(TextPage::find($id), $data, Auth::user())) flash('Page updated successfully.')->success();
-        else foreach($service->errors()->getMessages()['error'] as $error) flash($error)->error();
+        if ($service->updatePage(TextPage::find($id), $data, $request->user())) {
+            flash('Page updated successfully.')->success();
+        } else {
+            foreach ($service->errors()->getMessages()['error'] as $error) {
+                $service->addError($error);
+            }
+        }
 
         return redirect()->back();
     }
-
 }

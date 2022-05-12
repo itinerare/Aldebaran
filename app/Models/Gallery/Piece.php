@@ -2,12 +2,16 @@
 
 namespace App\Models\Gallery;
 
+use App\Facades\Settings;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Feed\Feedable;
+use Spatie\Feed\FeedItem;
 
-class Piece extends Model
+class Piece extends Model implements Feedable
 {
-    use SoftDeletes;
+    use HasFactory, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -15,7 +19,7 @@ class Piece extends Model
      * @var array
      */
     protected $fillable = [
-        'name', 'project_id', 'description', 'timestamp', 'is_visible', 'good_example'
+        'name', 'project_id', 'description', 'timestamp', 'is_visible', 'good_example',
     ];
 
     /**
@@ -26,11 +30,13 @@ class Piece extends Model
     protected $table = 'pieces';
 
     /**
-     * Dates on the model to convert to Carbon instances.
+     * The attributes that should be cast.
      *
      * @var array
      */
-    public $dates = ['timestamp'];
+    protected $casts = [
+        'timestamp' => 'datetime',
+    ];
 
     /**
      * Whether the model contains timestamps to be saved and updated.
@@ -59,7 +65,7 @@ class Piece extends Model
      */
     public function project()
     {
-        return $this->belongsTo('App\Models\Gallery\Project', 'project_id');
+        return $this->belongsTo(Project::class, 'project_id');
     }
 
     /**
@@ -67,7 +73,7 @@ class Piece extends Model
      */
     public function images()
     {
-        return $this->hasMany('App\Models\Gallery\PieceImage', 'piece_id')->orderBy('is_primary_image', 'DESC')->orderBy('sort', 'DESC');
+        return $this->hasMany(PieceImage::class, 'piece_id')->orderBy('is_primary_image', 'DESC')->orderBy('sort', 'DESC');
     }
 
     /**
@@ -75,7 +81,7 @@ class Piece extends Model
      */
     public function primaryImages()
     {
-        return $this->hasMany('App\Models\Gallery\PieceImage', 'piece_id')->where('is_primary_image', 1)->orderBy('sort', 'DESC');
+        return $this->hasMany(PieceImage::class, 'piece_id')->where('is_primary_image', 1)->orderBy('sort', 'DESC');
     }
 
     /**
@@ -83,7 +89,7 @@ class Piece extends Model
      */
     public function otherImages()
     {
-        return $this->hasMany('App\Models\Gallery\PieceImage', 'piece_id')->where('is_primary_image', 0)->orderBy('sort', 'DESC');
+        return $this->hasMany(PieceImage::class, 'piece_id')->where('is_primary_image', 0)->orderBy('sort', 'DESC');
     }
 
     /**
@@ -91,7 +97,7 @@ class Piece extends Model
      */
     public function tags()
     {
-        return $this->hasMany('App\Models\Gallery\PieceTag', 'piece_id');
+        return $this->hasMany(PieceTag::class, 'piece_id');
     }
 
     /**
@@ -99,7 +105,7 @@ class Piece extends Model
      */
     public function programs()
     {
-        return $this->hasMany('App\Models\Gallery\PieceProgram', 'piece_id');
+        return $this->hasMany(PieceProgram::class, 'piece_id');
     }
 
     /**********************************************************************************************
@@ -114,31 +120,39 @@ class Piece extends Model
      * Even with auth, pieces without an image are still hidden
      * as they will not display properly.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param mixed|null                            $user
+     *
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeVisible($query, $user = null)
     {
-        if($user) return $query->whereIn('id', PieceImage::visible()->pluck('piece_id')->toArray());
-        else return $query->where('is_visible', 1)->whereIn('id', PieceImage::visible($user ? $user : null)->pluck('piece_id')->toArray());
+        if ($user) {
+            return $query->whereIn('id', PieceImage::visible()->pluck('piece_id')->toArray());
+        } else {
+            return $query->where('is_visible', 1)->whereIn('id', PieceImage::visible($user ? $user : null)->pluck('piece_id')->toArray());
+        }
     }
 
     /**
      * Scope a query to only include pieces which should be included in the gallery.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     *
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeGallery($query)
     {
         $hiddenTags = Tag::where('is_active', 0)->pluck('id')->toArray();
+
         return $query->whereNotIn('id', PieceTag::whereIn('tag_id', $hiddenTags)->pluck('piece_id')->toArray());
     }
 
     /**
      * Scope a query to sort pieces by timestamp if set, and otherwise by created_at.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     *
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeSort($query)
@@ -159,7 +173,19 @@ class Piece extends Model
      */
     public function getUrlAttribute()
     {
-        return url('/gallery/pieces/'.$this->id.'.'.str_replace(' ', '-', str_replace('?', '', $this->name)));
+        return url('/gallery/pieces/'.$this->id.'.'.$this->slug);
+    }
+
+    /**
+     * Get the piece's slug.
+     *
+     * @return string
+     */
+    public function getSlugAttribute()
+    {
+        $string = str_replace(' ', '-', $this->name);
+
+        return preg_replace('/[^A-Za-z0-9\-]/', '', $string);
     }
 
     /**
@@ -179,8 +205,11 @@ class Piece extends Model
      */
     public function getThumbnailUrlAttribute()
     {
-        if($this->images->where('is_visible', 1)->count() == 0) return null;
-        return ($this->primaryImages->where('is_visible', 1)->count() ? $this->primaryImages->where('is_visible', 1)->random()->thumbnailUrl : $this->images->where('is_visible', 1)->first()->thumbnailUrl);
+        if ($this->images->where('is_visible', 1)->count() == 0) {
+            return null;
+        }
+
+        return $this->primaryImages->where('is_visible', 1)->count() ? $this->primaryImages->where('is_visible', 1)->random()->thumbnailUrl : $this->images->where('is_visible', 1)->first()->thumbnailUrl;
     }
 
     /**
@@ -191,8 +220,54 @@ class Piece extends Model
     public function getShowInGalleryAttribute()
     {
         // Check if the piece should be included in the gallery or not
-        if($this->tags->whereIn('tag_id', Tag::where('is_active', 0)->pluck('id')->toArray())->first()) return 0;
-        else return 1;
+        if ($this->tags->whereIn('tag_id', Tag::where('is_active', 0)->pluck('id')->toArray())->first()) {
+            return 0;
+        } else {
+            return 1;
+        }
     }
 
+    /**********************************************************************************************
+
+        OTHER FUNCTIONS
+
+    **********************************************************************************************/
+
+    /**
+     * Returns all feed items.
+     *
+     * @param mixed      $gallery
+     * @param mixed|null $project
+     */
+    public static function getFeedItems($gallery = true, $project = null)
+    {
+        $pieces = self::visible();
+        if ($gallery) {
+            return $pieces->gallery()->get();
+        } elseif (isset($project) && $project) {
+            return $pieces->where('project_id', $project)->get();
+        }
+
+        return $pieces->get();
+    }
+
+    /**
+     * Generates feed item information.
+     *
+     * @return /Spatie/Feed/FeedItem;
+     */
+    public function toFeedItem(): FeedItem
+    {
+        $summary = '<a href="'.$this->url.'"><img src="'.$this->thumbnailUrl.'"/></a><br/>This piece contains '.$this->images->count().' image'.($this->images->count() > 1 ? 's' : '').'. Click the thumbnail to view in full.<hr/>'.
+        $this->description;
+
+        return FeedItem::create([
+            'id'      => '/gallery/pieces/'.$this->id,
+            'title'   => $this->name,
+            'summary' => $summary,
+            'updated' => isset($this->timestamp) ? $this->timestamp : $this->created_at,
+            'link'    => $this->url,
+            'author'  => Settings::get('site_name'),
+        ]);
+    }
 }

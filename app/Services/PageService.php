@@ -1,10 +1,8 @@
-<?php namespace App\Services;
+<?php
 
-use App\Services\Service;
+namespace App\Services;
 
-use DB;
-
-use App\Models\TextPage;
+use Illuminate\Support\Facades\DB;
 
 class PageService extends Service
 {
@@ -22,10 +20,11 @@ class PageService extends Service
     /**
      * Updates a text page.
      *
-     * @param  \App\Models\TextPage   $page
-     * @param  array                  $data
-     * @param  \App\Models\User\User  $user
-     * @return bool|\App\Models\TextPage
+     * @param \App\Models\TextPage  $page
+     * @param array                 $data
+     * @param \App\Models\User\User $user
+     *
+     * @return \App\Models\TextPage|bool
      */
     public function updatePage($page, $data, $user)
     {
@@ -35,10 +34,10 @@ class PageService extends Service
             $page->update($data);
 
             return $this->commitReturn($page);
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             $this->setError('error', $e->getMessage());
         }
+
         return $this->rollbackReturn(false);
     }
-
 }

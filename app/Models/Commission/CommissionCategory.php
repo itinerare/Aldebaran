@@ -2,17 +2,20 @@
 
 namespace App\Models\Commission;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class CommissionCategory extends Model
 {
+    use HasFactory;
+
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
     protected $fillable = [
-        'name', 'type', 'is_active', 'sort'
+        'name', 'is_active', 'sort', 'class_id', 'data',
     ];
 
     /**
@@ -21,6 +24,15 @@ class CommissionCategory extends Model
      * @var string
      */
     protected $table = 'commission_categories';
+
+    /**
+     * The attributes that should be casted to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'data' => 'array',
+    ];
 
     /**
      * Whether the model contains timestamps to be saved and updated.
@@ -36,7 +48,8 @@ class CommissionCategory extends Model
      */
     public static $createRules = [
         //
-        'name' => 'required|unique:commission_categories'
+        'name'     => 'required|unique:commission_categories',
+        'class_id' => 'required',
     ];
 
     /**
@@ -46,7 +59,15 @@ class CommissionCategory extends Model
      */
     public static $updateRules = [
         //
-        'name' => 'required'
+        'name'            => 'required',
+        'class_id'        => 'required',
+        'field_key.*'     => 'nullable|between:3,25|alpha_dash',
+        'field_type.*'    => 'nullable|required_with:field_key.*',
+        'field_label.*'   => 'nullable|string|required_with:field_key.*',
+        'field_choices.*' => 'nullable|string|required_if:field_type.*,choice,multiple',
+        'field_rules.*'   => 'nullable|string|max:255',
+        'field_value.*'   => 'nullable|string|max:255',
+        'field_help.*'    => 'nullable|string|max:255',
     ];
 
     /**********************************************************************************************
@@ -56,11 +77,19 @@ class CommissionCategory extends Model
     **********************************************************************************************/
 
     /**
+     * Get the class this commission category belongs to.
+     */
+    public function class()
+    {
+        return $this->belongsTo(CommissionClass::class, 'class_id');
+    }
+
+    /**
      * Get the types associated with this commission category.
      */
     public function types()
     {
-        return $this->hasMany('App\Models\Commission\CommissionType', 'category_id')->orderBy('sort', 'DESC');
+        return $this->hasMany(CommissionType::class, 'category_id')->orderBy('sort', 'DESC');
     }
 
     /**********************************************************************************************
@@ -72,7 +101,8 @@ class CommissionCategory extends Model
     /**
      * Scope a query to only include active commission categories.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     *
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeActive($query)
@@ -81,16 +111,16 @@ class CommissionCategory extends Model
     }
 
     /**
-     * Scope a query to only include commission categories of a given type.
+     * Scope a query to only include commission categories of a given class.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  string                                 $type
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param mixed                                 $class
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeType($query, $type)
+    public function scopeByClass($query, $class)
     {
-        return $query->where('type', $type);
+        return $query->where('class_id', $class);
     }
 
     /**********************************************************************************************
@@ -106,7 +136,6 @@ class CommissionCategory extends Model
      */
     public function getFullNameAttribute()
     {
-        return ucfirst($this->type).' ・ '.$this->name;
+        return ucfirst($this->class->name).' ・ '.$this->name;
     }
-
 }

@@ -9,7 +9,7 @@
     <h1>Gallery</h1>
 </div>
 
-{!! $page->text !!}
+{!! $page ? $page->text : '' !!}
 
 <div>
     {!! Form::open(['method' => 'GET', 'class' => '']) !!}
@@ -44,7 +44,7 @@
 @if($pieces->count())
     {!! $pieces->render() !!}
 
-    @include('gallery._flex_'.Config::get('itinerare.settings.gallery_arrangement'), ['pieces' => $pieces])
+    @include('gallery._flex_'.config('aldebaran.settings.gallery_arrangement'), ['pieces' => $pieces])
 
     {!! $pieces->render() !!}
 @else

@@ -2,17 +2,20 @@
 
 namespace App\Models\Gallery;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class PieceTag extends Model
 {
+    use HasFactory;
+
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
     protected $fillable = [
-        'piece_id', 'tag_id'
+        'piece_id', 'tag_id',
     ];
 
     /**
@@ -49,7 +52,7 @@ class PieceTag extends Model
      */
     public function tag()
     {
-        return $this->belongsTo('App\Models\Gallery\Tag', 'tag_id');
+        return $this->belongsTo(Tag::class, 'tag_id');
     }
 
     /**********************************************************************************************
@@ -61,7 +64,8 @@ class PieceTag extends Model
     /**
      * Scope a query to only include visible tags.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     *
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeVisible($query)

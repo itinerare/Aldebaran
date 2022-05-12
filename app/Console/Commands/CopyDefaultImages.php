@@ -2,7 +2,6 @@
 
 namespace App\Console\Commands;
 
-use Config;
 use Illuminate\Console\Command;
 
 class CopyDefaultImages extends Command
@@ -23,8 +22,6 @@ class CopyDefaultImages extends Command
 
     /**
      * Create a new command instance.
-     *
-     * @return void
      */
     public function __construct()
     {
@@ -43,15 +40,14 @@ class CopyDefaultImages extends Command
         $this->info('* COPY DEFAULT IMAGES *');
         $this->info('***********************'."\n");
 
-        $images = Config::get('itinerare.image_files');
+        $images = config('aldebaran.image_files');
 
-        $sourceDir = base_path() . '/data/assets/';
-        $destDir = public_path() . '/images/assets/';
+        $sourceDir = base_path().'/data/assets/';
+        $destDir = public_path().'/images/assets/';
 
-        foreach($images as $image)
-        {
-            $this->line("Copying image: ".$image['filename'] . "\n");
-            copy($sourceDir . $image['filename'], $destDir . $image['filename']);
+        foreach ($images as $image) {
+            $this->line('Copying image: '.$image['filename']."\n");
+            copy($sourceDir.$image['filename'], $destDir.$image['filename']);
         }
         $this->line('Done!');
     }

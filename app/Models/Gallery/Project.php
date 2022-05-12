@@ -2,17 +2,20 @@
 
 namespace App\Models\Gallery;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Project extends Model
 {
+    use HasFactory;
+
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
     protected $fillable = [
-        'name', 'description', 'is_visible', 'sort'
+        'name', 'description', 'is_visible', 'sort',
     ];
 
     /**
@@ -36,7 +39,7 @@ class Project extends Model
      */
     public static $createRules = [
         //
-        'name' => 'required|unique:projects'
+        'name' => 'required|unique:projects',
     ];
 
     /**
@@ -46,7 +49,7 @@ class Project extends Model
      */
     public static $updateRules = [
         //
-        'name' => 'required'
+        'name' => 'required',
     ];
 
     /**********************************************************************************************
@@ -58,7 +61,8 @@ class Project extends Model
     /**
      * Scope a query to only include visible projects.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     *
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeVisible($query)
@@ -66,9 +70,9 @@ class Project extends Model
         return $query->where('is_visible', 1);
     }
 
-     /**********************************************************************************************
+    /**********************************************************************************************
 
-        ACCESSORS
+       ACCESSORS
 
     **********************************************************************************************/
 
@@ -101,5 +105,4 @@ class Project extends Model
     {
         return '<a href="'.$this->url.'">'.$this->name.'</a>';
     }
-
 }

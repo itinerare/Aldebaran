@@ -3,13 +3,13 @@
 @section ('title') {{ $type->name }} Examples @endsection
 
 @section('content')
-{!! breadcrumbs([$type->category->type.' Commissions' => 'commissions/'.$type->category->type, 'Example Gallery: '.$type->name => 'types/'.$type->id.'/gallery']) !!}
+{!! breadcrumbs([$type->category->class->name.' Commissions' => 'commissions/'.$type->category->class->slug, 'Example Gallery: '.$type->name => 'types/'.$type->id.'/gallery']) !!}
 
 <div class="borderhr mb-4">
     <h1>
         Example Gallery: {{ $type->name }}
         <div class="float-right ml-2">
-            <a class="btn btn-secondary" href="{{ url(isset($source) && $source == 'key' ? 'commissions/types/'.$type->key : 'commissions/'.$type->category->type) }}">Back to Commission Info</a>
+            <a class="btn btn-secondary" href="{{ url(isset($source) && $source == 'key' ? 'commissions/types/'.$type->key : 'commissions/'.$type->category->class->slug) }}">Back to Commission Info</a>
         </div>
     </h1>
 </div>
@@ -46,7 +46,7 @@
 @if($pieces->count())
     {!! $pieces->render() !!}
 
-    @include('gallery._flex_'.Config::get('itinerare.settings.gallery_arrangement'), ['pieces' => $pieces, 'source' => 'commissions/types/'.(isset($source) && $source == 'key' ? $type->key : $type->id).'/gallery'])
+    @include('gallery._flex_'.config('aldebaran.settings.gallery_arrangement'), ['pieces' => $pieces, 'source' => 'commissions/types/'.(isset($source) && $source == 'key' ? $type->key : $type->id).'/gallery'])
 
     {!! $pieces->render() !!}
 @else

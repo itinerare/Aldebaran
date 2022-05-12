@@ -64,7 +64,7 @@
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
-    <link href="{{ asset('css/itinerare.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/aldebaran.css') }}" rel="stylesheet">
 
     @if(file_exists(public_path(). '/css/custom.css'))
         <link href="{{ asset('css/custom.css') }}" rel="stylesheet">
@@ -86,6 +86,8 @@
     <link href="{{ asset('css/selectize.bootstrap4.css') }}" rel="stylesheet">
 
     {!! RecaptchaV3::initJs() !!}
+
+    @include('feed::links')
 </head>
 <body>
     <div id="app">
@@ -94,12 +96,14 @@
         <main class="container-fluid">
             <div class="row">
 
-                <div class="sidebar col-lg-2" id="sidebar">
-                    @if(View::hasSection('sidebar'))
-                        @yield('sidebar')
-                    @endif
-                </div>
-                <div class="main-content col-lg-8 p-4">
+                @if(!config('aldebaran.settings.layout.full_width') || View::hasSection('sidebar'))
+                    <div class="sidebar col-lg-2" id="sidebar">
+                        @if(View::hasSection('sidebar'))
+                            @yield('sidebar')
+                        @endif
+                    </div>
+                @endif
+                <div class="main-content {{ config('aldebaran.settings.layout.full_width') ? (View::hasSection('sidebar') ? 'col-lg-10' : 'col-lg-12') : 'col-lg-8' }} p-4">
                     <div>
                         @include('flash::message')
                         @yield('content')
@@ -139,15 +143,14 @@
                     convert_urls: false,
                     plugins: [
                         'advlist autolink lists link image charmap print preview anchor',
-                        'searchreplace visualblocks code fullscreen spoiler',
+                        'searchreplace visualblocks code fullscreen',
                         'insertdatetime media table paste code help wordcount'
                     ],
-                    toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | spoiler-add spoiler-remove | removeformat | code',
+                    toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | removeformat | code',
                     content_css: [
                         '{{ asset('css/app.css') }}',
-                        '{{ asset('css/itinerare.css') }}'
+                        '{{ asset('css/aldebaran.css') }}'
                     ],
-                    spoiler_caption: 'Toggle Spoiler',
                     target_list: false
                 });
                 var $mobileMenuButton = $('#mobileMenuButton');
@@ -156,17 +159,7 @@
                     e.preventDefault();
                     $sidebar.toggleClass('active');
                 });
-
-                $('.inventory-log-stack').on('click', function(e) {
-                    e.preventDefault();
-                    loadModal("{{ url('items') }}/" + $(this).data('id') + "?read_only=1", $(this).data('name'));
-                });
-
-                $('.spoiler-text').hide();
-                    $('.spoiler-toggle').click(function(){
-                        $(this).next().toggle();
-                    });
-                });
+            });
         </script>
     </div>
 </body>

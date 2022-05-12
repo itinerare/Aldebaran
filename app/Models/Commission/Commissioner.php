@@ -2,17 +2,20 @@
 
 namespace App\Models\Commission;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Commissioner extends Model
 {
+    use HasFactory;
+
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'contact', 'paypal', 'is_banned'
+        'name', 'email', 'contact', 'paypal', 'is_banned',
     ];
 
     /**
@@ -50,7 +53,7 @@ class Commissioner extends Model
      */
     public function ips()
     {
-        return $this->hasMany('App\Models\Commission\CommissionerIp', 'commissioner_id');
+        return $this->hasMany(CommissionerIp::class, 'commissioner_id');
     }
 
     /**
@@ -58,7 +61,7 @@ class Commissioner extends Model
      */
     public function commissions()
     {
-        return $this->hasMany('App\Models\Commission\Commission', 'commissioner_id');
+        return $this->hasMany(Commission::class, 'commissioner_id');
     }
 
     /**********************************************************************************************
@@ -75,9 +78,11 @@ class Commissioner extends Model
      */
     public function getNameAttribute()
     {
-        if(isset($this->attributes['name'])) return $this->attributes['name'];
-        else {
+        if (isset($this->attributes['name'])) {
+            return $this->attributes['name'];
+        } else {
             list($address, $domain) = explode('@', $this->email);
+
             return $address;
         }
     }
@@ -90,8 +95,11 @@ class Commissioner extends Model
      */
     public function getFullNameAttribute()
     {
-        if(isset($this->attributes['name'])) return $this->attributes['name'].' - '.$this->email;
-        else return $this->email;
+        if (isset($this->attributes['name'])) {
+            return $this->attributes['name'].' - '.$this->email;
+        } else {
+            return $this->email;
+        }
     }
 
     /**
@@ -101,7 +109,10 @@ class Commissioner extends Model
      */
     public function getDisplayNameAttribute()
     {
-        if($this->is_banned) return '<s>'.$this->name.'</s>';
-        else return $this->name;
+        if ($this->is_banned) {
+            return '<s>'.$this->name.'</s>';
+        } else {
+            return $this->name;
+        }
     }
 }

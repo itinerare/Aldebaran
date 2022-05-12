@@ -2,17 +2,23 @@
 
 namespace App\Models;
 
+use App\Facades\Settings;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Feed\Feedable;
+use Spatie\Feed\FeedItem;
 
-class Changelog extends Model
+class Changelog extends Model implements Feedable
 {
+    use HasFactory;
+
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
     protected $fillable = [
-        'name', 'text', 'is_visible'
+        'name', 'text', 'is_visible',
     ];
 
     /**
@@ -36,7 +42,7 @@ class Changelog extends Model
      */
     public static $createRules = [
         //
-        'text' => 'required'
+        'text' => 'required',
     ];
 
     /**
@@ -46,7 +52,7 @@ class Changelog extends Model
      */
     public static $updateRules = [
         //
-        'text' => 'required'
+        'text' => 'required',
     ];
 
     /**********************************************************************************************
@@ -58,11 +64,43 @@ class Changelog extends Model
     /**
      * Scope a query to only include visible entries.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     *
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeVisible($query)
     {
         return $query->where('is_visible', 1);
+    }
+
+    /**********************************************************************************************
+
+        OTHER FUNCTIONS
+
+    **********************************************************************************************/
+
+    /**
+     * Returns all feed items.
+     */
+    public static function getFeedItems()
+    {
+        return self::visible()->get();
+    }
+
+    /**
+     * Generates feed item information.
+     *
+     * @return /Spatie/Feed/FeedItem;
+     */
+    public function toFeedItem(): FeedItem
+    {
+        return FeedItem::create([
+            'id'      => '/changelog/'.$this->id,
+            'title'   => $this->name ? $this->name : $this->created_at->toFormattedDateString(),
+            'summary' => $this->text,
+            'updated' => $this->created_at,
+            'link'    => '/changelog',
+            'author'  => Settings::get('site_name'),
+        ]);
     }
 }

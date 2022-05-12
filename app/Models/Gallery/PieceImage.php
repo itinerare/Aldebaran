@@ -2,10 +2,13 @@
 
 namespace App\Models\Gallery;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class PieceImage extends Model
 {
+    use HasFactory;
+
     /**
      * The attributes that are mass assignable.
      *
@@ -13,7 +16,7 @@ class PieceImage extends Model
      */
     protected $fillable = [
         'piece_id', 'hash', 'fullsize_hash', 'extension', 'description',
-        'is_primary_image', 'data', 'is_visible', 'sort'
+        'is_primary_image', 'data', 'is_visible', 'sort',
     ];
 
     /**
@@ -22,6 +25,15 @@ class PieceImage extends Model
      * @var string
      */
     protected $table = 'piece_images';
+
+    /**
+     * The attributes that should be casted to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'data' => 'array',
+    ];
 
     /**
      * Whether the model contains timestamps to be saved and updated.
@@ -37,13 +49,13 @@ class PieceImage extends Model
      */
     public static $createRules = [
         //
-        'image' => 'required|mimes:png,jpg,jpeg,gif|max:5000',
-        'watermark_scale' => 'required',
-        'watermark_opacity' => 'required',
+        'image'              => 'required|mimes:png,jpg,jpeg,gif|max:5000',
+        'watermark_scale'    => 'required',
+        'watermark_opacity'  => 'required',
         'watermark_position' => 'required',
-        'watermark_color' => 'nullable|regex:/^#?[0-9a-fA-F]{6}$/i',
-        'text_opacity' => 'required_with:text_watermark',
-        'description' => 'max:255'
+        'watermark_color'    => 'nullable|regex:/^#?[0-9a-fA-F]{6}$/i',
+        'text_opacity'       => 'required_with:text_watermark',
+        'description'        => 'max:255',
     ];
 
     /**
@@ -53,13 +65,13 @@ class PieceImage extends Model
      */
     public static $updateRules = [
         //
-        'image' => 'mimes:png,jpg,jpeg,gif|max:5000',
-        'watermark_scale' => 'required_with:image,regenerate_watermark',
-        'watermark_opacity' => 'required_with:image,regenerate_watermark',
+        'image'              => 'mimes:png,jpg,jpeg,gif|max:5000',
+        'watermark_scale'    => 'required_with:image,regenerate_watermark',
+        'watermark_opacity'  => 'required_with:image,regenerate_watermark',
         'watermark_position' => 'required_with:image,regenerate_watermark',
-        'watermark_color' => 'nullable|regex:/^#?[0-9a-fA-F]{6}$/i',
-        'text_opacity' => 'required_with:text_watermark',
-        'description' => 'max:255'
+        'watermark_color'    => 'nullable|regex:/^#?[0-9a-fA-F]{6}$/i',
+        'text_opacity'       => 'required_with:text_watermark',
+        'description'        => 'max:255',
     ];
 
     /**********************************************************************************************
@@ -73,7 +85,7 @@ class PieceImage extends Model
      */
     public function piece()
     {
-        return $this->belongsTo('App\Models\Gallery\Piece', 'piece_id');
+        return $this->belongsTo(Piece::class, 'piece_id');
     }
 
     /**********************************************************************************************
@@ -85,13 +97,18 @@ class PieceImage extends Model
     /**
      * Scope a query to only include visible images.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param mixed|null                            $user
+     *
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeVisible($query, $user = null)
     {
-        if($user) return $query;
-        else return $query->where('is_visible', 1);
+        if ($user) {
+            return $query;
+        } else {
+            return $query->where('is_visible', 1);
+        }
     }
 
     /**********************************************************************************************
@@ -117,7 +134,7 @@ class PieceImage extends Model
      */
     public function getImageFileNameAttribute()
     {
-        return $this->id . '_'.$this->hash.'.'.$this->extension;
+        return $this->id.'_'.$this->hash.'.'.$this->extension;
     }
 
     /**
@@ -137,7 +154,7 @@ class PieceImage extends Model
      */
     public function getImageUrlAttribute()
     {
-        return asset($this->imageDirectory . '/' . $this->imageFileName);
+        return asset($this->imageDirectory.'/'.$this->imageFileName);
     }
 
     /**
@@ -147,7 +164,7 @@ class PieceImage extends Model
      */
     public function getThumbnailFileNameAttribute()
     {
-        return $this->id . '_'.$this->hash.'_th.'.$this->extension;
+        return $this->id.'_'.$this->hash.'_th.'.$this->extension;
     }
 
     /**
@@ -167,7 +184,7 @@ class PieceImage extends Model
      */
     public function getThumbnailUrlAttribute()
     {
-        return asset($this->imageDirectory . '/' . $this->thumbnailFileName);
+        return asset($this->imageDirectory.'/'.$this->thumbnailFileName);
     }
 
     /**
@@ -177,7 +194,7 @@ class PieceImage extends Model
      */
     public function getFullsizeFileNameAttribute()
     {
-        return $this->id . '_'.$this->fullsize_hash.'_full.'.$this->extension;
+        return $this->id.'_'.$this->fullsize_hash.'_full.'.$this->extension;
     }
 
     /**
@@ -187,17 +204,6 @@ class PieceImage extends Model
      */
     public function getFullsizeUrlAttribute()
     {
-        return asset($this->imageDirectory . '/' . $this->fullsizeFileName);
+        return asset($this->imageDirectory.'/'.$this->fullsizeFileName);
     }
-
-    /**
-     * Get the data attribute as an associative array.
-     *
-     * @return array
-     */
-    public function getDataAttribute()
-    {
-        return json_decode($this->attributes['data'], true);
-    }
-
 }
