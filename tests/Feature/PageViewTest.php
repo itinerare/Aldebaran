@@ -54,6 +54,8 @@ class PageViewTest extends TestCase
             'privacy policy, not set up, user'    => ['privacy', 0, 1, 404],
             'privacy policy, set up, visitor'     => ['privacy', 1, 0, 200],
             'privacy policy, set up, user'        => ['privacy', 1, 1, 200],
+            'non-page blurb, visitor'             => ['new_commission', 1, 0, 404],
+            'non-page blurb, user'                => ['new_commission', 1, 1, 404],
             'invalid page, visitor'               => ['invalid', 1, 0, 404],
             'invalid page, user'                  => ['invalid', 1, 1, 404],
         ];
