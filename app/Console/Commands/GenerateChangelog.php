@@ -11,7 +11,7 @@ class GenerateChangelog extends Command
      *
      * @var string
      */
-    protected $signature = 'generate-changelog {--first-release} {--to-date} {--from-tag} {--to-tag} {--major} {--minor} {--patch} {--rc} {--beta} {--alpha} {--ver} {--history} {--no-verify} {--no-tag}';
+    protected $signature = 'generate-changelog {--first-release} {--to-date} {--from-tag} {--to-tag} {--major} {--minor} {--patch} {--rc} {--beta} {--alpha} {--ver=} {--history} {--no-verify} {--no-tag}';
 
     /**
      * The console command description.
