@@ -4,6 +4,17 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [2.1.0](https://github.com/itinerare/Aldebaran/compare/v2.0.0...v2.1.0) (2022-05-12)
+### Features
+
+
+##### Tests
+
+* Add non-page blurb to page view tests ([31ea44](https://github.com/itinerare/Aldebaran/commit/31ea44bb0e1d9b12769cb782b5ce6ce5eea07279))
+
+
+---
+
 ## [2.0.0](https://github.com/itinerare/Aldebaran/compare/6a60caf6d49342946d8b6b7595266d8edf711dda...v2.0.0) (2022-05-12)
 ### ⚠ BREAKING CHANGES
 
