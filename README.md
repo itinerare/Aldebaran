@@ -33,7 +33,8 @@ Note that use of commission components in a use that generates or contributes to
 - Commissioner-only view per commission (accessible via a URL with a randomly generated key) that lists form responses, any pieces attached to the commission, and any comments from the artist/site operator
 - Admin-only ledger view which lists payments recorded per year, for the year in which they were paid, with link to the relevant commission
 
-## Other functions
+### Other functions
+- Two-factor authentication for the sole/admin account
 - Various pages' text around the site are configurable via the admin panel
 - A changelog updatable via the admin panel
 - RSS feeds for the gallery and changelog entries
@@ -42,7 +43,7 @@ Note that use of commission components in a use that generates or contributes to
 
 ## Setup
 
-For those not familiar with web development, a full guide will be forthcoming in the near future.
+For those not familiar with web development, please refer to the [Full Guide](https://github.com/itinerare/Aldebaran/wiki/Setup-Guide) for a much more detailed set of instructions!
 
 ### Obtain a copy of the code
 
@@ -81,6 +82,12 @@ Perform general site setup:
 ```
 $ php artisan setup-aldebaran
 ```
+
+## Contributing
+Thank you for considering contributing to Aldebaran! Please see the [Contribution Guide](CONTRIBUTING.md) for information on how best to contribute.
+
+### Extending Aldebaran
+If you are interested in providing optional/plugin-type functionality for Aldebaran, please contact me first and foremost; while I am open to developing plugin support and would rather do so before any are made, I will not be doing so until there is concrete interest in it.
 
 ## Contact
 If you have any questions, please contact me via email at [aldebaran@itinerare.net](emailto:aldebaran@itinerare.net).
