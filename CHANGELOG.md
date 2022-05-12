@@ -4,6 +4,10 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [2.1.1](https://github.com/itinerare/Aldebaran/compare/v2.1.0...v2.1.1) (2022-05-12)
+
+---
+
 ## [2.1.0](https://github.com/itinerare/Aldebaran/compare/v2.0.0...v2.1.0) (2022-05-12)
 ### Features
 

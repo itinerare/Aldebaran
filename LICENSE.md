@@ -4,7 +4,7 @@ This project is licensed under [the PolyForm Noncommercial License](LICENSE-POLY
 
 For commercial use, either:
 - (For individuals/one-developer companies) sponsor me via one of the platforms listed on [Patron License](LICENSE-PATRON.md) under the appropriate tier to acquire one. 
-- (For larger companies) [Contact me](mailto:queries@itinerare.net?subject=Aldebaran%20Errabunda%20license) to discuss!
+- (For larger companies) [Contact me](mailto:aldebaran@itinerare.net?subject=License) to discuss!
 
 This funding model helps me make my work sustainable! It compensates me for the work it took to write the project as well as for any continued maintenance, new features, etc. that I choose to write!
 
