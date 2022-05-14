@@ -2,7 +2,7 @@
     "name": "itinerare/aldebaran",
     "type": "project",
     "description": "A personal gallery and commission site framework.",
-    "license": "closed",
+    "license": "Polyform-Noncommercial-1.0",
     "require": {
         "php": "^8.1",
         "spatie/flysystem-dropbox": "^2.0.6",
