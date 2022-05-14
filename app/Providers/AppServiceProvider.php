@@ -34,7 +34,7 @@ class AppServiceProvider extends ServiceProvider
 
         Storage::extend('dropbox', function ($app, $config) {
             $adapter = new DropboxAdapter(new DropboxClient(
-                $config['authorization_token']
+                $config['token']
             ));
 
             return new FilesystemAdapter(
