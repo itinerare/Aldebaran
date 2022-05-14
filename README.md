@@ -40,6 +40,7 @@ Note that use of commission components in a use that generates or contributes to
 - RSS feeds for the gallery and changelog entries
 - Admin panel for editing site settings, including commission-related settings
 - Admin panel for uploading images used in the site's layout as well as custom CSS
+- Optional automatic backups for server-only content
 
 ## Setup
 
