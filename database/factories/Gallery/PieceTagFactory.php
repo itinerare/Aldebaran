@@ -2,19 +2,11 @@
 
 namespace Database\Factories\Gallery;
 
-use App\Models\Gallery\PieceTag;
 use App\Models\Gallery\Tag;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class PieceTagFactory extends Factory
 {
-    /**
-     * The name of the factory's corresponding model.
-     *
-     * @var string
-     */
-    protected $model = PieceTag::class;
-
     /**
      * Define the model's default state.
      *
