@@ -262,12 +262,13 @@ class Piece extends Model implements Feedable
         $this->description;
 
         return FeedItem::create([
-            'id'      => '/gallery/pieces/'.$this->id,
-            'title'   => $this->name,
-            'summary' => $summary,
-            'updated' => $this->timestamp ?? $this->created_at,
-            'link'    => $this->url,
-            'author'  => Settings::get('site_name'),
+            'id'         => '/gallery/pieces/'.$this->id,
+            'title'      => $this->name,
+            'summary'    => $summary,
+            'updated'    => $this->timestamp ?? $this->created_at,
+            'link'       => $this->url,
+            'author'     => Settings::get('site_name'),
+            'authorName' => Settings::get('site_name'),
         ]);
     }
 }
