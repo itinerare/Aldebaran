@@ -265,7 +265,7 @@ class Piece extends Model implements Feedable
             'id'      => '/gallery/pieces/'.$this->id,
             'title'   => $this->name,
             'summary' => $summary,
-            'updated' => isset($this->timestamp) ? $this->timestamp : $this->created_at,
+            'updated' => $this->timestamp ?? $this->created_at,
             'link'    => $this->url,
             'author'  => Settings::get('site_name'),
         ]);

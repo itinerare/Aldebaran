@@ -215,7 +215,7 @@ class CommissionController extends Controller
             'type'     => $type,
             'pieces'   => $query->paginate(20)->appends($request->query()),
             'projects' => ['none' => 'Any Project'] + Project::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
-            'source'   => isset($source) ? $source : null,
+            'source'   => $source ?? null,
         ]);
     }
 

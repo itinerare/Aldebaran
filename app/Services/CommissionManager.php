@@ -167,7 +167,7 @@ class CommissionManager extends Service
             // Update the commission status and comments
             $commission->update([
                 'status'   => 'Accepted',
-                'comments' => isset($data['comments']) ? $data['comments'] : null,
+                'comments' => $data['comments'] ?? null,
             ]);
 
             // If this is the last available commission slot overall or for this type,
@@ -248,10 +248,10 @@ class CommissionManager extends Service
                     CommissionPayment::create([
                         'commission_id' => $commission->id,
                         'cost'          => $cost,
-                        'tip'           => isset($data['tip'][$key]) ? $data['tip'][$key] : null,
-                        'is_paid'       => isset($data['is_paid'][$key]) ? $data['is_paid'][$key] : 0,
-                        'is_intl'       => isset($data['is_intl'][$key]) ? $data['is_intl'][$key] : 0,
-                        'paid_at'       => isset($data['is_paid'][$key]) && $data['is_paid'][$key] ? (isset($data['paid_at'][$key]) ? $data['paid_at'][$key] : Carbon::now()) : null,
+                        'tip'           => $data['tip'][$key] ?? null,
+                        'is_paid'       => $data['is_paid'][$key] ?? 0,
+                        'is_intl'       => $data['is_intl'][$key] ?? 0,
+                        'paid_at'       => isset($data['is_paid'][$key]) && $data['is_paid'][$key] ? ($data['paid_at'][$key] ?? Carbon::now()) : null,
                     ]);
                 }
             } elseif ($commission->payments->count()) {
@@ -298,7 +298,7 @@ class CommissionManager extends Service
             $commission->update([
                 'status'   => 'Complete',
                 'progress' => 'Finished',
-                'comments' => isset($data['comments']) ? $data['comments'] : null,
+                'comments' => $data['comments'] ?? null,
             ]);
 
             return $this->commitReturn($commission);
@@ -336,7 +336,7 @@ class CommissionManager extends Service
             // Update the commission status and comments
             $commission->update([
                 'status'   => 'Declined',
-                'comments' => isset($data['comments']) ? $data['comments'] : null,
+                'comments' => $data['comments'] ?? null,
             ]);
 
             return $this->commitReturn($commission);
@@ -378,7 +378,7 @@ class CommissionManager extends Service
             // Mark the commissioner as banned,
             $commissioner->update(['is_banned' => 1]);
             // and decline all current commission requests from them
-            Commission::where('commissioner_id', $commissioner->id)->whereIn('status', ['Pending', 'Accepted'])->update(['status' => 'Declined', 'comments' => isset($data['comments']) ? $data['comments'] : '<p>Automatically declined due to ban.</p>']);
+            Commission::where('commissioner_id', $commissioner->id)->whereIn('status', ['Pending', 'Accepted'])->update(['status' => 'Declined', 'comments' => $data['comments'] ?? '<p>Automatically declined due to ban.</p>']);
 
             return $this->commitReturn($commission);
         } catch (\Exception $e) {
@@ -428,10 +428,10 @@ class CommissionManager extends Service
         // Create commissioner information
         else {
             $commissioner = Commissioner::create([
-                'name'    => isset($data['name']) ? $data['name'] : null,
+                'name'    => $data['name'] ?? null,
                 'email'   => $data['email'],
                 'contact' => strip_tags($data['contact']),
-                'paypal'  => isset($data['paypal']) ? $data['paypal'] : $data['email'],
+                'paypal'  => $data['paypal'] ?? $data['email'],
             ]);
         }
 

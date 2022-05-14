@@ -309,11 +309,11 @@ class GalleryService extends Service
                 'scale'          => $data['watermark_scale'],
                 'opacity'        => $data['watermark_opacity'],
                 'position'       => $data['watermark_position'],
-                'color'          => isset($data['watermark_color']) ? $data['watermark_color'] : null,
-                'image_scale'    => isset($data['image_scale']) ? $data['image_scale'] : null,
-                'watermarked'    => isset($data['watermark_image']) ? $data['watermark_image'] : 0,
-                'text_watermark' => isset($data['text_watermark']) ? $data['text_watermark'] : null,
-                'text_opacity'   => isset($data['text_opacity']) ? $data['text_opacity'] : null,
+                'color'          => $data['watermark_color'] ?? null,
+                'image_scale'    => $data['image_scale'] ?? null,
+                'watermarked'    => $data['watermark_image'] ?? 0,
+                'text_watermark' => $data['text_watermark'] ?? null,
+                'text_opacity'   => $data['text_opacity'] ?? null,
             ];
 
             // Record data for the image
@@ -322,9 +322,9 @@ class GalleryService extends Service
                 'hash'             => randomString(15),
                 'fullsize_hash'    => randomString(15),
                 'extension'        => $data['image']->getClientOriginalExtension(),
-                'description'      => isset($data['description']) ? $data['description'] : null,
-                'is_primary_image' => isset($data['is_primary_image']) ? $data['is_primary_image'] : 0,
-                'is_visible'       => isset($data['is_visible']) ? $data['is_visible'] : 0,
+                'description'      => $data['description'] ?? null,
+                'is_primary_image' => $data['is_primary_image'] ?? 0,
+                'is_visible'       => $data['is_visible'] ?? 0,
                 'data'             => $data['data'],
             ]);
 
@@ -363,10 +363,10 @@ class GalleryService extends Service
             }
 
             $image->update([
-                'description'      => isset($data['description']) ? $data['description'] : null,
-                'is_primary_image' => isset($data['is_primary_image']) ? $data['is_primary_image'] : 0,
-                'is_visible'       => isset($data['is_visible']) ? $data['is_visible'] : 0,
-                'data'             => isset($data['data']) ? $data['data'] : $image->data,
+                'description'      => $data['description'] ?? null,
+                'is_primary_image' => $data['is_primary_image'] ?? 0,
+                'is_visible'       => $data['is_visible'] ?? 0,
+                'data'             => $data['data'] ?? $image->data,
             ]);
 
             return $this->commitReturn($image);
@@ -870,7 +870,7 @@ class GalleryService extends Service
             // Colorize the watermark if called for
             if (isset($data['watermark_color'])) {
                 // Convert hex code to RGB
-                list($r, $g, $b) = sscanf($data['watermark_color'], '#%02x%02x%02x');
+                [$r, $g, $b] = sscanf($data['watermark_color'], '#%02x%02x%02x');
                 $r = round($r / (255 / 100));
                 $g = round($g / (255 / 100));
                 $b = round($b / (255 / 100));
@@ -898,11 +898,11 @@ class GalleryService extends Service
                 'scale'          => $data['watermark_scale'],
                 'opacity'        => $data['watermark_opacity'],
                 'position'       => $data['watermark_position'],
-                'color'          => isset($data['watermark_color']) ? $data['watermark_color'] : null,
-                'image_scale'    => isset($data['image_scale']) ? $data['image_scale'] : null,
-                'watermarked'    => isset($data['watermark_image']) ? $data['watermark_image'] : 0,
-                'text_watermark' => isset($data['text_watermark']) ? $data['text_watermark'] : null,
-                'text_opacity'   => isset($data['text_opacity']) ? $data['text_opacity'] : null,
+                'color'          => $data['watermark_color'] ?? null,
+                'image_scale'    => $data['image_scale'] ?? null,
+                'watermarked'    => $data['watermark_image'] ?? 0,
+                'text_watermark' => $data['text_watermark'] ?? null,
+                'text_opacity'   => $data['text_opacity'] ?? null,
             ];
             $image->update(['data' => $data['data']]);
         }
