@@ -212,10 +212,10 @@ class DataGalleryPieceTest extends TestCase
 
         if ($hasData) {
             if (!$tag) {
-                $this->assertDeleted($this->tag);
+                $this->assertModelMissing($this->tag);
             }
             if (!$program) {
-                $this->assertDeleted($this->program);
+                $this->assertModelMissing($this->program);
             }
         } else {
             if ($tag) {

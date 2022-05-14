@@ -188,7 +188,7 @@ class DataGalleryProgramTest extends TestCase
 
         if ($expected) {
             $response->assertSessionHasNoErrors();
-            $this->assertDeleted($this->program);
+            $this->assertModelMissing($this->program);
         } else {
             $response->assertSessionHasErrors();
             $this->assertModelExists($this->program);

@@ -303,6 +303,6 @@ class DataCommissionTypeTest extends TestCase
             ->post('/admin/data/commission-types/delete/'.$this->type->id);
 
         $response->assertSessionHasNoErrors();
-        $this->assertDeleted($this->type);
+        $this->assertModelMissing($this->type);
     }
 }

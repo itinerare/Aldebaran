@@ -166,7 +166,7 @@ class DataCommissionClassTest extends TestCase
             if (!$hasPage) {
                 // If an existing page should be removed,
                 // check that it is
-                $this->assertDeleted($this->page);
+                $this->assertModelMissing($this->page);
             } elseif ($hasPage) {
                 // Else check that it has been preserved
                 $this->assertModelExists($this->page);
@@ -232,7 +232,7 @@ class DataCommissionClassTest extends TestCase
 
         if ($expected) {
             $response->assertSessionHasNoErrors();
-            $this->assertDeleted($this->class);
+            $this->assertModelMissing($this->class);
 
             // Verify that default commission class text pages are deleted
             foreach (['tos', 'info'] as $page) {
