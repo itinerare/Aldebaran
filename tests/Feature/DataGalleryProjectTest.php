@@ -150,7 +150,7 @@ class DataGalleryProjectTest extends TestCase
 
         if ($expected) {
             $response->assertSessionHasNoErrors();
-            $this->assertDeleted($this->project);
+            $this->assertModelMissing($this->project);
         } else {
             $response->assertSessionHasErrors();
             $this->assertModelExists($this->project);

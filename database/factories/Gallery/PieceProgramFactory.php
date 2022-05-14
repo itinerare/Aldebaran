@@ -2,19 +2,11 @@
 
 namespace Database\Factories\Gallery;
 
-use App\Models\Gallery\PieceProgram;
 use App\Models\Gallery\Program;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class PieceProgramFactory extends Factory
 {
-    /**
-     * The name of the factory's corresponding model.
-     *
-     * @var string
-     */
-    protected $model = PieceProgram::class;
-
     /**
      * Define the model's default state.
      *

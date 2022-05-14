@@ -81,7 +81,7 @@ class Commissioner extends Model
         if (isset($this->attributes['name'])) {
             return $this->attributes['name'];
         } else {
-            list($address, $domain) = explode('@', $this->email);
+            [$address, $domain] = explode('@', $this->email);
 
             return $address;
         }

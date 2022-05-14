@@ -142,6 +142,6 @@ class AdminChangelogTest extends TestCase
             ->actingAs($this->user)
             ->post('/admin/changelog/delete/'.$this->log->id);
 
-        $this->assertDeleted($this->log);
+        $this->assertModelMissing($this->log);
     }
 }

@@ -2,19 +2,11 @@
 
 namespace Database\Factories;
 
-use App\Models\TextPage;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
 class TextPageFactory extends Factory
 {
-    /**
-     * The name of the factory's corresponding model.
-     *
-     * @var string
-     */
-    protected $model = TextPage::class;
-
     /**
      * Define the model's default state.
      *
