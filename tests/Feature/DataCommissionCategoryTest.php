@@ -188,7 +188,7 @@ class DataCommissionCategoryTest extends TestCase
 
         if ($expected) {
             $response->assertSessionHasNoErrors();
-            $this->assertDeleted($this->category);
+            $this->assertModelMissing($this->category);
         } else {
             $response->assertSessionHasErrors();
             $this->assertModelExists($this->category);

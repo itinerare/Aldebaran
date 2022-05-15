@@ -13,3 +13,4 @@ yarn-error.log
 *.env
 .env.testing
 *.cache
+/.vscode

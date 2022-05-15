@@ -629,10 +629,10 @@ class CommissionService extends Service
             $data['data']['fields'][$fieldKey] = [
                 'label'   => $data['field_label'][$key],
                 'type'    => $data['field_type'][$key],
-                'rules'   => isset($data['field_rules'][$key]) ? $data['field_rules'][$key] : null,
-                'choices' => isset($data['field_choices'][$key]) ? $data['field_choices'][$key] : null,
-                'value'   => isset($data['field_value'][$key]) ? $data['field_value'][$key] : null,
-                'help'    => isset($data['field_help'][$key]) ? $data['field_help'][$key] : null,
+                'rules'   => $data['field_rules'][$key] ?? null,
+                'choices' => $data['field_choices'][$key] ?? null,
+                'value'   => $data['field_value'][$key] ?? null,
+                'help'    => $data['field_help'][$key] ?? null,
             ];
         }
 
@@ -699,8 +699,8 @@ class CommissionService extends Service
         }
 
         $data['data']['pricing'] = $data['pricing'];
-        $data['data']['extras'] = isset($data['extras']) ? $data['extras'] : null;
-        $data['data']['tags'] = isset($data['tags']) ? $data['tags'] : null;
+        $data['data']['extras'] = $data['extras'] ?? null;
+        $data['data']['tags'] = $data['tags'] ?? null;
 
         // Generate a key if the type is being created or if
         // it's set to be regenerated

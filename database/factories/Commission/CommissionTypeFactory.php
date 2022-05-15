@@ -3,18 +3,10 @@
 namespace Database\Factories\Commission;
 
 use App\Models\Commission\CommissionCategory;
-use App\Models\Commission\CommissionType;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class CommissionTypeFactory extends Factory
 {
-    /**
-     * The name of the factory's corresponding model.
-     *
-     * @var string
-     */
-    protected $model = CommissionType::class;
-
     /**
      * Define the model's default state.
      *
@@ -98,7 +90,7 @@ class CommissionTypeFactory extends Factory
     {
         return $this->state(function (array $attributes) use ($pricing, $extras, $tag, $includeClass, $includeCategory) {
             return [
-                'data' => '{"fields":{"test":{"label":"Test","type":"text","rules":null,"choices":null,"value":null,"help":null}},"include":{"class":'.($includeClass ? 1 : 0).',"category":'.($includeCategory ? 1 : 0).'},"pricing":{"type":"'.(isset($pricing['type']) ? $pricing['type'] : 'flat').'",'.(isset($pricing['type']) && $pricing['type'] == 'range' ? '"range":{"min":"'.$pricing['min'].'","max":"'.$pricing['max'].'"}' : '"cost":"'.$pricing['cost'].'"').'},"extras":'.(isset($extras) ? '"'.$extras.'"' : 'null').',"tags":'.($tag ? '['.$tag.']' : 'null').'}',
+                'data' => '{"fields":{"test":{"label":"Test","type":"text","rules":null,"choices":null,"value":null,"help":null}},"include":{"class":'.($includeClass ? 1 : 0).',"category":'.($includeCategory ? 1 : 0).'},"pricing":{"type":"'.($pricing['type'] ?? 'flat').'",'.(isset($pricing['type']) && $pricing['type'] == 'range' ? '"range":{"min":"'.$pricing['min'].'","max":"'.$pricing['max'].'"}' : '"cost":"'.$pricing['cost'].'"').'},"extras":'.(isset($extras) ? '"'.$extras.'"' : 'null').',"tags":'.($tag ? '['.$tag.']' : 'null').'}',
             ];
         });
     }

@@ -165,7 +165,7 @@ class DataGalleryTagTest extends TestCase
 
         if ($expected) {
             $response->assertSessionHasNoErrors();
-            $this->assertDeleted($this->tag);
+            $this->assertModelMissing($this->tag);
         } else {
             $response->assertSessionHasErrors();
             $this->assertModelExists($this->tag);

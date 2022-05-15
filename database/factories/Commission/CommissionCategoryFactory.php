@@ -2,19 +2,11 @@
 
 namespace Database\Factories\Commission;
 
-use App\Models\Commission\CommissionCategory;
 use App\Models\Commission\CommissionClass;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class CommissionCategoryFactory extends Factory
 {
-    /**
-     * The name of the factory's corresponding model.
-     *
-     * @var string
-     */
-    protected $model = CommissionCategory::class;
-
     /**
      * Define the model's default state.
      *

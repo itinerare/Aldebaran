@@ -95,12 +95,13 @@ class Changelog extends Model implements Feedable
     public function toFeedItem(): FeedItem
     {
         return FeedItem::create([
-            'id'      => '/changelog/'.$this->id,
-            'title'   => $this->name ? $this->name : $this->created_at->toFormattedDateString(),
-            'summary' => $this->text,
-            'updated' => $this->created_at,
-            'link'    => '/changelog',
-            'author'  => Settings::get('site_name'),
+            'id'         => '/changelog/'.$this->id,
+            'title'      => $this->name ? $this->name : $this->created_at->toFormattedDateString(),
+            'summary'    => $this->text,
+            'updated'    => $this->created_at,
+            'link'       => '/changelog',
+            'author'     => Settings::get('site_name'),
+            'authorName' => Settings::get('site_name'),
         ]);
     }
 }
