@@ -4,6 +4,38 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [3.0.0](https://github.com/itinerare/Aldebaran/compare/v2.1.1...v3.0.0) (2022-05-15)
+### ⚠ BREAKING CHANGES
+
+* Update to Laravel 9 ([f56125](https://github.com/itinerare/Aldebaran/commit/f561256258df0d94150b3dbbc725d3d5e93d91bd))
+* Update to PHP 8 ([a9f1a4](https://github.com/itinerare/Aldebaran/commit/a9f1a4c525685e16364e8dcf6b9bd8a93db0eb77))
+
+### Features
+
+
+##### Backups
+
+* Make backups optional ([d613b1](https://github.com/itinerare/Aldebaran/commit/d613b1133bfb15e9f701dc65f17f214b0ade9c02))
+
+### Bug Fixes
+
+* TrustProxies middleware error ([dd1b7f](https://github.com/itinerare/Aldebaran/commit/dd1b7f920f24aeded9a1c12353923bf9e4acebf1))
+
+##### Backups
+
+* Error with drobox driver ([bf1af6](https://github.com/itinerare/Aldebaran/commit/bf1af6178a76e4e6737e4fb2828b96ca666eba77))
+
+##### Feeds
+
+* Error generating feed items ([659723](https://github.com/itinerare/Aldebaran/commit/6597233e04292f54f1e13977c22d943ac6cd5ee8))
+
+##### Tests
+
+* Update assertDeleted to assertModelMissing ([fb5acc](https://github.com/itinerare/Aldebaran/commit/fb5acc541a1ff87a29e3a5af4556ebaec5c22862))
+
+
+---
+
 ## [2.1.1](https://github.com/itinerare/Aldebaran/compare/v2.1.0...v2.1.1) (2022-05-12)
 
 ---
