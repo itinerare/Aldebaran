@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin\Data;
 use App\Http\Controllers\Controller;
 use App\Models\Gallery\Piece;
 use App\Models\Gallery\PieceImage;
+use App\Models\Gallery\PieceLiterature;
 use App\Models\Gallery\PieceTag;
 use App\Models\Gallery\Program;
 use App\Models\Gallery\Project;
@@ -305,6 +306,26 @@ class GalleryController extends Controller
         return redirect()->back();
     }
 
+    /**
+     * Sorts piece literatures.
+     *
+     * @param mixed $id
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function postSortPieceLiteratures($id, Request $request, GalleryService $service)
+    {
+        if ($service->sortPieceLiteratures($id, $request->get('sort'))) {
+            flash('Literature order updated successfully.')->success();
+        } else {
+            foreach ($service->errors()->getMessages()['error'] as $error) {
+                $service->addError($error);
+            }
+        }
+
+        return redirect()->back();
+    }
+
     /******************************************************************************
         IMAGES
     *******************************************************************************/
@@ -406,6 +427,114 @@ class GalleryController extends Controller
         $piece = $image->piece;
         if ($id && $service->deletePieceImage($image)) {
             flash('Image deleted successfully.')->success();
+        } else {
+            foreach ($service->errors()->getMessages()['error'] as $error) {
+                $service->addError($error);
+            }
+        }
+
+        return redirect()->to('admin/data/pieces/edit/'.$piece->id);
+    }
+
+    /******************************************************************************
+        LITERATURES
+    *******************************************************************************/
+
+    /**
+     * Gets the literature creation page.
+     *
+     * @param int $id
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getCreateLiterature(GalleryService $service, $id)
+    {
+        $piece = Piece::find($id);
+
+        return view('admin.gallery.create_edit_literature', [
+            'piece'      => $piece,
+            'literature' => new PieceLiterature,
+        ]);
+    }
+
+    /**
+     * Gets the literature edit page.
+     *
+     * @param int $id
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getEditLiterature($id)
+    {
+        $literature = PieceLiterature::find($id);
+        if (!$literature) {
+            abort(404);
+        }
+
+        return view('admin.gallery.create_edit_literature', [
+            'literature' => $literature,
+            'piece'      => Piece::find($literature->piece_id),
+        ]);
+    }
+
+    /**
+     * Creates and updates literatures.
+     *
+     * @param int $id
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function postCreateEditLiterature(Request $request, GalleryService $service, $id = null)
+    {
+        $id ? $request->validate(PieceLiterature::$updateRules) : $request->validate(PieceLiterature::$createRules);
+        $data = $request->only([
+            'piece_id', 'image', 'remove_image', 'text', 'is_primary', 'is_visible',
+        ]);
+
+        if ($id && $service->updateLiterature(PieceLiterature::find($id), $data, $request->user())) {
+            flash('Literature updated successfully.')->success();
+        } elseif (!$id && $image = $service->createLiterature($data, $request->user())) {
+            flash('Literature created successfully.')->success();
+
+            return redirect()->to('admin/data/pieces/literatures/edit/'.$image->id);
+        } else {
+            foreach ($service->errors()->getMessages()['error'] as $error) {
+                $service->addError($error);
+            }
+        }
+
+        return redirect()->back();
+    }
+
+    /**
+     * Gets the literature deletion modal.
+     *
+     * @param int $id
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getDeleteLiterature($id)
+    {
+        $literature = PieceLiterature::find($id);
+
+        return view('admin.gallery._delete_literature', [
+            'literature' => $literature,
+        ]);
+    }
+
+    /**
+     * Deletes a literature.
+     *
+     * @param int $id
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function postDeleteLiterature(Request $request, GalleryService $service, $id)
+    {
+        $literature = PieceLiterature::find($id);
+        $piece = $literature->piece;
+        if ($id && $service->deleteLiterature($literature)) {
+            flash('Literature deleted successfully.')->success();
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
                 $service->addError($error);

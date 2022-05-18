@@ -85,7 +85,7 @@
                 <th></th>
             </tr>
         </thead>
-        <tbody id="sortable" class="sortable">
+        <tbody id="sortableImages" class="sortable">
             @foreach($piece->images as $image)
                 <tr class="sort-item" data-id="{{ $image->id }}">
                     <td style="min-width: 100px;">
@@ -111,12 +111,65 @@
 
     <div class="mb-4">
         {!! Form::open(['url' => 'admin/data/pieces/'.$piece->id.'/sort-images']) !!}
-        {!! Form::hidden('sort', '', ['id' => 'sortableOrder']) !!}
+        {!! Form::hidden('sort', '', ['id' => 'sortableImageOrder']) !!}
         {!! Form::submit('Save Order', ['class' => 'btn btn-primary']) !!}
         {!! Form::close() !!}
     </div>
     @else
         <p>This piece has no images yet.</p>
+    @endif
+@endif
+
+@if($piece->id)
+    <h3>Literatures</h3>
+
+    <div class="text-right">
+        <a href="{{ url('admin/data/pieces/literatures/create/'.$piece->id) }}" class="btn btn-outline-primary mb-2">Add a Literature</a>
+    </div>
+
+    @if($piece->literatures->count())
+    <table class="table table-sm image-table">
+        <thead>
+            <tr>
+                <th style="width:40%;">Text</th>
+                <th>Has Thumbnail</th>
+                <th>Primary</th>
+                <th>Visible</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody id="sortableLit" class="sortable">
+            @foreach($piece->literatures as $literature)
+                <tr class="sort-item" data-id="{{ $literature->id }}">
+                    <td>
+                        <a class="fas fa-arrows-alt-v handle float-left mr-3" href="#"></a>
+                        {!! Str::limit($literature->text, 50) !!}
+                    </td>
+                    <td>
+                        {!! $literature->hash ? '<i class="text-success fas fa-check"></i>' : '-' !!}
+                    </td>
+                    <td>
+                        {!! $literature->is_primary ? '<i class="text-success fas fa-check"></i>' : '-' !!}
+                    </td>
+                    <td>
+                        {!! $literature->is_visible ? '<i class="text-success fas fa-check"></i>' : '-' !!}
+                    </td>
+                    <td class="text-right">
+                        <a href="{{ url('admin/data/pieces/literatures/edit/'.$literature->id) }}" class="btn btn-primary">Edit</a>
+                    </td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
+
+    <div class="mb-4">
+        {!! Form::open(['url' => 'admin/data/pieces/'.$piece->id.'/sort-literatures']) !!}
+        {!! Form::hidden('sort', '', ['id' => 'sortableLitOrder']) !!}
+        {!! Form::submit('Save Order', ['class' => 'btn btn-primary']) !!}
+        {!! Form::close() !!}
+    </div>
+    @else
+        <p>This piece has no literatures yet.</p>
     @endif
 @endif
 
@@ -148,18 +201,30 @@ $( document ).ready(function() {
     $('.handle').on('click', function(e) {
         e.preventDefault();
     });
-    $( "#sortable" ).sortable({
+    $( "#sortableImages" ).sortable({
         items: '.sort-item',
         handle: ".handle",
         placeholder: "sortable-placeholder",
         stop: function( event, ui ) {
-            $('#sortableOrder').val($(this).sortable("toArray", {attribute:"data-id"}));
+            $('#sortableImageOrder').val($(this).sortable("toArray", {attribute:"data-id"}));
         },
         create: function() {
-            $('#sortableOrder').val($(this).sortable("toArray", {attribute:"data-id"}));
+            $('#sortableImageOrder').val($(this).sortable("toArray", {attribute:"data-id"}));
         }
     });
-    $( "#sortable" ).disableSelection();
+    $( "#sortableImages" ).disableSelection();
+    $( "#sortableLit" ).sortable({
+        items: '.sort-item',
+        handle: ".handle",
+        placeholder: "sortable-placeholder",
+        stop: function( event, ui ) {
+            $('#sortableLitOrder').val($(this).sortable("toArray", {attribute:"data-id"}));
+        },
+        create: function() {
+            $('#sortableLitOrder').val($(this).sortable("toArray", {attribute:"data-id"}));
+        }
+    });
+    $( "#sortableLit" ).disableSelection();
 });
 
 </script>

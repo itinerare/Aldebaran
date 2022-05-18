@@ -93,6 +93,30 @@ class Piece extends Model implements Feedable
     }
 
     /**
+     * Get literatures associated with this piece.
+     */
+    public function literatures()
+    {
+        return $this->hasMany(PieceLiterature::class, 'piece_id')->orderBy('is_primary', 'DESC')->orderBy('sort', 'DESC');
+    }
+
+    /**
+     * Get only primary literatures associated with this piece.
+     */
+    public function primaryLiteratures()
+    {
+        return $this->hasMany(PieceLiterature::class, 'piece_id')->where('is_primary', 1)->orderBy('sort', 'DESC');
+    }
+
+    /**
+     * Get only non-primary literatures associated with this piece.
+     */
+    public function otherLiteratures()
+    {
+        return $this->hasMany(PieceLiterature::class, 'piece_id')->where('is_primary', 0)->orderBy('sort', 'DESC');
+    }
+
+    /**
      * Get tags associated with this piece.
      */
     public function tags()

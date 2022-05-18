@@ -57,6 +57,15 @@ Route::group(['prefix' => 'data', 'namespace' => 'Data'], function () {
 
     Route::post('pieces/{id}/sort-images', 'GalleryController@postSortPieceImages');
 
+    Route::get('pieces/literatures/create/{id}', 'GalleryController@getCreateLiterature');
+    Route::post('pieces/literatures/create', 'GalleryController@postCreateEditLiterature');
+    Route::get('pieces/literatures/edit/{id}', 'GalleryController@getEditLiterature');
+    Route::post('pieces/literatures/edit/{id}', 'GalleryController@postCreateEditLiterature');
+    Route::get('pieces/literatures/delete/{id}', 'GalleryController@getDeleteLiterature');
+    Route::post('pieces/literatures/delete/{id}', 'GalleryController@postDeleteLiterature');
+
+    Route::post('pieces/{id}/sort-literatures', 'GalleryController@postSortPieceLiteratures');
+
     // TAGS
     Route::get('tags', 'GalleryController@getTagIndex');
     Route::get('tags/create', 'GalleryController@getCreateTag');
