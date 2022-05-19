@@ -340,6 +340,9 @@ class GalleryController extends Controller
     public function getCreateImage(GalleryService $service, $id)
     {
         $piece = Piece::find($id);
+        if (!$piece) {
+            abort(404);
+        }
 
         return view('admin.gallery.create_edit_image', [
             'piece' => $piece,
@@ -450,6 +453,9 @@ class GalleryController extends Controller
     public function getCreateLiterature(GalleryService $service, $id)
     {
         $piece = Piece::find($id);
+        if (!$piece) {
+            abort(404);
+        }
 
         return view('admin.gallery.create_edit_literature', [
             'piece'      => $piece,
