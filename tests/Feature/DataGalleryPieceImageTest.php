@@ -51,18 +51,28 @@ class DataGalleryPieceImageTest extends TestCase
 
     /**
      * Test image creation access.
+     *
+     * @dataProvider imageCreateEditViewProvider
+     *
+     * @param bool $piece
+     * @param int  $expected
      */
-    public function testGetCreateImage()
+    public function testGetCreateImage($piece, $expected)
     {
         $this->actingAs($this->user)
-            ->get('/admin/data/pieces/images/create/'.$this->piece->id)
-            ->assertStatus(200);
+            ->get('/admin/data/pieces/images/create/'.($piece ? $this->piece->id : mt_rand(5, 10)))
+            ->assertStatus($expected);
     }
 
     /**
      * Test image editing access.
+     *
+     * @dataProvider imageCreateEditViewProvider
+     *
+     * @param bool $image
+     * @param int  $expected
      */
-    public function testGetEditImage()
+    public function testGetEditImage($image, $expected)
     {
         // This sidesteps casts not working correctly in tests,
         // for some reason
@@ -70,8 +80,16 @@ class DataGalleryPieceImageTest extends TestCase
         $this->image->save();
 
         $this->actingAs($this->user)
-            ->get('/admin/data/pieces/images/edit/'.$this->image->id)
-            ->assertStatus(200);
+            ->get('/admin/data/pieces/images/edit/'.($image ? $this->image->id : mt_rand(5, 10)))
+            ->assertStatus($expected);
+    }
+
+    public function imageCreateEditViewProvider()
+    {
+        return [
+            'valid'   => [1, 200],
+            'invalid' => [0, 404],
+        ];
     }
 
     /**
