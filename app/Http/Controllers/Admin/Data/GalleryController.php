@@ -337,7 +337,7 @@ class GalleryController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getCreateImage(GalleryService $service, $id)
+    public function getCreateImage($id)
     {
         $piece = Piece::find($id);
         if (!$piece) {
@@ -450,7 +450,7 @@ class GalleryController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getCreateLiterature(GalleryService $service, $id)
+    public function getCreateLiterature($id)
     {
         $piece = Piece::find($id);
         if (!$piece) {
