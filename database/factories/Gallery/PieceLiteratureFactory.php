@@ -26,11 +26,27 @@ class PieceLiteratureFactory extends Factory
     }
 
     /**
-     * Generate an literature with an image.
+     * Generate a literature for a specific piece. Required.
+     *
+     * @param int $id
      *
      * @return \Illuminate\Database\Eloquent\Factories\Factory
      */
-    public function withImage()
+    public function piece($id)
+    {
+        return $this->state(function (array $attributes) use ($id) {
+            return [
+                'piece_id' => $id,
+            ];
+        });
+    }
+
+    /**
+     * Generate an literature with a thumbnail.
+     *
+     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     */
+    public function thumbnail()
     {
         return $this->state(function (array $attributes) {
             return [

@@ -198,7 +198,7 @@ class DataGalleryPieceImageTest extends TestCase
     }
 
     /**
-     * Test program deletion.
+     * Test image deletion.
      *
      * @dataProvider imageDeleteProvider
      *
