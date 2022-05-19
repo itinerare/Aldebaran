@@ -521,17 +521,21 @@ class GalleryService extends Service
             }
 
             // Handle image and information if necessary
-            if (isset($data['remove_image']) && !isset($data['image'])) {
+            if (isset($data['remove_image'])) {
                 if ($literature->hash && $data['remove_image']) {
                     $data['hash'] = null;
                     $data['extension'] = null;
                     $this->deleteImage($literature->imagePath, $literature->thumbnailFileName);
                 }
-                unset($data['remove_image']);
             }
 
             $image = null;
             if (isset($data['image']) && $data['image']) {
+                // If there is already an image, delete the file
+                // before updating the recorded image information
+                if ($literature->hash && !$data['remove_image']) {
+                    $this->deleteImage($literature->imagePath, $literature->thumbnailFileName);
+                }
                 $data['hash'] = randomString(15);
                 $data['extension'] = $data['image']->getClientOriginalExtension();
                 $image = $data['image'];
