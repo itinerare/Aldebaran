@@ -181,4 +181,50 @@ class DataGalleryPieceImageTest extends TestCase
         // Get all possible sequences
         return $this->booleanSequences(4);
     }
+
+    /**
+     * Test image delete access.
+     *
+     * @dataProvider imageDeleteProvider
+     *
+     * @param bool $image
+     * @param int  $expected
+     */
+    public function testGetDeleteImage($image, $expected)
+    {
+        $this->actingAs($this->user)
+            ->get('/admin/data/pieces/images/delete/'.($image ? $this->image->id : mt_rand(5, 50)))
+            ->assertStatus($expected);
+    }
+
+    /**
+     * Test program deletion.
+     *
+     * @dataProvider imageDeleteProvider
+     *
+     * @param bool $image
+     * @param bool $expected
+     */
+    public function testPostDeleteImage($image, $expected)
+    {
+        $response = $this
+            ->actingAs($this->user)
+            ->post('/admin/data/pieces/images/delete/'.($image ? $this->image->id : mt_rand(5, 50)));
+
+        if ($expected == 200) {
+            $response->assertSessionHasNoErrors();
+            $this->assertModelMissing($this->image);
+        } else {
+            $response->assertSessionHasErrors();
+            $this->assertModelExists($this->image);
+        }
+    }
+
+    public function imageDeleteProvider()
+    {
+        return [
+            'valid'   => [1, 200],
+            'invalid' => [0, 404],
+        ];
+    }
 }
