@@ -411,6 +411,9 @@ class GalleryController extends Controller
     public function getDeleteImage($id)
     {
         $image = PieceImage::find($id);
+        if (!$image) {
+            abort(404);
+        }
 
         return view('admin.gallery._delete_image', [
             'image' => $image,
@@ -427,7 +430,7 @@ class GalleryController extends Controller
     public function postDeleteImage(Request $request, GalleryService $service, $id)
     {
         $image = PieceImage::find($id);
-        $piece = $image->piece;
+        $piece = $image ? $image->piece : null;
         if ($id && $service->deletePieceImage($image)) {
             flash('Image deleted successfully.')->success();
         } else {
@@ -522,6 +525,9 @@ class GalleryController extends Controller
     public function getDeleteLiterature($id)
     {
         $literature = PieceLiterature::find($id);
+        if (!$literature) {
+            abort(404);
+        }
 
         return view('admin.gallery._delete_literature', [
             'literature' => $literature,
@@ -538,7 +544,7 @@ class GalleryController extends Controller
     public function postDeleteLiterature(Request $request, GalleryService $service, $id)
     {
         $literature = PieceLiterature::find($id);
-        $piece = $literature->piece;
+        $piece = $literature ? $literature->piece : null;
         if ($id && $service->deleteLiterature($literature)) {
             flash('Literature deleted successfully.')->success();
         } else {

@@ -15,6 +15,7 @@ use App\Models\Gallery\Project;
 use App\Models\Gallery\Tag;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 use Intervention\Image\Facades\Image;
 
 class GalleryService extends Service
@@ -382,6 +383,10 @@ class GalleryService extends Service
         DB::beginTransaction();
 
         try {
+            if (!$image) {
+                throw new \Exception('This image is invalid.');
+            }
+
             // Check the regenerate watermark toggle, including setting it to false if an image has been uploaded
             if (!isset($data['regenerate_watermark']) || isset($data['image'])) {
                 $data['regenerate_watermark'] = 0;
@@ -418,6 +423,10 @@ class GalleryService extends Service
         DB::beginTransaction();
 
         try {
+            if (!$image) {
+                throw new \Exception('This image is invalid.');
+            }
+
             // Delete the associated files...
             unlink($image->imagePath.'/'.$image->thumbnailFileName);
             unlink($image->imagePath.'/'.$image->imageFileName);
@@ -507,6 +516,10 @@ class GalleryService extends Service
         DB::beginTransaction();
 
         try {
+            if (!$literature) {
+                throw new \Exception('This literature is invalid.');
+            }
+
             // Handle image and information if necessary
             if (isset($data['remove_image']) && !isset($data['image'])) {
                 if ($literature->hash && $data['remove_image']) {
@@ -559,6 +572,10 @@ class GalleryService extends Service
         DB::beginTransaction();
 
         try {
+            if (!$literature) {
+                throw new \Exception('This literature is invalid.');
+            }
+
             // Delete thumbnail file if set
             if ($literature->hash) {
                 unlink($literature->imagePath.'/'.$literature->thumbnailFileName);
@@ -820,7 +837,7 @@ class GalleryService extends Service
             $this->handleImage($file['fullsize'], $image->imagePath, $image->fullsizeFileName);
             $this->handleImage($file['image'], $image->imagePath, $image->imageFileName);
             $this->handleImage($file['thumbnail'], $image->imagePath, $image->thumbnailFileName);
-        } elseif (!$create) {
+        } elseif (!$create && File::exists($image->imagePath.'/'.$image->thumbnailFileName)) {
             // Remove test files
             unlink($image->imagePath.'/'.$image->thumbnailFileName);
             unlink($image->imagePath.'/'.$image->imageFileName);
