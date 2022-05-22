@@ -7,6 +7,7 @@ use App\Models\Commission\CommissionClass;
 use App\Models\Commission\CommissionType;
 use App\Models\Gallery\Piece;
 use App\Models\Gallery\PieceImage;
+use App\Models\Gallery\PieceLiterature;
 use App\Models\Gallery\PieceTag;
 use App\Models\Gallery\Project;
 use App\Models\Gallery\Tag;
@@ -14,6 +15,7 @@ use App\Models\TextPage;
 use App\Services\GalleryService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
@@ -75,9 +77,27 @@ class CommissionInfoTest extends TestCase
                         'good_example' => $data[3][2],
                     ]);
 
-                    // Create images and test files
-                    $image = PieceImage::factory()->piece($piece->id)->create();
-                    $this->service->testImages($image);
+                    if ($data[3][5]) {
+                        // Create images and test files
+                        $image = PieceImage::factory()->piece($piece->id)->create();
+                        $this->service->testImages($image);
+                    }
+
+                    if ($data[3][6] && $data[3][6][0]) {
+                        if ($data[3][6][1]) {
+                            // Create a literature with thumbnail data
+                            $literature = PieceLiterature::factory()
+                                ->piece($piece->id)->thumbnail()->create();
+
+                            // And generate a fake thumbnail image and handle it
+                            $thumbnail = UploadedFile::fake()->image('test_thumbnail.png');
+                            $this->service->handleImage($thumbnail, $literature->imagePath, $literature->thumbnailFileName);
+                        } else {
+                            // Otherwise just generate a literature
+                            $literature = PieceLiterature::factory()
+                                ->piece($piece->id)->create();
+                        }
+                    }
 
                     // Create examples if relevant
                     foreach ([$data[3][3], $data[3][4]] as $key => $quantity) {
@@ -123,8 +143,15 @@ class CommissionInfoTest extends TestCase
                 }
             }
 
-            // Clean up test images
-            $this->service->testImages($image, false);
+            if ($data[3][5]) {
+                // Clean up test images
+                $this->service->testImages($image, false);
+            }
+
+            if ($data[3][6] && $data[3][6][1]) {
+                // Remove test thumbnail file
+                unlink($literature->imagePath.'/'.$literature->thumbnailFileName);
+            }
 
             if (isset($exampleImages)) {
                 foreach ($exampleImages as $pools) {
@@ -138,16 +165,27 @@ class CommissionInfoTest extends TestCase
 
     public function commissionInfoProvider()
     {
-        // $data = [hasCategory, hasType, withExamples, [withPiece, isVisible, isGoodExample, goodExamples, okExamples]]
+        // $data = [hasCategory, hasType, withExamples, [withPiece, isVisible, isGoodExample, goodExamples, okExamples, hasImage, hasLiterature/[hasLiterature, hasThumb]]]
 
         return [
-            'with category'                          => [[1, 1], 0, [1, 0, 0, [0, 0, 0, 0, 0]], 200],
-            'with type'                              => [[1, 1], 0, [1, 1, 0, [0, 0, 0, 0, 0]], 200],
-            'with type with empty examples'          => [[1, 1], 0, [1, 1, 1, [0, 0, 0, 0, 0]], 200],
-            'visitor with type with visible example' => [[1, 1], 0, [1, 1, 1, [1, 1, 1, 0, 0]], 200],
-            'visitor with type with hidden example'  => [[1, 1], 0, [1, 1, 1, [1, 0, 1, 0, 0]], 200],
-            'user with type with visible example'    => [[1, 1], 1, [1, 1, 1, [1, 1, 1, 0, 0]], 200],
-            'user with type with hidden example'     => [[1, 1], 1, [1, 1, 1, [1, 0, 1, 0, 0]], 200],
+            'with category'                 => [[1, 1], 0, [1, 0, 0, [0, 0, 0, 0, 0, 0, 0]], 200],
+            'with type'                     => [[1, 1], 0, [1, 1, 0, [0, 0, 0, 0, 0, 0, 0]], 200],
+            'with type with empty examples' => [[1, 1], 0, [1, 1, 1, [0, 0, 0, 0, 0, 0, 0]], 200],
+
+            'visitor with type with visible example with image' => [[1, 1], 0, [1, 1, 1, [1, 1, 1, 0, 0, 1, 0]], 200],
+            'visitor with type with hidden example with image'  => [[1, 1], 0, [1, 1, 1, [1, 0, 1, 0, 0, 1, 0]], 200],
+            'user with type with visible example with image'    => [[1, 1], 1, [1, 1, 1, [1, 1, 1, 0, 0, 1, 0]], 200],
+            'user with type with hidden example with image'     => [[1, 1], 1, [1, 1, 1, [1, 0, 1, 0, 0, 1, 0]], 200],
+
+            'visitor with type with visible example with literature' => [[1, 1], 0, [1, 1, 1, [1, 1, 1, 0, 0, 0, [1, 0]]], 200],
+            'visitor with type with hidden example with literature'  => [[1, 1], 0, [1, 1, 1, [1, 0, 1, 0, 0, 0, [1, 0]]], 200],
+            'user with type with visible example with literature'    => [[1, 1], 1, [1, 1, 1, [1, 1, 1, 0, 0, 0, [1, 0]]], 200],
+            'user with type with hidden example with literature'     => [[1, 1], 1, [1, 1, 1, [1, 0, 1, 0, 0, 0, [1, 0]]], 200],
+
+            'visitor with type with visible example with literature with thumbnail' => [[1, 1], 0, [1, 1, 1, [1, 1, 1, 0, 0, 0, [1, 1]]], 200],
+            'visitor with type with hidden example with literature with thumbnail'  => [[1, 1], 0, [1, 1, 1, [1, 0, 1, 0, 0, 0, [1, 1]]], 200],
+            'user with type with visible example with literature with thumbnail'    => [[1, 1], 1, [1, 1, 1, [1, 1, 1, 0, 0, 0, [1, 1]]], 200],
+            'user with type with hidden example with literature with thumbnail'     => [[1, 1], 1, [1, 1, 1, [1, 0, 1, 0, 0, 0, [1, 1]]], 200],
 
             // Disabled in favor of manual testing for the moment
             //'good example with 4 ok examples' => [[1, 1], 1, [1, 1, 1, [1, 1, 0, 0, 4]], 200],
@@ -203,9 +241,27 @@ class CommissionInfoTest extends TestCase
                         'good_example' => $data[3][2],
                     ]);
 
-                    // Create images and test files
-                    $image = PieceImage::factory()->piece($piece->id)->create();
-                    $this->service->testImages($image);
+                    if ($data[3][5]) {
+                        // Create images and test files
+                        $image = PieceImage::factory()->piece($piece->id)->create();
+                        $this->service->testImages($image);
+                    }
+
+                    if ($data[3][6] && $data[3][6][0]) {
+                        if ($data[3][6][1]) {
+                            // Create a literature with thumbnail data
+                            $literature = PieceLiterature::factory()
+                                ->piece($piece->id)->thumbnail()->create();
+
+                            // And generate a fake thumbnail image and handle it
+                            $thumbnail = UploadedFile::fake()->image('test_thumbnail.png');
+                            $this->service->handleImage($thumbnail, $literature->imagePath, $literature->thumbnailFileName);
+                        } else {
+                            // Otherwise just generate a literature
+                            $literature = PieceLiterature::factory()
+                                ->piece($piece->id)->create();
+                        }
+                    }
 
                     // Create examples if relevant
                     foreach ([$data[3][3], $data[3][4]] as $key => $quantity) {
@@ -251,35 +307,53 @@ class CommissionInfoTest extends TestCase
                 }
             }
 
-            // Clean up test images
-            $this->service->testImages($image, false);
+            if ($data[3][5]) {
+                // Clean up test images
+                $this->service->testImages($image, false);
+            }
+
+            if ($data[3][6] && $data[3][6][1]) {
+                // Remove test thumbnail file
+                unlink($literature->imagePath.'/'.$literature->thumbnailFileName);
+            }
         }
     }
 
     public function commissionTypeProvider()
     {
         // $visibility = [commsEnabled, classActive, commsOpen, typeActive, typeVisible, withKey]
-        // $data = [hasCategory, hasType, withExamples, [withPiece, isVisible, isGoodExample, goodExamples, okExamples]]
+        // $data = [hasCategory, hasType, withExamples, [withPiece, isVisible, isGoodExample, goodExamples, okExamples, hasImage, hasLiterature/[hasLiterature, hasThumb]]]
 
         return [
-            'visitor, type active, visible'           => [[1, 1, 1, 1, 1, 0], 0, [1, 1, 0, [0, 0, 0, 0, 0]], 404],
-            'visitor, type inactive, visible'         => [[1, 1, 1, 0, 1, 0], 0, [1, 1, 0, [0, 0, 0, 0, 0]], 404],
-            'visitor, type active, hidden with key'   => [[1, 1, 1, 1, 0, 1], 0, [1, 1, 0, [0, 0, 0, 0, 0]], 200],
-            'visitor, type inactive, hidden with key' => [[1, 1, 1, 0, 0, 1], 0, [1, 1, 0, [0, 0, 0, 0, 0]], 404],
-            'visitor, class inactive'                 => [[1, 0, 1, 1, 1, 0], 0, [1, 1, 0, [0, 0, 0, 0, 0]], 404],
-            'visitor, comms disabled'                 => [[0, 1, 1, 1, 1, 0], 0, [1, 1, 0, [0, 0, 0, 0, 0]], 404],
-            'user, type active, visible'              => [[1, 1, 1, 1, 1, 0], 1, [1, 1, 0, [0, 0, 0, 0, 0]], 404],
-            'user, type inactive, visible'            => [[1, 1, 1, 0, 1, 0], 1, [1, 1, 0, [0, 0, 0, 0, 0]], 404],
-            'user, type active, hidden with key'      => [[1, 1, 1, 1, 0, 1], 1, [1, 1, 0, [0, 0, 0, 0, 0]], 200],
-            'user, type inactive, hidden with key'    => [[1, 1, 1, 0, 0, 1], 1, [1, 1, 0, [0, 0, 0, 0, 0]], 404],
-            'user, class inactive'                    => [[1, 0, 1, 1, 1, 0], 1, [1, 1, 0, [0, 0, 0, 0, 0]], 404],
-            'user, comms disabled'                    => [[0, 1, 1, 1, 1, 0], 1, [1, 1, 0, [0, 0, 0, 0, 0]], 404],
+            'visitor, type active, visible'           => [[1, 1, 1, 1, 1, 0], 0, [1, 1, 0, [0, 0, 0, 0, 0, 0, 0]], 404],
+            'visitor, type inactive, visible'         => [[1, 1, 1, 0, 1, 0], 0, [1, 1, 0, [0, 0, 0, 0, 0, 0, 0]], 404],
+            'visitor, type active, hidden with key'   => [[1, 1, 1, 1, 0, 1], 0, [1, 1, 0, [0, 0, 0, 0, 0, 0, 0]], 200],
+            'visitor, type inactive, hidden with key' => [[1, 1, 1, 0, 0, 1], 0, [1, 1, 0, [0, 0, 0, 0, 0, 0, 0]], 404],
+            'visitor, class inactive'                 => [[1, 0, 1, 1, 1, 0], 0, [1, 1, 0, [0, 0, 0, 0, 0, 0, 0]], 404],
+            'visitor, comms disabled'                 => [[0, 1, 1, 1, 1, 0], 0, [1, 1, 0, [0, 0, 0, 0, 0, 0, 0]], 404],
+            'user, type active, visible'              => [[1, 1, 1, 1, 1, 0], 1, [1, 1, 0, [0, 0, 0, 0, 0, 0, 0]], 404],
+            'user, type inactive, visible'            => [[1, 1, 1, 0, 1, 0], 1, [1, 1, 0, [0, 0, 0, 0, 0, 0, 0]], 404],
+            'user, type active, hidden with key'      => [[1, 1, 1, 1, 0, 1], 1, [1, 1, 0, [0, 0, 0, 0, 0, 0, 0]], 200],
+            'user, type inactive, hidden with key'    => [[1, 1, 1, 0, 0, 1], 1, [1, 1, 0, [0, 0, 0, 0, 0, 0, 0]], 404],
+            'user, class inactive'                    => [[1, 0, 1, 1, 1, 0], 1, [1, 1, 0, [0, 0, 0, 0, 0, 0, 0]], 404],
+            'user, comms disabled'                    => [[0, 1, 1, 1, 1, 0], 1, [1, 1, 0, [0, 0, 0, 0, 0, 0, 0]], 404],
 
-            'with type with empty examples'          => [[1, 1, 1, 1, 0, 1], 0, [1, 1, 1, [0, 0, 0, 0, 0]], 200],
-            'visitor with type with visible example' => [[1, 1, 1, 1, 0, 1], 0, [1, 1, 1, [1, 1, 1, 0, 0]], 200],
-            'visitor with type with hidden example'  => [[1, 1, 1, 1, 0, 1], 0, [1, 1, 1, [1, 0, 1, 0, 0]], 200],
-            'user with type with visible example'    => [[1, 1, 1, 1, 0, 1], 1, [1, 1, 1, [1, 1, 1, 0, 0]], 200],
-            'user with type with hidden example'     => [[1, 1, 1, 1, 0, 1], 1, [1, 1, 1, [1, 0, 1, 0, 0]], 200],
+            'with type with empty examples' => [[1, 1, 1, 1, 0, 1], 0, [1, 1, 1, [0, 0, 0, 0, 0, 0, 0]], 200],
+
+            'visitor with type with visible example with image' => [[1, 1, 1, 1, 0, 1], 0, [1, 1, 1, [1, 1, 1, 0, 0, 1, 0]], 200],
+            'visitor with type with hidden example with image'  => [[1, 1, 1, 1, 0, 1], 0, [1, 1, 1, [1, 0, 1, 0, 0, 1, 0]], 200],
+            'user with type with visible example with image'    => [[1, 1, 1, 1, 0, 1], 1, [1, 1, 1, [1, 1, 1, 0, 0, 1, 0]], 200],
+            'user with type with hidden example with image'     => [[1, 1, 1, 1, 0, 1], 1, [1, 1, 1, [1, 0, 1, 0, 0, 1, 0]], 200],
+
+            'visitor with type with visible example with literature' => [[1, 1, 1, 1, 0, 1], 0, [1, 1, 1, [1, 1, 1, 0, 0, 0, [1, 0]]], 200],
+            'visitor with type with hidden example with literature'  => [[1, 1, 1, 1, 0, 1], 0, [1, 1, 1, [1, 0, 1, 0, 0, 0, [1, 0]]], 200],
+            'user with type with visible example with literature'    => [[1, 1, 1, 1, 0, 1], 1, [1, 1, 1, [1, 1, 1, 0, 0, 0, [1, 0]]], 200],
+            'user with type with hidden example with literature'     => [[1, 1, 1, 1, 0, 1], 1, [1, 1, 1, [1, 0, 1, 0, 0, 0, [1, 0]]], 200],
+
+            'visitor with type with visible example with literature with thumbnail' => [[1, 1, 1, 1, 0, 1], 0, [1, 1, 1, [1, 1, 1, 0, 0, 0, [1, 1]]], 200],
+            'visitor with type with hidden example with literature with thumbnail'  => [[1, 1, 1, 1, 0, 1], 0, [1, 1, 1, [1, 0, 1, 0, 0, 0, [1, 1]]], 200],
+            'user with type with visible example with literature with thumbnail'    => [[1, 1, 1, 1, 0, 1], 1, [1, 1, 1, [1, 1, 1, 0, 0, 0, [1, 1]]], 200],
+            'user with type with hidden example with literature with thumbnail'     => [[1, 1, 1, 1, 0, 1], 1, [1, 1, 1, [1, 0, 1, 0, 0, 0, [1, 1]]], 200],
         ];
     }
 
@@ -320,9 +394,27 @@ class CommissionInfoTest extends TestCase
                 $piece->update(['is_visible' => 0]);
             }
 
-            // Create images and test files
-            $image = PieceImage::factory()->piece($piece->id)->create();
-            $this->service->testImages($image);
+            if ($data[0][2]) {
+                // Create images and test files
+                $image = PieceImage::factory()->piece($piece->id)->create();
+                $this->service->testImages($image);
+            }
+
+            if ($data[0][3] && $data[0][3][0]) {
+                if ($data[0][3][1]) {
+                    // Create a literature with thumbnail data
+                    $literature = PieceLiterature::factory()
+                        ->piece($piece->id)->thumbnail()->create();
+
+                    // And generate a fake thumbnail image and handle it
+                    $thumbnail = UploadedFile::fake()->image('test_thumbnail.png');
+                    $this->service->handleImage($thumbnail, $literature->imagePath, $literature->thumbnailFileName);
+                } else {
+                    // Otherwise just generate a literature
+                    $literature = PieceLiterature::factory()
+                        ->piece($piece->id)->create();
+                }
+            }
         }
 
         $url = 'commissions/types/'.$type->id.'/gallery';
@@ -362,26 +454,43 @@ class CommissionInfoTest extends TestCase
                 });
             }
 
-            // Clean up test images
-            $this->service->testImages($image, false);
+            if ($data[0][2]) {
+                // Clean up test images
+                $this->service->testImages($image, false);
+            }
+
+            if ($data[0][3] && $data[0][3][1]) {
+                // Remove test thumbnail file
+                unlink($literature->imagePath.'/'.$literature->thumbnailFileName);
+            }
         }
     }
 
     public function commissionTypeGalleryProvider()
     {
-        // $data = [[hasPiece, isVisible], [searchType, expectedResult]]
+        // $data = [[hasPiece, isVisible, hasImage, hasLiterature/[hasLiterature, hasThumb]], [searchType, expectedResult]]
         // Search is dependent on presence of at least one piece
 
         return [
-            'visitor, with visible piece' => [[1, 1], 0, [[1, 1], null], 200],
-            'visitor, with hidden piece'  => [[1, 1], 0, [[1, 0], null], 200],
-            'user, with visible piece'    => [[1, 1], 1, [[1, 1], null], 200],
-            'user, with hidden piece'     => [[1, 1], 1, [[1, 0], null], 200],
+            'visitor, with visible piece with image' => [[1, 1], 0, [[1, 1, 1, 0], null], 200],
+            'visitor, with hidden piece with image'  => [[1, 1], 0, [[1, 0, 1, 0], null], 200],
+            'user, with visible piece with image'    => [[1, 1], 1, [[1, 1, 1, 0], null], 200],
+            'user, with hidden piece with image'     => [[1, 1], 1, [[1, 0, 1, 0], null], 200],
 
-            'search by title (successful)'     => [[1, 1], 1, [[1, 1], ['name', 1]], 200],
-            'search by title (unsuccessful)'   => [[1, 1], 1, [[1, 1], ['name', 0]], 200],
-            'search by project (successful)'   => [[1, 1], 1, [[1, 1], ['project_id', 1]], 200],
-            'search by project (unsuccessful)' => [[1, 1], 1, [[1, 1], ['project_id', 0]], 200],
+            'visitor, with visible piece with literature' => [[1, 1], 0, [[1, 1, 0, [1, 0]], null], 200],
+            'visitor, with hidden piece with literature'  => [[1, 1], 0, [[1, 0, 0, [1, 0]], null], 200],
+            'user, with visible piece with literature'    => [[1, 1], 1, [[1, 1, 0, [1, 0]], null], 200],
+            'user, with hidden piece with literature'     => [[1, 1], 1, [[1, 0, 0, [1, 0]], null], 200],
+
+            'visitor, with visible piece with literature with thumbnail' => [[1, 1], 0, [[1, 1, 0, [1, 1]], null], 200],
+            'visitor, with hidden piece with literature with thumbnail'  => [[1, 1], 0, [[1, 0, 0, [1, 1]], null], 200],
+            'user, with visible piece with literature with thumbnail'    => [[1, 1], 1, [[1, 1, 0, [1, 1]], null], 200],
+            'user, with hidden piece with literature with thumbnail'     => [[1, 1], 1, [[1, 0, 0, [1, 1]], null], 200],
+
+            'search by title (successful)'     => [[1, 1], 1, [[1, 1, 1, 0], ['name', 1]], 200],
+            'search by title (unsuccessful)'   => [[1, 1], 1, [[1, 1, 1, 0], ['name', 0]], 200],
+            'search by project (successful)'   => [[1, 1], 1, [[1, 1, 1, 0], ['project_id', 1]], 200],
+            'search by project (unsuccessful)' => [[1, 1], 1, [[1, 1, 1, 0], ['project_id', 0]], 200],
         ];
     }
 
