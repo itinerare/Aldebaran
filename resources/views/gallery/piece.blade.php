@@ -2,7 +2,11 @@
 
 @section ('title') {{ $piece->name }} @endsection
 
-@section ('meta-img') {{ $piece->primaryImages->count() ? $piece->primaryImages->random()->thumbnailUrl : $piece->images->first()->thumbnailUrl }} @endsection
+@if($piece->thumbnailUrl)
+    @section ('meta-img')
+        {{ $piece->thumbnailUrl }}
+    @endsection
+@endif
 
 @section ('meta-desc') {{ strip_tags($piece->description) }} @endsection
 
@@ -21,28 +25,43 @@
     </h1>
 </div>
 
-<div class="row">
-    @foreach($piece->primaryImages->where('is_visible', 1) as $image)
-        <div class="col-md text-center align-self-center mb-2">
-            <a href="{{ $image->imageUrl }}" data-lightbox="entry" data-title="{{ isset($image->description) ? $image->description : '' }}">
-                <img class="img-thumbnail p-2" src="{{ $image->imageUrl }}" style="max-width:100%; max-height:60vh;" />
-            </a>
-        </div>
-        {!! $loop->odd && $loop->count > 2 ? '<div class="w-100"></div>' : '' !!}
-    @endforeach
-</div>
+<!-- Images -->
+@if($piece->images->count())
+    <div class="row">
+        @foreach($piece->primaryImages->where('is_visible', 1) as $image)
+            <div class="col-md text-center align-self-center mb-2">
+                <a href="{{ $image->imageUrl }}" data-lightbox="entry" data-title="{{ isset($image->description) ? $image->description : '' }}">
+                    <img class="img-thumbnail p-2" src="{{ $image->imageUrl }}" style="max-width:100%; max-height:60vh;" />
+                </a>
+            </div>
+            {!! $loop->odd && $loop->count > 2 ? '<div class="w-100"></div>' : '' !!}
+        @endforeach
+    </div>
 
-<div class="row mb-2">
-    @foreach($piece->otherImages->where('is_visible', 1) as $image)
-        <div class="col-sm text-center align-self-center mb-2">
-            <a href="{{ $image->imageUrl }}" data-lightbox="entry" data-title="{{ isset($image->description) ? $image->description : '' }}">
-                <img class="img-thumbnail p-2" src="{{ $image->thumbnailUrl }}" style="max-width:100%; max-height:60vh;" />
-            </a>
-        </div>
-        {!! $loop->iteration % ($loop->count%4 == 0 ? 4 : 3) == 0 ? '<div class="w-100"></div>' : '' !!}
-    @endforeach
-</div>
+    <div class="row mb-2">
+        @foreach($piece->otherImages->where('is_visible', 1) as $image)
+            <div class="col-sm text-center align-self-center mb-2">
+                <a href="{{ $image->imageUrl }}" data-lightbox="entry" data-title="{{ isset($image->description) ? $image->description : '' }}">
+                    <img class="img-thumbnail p-2" src="{{ $image->thumbnailUrl }}" style="max-width:100%; max-height:60vh;" />
+                </a>
+            </div>
+            {!! $loop->iteration % ($loop->count%4 == 0 ? 4 : 3) == 0 ? '<div class="w-100"></div>' : '' !!}
+        @endforeach
+    </div>
+@endif
 
+<!-- Literature -->
+@if($piece->literatures->count())
+    @foreach($piece->literatures as $literature)
+        <div class="card mb-4">
+            <div class="card-body">
+                {!! $literature->text !!}
+            </div>
+        </div>
+    @endforeach
+@endif
+
+<!-- Information -->
 <div class="card card-body">
     <div class="borderhr mb-2">
         <p>

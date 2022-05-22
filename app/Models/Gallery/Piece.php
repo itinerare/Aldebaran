@@ -152,9 +152,9 @@ class Piece extends Model implements Feedable
     public function scopeVisible($query, $user = null)
     {
         if ($user) {
-            return $query->whereIn('id', PieceImage::visible()->pluck('piece_id')->toArray());
+            return $query->whereIn('id', PieceImage::visible()->pluck('piece_id')->toArray() + PieceLiterature::visible()->pluck('piece_id')->toArray());
         } else {
-            return $query->where('is_visible', 1)->whereIn('id', PieceImage::visible($user ? $user : null)->pluck('piece_id')->toArray());
+            return $query->where('is_visible', 1)->whereIn('id', PieceImage::visible($user ? $user : null)->pluck('piece_id')->toArray() + PieceLiterature::visible($user ? $user : null)->pluck('piece_id')->toArray());
         }
     }
 
@@ -229,11 +229,28 @@ class Piece extends Model implements Feedable
      */
     public function getThumbnailUrlAttribute()
     {
-        if ($this->images->where('is_visible', 1)->count() == 0) {
+        if (!$this->images->where('is_visible', 1)->count() && !$this->literatures->where('is_visible', 1)->whereNotNull('hash')->count()) {
             return null;
         }
 
-        return $this->primaryImages->where('is_visible', 1)->count() ? $this->primaryImages->where('is_visible', 1)->random()->thumbnailUrl : $this->images->where('is_visible', 1)->first()->thumbnailUrl;
+        // Cycle through conditions attempting to locate a valid thumbnail
+        if ($this->primaryImages->where('is_visible', 1)->count()) {
+            // First check for primary images; if so select a random one
+            return $this->primaryImages->where('is_visible', 1)->random()->thumbnailUrl;
+        } elseif ($this->images->where('is_visible', 1)->count()) {
+            // Otherwise, if there are non-primary images, select a random one
+            return $this->images->where('is_visible', 1)->random()->thumbnailUrl;
+        } elseif ($this->literatures->where('is_visible', 1)->whereNotNull('hash')->where('is_primary', 1)->count()) {
+            // Otherwise, check for primary literatures with thumbnails,
+            // and select one
+            return $this->literatures->where('is_visible', 1)->whereNotNull('hash')->where('is_primary', 1)->random()->thumbnailUrl;
+        } elseif ($this->literatures->where('is_visible', 1)->whereNotNull('hash')->count()) {
+            // Otherwise, check for non-primary literatures with thumbnails,
+            // and select one
+            return $this->literatures->where('is_visible', 1)->whereNotNull('hash')->random()->thumbnailUrl;
+        }
+
+        return null;
     }
 
     /**
@@ -282,8 +299,16 @@ class Piece extends Model implements Feedable
      */
     public function toFeedItem(): FeedItem
     {
-        $summary = '<a href="'.$this->url.'"><img src="'.$this->thumbnailUrl.'"/></a><br/>This piece contains '.$this->images->count().' image'.($this->images->count() > 1 ? 's' : '').'. Click the thumbnail to view in full.<hr/>'.
-        $this->description;
+        $summary = '';
+        if ($this->images->count()) {
+            $summary = $summary.'<a href="'.$this->url.'"><img src="'.$this->thumbnailUrl.'"/></a><br/>This piece contains '.$this->images->count().' image'.($this->images->count() > 1 ? 's' : '').'. Click the thumbnail to view in full.<hr/>';
+        }
+        if ($this->literatures->count()) {
+            foreach ($this->literatures as $literature) {
+                $summary = $summary.$literature->text.'<hr/>';
+            }
+        }
+        $summary = $summary.$this->description;
 
         return FeedItem::create([
             'id'         => '/gallery/pieces/'.$this->id,

@@ -73,7 +73,7 @@
 <div class="row">
     <div class="col-md form-group">
         {!! Form::checkbox('is_primary', 1, $literature->id ? $literature->is_primary : 1, ['class' => 'form-check-input', 'data-toggle' => 'toggle']) !!}
-        {!! Form::label('is_primary', 'Is Primary', ['class' => 'form-check-label ml-3']) !!} {!! add_help('Whether or not this is a primary literature for the piece. Primary literatures are displayed front and center, while other literatures are sidelined but still visible.') !!}
+        {!! Form::label('is_primary', 'Is Primary', ['class' => 'form-check-label ml-3']) !!} {!! add_help('Whether or not this is a primary literature for the piece. Primary literatures are preferred for a piece\'s thumbnail or text preview.') !!}
     </div>
     <div class="col-md form-group">
         {!! Form::checkbox('is_visible', 1, $literature->id ? $literature->is_visible : 1, ['class' => 'form-check-input', 'data-toggle' => 'toggle']) !!}
