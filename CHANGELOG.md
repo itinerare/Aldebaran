@@ -4,6 +4,34 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [3.1.0](https://github.com/itinerare/Aldebaran/compare/v3.0.0...v3.1.0) (2022-05-22)
+### Features
+
+
+##### Pieces
+
+* Add display of literatures ([bcb876](https://github.com/itinerare/Aldebaran/commit/bcb87670bad4f32e00342db95cb29c0d1092b9f8))
+* Add support for creating and adding literatures ([b862b2](https://github.com/itinerare/Aldebaran/commit/b862b22c5e9bf61452ae63516766c8b6fdb92b32))
+
+##### Tests
+
+* Add piece image delete tests ([b94b5b](https://github.com/itinerare/Aldebaran/commit/b94b5b0ea9d663f2299e3cf4fddb8886832b0f75))
+* Add piece literature create/edit/delete tests ([522da3](https://github.com/itinerare/Aldebaran/commit/522da35d056226ba3f108642c88ef0e909fbd26c))
+* Extend gallery-type, piece view tests with literature support ([51f940](https://github.com/itinerare/Aldebaran/commit/51f940d951a62c3fb5c2f8ae527ed3b5ebef5afc))
+* Extend piece image get create/edit tests ([816fda](https://github.com/itinerare/Aldebaran/commit/816fda72892e0440117e4f5bab7089635a82f146))
+
+### Bug Fixes
+
+
+##### Pieces
+
+* Attempting to create an image/literature for an invalid piece does not 404 ([54c0f4](https://github.com/itinerare/Aldebaran/commit/54c0f47bbc9c377cd879d82a83f32b2c83372777))
+* Missing checks for invalid image/literature when deleting ([2329c3](https://github.com/itinerare/Aldebaran/commit/2329c3a816e5f0d2589df485ec55158f736f1128))
+* Piece lit thumbs not properly cleaned up on update ([3904ad](https://github.com/itinerare/Aldebaran/commit/3904adf9bb371a479cb879a70a014d8762b65d77))
+
+
+---
+
 ## [3.0.0](https://github.com/itinerare/Aldebaran/compare/v2.1.1...v3.0.0) (2022-05-15)
 ### ⚠ BREAKING CHANGES
 
