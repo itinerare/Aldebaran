@@ -67,6 +67,9 @@
         ],
         "test-coverage": [
             "./vendor/bin/phpunit --coverage-text"
+        ],
+        "changelog": [
+            "./vendor/marcocesarato/php-conventional-changelog/conventional-changelog"
         ]
     },
     "extra": {
@@ -81,5 +84,5 @@
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
-    "version": "3.0.0"
+    "version": "3.1.0"
 }

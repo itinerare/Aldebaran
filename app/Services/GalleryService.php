@@ -7,6 +7,7 @@ use App\Models\Commission\CommissionPiece;
 use App\Models\Commission\CommissionType;
 use App\Models\Gallery\Piece;
 use App\Models\Gallery\PieceImage;
+use App\Models\Gallery\PieceLiterature;
 use App\Models\Gallery\PieceProgram;
 use App\Models\Gallery\PieceTag;
 use App\Models\Gallery\Program;
@@ -14,6 +15,7 @@ use App\Models\Gallery\Project;
 use App\Models\Gallery\Tag;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 use Intervention\Image\Facades\Image;
 
 class GalleryService extends Service
@@ -254,7 +256,7 @@ class GalleryService extends Service
     }
 
     /**
-     * Sorts project order.
+     * Sorts piece image order.
      *
      * @param int    $id
      * @param string $data
@@ -271,6 +273,34 @@ class GalleryService extends Service
 
             foreach ($sort as $key => $s) {
                 PieceImage::where('piece_id', $id)->where('id', $s)->update(['sort' => $key]);
+            }
+
+            return $this->commitReturn(true);
+        } catch (\Exception $e) {
+            $this->setError('error', $e->getMessage());
+        }
+
+        return $this->rollbackReturn(false);
+    }
+
+    /**
+     * Sorts piece literature order.
+     *
+     * @param int    $id
+     * @param string $data
+     *
+     * @return bool
+     */
+    public function sortPieceLiteratures($id, $data)
+    {
+        DB::beginTransaction();
+
+        try {
+            // explode the sort array and reverse it since the order is inverted
+            $sort = array_reverse(explode(',', $data));
+
+            foreach ($sort as $key => $s) {
+                PieceLiterature::where('piece_id', $id)->where('id', $s)->update(['sort' => $key]);
             }
 
             return $this->commitReturn(true);
@@ -353,6 +383,10 @@ class GalleryService extends Service
         DB::beginTransaction();
 
         try {
+            if (!$image) {
+                throw new \Exception('This image is invalid.');
+            }
+
             // Check the regenerate watermark toggle, including setting it to false if an image has been uploaded
             if (!isset($data['regenerate_watermark']) || isset($data['image'])) {
                 $data['regenerate_watermark'] = 0;
@@ -389,6 +423,10 @@ class GalleryService extends Service
         DB::beginTransaction();
 
         try {
+            if (!$image) {
+                throw new \Exception('This image is invalid.');
+            }
+
             // Delete the associated files...
             unlink($image->imagePath.'/'.$image->thumbnailFileName);
             unlink($image->imagePath.'/'.$image->imageFileName);
@@ -396,6 +434,159 @@ class GalleryService extends Service
 
             // and then the model itself
             $image->delete();
+
+            return $this->commitReturn(true);
+        } catch (\Exception $e) {
+            $this->setError('error', $e->getMessage());
+        }
+
+        return $this->rollbackReturn(false);
+    }
+
+    /******************************************************************************
+        LITERATURES
+    *******************************************************************************/
+
+    /**
+     * Creates a new literature.
+     *
+     * @param array                 $data
+     * @param \App\Models\User\User $user
+     *
+     * @return \App\Models\Gallery\PieceLiterature|bool
+     */
+    public function createLiterature($data, $user)
+    {
+        DB::beginTransaction();
+
+        try {
+            // Check that the piece exists
+            $piece = Piece::find($data['piece_id']);
+            if (!$piece) {
+                throw new \Exception('No valid piece found!');
+            }
+
+            // Handle image and information if necessary
+            $image = null;
+            if (isset($data['image']) && $data['image']) {
+                $data['hash'] = randomString(15);
+                $data['extension'] = $data['image']->getClientOriginalExtension();
+                $image = $data['image'];
+                unset($data['image']);
+            } else {
+                $data['hash'] = null;
+                $data['extension'] = null;
+            }
+
+            if (!isset($data['is_visible'])) {
+                $data['is_visible'] = 0;
+            }
+
+            if (!isset($data['is_primary'])) {
+                $data['is_primary'] = 0;
+            }
+
+            // Create the literature
+            $literature = PieceLiterature::create($data);
+
+            // Save image if necessary
+            if ($image) {
+                $this->handleImage($image, $literature->imagePath, $literature->thumbnailFileName);
+            }
+
+            return $this->commitReturn($literature);
+        } catch (\Exception $e) {
+            $this->setError('error', $e->getMessage());
+        }
+
+        return $this->rollbackReturn(false);
+    }
+
+    /**
+     * Updates a literature.
+     *
+     * @param \App\models\Gallery\PieceLiterature $literature
+     * @param array                               $data
+     * @param \App\Models\User\User               $user
+     *
+     * @return \App\Models\Gallery\PieceLiterature|bool
+     */
+    public function updateLiterature($literature, $data, $user)
+    {
+        DB::beginTransaction();
+
+        try {
+            if (!$literature) {
+                throw new \Exception('This literature is invalid.');
+            }
+
+            // Handle image and information if necessary
+            if (isset($data['remove_image'])) {
+                if ($literature->hash && $data['remove_image']) {
+                    $data['hash'] = null;
+                    $data['extension'] = null;
+                    $this->deleteImage($literature->imagePath, $literature->thumbnailFileName);
+                }
+            }
+
+            $image = null;
+            if (isset($data['image']) && $data['image']) {
+                // If there is already an image, delete the file
+                // before updating the recorded image information
+                if ($literature->hash && !$data['remove_image']) {
+                    $this->deleteImage($literature->imagePath, $literature->thumbnailFileName);
+                }
+                $data['hash'] = randomString(15);
+                $data['extension'] = $data['image']->getClientOriginalExtension();
+                $image = $data['image'];
+                unset($data['image']);
+            }
+
+            if (!isset($data['is_visible'])) {
+                $data['is_visible'] = 0;
+            }
+            if (!isset($data['is_primary'])) {
+                $data['is_primary'] = 0;
+            }
+
+            $literature->update($data);
+
+            // Save image if necessary
+            if ($image) {
+                $this->handleImage($image, $literature->imagePath, $literature->thumbnailFileName);
+            }
+
+            return $this->commitReturn($literature);
+        } catch (\Exception $e) {
+            $this->setError('error', $e->getMessage());
+        }
+
+        return $this->rollbackReturn(false);
+    }
+
+    /**
+     * Deletes a literature.
+     *
+     * @param \App\Models\Gallery\PieceLiterature $literature
+     *
+     * @return bool
+     */
+    public function deleteLiterature($literature)
+    {
+        DB::beginTransaction();
+
+        try {
+            if (!$literature) {
+                throw new \Exception('This literature is invalid.');
+            }
+
+            // Delete thumbnail file if set
+            if ($literature->hash) {
+                unlink($literature->imagePath.'/'.$literature->thumbnailFileName);
+            }
+
+            // and then the model itself
+            $literature->delete();
 
             return $this->commitReturn(true);
         } catch (\Exception $e) {
@@ -650,7 +841,7 @@ class GalleryService extends Service
             $this->handleImage($file['fullsize'], $image->imagePath, $image->fullsizeFileName);
             $this->handleImage($file['image'], $image->imagePath, $image->imageFileName);
             $this->handleImage($file['thumbnail'], $image->imagePath, $image->thumbnailFileName);
-        } elseif (!$create) {
+        } elseif (!$create && File::exists($image->imagePath.'/'.$image->thumbnailFileName)) {
             // Remove test files
             unlink($image->imagePath.'/'.$image->thumbnailFileName);
             unlink($image->imagePath.'/'.$image->imageFileName);
