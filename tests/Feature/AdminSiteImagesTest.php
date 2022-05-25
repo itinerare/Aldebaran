@@ -51,8 +51,8 @@ class AdminSiteImagesTest extends TestCase
         $response = $this
             ->actingAs($this->user)
             ->post('/admin/site-images/upload', [
-                'file' => $this->file,
-                'key'  => $key,
+                $key.'_file' => $this->file,
+                'key'        => $key,
             ]);
 
         $response->assertSessionHasNoErrors();
@@ -90,7 +90,7 @@ class AdminSiteImagesTest extends TestCase
         $response = $this
             ->actingAs($this->user)
             ->post('/admin/site-images/upload/css', [
-                'file' => $file,
+                'css_file' => $file,
             ]);
 
         $response->assertSessionHasNoErrors();

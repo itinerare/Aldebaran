@@ -100,9 +100,10 @@ class AdminController extends Controller
      */
     public function postUploadImage(Request $request, FileService $service)
     {
-        $request->validate(['file' => 'required|file']);
-        $file = $request->file('file');
         $key = $request->get('key');
+        $fieldname = $key.'_file';
+        $request->validate([$fieldname => 'required|file']);
+        $file = $request->file($fieldname);
         $filename = config('aldebaran.image_files.'.$key)['filename'];
 
         if ($service->uploadFile($file, null, $filename, false)) {
@@ -123,8 +124,8 @@ class AdminController extends Controller
      */
     public function postUploadCss(Request $request, FileService $service)
     {
-        $request->validate(['file' => 'required|file']);
-        $file = $request->file('file');
+        $request->validate(['css_file' => 'required|file']);
+        $file = $request->file('css_file');
 
         if ($service->uploadCss($file)) {
             flash('File uploaded successfully.')->success();
