@@ -8,6 +8,7 @@ use App\Models\Commission\CommissionPiece;
 use App\Models\Commission\CommissionType;
 use App\Models\Gallery\Piece;
 use App\Models\Gallery\PieceImage;
+use App\Models\Gallery\PieceLiterature;
 use App\Services\GalleryService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -436,6 +437,11 @@ class CommissionFormTest extends TestCase
                 $image = PieceImage::factory()->piece($piece->id)->create();
                 $this->service->testImages($image);
             }
+
+            if ($pieceData[2]) {
+                $literature = PieceLiterature::factory()
+                    ->piece($piece->id)->create();
+            }
         }
 
         // Either take the commission's valid URL or generate a fake one
@@ -453,6 +459,11 @@ class CommissionFormTest extends TestCase
                 if ($pieceData[0]) {
                     // Check that the image's thumbnail is present/displayed
                     $response->assertSee($image->thumbnailUrl);
+                }
+
+                if ($pieceData[2]) {
+                    // Check that the literature is present/displayed
+                    $response->assertSee('Literature #'.$literature->id);
                 }
             }
 
@@ -472,10 +483,11 @@ class CommissionFormTest extends TestCase
             'declined commission' => [1, 'Declined', null, null, 200],
             'invalid commission'  => [0, 'Pending', null, null, 404],
 
-            // $pieceData = [(bool) withImage, (bool) isVisible]
-            'with piece'            => [1, 'Accepted', null, [0, 1], 200],
-            'with hidden piece'     => [1, 'Accepted', null, [0, 0], 200],
-            'with piece with image' => [1, 'Accepted', null, [1, 1], 200],
+            // $pieceData = [(bool) withImage, (bool) isVisible, (bool) withLiterature]
+            'with piece'                 => [1, 'Accepted', null, [0, 1, 0], 200],
+            'with hidden piece'          => [1, 'Accepted', null, [0, 0, 0], 200],
+            'with piece with image'      => [1, 'Accepted', null, [1, 1, 0], 200],
+            'with piece with literature' => [1, 'Accepted', null, [1, 1, 1], 200],
 
             // Field testing
             // (string) type, (bool) rules, (bool) choices, value, (string) help, (bool) include category, (bool) include class, (bool) is empty
