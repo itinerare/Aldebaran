@@ -41,6 +41,9 @@ class SetupAldebaran extends Command
             $this->line("\n".'Copying default images...');
             $this->call('copy-default-images');
 
+            $this->line("\n".'Adding dummy commissioner...');
+            $this->call('add-dummy-commissioner');
+
             // Run admin user setup
             $this->line("\n".'Setting up admin user...');
             $this->call('setup-admin-user');
