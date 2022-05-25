@@ -170,9 +170,9 @@ class AdminCommissionTest extends TestCase
             'complete'     => [null, 0, 'Complete', null, 200],
 
             // $pieceData = [(bool) withImage, (bool) isVisible]
-            'with piece'            => [[0, 1, 0], 0, 'Accepted', null, 200],
-            'with hidden piece'     => [[0, 0, 0], 0, 'Accepted', null, 200],
-            'with piece with image' => [[1, 1, 0], 0, 'Accepted', null, 200],
+            'with piece'                 => [[0, 1, 0], 0, 'Accepted', null, 200],
+            'with hidden piece'          => [[0, 0, 0], 0, 'Accepted', null, 200],
+            'with piece with image'      => [[1, 1, 0], 0, 'Accepted', null, 200],
             'with piece with literature' => [[0, 1, 1], 0, 'Accepted', null, 200],
 
             // Field testing
