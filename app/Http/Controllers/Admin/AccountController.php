@@ -45,7 +45,7 @@ class AccountController extends Controller
     public function postEmail(Request $request, UserService $service)
     {
         $request->validate([
-            'email' => 'required|string|email|max:255|unique:users',
+            'email' => 'required|string|email|max:255',
         ]);
         if ($service->updateEmail($request->only(['email']), $request->user())) {
             flash('Email updated successfully.')->success();

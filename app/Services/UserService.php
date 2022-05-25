@@ -97,6 +97,10 @@ class UserService extends Service
      */
     public function updateEmail($data, $user)
     {
+        if (User::where('email', $data['email'])->where('id', '!=', $user->id)->first()) {
+            throw new \Exception('A user with this email address already exists.');
+        }
+
         $user->email = $data['email'];
         $user->save();
 
