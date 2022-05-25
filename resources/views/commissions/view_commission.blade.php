@@ -88,7 +88,7 @@
 
 @if($commission->status == 'Accepted' || $commission->status == 'Complete')
     <h2>Pieces</h2>
-    <p>These are the piece(s) associated with your commission! Pieces may have multiple images, depending. Each image associated with a piece is displayed via its thumbnail, and each thumbnail links to the full-sized image.</p>
+    <p>These are the piece(s) associated with your commission! Pieces may have multiple images and/or pieces of literature, depending. Each image associated with a piece is displayed via its thumbnail, and each thumbnail links to the full-sized image. Likewise, the full text of each piece of literature is displayed in a collapsed section.</p>
 
     @if($commission->pieces->count())
         <div class="mb-4">
@@ -122,7 +122,7 @@
                                 <i>No image(s) provided.</i>
                             @endif
                         </div>
-                        <div class="col-md">
+                        <div class="col-md mb-2">
                             <div class="card card-body">
                                 <div class="borderhr">
                                     <h4>
@@ -131,13 +131,36 @@
                                             <span class="float-right"><a class="btn btn-primary" href="{{ $piece->piece->url }}">View in Gallery</a></span>
                                         @endif
                                     </h4>
-                                    <p>
-                                        {{ $piece->piece->primaryImages->count() }} Primary Image{{ $piece->piece->primaryImages->count() == 1 ? '' : 's' }} ・ {{ $piece->piece->otherImages->count() }} Secondary Image{{ $piece->piece->otherImages->count() == 1 ? '' : 's' }}<br/>
-                                        {{ $piece->piece->images->count() }} Image{{ $piece->piece->images->count() == 1 ? '' : 's' }} Total
-                                    </p>
+                                    @if($piece->piece->images->count())
+                                        <p>
+                                            {{ $piece->piece->primaryImages->count() }} Primary Image{{ $piece->piece->primaryImages->count() == 1 ? '' : 's' }} ・ {{ $piece->piece->otherImages->count() }} Secondary Image{{ $piece->piece->otherImages->count() == 1 ? '' : 's' }}<br/>
+                                            {{ $piece->piece->images->count() }} Image{{ $piece->piece->images->count() == 1 ? '' : 's' }} Total
+                                        </p>
+                                    @endif
+                                    @if($piece->piece->literatures->count())
+                                        <p>
+                                            {{ $piece->piece->primaryLiteratures->count() }} Primary Literature{{ $piece->piece->primaryLiteratures->count() == 1 ? '' : 's' }} ・ {{ $piece->piece->otherImages->count() }} Secondary Literature{{ $piece->piece->otherLiteratures->count() == 1 ? '' : 's' }}<br/>
+                                            {{ $piece->piece->literatures->count() }} Literatures{{ $piece->piece->literatures->count() == 1 ? '' : 's' }} Total
+                                        </p>
+                                    @endif
                                 </div>
                             </div>
                         </div>
+                        @if($piece->piece->literatures->count())
+                            <div class="col-md-12">
+                                @foreach($piece->piece->literatures as $literature)
+                                    <div class="card mb-2">
+                                        <h5 class="card-header">
+                                            Literature #{{ $literature->id }}
+                                            <a class="small inventory-collapse-toggle collapse-toggle collapsed" href="#literature-{{ $literature->id }}" data-toggle="collapse">Show</a></h3>
+                                        </h5>
+                                        <div class="card-body collapse" id="literature-{{ $literature->id }}">
+                                            {!! $literature->text !!}
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        @endif
                     </div>
                 </div>
             @endforeach
