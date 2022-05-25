@@ -47,7 +47,7 @@ class AdminSiteSettingsTest extends TestCase
         // Try to post data
         $response = $this
             ->actingAs($this->user)
-            ->post('/admin/site-settings/'.$key, ['value' => $value ?? $this->value]);
+            ->post('/admin/site-settings/'.$key, [$key.'_value' => $value ?? $this->value]);
 
         $response->assertSessionHasNoErrors();
         $this->assertDatabaseHas('site_settings', [

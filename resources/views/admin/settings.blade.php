@@ -16,8 +16,8 @@
     <h2>General Settings</h2>
     {!! Form::open(['url' => 'admin/site-settings/site_name']) !!}
         <div class="form-group">
-            <strong>{!! Form::label('Site Name') !!}:</strong> {{ $settings->where('key', 'site_name')->first()->description }}
-            {!! Form::text('value', $settings->where('key', 'site_name')->first()->value, ['class' => 'form-control']) !!}
+            <strong>{!! Form::label('site_name_value', 'Site Name') !!}:</strong> {{ $settings->where('key', 'site_name')->first()->description }}
+            {!! Form::text('site_name_value', $settings->where('key', 'site_name')->first()->value, ['class' => 'form-control']) !!}
         </div>
         <div class="form-group text-right mb-3">
             {!! Form::submit('Edit', ['class' => 'btn btn-primary']) !!}
@@ -26,8 +26,8 @@
 
     {!! Form::open(['url' => 'admin/site-settings/site_desc']) !!}
         <div class="form-group">
-            <strong>{!! Form::label('Site Description') !!}:</strong> {{ $settings->where('key', 'site_desc')->first()->description }} Must be brief!
-            {!! Form::text('value', $settings->where('key', 'site_desc')->first()->value, ['class' => 'form-control']) !!}
+            <strong>{!! Form::label('site_desc_value', 'Site Description') !!}:</strong> {{ $settings->where('key', 'site_desc')->first()->description }} Must be brief!
+            {!! Form::text('site_desc_value', $settings->where('key', 'site_desc')->first()->value, ['class' => 'form-control']) !!}
         </div>
         <div class="form-group text-right mb-3">
             {!! Form::submit('Edit', ['class' => 'btn btn-primary']) !!}
@@ -40,8 +40,8 @@
 
         {!! Form::open(['url' => 'admin/site-settings/notif_emails']) !!}
             <div class="form-group h-100">
-                <strong>{!! Form::label('Email Notifications') !!}:</strong> {{ $settings->where('key', 'notif_emails')->first()->description }}<br/>
-                {!! Form::checkbox('value', 1, $settings->where('key', 'notif_emails')->first()->value, ['class' => 'form-check-input mb-3', 'data-toggle' => 'toggle']) !!}
+                <strong>{!! Form::label('notif_emails_value', 'Email Notifications') !!}:</strong> {{ $settings->where('key', 'notif_emails')->first()->description }}<br/>
+                {!! Form::checkbox('notif_emails_value', 1, $settings->where('key', 'notif_emails')->first()->value, ['class' => 'form-check-input mb-3', 'data-toggle' => 'toggle']) !!}
                 <div class="form-group text-right mb-3">
                     {!! Form::submit('Edit', ['class' => 'btn btn-primary']) !!}
                 </div>
@@ -54,8 +54,8 @@
                 <div class="col-md-6 mb-2">
                     {!! Form::open(['url' => 'admin/site-settings/'.$class->slug.'_comms_open']) !!}
                     <div class="form-group h-100">
-                        <strong>{!! Form::label('Commissions Open') !!}:</strong> {{ $settings->where('key', $class->slug.'_comms_open')->first()->description }}<br/>
-                        {!! Form::checkbox('value', 1, $settings->where('key', $class->slug.'_comms_open')->first()->value, ['class' => 'form-check-input mb-3', 'data-toggle' => 'toggle']) !!}
+                        <strong>{!! Form::label($class->slug.'_comms_open_value', 'Commissions Open') !!}:</strong> {{ $settings->where('key', $class->slug.'_comms_open')->first()->description }}<br/>
+                        {!! Form::checkbox($class->slug.'_comms_open_value', 1, $settings->where('key', $class->slug.'_comms_open')->first()->value, ['class' => 'form-check-input mb-3', 'data-toggle' => 'toggle']) !!}
                         <div class="form-group text-right mb-3">
                             {!! Form::submit('Edit', ['class' => 'btn btn-primary']) !!}
                         </div>
@@ -65,8 +65,8 @@
                 <div class="col-md-6 mb-2">
                     {!! Form::open(['url' => 'admin/site-settings/overall_'.$class->slug.'_slots']) !!}
                         <div class="form-group h-100">
-                            <strong>{!! Form::label('Overall Slots') !!}:</strong> {{ $settings->where('key', 'overall_'.$class->slug.'_slots')->first()->description }}
-                            {!! Form::number('value', $settings->where('key', 'overall_'.$class->slug.'_slots')->first()->value, ['class' => 'form-control']) !!}
+                            <strong>{!! Form::label($class->slug.'_overall_slots_value', 'Overall Slots') !!}:</strong> {{ $settings->where('key', $class->slug.'_overall_slots')->first()->description }}
+                            {!! Form::number($class->slug.'_overall_slots_value', $settings->where('key', $class->slug.'_overall_slots')->first()->value, ['class' => 'form-control']) !!}
                         </div>
                         <div class="form-group text-right mb-3">
                             {!! Form::submit('Edit', ['class' => 'btn btn-primary']) !!}
@@ -76,8 +76,8 @@
                 <div class="col-md-12 mb-2">
                     {!! Form::open(['url' => 'admin/site-settings/'.$class->slug.'_status']) !!}
                         <div class="form-group h-100">
-                            <strong>{!! Form::label('Status Message') !!}:</strong> {{ $settings->where('key', $class->slug.'_status')->first()->description }}
-                            {!! Form::text('value', $settings->where('key', $class->slug.'_status')->first()->value, ['class' => 'form-control']) !!}
+                            <strong>{!! Form::label($class->slug.'_status_value', 'Status Message') !!}:</strong> {{ $settings->where('key', $class->slug.'_status')->first()->description }}
+                            {!! Form::text($class->slug.'_status_value', $settings->where('key', $class->slug.'_status')->first()->value, ['class' => 'form-control']) !!}
                         </div>
                         <div class="form-group text-right mb-3">
                             {!! Form::submit('Edit', ['class' => 'btn btn-primary']) !!}
@@ -87,8 +87,8 @@
                 <div class="col-md-12 mb-2">
                     {!! Form::open(['url' => 'admin/site-settings/'.$class->slug.'_full']) !!}
                         <div class="form-group h-100">
-                            <strong>{!! Form::label('Full Commissions Message') !!}:</strong> {{ $settings->where('key', $class->slug.'_full')->first()->description }}
-                            {!! Form::text('value', $settings->where('key', $class->slug.'_full')->first()->value, ['class' => 'form-control']) !!}
+                            <strong>{!! Form::label($class->slug.'_full_value', 'Full Commissions Message') !!}:</strong> {{ $settings->where('key', $class->slug.'_full')->first()->description }}
+                            {!! Form::text($class->slug.'_full_value', $settings->where('key', $class->slug.'_full')->first()->value, ['class' => 'form-control']) !!}
                         </div>
                         <div class="form-group text-right mb-3">
                             {!! Form::submit('Edit', ['class' => 'btn btn-primary']) !!}

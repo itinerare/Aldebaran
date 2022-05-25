@@ -65,10 +65,11 @@ class AdminController extends Controller
      */
     public function postEditSetting(Request $request, $key)
     {
-        if (!$request->get('value')) {
+        $fieldname = $key.'_value';
+        if (!$request->get($fieldname)) {
             $value = 0;
         }
-        if (DB::table('site_settings')->where('key', $key)->update(['value' => $value ?? $request->get('value')])) {
+        if (DB::table('site_settings')->where('key', $key)->update(['value' => $value ?? $request->get($fieldname)])) {
             flash('Setting updated successfully.')->success();
         } else {
             flash('Invalid setting selected.')->success();
