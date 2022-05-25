@@ -99,7 +99,7 @@
                         @endif
                     </div>
                 @endif
-                <div class="main-content {{ config('aldebaran.settings.layout.full_width') ? (View::hasSection('sidebar') ? 'col-lg-10' : 'col-lg-12') : 'col-lg-8' }} p-4">
+                <div class="main-content {{ config('aldebaran.settings.layout.full_width') ? (View::hasSection('sidebar') ? 'col-lg-10' : 'col-lg-12') : 'col-lg-8' }} p-4" id="content">
                     <div>
                         @include('flash::message')
                         @yield('content')
