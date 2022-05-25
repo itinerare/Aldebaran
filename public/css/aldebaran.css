@@ -157,6 +157,27 @@ a {-webkit-transition: all .3s ease-in-out; -o-transition: all .3s ease-in-out; 
     top: 80%;
 }
 
+#skip a {
+    position:absolute;
+    left:-10000px !important;
+    top:auto;
+    width:1px;
+    height:1px;
+    overflow:hidden;
+}
+
+#skip a:focus {
+    position:static;
+    width:auto;
+    height:auto;
+    padding:8px 16px;
+    float:left;
+    width:auto;
+    border:none;
+    display:block;
+    outline:0;
+}
+
 /**************************************************************************************************
 
     Layout
@@ -199,7 +220,7 @@ main > .row {
 /* Sidebar */
 
 .sidebar {
-    background: url('/images/assets/arct bg 50.png') no-repeat;
+    background: url('/images/assets/sidebar_bg.png') no-repeat;
     background-position: top;
     background-color: #ddd;
     -webkit-background-size: auto;
