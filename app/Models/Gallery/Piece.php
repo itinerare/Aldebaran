@@ -301,7 +301,7 @@ class Piece extends Model implements Feedable
     {
         $summary = '';
         if ($this->images->count()) {
-            $summary = $summary.'<a href="'.$this->url.'"><img src="'.$this->thumbnailUrl.'"/></a><br/>This piece contains '.$this->images->count().' image'.($this->images->count() > 1 ? 's' : '').'. Click the thumbnail to view in full.<hr/>';
+            $summary = $summary.'<a href="'.$this->url.'"><img src="'.$this->thumbnailUrl.'" alt="Thumbnail for '.$this->name.'" /></a><br/>This piece contains '.$this->images->count().' image'.($this->images->count() > 1 ? 's' : '').'. Click the thumbnail to view in full.<hr/>';
         }
         if ($this->literatures->count()) {
             foreach ($this->literatures as $literature) {

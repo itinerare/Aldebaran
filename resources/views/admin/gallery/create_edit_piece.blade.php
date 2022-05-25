@@ -90,7 +90,7 @@
                 <tr class="sort-item" data-id="{{ $image->id }}">
                     <td style="min-width: 100px;">
                         <a class="fas fa-arrows-alt-v handle mr-3" href="#"></a>
-                        <img src="{{ $image->thumbnailUrl }}" style="height:50px; width:auto; max-width:100%;" />
+                        <img src="{{ $image->thumbnailUrl }}" style="height:50px; width:auto; max-width:100%;" alt="Thumbnail for image #{{ $image->id }}" />
                     </td>
                     <td>
                         {!! isset($image->description) ? $image->description : null !!}

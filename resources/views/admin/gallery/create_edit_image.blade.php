@@ -21,7 +21,7 @@
             <div class="card-body text-center">
                 Watermarked/Display Image:<br/>
                 <a href="{{ $image->imageUrl }}" data-lightbox="entry" data-title="Watermarked Image">
-                    <img class="p-2" src="{{ $image->imageUrl }}" style="max-width:100%; max-height:60vh;" />
+                    <img class="p-2" src="{{ $image->imageUrl }}" style="max-width:100%; max-height:60vh;" alt="Watermarked view" />
                 </a>
 
             </div>
@@ -29,13 +29,13 @@
                 <div class="col-md-6 text-center">
                     Fullsize:<br/>
                     <a href="{{ $image->fullsizeUrl }}" data-lightbox="entry" data-title="Fullsize Image">
-                        <img class="p-2" src="{{ $image->fullsizeUrl }}" style="max-width:100%; max-height:60vh;" />
+                        <img class="p-2" src="{{ $image->fullsizeUrl }}" style="max-width:100%; max-height:60vh;" alt="Full-size view" />
                     </a>
                 </div>
                 <div class="col-md-6 text-center">
                     Thumbnail:<br/>
                     <a href="{{ $image->thumbnailUrl }}" data-lightbox="entry" data-title="Thumbnail Image">
-                        <img class="p-2" src="{{ $image->thumbnailUrl }}" style="max-width:100%; max-height:60vh;" />
+                        <img class="p-2" src="{{ $image->thumbnailUrl }}" style="max-width:100%; max-height:60vh;" alt="Thumbnail view" />
                     </a>
                 </div>
             </div>
@@ -43,7 +43,7 @@
     @endif
     <div class="card mb-2 hide" id="imageContainer">
         <div class="card-body text-center">
-            <img src="#" id="image" style="max-width:100%; max-height:60vh;" />
+            <img src="#" id="image" style="max-width:100%; max-height:60vh;" alt="Uploaded image preview" />
         </div>
     </div>
     <div class="card p-2">

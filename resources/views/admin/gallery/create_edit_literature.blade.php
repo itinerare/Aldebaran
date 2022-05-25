@@ -32,14 +32,14 @@
                     <div class="card-body text-center">
                         Thumbnail:<br/>
                         <a href="{{ $literature->thumbnailUrl }}" data-lightbox="entry" data-title="Literature Thumbnail">
-                            <img class="p-2" src="{{ $literature->thumbnailUrl }}" style="max-width:100%; max-height:60vh;" />
+                            <img class="p-2" src="{{ $literature->thumbnailUrl }}" style="max-width:100%; max-height:60vh;" alt="Thumbnail image" />
                         </a>
                     </div>
                 </div>
             @endif
             <div class="card mb-2 hide" id="thumbnailContainer">
                 <div class="card-body text-center">
-                    <img src="#" id="thumbnail" style="max-width:100%; max-height:60vh;" />
+                    <img src="#" id="thumbnail" style="max-width:100%; max-height:60vh;" alt="Thumbnail image preview" />
                 </div>
             </div>
             <div class="card mb-2 {{ $literature->hash ? 'hide' : '' }}" id="placeholderContainer">

@@ -21,7 +21,7 @@
 <div class="row">
     @if($program->has_image)
         <div class="col-md-2 text-center align-self-center">
-            <img class="mw-100" src="{{ $program->imageUrl }}"/>
+            <img class="mw-100" src="{{ $program->imageUrl }}" alt="Icon for {{ $program->name }}" />
         </div>
     @endif
     <div class="col-md">
