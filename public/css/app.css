@@ -1,4 +1,7 @@
-@import url(https://fonts.googleapis.com/css?family=Nunito);
+@font-face {
+    font-family: Nunito;
+    src: url(../webfonts/Nunito-Regular.ttf)
+}
 
 /*!
  * Bootstrap v4.1.3 (https://getbootstrap.com/)
