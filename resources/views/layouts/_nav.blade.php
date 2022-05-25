@@ -79,17 +79,17 @@
                 <!-- Authentication Links -->
                 @guest
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('login') }}"><i class="fas fa-crown"></i></a>
+                        <a class="nav-link" href="{{ route('login') }}" aria-label="Login"><i class="fas fa-crown"></i></a>
                     </li>
                     @if (Settings::get('is_registration_open') == 1)
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
+                            <a class="nav-link" href="{{ route('register') }}" aria-label="Register">{{ __('Register') }}</a>
                         </li>
                     @endif
                 @else
 
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url('admin') }}"><i class="fas fa-crown"></i></a>
+                        <a class="nav-link" href="{{ url('admin') }}"  aria-label="Admin Panel"><i class="fas fa-crown"></i></a>
                     </li>
 
                     <li class="nav-item">
