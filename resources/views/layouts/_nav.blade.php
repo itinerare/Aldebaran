@@ -1,7 +1,7 @@
 <nav class="navbar navbar-expand-md navbar-dark bg-dark" id="headerNav">
     <div class="container-fluid">
         <span class="skip" id="skip"><a href="#content">To Main Content</a></span>
-        <a class="navbar-brand" href="{{ url('/') }}">
+        <a class="navbar-brand" href="{{ url('/') }}" aria-label="To Home">
             {{ Settings::get('site_name') }}
         </a>
 
