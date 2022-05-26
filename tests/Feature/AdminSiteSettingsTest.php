@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Commission\CommissionClass;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -18,17 +19,42 @@ class AdminSiteSettingsTest extends TestCase
     {
         parent::setUp();
 
+        // Generate some test data
         $this->value = $this->faker->unique()->domainWord();
+
+        // Ensure site settings are present
+        $this->artisan('add-site-settings');
     }
 
     /**
      * Test site settings access.
+     *
+     * @dataProvider settingsViewProvider
+     *
+     * @param bool $commsEnabled
+     * @param int  $expected
      */
-    public function testGetSiteSettingsIndex()
+    public function testGetSiteSettingsIndex($commsEnabled, $expected)
     {
+        // Adjust commission enable/disable as appropriate
+        config(['aldebaran.settings.commissions.enabled' => $commsEnabled]);
+
+        if ($commsEnabled) {
+            // Create testing class
+            $this->class = CommissionClass::factory()->create();
+        }
+
         $this->actingAs($this->user)
             ->get('/admin/site-settings')
-            ->assertStatus(200);
+            ->assertStatus($expected);
+    }
+
+    public function settingsViewProvider()
+    {
+        return [
+            'basic'               => [0, 200],
+            'commissions enabled' => [1, 200],
+        ];
     }
 
     /**
@@ -41,9 +67,6 @@ class AdminSiteSettingsTest extends TestCase
      */
     public function testPostEditSiteSetting($key, $value = null)
     {
-        // Ensure site settings are present to modify
-        $this->artisan('add-site-settings');
-
         // Try to post data
         $response = $this
             ->actingAs($this->user)
