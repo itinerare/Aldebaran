@@ -89,7 +89,7 @@
         </div>
 
         <div class="form-group">
-            {!! Form::label('Link') !!} {!! add_help('The URL of this page, as mentioned above!') !!}
+            {!! Form::label('link', 'Link') !!} {!! add_help('The URL of this page, as mentioned above!') !!}
             {!! Form::text('link', $commission->url, ['class' => 'form-control', 'disabled']) !!}
         </div>
     </div>
@@ -196,7 +196,7 @@
     </div>
 
     <div class="form-group">
-        {!! Form::label('Progress') !!}
+        {!! Form::label('progress', 'Progress') !!}
         {!! Form::select('progress', ['Not Started' => 'Not Started', 'Working On' => 'Working On', 'Sketch' => 'Sketch', 'Lines' => 'Lines', 'Color' => 'Color', 'Shading' => 'Shading', 'Finalizing' => 'Finalizing', 'Pending Approval' => 'Pending Approval', 'Finished' => 'Finished'], $commission->progress, ['class' => 'form-control']) !!}
     </div>
 @endif

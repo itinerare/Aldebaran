@@ -47,6 +47,7 @@
         </div>
     </div>
     <div class="card p-2">
+        {!! Form::label('mainImage', 'Upload File') !!}
         {!! Form::file('image', ['id' => 'mainImage']) !!}
         <small>Images may be PNG, GIF, or JPG and up to {{ min(ini_get("upload_max_filesize"), ini_get("post_max_size"), '5') }}MB in size.</small>
     </div>
@@ -55,20 +56,20 @@
 <div class="row">
     <div class="row no-gutters col-md-6 form-group">
         <div class="col-md-8 form-group">
-            {!! Form::label('Watermark Scale') !!} {!! add_help('This adjusts the image watermark.') !!}
+            {!! Form::label('watermark_scale', 'Watermark Scale') !!} {!! add_help('This adjusts the image watermark.') !!}
             {!! Form::select('watermark_scale', ['.20' => '20%', '.30' => '30%', '.40' => '40%', '.50' => '50%', '.60' => '60%', '.70' => '70%'], $image->id ? $image->data['scale'] : '.30', ['class' => 'form-control', 'placeholder' => 'Select a Scale']) !!}
         </div>
         <div class="col-md-4 pl-2 form-group">
-            {!! Form::label('Opacity') !!}
+            {!! Form::label('watermark_opacity', 'Opacity') !!}
             {!! Form::select('watermark_opacity', [0 => '0%', 10 => '10%', 20 => '20%', 30 => '30%', 40 => '40%', 50 => '50%', 60 => '60%', 70 => '70%', 80 => '80%', 90 => '90%', 100 => '100%'], $image->id ? $image->data['opacity'] : 30, ['class' => 'form-control', 'placeholder' => 'Select an Opacity']) !!}
         </div>
     </div>
     <div class="col-md-6 form-group">
-        {!! Form::label('Watermark Position') !!}
+        {!! Form::label('watermark_position', 'Watermark Position') !!}
         {!! Form::select('watermark_position', ['top-left' => 'Top Left', 'top' => 'Top', 'top-right' => 'Top Right', 'left' => 'Left', 'center' => 'Center', 'right' => 'Right', 'bottom-left' => 'Bottom Left', 'bottom' => 'Bottom', 'bottom-right' => 'Bottom Right'], $image->id ? $image->data['position'] : 'bottom-right', ['class' => 'form-control', 'placeholder' => 'Select a Position']) !!}
     </div>
     <div class="col-md-6 form-group">
-        {!! Form::label('Watermark Color (Optional)') !!} {!! add_help('Should be a hex color code. Watermark defaults to black if not set.') !!}
+        {!! Form::label('watermark_color', 'Watermark Color (Optional)') !!} {!! add_help('Should be a hex color code. Watermark defaults to black if not set.') !!}
         <div class="input-group cp">
             {!! Form::text('watermark_color', $image->id && isset($image->data['color']) ? $image->data['color'] : null, ['class' => 'form-control', 'placeholder' => 'Enter a Color']) !!}
             <span class="input-group-append">
@@ -78,18 +79,18 @@
     </div>
     <div class="row no-gutters col-md-6 form-group">
         <div class="col-md-8 form-group">
-            {!! Form::label('Text Watermark (Optional)') !!} {!! add_help('If set, this will add a repeating text watermark over the image.') !!}
+            {!! Form::label('text_watermark', 'Text Watermark (Optional)') !!} {!! add_help('If set, this will add a repeating text watermark over the image.') !!}
             {!! Form::select('text_watermark', ['generic' => 'Generic Work', 'personal' => 'Personal Work', 'gift' => 'Gift Work', 'commission' => 'Commissioned Work'], $image->id && isset($image->data['text_watermark']) ? $image->data['text_watermark'] : null, ['class' => 'form-control', 'placeholder' => 'Select an Option']) !!}
         </div>
         <div class="col-md-4 pl-2 form-group">
-            {!! Form::label('Opacity') !!}
+            {!! Form::label('text_opacity', 'Opacity') !!}
             {!! Form::select('text_opacity', ['.10' => '10%', '.20' => '20%', '.30' => '30%', '.40' => '40%', '.50' => '50%', '.60' => '60%', '.70' => '70%', '.80' => '80%', '.90' => '90%', '1' => '100%'], $image->id && isset($image->data['text_opacity']) ? $image->data['text_opacity'] : '.30', ['class' => 'form-control', 'placeholder' => 'Select an Option']) !!}
         </div>
     </div>
 </div>
 
 <div class="form-group">
-    {!! Form::label('Image Scale (Optional)') !!} {!! add_help('If set, this resizes the image.') !!}
+    {!! Form::label('image_scale', 'Image Scale (Optional)') !!} {!! add_help('If set, this resizes the image.') !!}
     {!! Form::select('image_scale', ['.10' => '10%', '.20' => '20%', '.30' => '30%', '.40' => '40%', '.50' => '50%', '.60' => '60%', '.70' => '70%', '.80' => '80%', '.90' => '90%'], $image->id && isset($image->data['image_scale']) ? $image->data['image_scale'] : null, ['class' => 'form-control', 'placeholder' => 'Select an Image Scale']) !!}
 </div>
 
@@ -115,7 +116,7 @@
 @endif
 
 <div class="form-group">
-    {!! Form::label('Caption (Optional)') !!} {!! add_help('Should be brief.') !!}
+    {!! Form::label('description', 'Caption (Optional)') !!} {!! add_help('Should be brief.') !!}
     {!! Form::textarea('description', $image->description, ['class' => 'form-control']) !!}
 </div>
 

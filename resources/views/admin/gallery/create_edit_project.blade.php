@@ -14,12 +14,12 @@
 {!! Form::open(['url' => $project->id ? 'admin/data/projects/edit/'.$project->id : 'admin/data/projects/create']) !!}
 
 <div class="form-group">
-    {!! Form::label('Name') !!}
-    {!! Form::text('name', $project->name, ['class' => 'form-control']) !!}
+    {!! Form::label('name', 'Name') !!}
+    {!! Form::text('name', $project->name, ['class' => 'form-control', 'required']) !!}
 </div>
 
 <div class="form-group">
-    {!! Form::label('Description (Optional)') !!}
+    {!! Form::label('description', 'Description (Optional)') !!}
     {!! Form::textarea('description', $project->description, ['class' => 'form-control wysiwyg']) !!}
 </div>
 

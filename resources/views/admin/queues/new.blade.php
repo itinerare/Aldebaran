@@ -39,29 +39,29 @@
     <div class="col-md">
         <h5>Existing</h5>
         <div class="form-group">
-            {!! Form::label('Commissioner') !!}
+            {!! Form::label('commissioner_id', 'Commissioner') !!}
             {!! Form::select('commissioner_id', $commissioners, null, ['class' => 'form-control selectize', 'placeholder' => 'Select a Commissioner']) !!}
         </div>
     </div>
     <div class="col-md">
         <h5>New</h5>
         <div class="form-group">
-            {!! Form::label('Name (Optional)') !!}
+            {!! Form::label('name', 'Name (Optional)') !!}
             {!! Form::text('name', null, ['class' => 'form-control']) !!}
         </div>
 
         <div class="form-group">
-            {!! Form::label('Email') !!}
+            {!! Form::label('email', 'Email') !!}
             {!! Form::text('email', null, ['class' => 'form-control']) !!}
         </div>
 
         <div class="form-group">
-            {!! Form::label('Preferred Method of Contact') !!} {!! add_help('Please specify at least one of: email (address only necessary if different from the above), discord tag (including following numbers), or twitter @.') !!}
+            {!! Form::label('contact', 'Preferred Method of Contact') !!} {!! add_help('Please specify at least one of: email (address only necessary if different from the above), discord tag (including following numbers), or twitter @.') !!}
             {!! Form::text('contact', null, ['class' => 'form-control']) !!}
         </div>
 
         <div class="form-group">
-            {!! Form::label('Paypal Address') !!} {!! add_help('If different from the email address provided above. If this field is left blank, the above email address will automatically be used instead.') !!}
+            {!! Form::label('paypal', 'Paypal Address') !!} {!! add_help('If different from the email address provided above. If this field is left blank, the above email address will automatically be used instead.') !!}
             {!! Form::text('paypal', null, ['class' => 'form-control']) !!}
         </div>
     </div>
@@ -74,7 +74,7 @@
 @include('commissions._form_builder', ['type' => $type, 'form' => true])
 
 <div class="form-group">
-    {!! Form::label('Anything Else? (Optional)') !!}
+    {!! Form::label('additional_information', 'Anything Else? (Optional)') !!}
     {!! Form::textarea('additional_information', null, ['class' => 'form-control']) !!}
 </div>
 

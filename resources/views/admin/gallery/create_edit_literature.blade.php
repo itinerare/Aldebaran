@@ -14,8 +14,8 @@
 {!! Form::open(['url' => $literature->id ? 'admin/data/pieces/literatures/edit/'.$literature->id : 'admin/data/pieces/literatures/create', 'id' => 'literatureForm', 'files' => true]) !!}
 
 <div class="form-group">
-    {!! Form::label('Literature') !!}
-    {!! Form::textarea('text', $literature->text, ['class' => 'form-control wysiwyg']) !!}
+    {!! Form::label('text', 'Literature') !!}
+    {!! Form::textarea('text', $literature->text, ['class' => 'form-control wysiwyg', 'required']) !!}
 </div>
 
 <h3>Other Information</h3>
@@ -51,6 +51,7 @@
     </div>
     <div class="col-md">
         <div class="card p-2">
+            {!! Form::label('literatureThumb', 'Upload File') !!}
             {!! Form::file('image', ['id' => 'literatureThumb']) !!}
             <small>Thumbnail may be PNG, GIF, or JPG, should be {{ config('aldebaran.settings.gallery_arrangement') == 'rows' ? config('aldebaran.settings.thumbnail_height') : config('aldebaran.settings.thumbnail_width') }}px in {{ config('aldebaran.settings.gallery_arrangement') == 'rows' ? 'height' : 'width' }}, and up to {{ min(ini_get("upload_max_filesize"), ini_get("post_max_size"), '5') }}MB in size.</small>
 

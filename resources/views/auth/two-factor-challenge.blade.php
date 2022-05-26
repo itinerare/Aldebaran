@@ -7,7 +7,7 @@
 
 {!! Form::open(['url' => 'two-factor-challenge']) !!}
     <div class="form-group row">
-        {!! Form::label('Code', null, ['class' => 'col-md-3 col-form-label text-md-right']) !!}
+        {!! Form::label('code', 'Code', ['class' => 'col-md-3 col-form-label text-md-right']) !!}
         <div class="col-md-7">
             {!! Form::text('code', null, ['class' => 'form-control']) !!}
         </div>
@@ -21,7 +21,7 @@
     </div>
     <div class="mb-3" id="recoveryContainer">
         <div class="form-group row">
-            {!! Form::label('Recovery Code', null, ['class' => 'col-md-3 col-form-label text-md-right']) !!}
+            {!! Form::label('recovery_code', 'Recovery Code', ['class' => 'col-md-3 col-form-label text-md-right']) !!}
             <div class="col-md-7">
                 {!! Form::text('recovery_code', null, ['class' => 'form-control']) !!}
             </div>

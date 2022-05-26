@@ -16,14 +16,14 @@
 <div class="row">
     <div class="col-md">
         <div class="form-group">
-            {!! Form::label('Name') !!}
-            {!! Form::text('name', $class->name, ['class' => 'form-control']) !!}
+            {!! Form::label('name', 'Name') !!}
+            {!! Form::text('name', $class->name, ['class' => 'form-control', 'required']) !!}
         </div>
     </div>
     @if($class->id)
         <div class="col-md">
             <div class="form-group">
-                {!! Form::label('Slug') !!}
+                {!! Form::label('slug', 'Slug') !!}
                 {!! Form::text('slug', $class->slug, ['class' => 'form-control', 'disabled']) !!}
             </div>
         </div>
@@ -52,19 +52,19 @@
                         <div class="row">
                             <div class="col-md">
                                 <div class="form-group">
-                                    {!! Form::label('Page Title') !!}
-                                    {!! Form::text('page_title[]', $page['title'], ['class' => 'form-control']) !!}
+                                    {!! Form::label('page_title[]', 'Page Title') !!}
+                                    {!! Form::text('page_title[]', $page['title'], ['class' => 'form-control', 'required']) !!}
                                 </div>
                             </div>
                             <div class="col-md">
                                 <div class="form-group">
-                                    {!! Form::label('Page Key') !!}
-                                    {!! Form::text('page_key[]', $page['key'], ['class' => 'form-control']) !!}
+                                    {!! Form::label('page_key[]', 'Page Key') !!}
+                                    {!! Form::text('page_key[]', $page['key'], ['class' => 'form-control', 'required']) !!}
                                 </div>
                             </div>
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    {!! Form::label('URL') !!}
+                                    {!! Form::label('page_url[]', 'URL') !!}
                                     {!! Form::text('page_url[]', url('commissions/'.$class->slug.'/'.$page['key']), ['class' => 'form-control', 'disabled']) !!}
                                 </div>
                             </div>
@@ -104,14 +104,14 @@
             <div class="row">
                 <div class="col-md">
                     <div class="form-group">
-                        {!! Form::label('Page Title') !!}
-                        {!! Form::text('page_title[]', null, ['class' => 'form-control']) !!}
+                        {!! Form::label('page_title[]', 'Page Title') !!}
+                        {!! Form::text('page_title[]', null, ['class' => 'form-control', 'required']) !!}
                     </div>
                 </div>
                 <div class="col-md">
                     <div class="form-group">
-                        {!! Form::label('Page Key') !!}
-                        {!! Form::text('page_key[]', null, ['class' => 'form-control']) !!}
+                        {!! Form::label('page_key[]', 'Page Key') !!}
+                        {!! Form::text('page_key[]', null, ['class' => 'form-control', 'required']) !!}
                     </div>
                 </div>
             </div>

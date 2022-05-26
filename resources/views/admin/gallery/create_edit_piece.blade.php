@@ -16,17 +16,17 @@
 <h3>Basic Information</h3>
 
 <div class="form-group">
-    {!! Form::label('Name') !!}
-    {!! Form::text('name', $piece->name, ['class' => 'form-control']) !!}
+    {!! Form::label('name', 'Name') !!}
+    {!! Form::text('name', $piece->name, ['class' => 'form-control', 'required']) !!}
 </div>
 
 <div class="form-group">
-    {!! Form::label('Project') !!}
-    {!! Form::select('project_id', $projects, $piece->project_id, ['class' => 'form-control', 'placeholder' => 'Select a Project']) !!}
+    {!! Form::label('project_id', 'Project') !!}
+    {!! Form::select('project_id', $projects, $piece->project_id, ['class' => 'form-control', 'placeholder' => 'Select a Project', 'required']) !!}
 </div>
 
 <div class="form-group">
-    {!! Form::label('Description (Optional)') !!}
+    {!! Form::label('description', 'Description (Optional)') !!}
     {!! Form::textarea('description', $piece->description, ['class' => 'form-control wysiwyg']) !!}
 </div>
 
@@ -89,7 +89,7 @@
             @foreach($piece->images as $image)
                 <tr class="sort-item" data-id="{{ $image->id }}">
                     <td style="min-width: 100px;">
-                        <a class="fas fa-arrows-alt-v handle mr-3" href="#"></a>
+                        <a class="fas fa-arrows-alt-v handle mr-3" href="#" aria-label="Sort handle"></a>
                         <img src="{{ $image->thumbnailUrl }}" style="height:50px; width:auto; max-width:100%;" alt="Thumbnail for image #{{ $image->id }}" />
                     </td>
                     <td>
@@ -142,7 +142,7 @@
             @foreach($piece->literatures as $literature)
                 <tr class="sort-item" data-id="{{ $literature->id }}">
                     <td>
-                        <a class="fas fa-arrows-alt-v handle float-left mr-3" href="#"></a>
+                        <a class="fas fa-arrows-alt-v handle float-left mr-3" href="#" aria-label="Sort handle"></a>
                         {!! Str::limit($literature->text, 50) !!}
                     </td>
                     <td>

@@ -34,18 +34,18 @@
 <p>This section concerns your contact information so that I can contact you about your commission (including status updates) and invoice you.</p>
 
 <div class="form-group">
-    {!! Form::label('Name (Optional)') !!} {!! add_help('You don\'t strictly need to provide this, but it helps identify you! Of course, it can be whatever name you prefer to be called. If left unfilled, your email address (minus the domain) will be used instead.') !!}
+    {!! Form::label('name', 'Name (Optional)') !!} {!! add_help('You don\'t strictly need to provide this, but it helps identify you! Of course, it can be whatever name you prefer to be called. If left unfilled, your email address (minus the domain) will be used instead.') !!}
     {!! Form::text('name', old('name'), ['class' => 'form-control']) !!}
 </div>
 
 <div class="form-group">
-    {!! Form::label('Email Address') !!}
-    {!! Form::text('email', old('email'), ['class' => 'form-control']) !!}
+    {!! Form::label('email', 'Email Address') !!}
+    {!! Form::text('email', old('email'), ['class' => 'form-control', 'required']) !!}
 </div>
 
 <div class="form-group">
-    {!! Form::label('Preferred Method of Contact') !!} {!! add_help('Please specify at least one of: email (address not necessary-- I will use the one entered above), discord tag (including following numbers), or twitter @ (you must be able to accept DMs from me).') !!}
-    {!! Form::text('contact', old('contact'), ['class' => 'form-control']) !!}
+    {!! Form::label('contact', 'Preferred Method of Contact') !!} {!! add_help('Please specify at least one of: email (address not necessary-- I will use the one entered above), discord tag (including following numbers), or twitter @ (you must be able to accept DMs from me).') !!}
+    {!! Form::text('contact', old('contact'), ['class' => 'form-control', 'required']) !!}
 </div>
 
 <div class="form-group">
@@ -54,7 +54,7 @@
 </div>
 <div class="mb-3" id="paymentOptions">
     <div class="form-group">
-        {!! Form::label('Paypal Address') !!}
+        {!! Form::label('paypal', 'Paypal Address') !!}
         {!! Form::text('paypal', old('paypal'), ['class' => 'form-control']) !!}
     </div>
 </div>
@@ -70,7 +70,7 @@
 @include('commissions._form_builder', ['type' => $type, 'form' => true])
 
 <div class="form-group">
-    {!! Form::label('Anything Else? (Optional)') !!}
+    {!! Form::label('additional_information', 'Anything Else? (Optional)') !!}
     {!! Form::textarea('additional_information', old('additional_information'), ['class' => 'form-control']) !!}
 </div>
 

@@ -11,9 +11,9 @@
 
 {!! Form::open(['url' => 'admin/account-settings/email']) !!}
     <div class="form-group row">
-        <label class="col-md-2 col-form-label">Email Address</label>
+        {!! Form::label('email', 'Email Address', ['class' => 'col-md-2 col-form-label']) !!}
         <div class="col-md-10">
-            {!! Form::text('email', Auth::user()->email, ['class' => 'form-control']) !!}
+            {!! Form::text('email', Auth::user()->email, ['class' => 'form-control', 'required']) !!}
         </div>
     </div>
     <div class="text-right">
@@ -25,21 +25,21 @@
 
 {!! Form::open(['url' => 'admin/account-settings/password']) !!}
     <div class="form-group row">
-        <label class="col-md-2 col-form-label">Old Password</label>
+        {!! Form::label('old_password', 'Old Password', ['class' => 'col-md-2 col-form-label']) !!}
         <div class="col-md-10">
-            {!! Form::password('old_password', ['class' => 'form-control']) !!}
+            {!! Form::password('old_password', ['class' => 'form-control', 'required']) !!}
         </div>
     </div>
     <div class="form-group row">
-        <label class="col-md-2 col-form-label">New Password</label>
+        {!! Form::label('new_password', 'New Password', ['class' => 'col-md-2 col-form-label']) !!}
         <div class="col-md-10">
-            {!! Form::password('new_password', ['class' => 'form-control']) !!}
+            {!! Form::password('new_password', ['class' => 'form-control', 'required']) !!}
         </div>
     </div>
     <div class="form-group row">
-        <label class="col-md-2 col-form-label">Confirm New Password</label>
+        {!! Form::label('new_password_confirmation', 'Confirm New Password', ['class' => 'col-md-2 col-form-label']) !!}
         <div class="col-md-10">
-            {!! Form::password('new_password_confirmation', ['class' => 'form-control']) !!}
+            {!! Form::password('new_password_confirmation', ['class' => 'form-control', 'required']) !!}
         </div>
     </div>
     <div class="text-right">
@@ -61,9 +61,9 @@
     <h4>Disable 2FA</h4>
     {!! Form::open(['url' => 'admin/account-settings/two-factor/disable']) !!}
     <div class="form-group row">
-        <label class="col-md-2 col-form-label">Confirm Code</label>
+        {!! Form::label('code', 'Confirm Code', ['class' => 'col-md-2 col-form-label']) !!}
         <div class="col-md-10">
-            {!! Form::text('code', null, ['class' => 'form-control']) !!}
+            {!! Form::text('code', null, ['class' => 'form-control', 'required']) !!}
         </div>
     </div>
     <div class="text-right">
