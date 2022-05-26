@@ -81,7 +81,9 @@
     <link href="{{ asset('css/croppie.css') }}" rel="stylesheet">
     <link href="{{ asset('css/selectize.bootstrap4.css') }}" rel="stylesheet">
 
-    {!! RecaptchaV3::initJs() !!}
+    @if(config('aldebaran.settings.captcha'))
+        {!! RecaptchaV3::initJs() !!}
+    @endif
 
     @include('feed::links')
 </head>

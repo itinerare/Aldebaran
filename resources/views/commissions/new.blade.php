@@ -79,7 +79,9 @@
     I have read and agree to the <a href="{{ url('/commissions/'.$type->category->class->slug.'/tos') }}">Terms of Service</a> and <a href="{{ url('privacy') }}">Privacy Policy</a>.
 </label>
 
-{!! RecaptchaV3::field('submit') !!}
+@if(config('aldebaran.settings.captcha'))
+    {!! RecaptchaV3::field('submit') !!}
+@endif
 
 <div class="text-right">
     <input onclick="this.disabled=true;this.value='Submiting...';this.form.submit();" class="btn btn-primary" type="submit" value="Submit"></input>
