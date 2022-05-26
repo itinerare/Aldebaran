@@ -2,6 +2,10 @@
 
 @section('admin-title') {{ $image->id ? 'Edit' : 'Create' }} Image @endsection
 
+@section('admin-head-scripts')
+    <script src="{{ asset('js/bootstrap-colorpicker.min.js') }}"></script>
+@endsection
+
 @section('admin-content')
 {!! breadcrumbs(['Admin Panel' => 'admin', 'Pieces' => 'admin/data/pieces', 'Edit Piece' => 'admin/data/pieces/edit/'.$piece->id, ($image->id ? 'Edit' : 'Create').' Image' => $image->id ? 'admin/data/pieces/images/edit/'.$image->id : 'admin/data/pieces/images/create/'.$piece->id]) !!}
 
@@ -141,6 +145,8 @@
 @section('scripts')
 @parent
 <script>
+$('.cp').colorpicker();
+
 $( document ).ready(function() {
     $('.delete-image-button').on('click', function(e) {
         e.preventDefault();
