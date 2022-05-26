@@ -12,6 +12,15 @@ return [
     |
     */
 
+    /*
+    |--------------------------------------------------------------------------
+    | Layout Settings
+    |--------------------------------------------------------------------------
+    |
+    | These are settings related to the layout of the site.
+    |
+    */
+
     'navigation' => [
         // This enables the main gallery page and shows the nav bar item
         // By default, this is enabled (1) but can be set to 0 to disable
@@ -33,6 +42,7 @@ return [
 
     // Whether galleries should display images in columns or rows
     // Should be either 'rows' or 'columns'
+    // It's recommended to use rows!
     'gallery_arrangement' => 'rows',
 
     // Image dimensions, in px.
@@ -41,10 +51,20 @@ return [
     'thumbnail_height'   => 200,
     'display_image_size' => 2000,
 
+    /*
+    |--------------------------------------------------------------------------
+    | Commissions Settings
+    |--------------------------------------------------------------------------
+    |
+    | These are settings related to the site's commission-related components.
+    |
+    | NOTE: Enabling commissions and using these components in a way that generates
+    | income, or contributes to generating income, requires a private license!
+    |
+    */
+
     'commissions' => [
         // Enables and displays the site's commission components
-        // NOTE: Enabling this and using these components in a way that
-        // generates income, or contributes to generating income, requires a private license!
         'enabled' => 0,
 
         // Fee information. Current for PayPal as of Aug 10 2021
@@ -54,6 +74,24 @@ return [
             'percent_intl' => 4.99,
         ],
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Enable Captcha
+    |--------------------------------------------------------------------------
+    |
+    | Whether or not reCAPTCHA is enabled. Presented as a privacy-conscious option;
+    | this is liable to lead to spam if using commission components/the commission
+    | request form, but is probably outright unnecessary if not.
+    |
+    | Note that enabling this requires you to have supplied the relevant information
+    | in the .env file!
+    |
+    | Simply change to "1" to enable, or keep at "0" to disable.
+    |
+    */
+
+    'captcha' => 0,
 
     /*
     |--------------------------------------------------------------------------
@@ -70,6 +108,7 @@ return [
     | Simply change to "1" to enable, or keep at "0" to disable.
     |
     */
+
     'enable_backups' => 0,
 
     /*

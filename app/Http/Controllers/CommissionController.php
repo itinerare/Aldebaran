@@ -283,7 +283,7 @@ class CommissionController extends Controller
 
         // If the app is running in a prod environment,
         // validate recaptcha response as well
-        if (config('app.env') == 'production') {
+        if (config('app.env') == 'production' && config('aldebaran.settings.captcha')) {
             $validationRules['g-recaptcha-response'] = 'required|recaptchav3:submit,0.5';
         }
 
