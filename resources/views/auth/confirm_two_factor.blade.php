@@ -23,8 +23,8 @@
 
 {!! Form::open(['url' => 'admin/account-settings/two-factor/confirm']) !!}
     <div class="form-group">
-        {!! Form::label('Confirm 2FA') !!}
-        {!! Form::text('code', null, ['class' => 'form-control']) !!}
+        {!! Form::label('code', 'Confirm 2FA') !!}
+        {!! Form::text('code', null, ['class' => 'form-control', 'required']) !!}
     </div>
     <div class="text-right">
         {!! Form::submit('Confirm', ['class' => 'btn btn-primary']) !!}

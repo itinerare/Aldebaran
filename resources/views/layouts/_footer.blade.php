@@ -1,6 +1,6 @@
 <div class="float-right align-self-center">
     <h1>
-        <a href="/feeds"><i class="fas fa-rss-square" data-toggle="tooltip" title="RSS Feeds"></i></a>
+        <a href="/feeds" data-toggle="tooltip" title="RSS Feeds" aria-label="RSS Feeds"><i class="fas fa-rss-square"></i></a>
     </h1>
 </div>
 

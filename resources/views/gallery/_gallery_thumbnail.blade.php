@@ -18,7 +18,7 @@
                 <div class="content-overlay"></div>
                 <div class="text-center align-self-center my-auto">
                     @if($piece->thumbnailUrl)
-                        <img src="{{ $piece->thumbnailUrl }}" style="{{ config('aldebaran.settings.gallery_arrangement') == 'rows' ? 'width: auto; height: '.config('aldebaran.settings.thumbnail_height').'px' : 'height: auto; max-width: '.config('aldebaran.settings.thumbnail_width').'px' }}" />
+                        <img src="{{ $piece->thumbnailUrl }}" style="{{ config('aldebaran.settings.gallery_arrangement') == 'rows' ? 'width: auto; height: '.config('aldebaran.settings.thumbnail_height').'px' : 'height: auto; max-width: '.config('aldebaran.settings.thumbnail_width').'px' }}" alt="Thumbnail for {{ $piece->name }}" />
                     @elseif($piece->literatures->where('is_visible', 1)->count())
                         <div class="text-secondary justify-content-center pt-2" style="{{ config('aldebaran.settings.gallery_arrangement') == 'rows' ? 'width: auto; height: '.config('aldebaran.settings.thumbnail_height').'px' : 'height: auto; max-width: '.config('aldebaran.settings.thumbnail_width').'px' }}; overflow: hidden;">
                             {{ str_limit(strip_tags($piece->literatures->where('is_visible', 1)->where('is_primary', 1)->count() ? $piece->literatures->where('is_visible', 1)->where('is_primary', 1)->first()->text : $piece->literatures->where('is_visible', 1)->random()->text), 450) }}

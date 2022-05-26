@@ -65,10 +65,11 @@ class AdminController extends Controller
      */
     public function postEditSetting(Request $request, $key)
     {
-        if (!$request->get('value')) {
+        $fieldname = $key.'_value';
+        if (!$request->get($fieldname)) {
             $value = 0;
         }
-        if (DB::table('site_settings')->where('key', $key)->update(['value' => $value ?? $request->get('value')])) {
+        if (DB::table('site_settings')->where('key', $key)->update(['value' => $value ?? $request->get($fieldname)])) {
             flash('Setting updated successfully.')->success();
         } else {
             flash('Invalid setting selected.')->success();
@@ -100,9 +101,10 @@ class AdminController extends Controller
      */
     public function postUploadImage(Request $request, FileService $service)
     {
-        $request->validate(['file' => 'required|file']);
-        $file = $request->file('file');
         $key = $request->get('key');
+        $fieldname = $key.'_file';
+        $request->validate([$fieldname => 'required|file']);
+        $file = $request->file($fieldname);
         $filename = config('aldebaran.image_files.'.$key)['filename'];
 
         if ($service->uploadFile($file, null, $filename, false)) {
@@ -123,8 +125,8 @@ class AdminController extends Controller
      */
     public function postUploadCss(Request $request, FileService $service)
     {
-        $request->validate(['file' => 'required|file']);
-        $file = $request->file('file');
+        $request->validate(['css_file' => 'required|file']);
+        $file = $request->file('css_file');
 
         if ($service->uploadCss($file)) {
             flash('File uploaded successfully.')->success();

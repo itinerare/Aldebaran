@@ -89,7 +89,7 @@
         </div>
 
         <div class="form-group">
-            {!! Form::label('Link') !!} {!! add_help('The URL of this page, as mentioned above!') !!}
+            {!! Form::label('link', 'Link') !!} {!! add_help('The URL of this page, as mentioned above!') !!}
             {!! Form::text('link', $commission->url, ['class' => 'form-control', 'disabled']) !!}
         </div>
     </div>
@@ -115,7 +115,7 @@
                         <div class="col-md-4">
                             @if($piece->piece->images->count())
                                 <a href="{{ url('admin/data/pieces/edit/'.$piece->piece_id) }}">
-                                    <img class="image img-thumbnail" style="max-width:100%;" src="{{ $piece->piece->primaryImages->count() ? $piece->piece->primaryImages->random()->thumbnailUrl : $piece->piece->images->first()->thumbnailUrl }}" />
+                                    <img class="image img-thumbnail" style="max-width:100%;" src="{{ $piece->piece->primaryImages->count() ? $piece->piece->primaryImages->random()->thumbnailUrl : $piece->piece->images->first()->thumbnailUrl }}" alt="Thumbnail for piece {{ $piece->name }}" />
                                 </a>
                             @else
                                 <i>No image(s) provided.</i>
@@ -196,7 +196,7 @@
     </div>
 
     <div class="form-group">
-        {!! Form::label('Progress') !!}
+        {!! Form::label('progress', 'Progress') !!}
         {!! Form::select('progress', ['Not Started' => 'Not Started', 'Working On' => 'Working On', 'Sketch' => 'Sketch', 'Lines' => 'Lines', 'Color' => 'Color', 'Shading' => 'Shading', 'Finalizing' => 'Finalizing', 'Pending Approval' => 'Pending Approval', 'Finished' => 'Finished'], $commission->progress, ['class' => 'form-control']) !!}
     </div>
 @endif
@@ -323,7 +323,7 @@
                         <div class="row">
                             <div class="col-md-4">
                                 <a href="{{ url('admin/data/pieces/edit/'.$piece->piece_id) }}">
-                                    <img class="image img-thumbnail" style="max-width:100%;" src="{{ $piece->piece->primaryImages->count() ? $piece->piece->primaryImages->random()->thumbnailUrl : $piece->piece->images->first()->thumbnailUrl }}" />
+                                    <img class="image img-thumbnail" style="max-width:100%;" src="{{ $piece->piece->primaryImages->count() ? $piece->piece->primaryImages->random()->thumbnailUrl : $piece->piece->images->first()->thumbnailUrl }}" alt="Thumbnail for piece {{ $piece->name }}" />
                                 </a>
                             </div>
                             <div class="col-md align-self-center">

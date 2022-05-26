@@ -14,13 +14,13 @@
 {!! Form::open(['url' => $log->id ? 'admin/changelog/edit/'.$log->id : 'admin/changelog/create']) !!}
 
 <div class="form-group">
-    {!! Form::label('Title (Optional)') !!} {!! add_help('If left blank, the post date of the entry will be used as its title instead.') !!}
+    {!! Form::label('name', 'Title (Optional)') !!} {!! add_help('If left blank, the post date of the entry will be used as its title instead.') !!}
     {!! Form::text('name', $log->name, ['class' => 'form-control']) !!}
 </div>
 
 <div class="form-group">
-    {!! Form::label('Content') !!}
-    {!! Form::textarea('text', $log->text, ['class' => 'form-control wysiwyg']) !!}
+    {!! Form::label('text', 'Content') !!}
+    {!! Form::textarea('text', $log->text, ['class' => 'form-control wysiwyg', 'required']) !!}
 </div>
 
 <div class="form-group">

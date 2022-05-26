@@ -1,6 +1,7 @@
 <nav class="navbar navbar-expand-md navbar-dark bg-dark" id="headerNav">
     <div class="container-fluid">
-        <a class="navbar-brand" href="{{ url('/') }}">
+        <span class="skip"><a href="#content">To Main Content</a></span>
+        <a class="navbar-brand" href="{{ url('/') }}" aria-label="To Home">
             {{ Settings::get('site_name') }}
         </a>
 
@@ -79,17 +80,17 @@
                 <!-- Authentication Links -->
                 @guest
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('login') }}"><i class="fas fa-crown"></i></a>
+                        <a class="nav-link" href="{{ route('login') }}" aria-label="Login"><i class="fas fa-crown"></i></a>
                     </li>
                     @if (Settings::get('is_registration_open') == 1)
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
+                            <a class="nav-link" href="{{ route('register') }}" aria-label="Register">{{ __('Register') }}</a>
                         </li>
                     @endif
                 @else
 
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url('admin') }}"><i class="fas fa-crown"></i></a>
+                        <a class="nav-link" href="{{ url('admin') }}"  aria-label="Admin Panel"><i class="fas fa-crown"></i></a>
                     </li>
 
                     <li class="nav-item">

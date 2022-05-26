@@ -13,13 +13,14 @@
     <div class="card mb-3">
         <div class="card-body">
             <div class="d-flex">
-                <div class="mr-2" style="width: 200px;"><img src="{{ asset('images/assets/'.$image['filename']) }}" class="mw-100" /></div>
+                <div class="mr-2" style="width: 200px;"><img src="{{ asset('images/assets/'.$image['filename']) }}" class="mw-100" alt="{{ $image['name'] }} preview" /></div>
                 <div style="width: 100%;">
                     <h3 class="card-heading">{{ $image['name'] }} <a href="{{ asset('images/assets/'.$image['filename']) }}" class="btn btn-info btn-sm float-right">View Current</a></h3>
                     <p>{{ $image['description'] }}</p>
                     {!! Form::open(['url' => 'admin/site-images/upload', 'files' => true]) !!}
+                    {!! Form::label($key.'_file', 'Upload File') !!}
                         <div class="d-flex">
-                            {!! Form::file('file', ['class' => 'form-control mr-2']) !!}
+                            {!! Form::file($key.'_file', ['class' => 'form-control mr-2', 'aria-labelledby' => $image['name'].' upload']) !!}
                             {!! Form::submit('Upload', ['class' => 'btn btn-primary']) !!}
                         </div>
                         {!! Form::hidden('key', $key) !!}
@@ -39,8 +40,9 @@
         <div>
             <h3 class="card-heading">CSS @if(file_exists(public_path(). '/css/custom.css'))<a href="{{ asset('css/custom.css') }}" class="btn btn-info btn-sm float-right">View Current</a>@endif</h3>
             {!! Form::open(['url' => 'admin/site-images/upload/css', 'files' => true]) !!}
+            {!! Form::label('css_file', 'Upload File') !!}
                 <div class="d-flex">
-                    {!! Form::file('file', ['class' => 'form-control mr-2']) !!}
+                    {!! Form::file('css_file', ['class' => 'form-control mr-2', 'aria-labelledby' => 'CSS upload']) !!}
                     {!! Form::submit('Upload', ['class' => 'btn btn-primary']) !!}
                 </div>
             {!! Form::close() !!}

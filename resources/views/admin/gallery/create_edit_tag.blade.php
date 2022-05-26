@@ -14,12 +14,12 @@
 {!! Form::open(['url' => $tag->id ? 'admin/data/tags/edit/'.$tag->id : 'admin/data/tags/create']) !!}
 
 <div class="form-group">
-    {!! Form::label('Name') !!}
-    {!! Form::text('name', $tag->name, ['class' => 'form-control']) !!}
+    {!! Form::label('name', 'Name') !!}
+    {!! Form::text('name', $tag->name, ['class' => 'form-control', 'required']) !!}
 </div>
 
 <div class="form-group">
-    {!! Form::label('Description (Optional)') !!}
+    {!! Form::label('description', 'Description (Optional)') !!}
     {!! Form::textarea('description', $tag->description, ['class' => 'form-control']) !!}
 </div>
 

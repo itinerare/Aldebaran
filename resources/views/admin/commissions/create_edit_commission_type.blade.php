@@ -16,37 +16,37 @@
 <h3>Basic Information</h3>
 
 <div class="form-group">
-    {!! Form::label('Name') !!}
-    {!! Form::text('name', $type->name, ['class' => 'form-control']) !!}
+    {!! Form::label('name', 'Name') !!}
+    {!! Form::text('name', $type->name, ['class' => 'form-control', 'required']) !!}
 </div>
 
 <div class="form-group">
-    {!! Form::label('Category') !!}
-    {!! Form::select('category_id', $categories, $type->category_id, ['class' => 'form-control', 'placeholder' => 'Select a Category']) !!}
+    {!! Form::label('category_id', 'Category') !!}
+    {!! Form::select('category_id', $categories, $type->category_id, ['class' => 'form-control', 'placeholder' => 'Select a Category', 'required']) !!}
 </div>
 
 <div class="form-group">
-    {!! Form::label('Description (Optional)') !!}
+    {!! Form::label('description', 'Description (Optional)') !!}
     {!! Form::textarea('description', $type->description, ['class' => 'form-control wysiwyg']) !!}
 </div>
 
 <h3>Pricing</h3>
 
 <div class="form-group">
-    {!! Form::label('Price Type') !!} {!! add_help('This determines how the cost is displayed to potential commissioners.') !!}
-    {!! Form::select('price_type', ['flat' => 'Flat Cost', 'range' => 'Range', 'min' => 'Minimum', 'rate' => 'Hourly Rate'], $type->id ? $type->data['pricing']['type'] : null, ['class' => 'form-control', 'id' => 'price_type', 'placeholder' => 'Select a Pricing Type']) !!}
+    {!! Form::label('price_type', 'Price Type') !!} {!! add_help('This determines how the cost is displayed to potential commissioners.') !!}
+    {!! Form::select('price_type', ['flat' => 'Flat Cost', 'range' => 'Range', 'min' => 'Minimum', 'rate' => 'Hourly Rate'], $type->id ? $type->data['pricing']['type'] : null, ['class' => 'form-control', 'id' => 'price_type', 'placeholder' => 'Select a Pricing Type', 'required']) !!}
 </div>
 
 <div class="card mb-3 hide" id="flatOptions">
     <div class="card-body">
-        {!! Form::label('Flat Cost') !!}
+        {!! Form::label('flat_cost', 'Flat Cost') !!}
         {!! Form::number('flat_cost', $type->id && isset($type->data['pricing']['cost']) ? $type->data['pricing']['cost'] : null, ['class' => 'form-control', 'placeholder' => 'Enter a Cost']) !!}
     </div>
 </div>
 
 <div class="card mb-3 hide" id="rangeOptions">
     <div class="card-body">
-        {!! Form::label('Cost Range') !!}
+        {!! Form::label('cost_min', 'Cost Range') !!}
         <div class="d-flex">
             {!! Form::number('cost_min', $type->id && isset($type->data['pricing']['range']['min']) ? $type->data['pricing']['range']['min'] : null, ['class' => 'form-control', 'placeholder' => 'Enter a Minimum Cost']) !!}
             {!! Form::number('cost_max', $type->id && isset($type->data['pricing']['range']['max']) ? $type->data['pricing']['range']['max'] : null, ['class' => 'form-control', 'placeholder' => 'Enter a Maximum Cost']) !!}
@@ -56,21 +56,21 @@
 
 <div class="card mb-3 hide" id="minOptions">
     <div class="card-body">
-        {!! Form::label('Minimum Cost') !!}
+        {!! Form::label('minimum_cost', 'Minimum Cost') !!}
         {!! Form::number('minimum_cost', $type->id && isset($type->data['pricing']['cost']) ? $type->data['pricing']['cost'] : null, ['class' => 'form-control', 'placeholder' => 'Enter a Minimum Cost']) !!}
     </div>
 </div>
 
 <div class="card mb-3 hide" id="rateOptions">
     <div class="card-body">
-        {!! Form::label('Rate') !!}
+        {!! Form::label('rate', 'Rate') !!}
         {!! Form::number('rate', $type->id && isset($type->data['pricing']['cost']) ? $type->data['pricing']['cost'] : null, ['class' => 'form-control', 'placeholder' => 'Enter a Rate']) !!}
     </div>
 </div>
 
 <h4>Extras</h4>
 <div class="form-group">
-    {!! Form::label('Extras (Optional)') !!} {!! add_help('Information about any extras and associated cost(s).') !!}
+    {!! Form::label('extras', 'Extras (Optional)') !!} {!! add_help('Information about any extras and associated cost(s).') !!}
     {!! Form::textarea('extras', $type->id && isset($type->data['extras']) ? $type->data['extras'] : null, ['class' => 'form-control']) !!}
 </div>
 
@@ -90,7 +90,7 @@
 </div>
 
 <div class="form-group">
-    {!! Form::label('Available Slots (Optional)') !!} {!! add_help('Number of slots available for this type at once. Filled by accepted commissions, at which point no more requests will be accepted. Set to 0 to disable.') !!}
+    {!! Form::label('availability', 'Available Slots (Optional)') !!} {!! add_help('Number of slots available for this type at once. Filled by accepted commissions, at which point no more requests will be accepted. Set to 0 to disable.') !!}
     {!! Form::number('availability', $type->availability, ['class' => 'form-control']) !!}
 </div>
 
@@ -116,7 +116,7 @@
 
 @if($type->id)
     <div class="form-group">
-        {!! Form::label('Link') !!} {!! add_help('URL to link directly to the commission type\'s information. Can be used to link when the type is active but not visible.') !!}
+        {!! Form::label('link', 'Link') !!} {!! add_help('URL to link directly to the commission type\'s information. Can be used to link when the type is active but not visible.') !!}
         {!! Form::text('link', $type->url, ['class' => 'form-control', 'disabled']) !!}
     </div>
 

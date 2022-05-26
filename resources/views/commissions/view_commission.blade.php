@@ -80,7 +80,7 @@
         </div>
 
         <div class="form-group">
-            {!! Form::label('Link') !!} {!! add_help('The URL of this page, as mentioned above!') !!}
+            {!! Form::label('link', 'Link') !!} {!! add_help('The URL of this page, as mentioned above!') !!}
             {!! Form::text('link', $commission->url, ['class' => 'form-control', 'disabled']) !!}
         </div>
     </div>
@@ -101,7 +101,7 @@
                                     @foreach($piece->piece->primaryImages as $image)
                                         <div class="col-md text-center align-self-center mb-2">
                                             <a href="{{ $image->fullsizeUrl }}"">
-                                                <img class="img-thumbnail p-2" src="{{ $image->thumbnailUrl }}" style="max-width:100%; max-height:60vh;" />
+                                                <img class="img-thumbnail p-2" src="{{ $image->thumbnailUrl }}" style="max-width:100%; max-height:60vh;" alt="Thumbnail for image #{{ $image->id }} from piece {{ $piece->name }}" />
                                             </a>
                                         </div>
                                         {!! $loop->odd ? '<div class="w-100"></div>' : '' !!}
@@ -112,7 +112,7 @@
                                     @foreach($piece->piece->otherImages as $image)
                                         <div class="col-sm text-center align-self-center mb-2">
                                             <a href="{{ $image->fullsizeUrl }}">
-                                                <img class="img-thumbnail p-2" src="{{ $image->thumbnailUrl }}" style="max-width:100%; max-height:60vh;" />
+                                                <img class="img-thumbnail p-2" src="{{ $image->thumbnailUrl }}" style="max-width:100%; max-height:60vh;" alt="Thumbnail for image #{{ $image->id }} from piece {{ $piece->name }}" />
                                             </a>
                                         </div>
                                         {!! $loop->even ? '<div class="w-100"></div>' : '' !!}
