@@ -157,7 +157,7 @@ a {-webkit-transition: all .3s ease-in-out; -o-transition: all .3s ease-in-out; 
     top: 80%;
 }
 
-#skip a {
+.skip a {
     position:absolute;
     left:-10000px !important;
     top:auto;
@@ -166,7 +166,7 @@ a {-webkit-transition: all .3s ease-in-out; -o-transition: all .3s ease-in-out; 
     overflow:hidden;
 }
 
-#skip a:focus {
+.skip a:focus {
     position:static;
     width:auto;
     height:auto;

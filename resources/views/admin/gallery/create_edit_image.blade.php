@@ -121,7 +121,12 @@
 
 <div class="form-group">
     {!! Form::label('description', 'Caption (Optional)') !!} {!! add_help('Should be brief.') !!}
-    {!! Form::textarea('description', $image->description, ['class' => 'form-control']) !!}
+    {!! Form::text('description', $image->description, ['class' => 'form-control']) !!}
+</div>
+
+<div class="form-group">
+    {!! Form::label('alt_text', 'Alt. Text (Optional)') !!} {!! add_help('Will be used instead of the generic alt text for the image as well as listed alongside the piece\'s description.') !!}
+    {!! Form::textarea('alt_text', $image->alt_text, ['class' => 'form-control']) !!}
 </div>
 
 <div class="row">

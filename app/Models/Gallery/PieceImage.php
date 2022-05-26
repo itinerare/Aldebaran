@@ -16,7 +16,7 @@ class PieceImage extends Model
      */
     protected $fillable = [
         'piece_id', 'hash', 'fullsize_hash', 'extension', 'description',
-        'is_primary_image', 'data', 'is_visible', 'sort',
+        'is_primary_image', 'data', 'is_visible', 'sort', 'alt_text',
     ];
 
     /**
