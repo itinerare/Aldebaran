@@ -353,6 +353,7 @@ class GalleryService extends Service
                 'fullsize_hash'    => randomString(15),
                 'extension'        => $data['image']->getClientOriginalExtension(),
                 'description'      => $data['description'] ?? null,
+                'alt_text'         => $data['alt_text'],
                 'is_primary_image' => $data['is_primary_image'] ?? 0,
                 'is_visible'       => $data['is_visible'] ?? 0,
                 'data'             => $data['data'],
@@ -400,6 +401,7 @@ class GalleryService extends Service
                 'description'      => $data['description'] ?? null,
                 'is_primary_image' => $data['is_primary_image'] ?? 0,
                 'is_visible'       => $data['is_visible'] ?? 0,
+                'alt_text'         => $data['alt_text'],
                 'data'             => $data['data'] ?? $image->data,
             ]);
 

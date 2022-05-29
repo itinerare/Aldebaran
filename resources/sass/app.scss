@@ -1,5 +1,8 @@
 // Fonts
-@import url('https://fonts.googleapis.com/css?family=Nunito');
+@font-face {
+    font-family: Nunito;
+    src: url(../webfonts/Nunito-Regular.ttf)
+}
 
 // Variables
 @import 'variables';

@@ -14,8 +14,8 @@
 {!! Form::open(['url' => $literature->id ? 'admin/data/pieces/literatures/edit/'.$literature->id : 'admin/data/pieces/literatures/create', 'id' => 'literatureForm', 'files' => true]) !!}
 
 <div class="form-group">
-    {!! Form::label('Literature') !!}
-    {!! Form::textarea('text', $literature->text, ['class' => 'form-control wysiwyg']) !!}
+    {!! Form::label('text', 'Literature') !!}
+    {!! Form::textarea('text', $literature->text, ['class' => 'form-control wysiwyg', 'required']) !!}
 </div>
 
 <h3>Other Information</h3>
@@ -32,14 +32,14 @@
                     <div class="card-body text-center">
                         Thumbnail:<br/>
                         <a href="{{ $literature->thumbnailUrl }}" data-lightbox="entry" data-title="Literature Thumbnail">
-                            <img class="p-2" src="{{ $literature->thumbnailUrl }}" style="max-width:100%; max-height:60vh;" />
+                            <img class="p-2" src="{{ $literature->thumbnailUrl }}" style="max-width:100%; max-height:60vh;" alt="Thumbnail image" />
                         </a>
                     </div>
                 </div>
             @endif
             <div class="card mb-2 hide" id="thumbnailContainer">
                 <div class="card-body text-center">
-                    <img src="#" id="thumbnail" style="max-width:100%; max-height:60vh;" />
+                    <img src="#" id="thumbnail" style="max-width:100%; max-height:60vh;" alt="Thumbnail image preview" />
                 </div>
             </div>
             <div class="card mb-2 {{ $literature->hash ? 'hide' : '' }}" id="placeholderContainer">
@@ -51,6 +51,7 @@
     </div>
     <div class="col-md">
         <div class="card p-2">
+            {!! Form::label('literatureThumb', 'Upload File') !!}
             {!! Form::file('image', ['id' => 'literatureThumb']) !!}
             <small>Thumbnail may be PNG, GIF, or JPG, should be {{ config('aldebaran.settings.gallery_arrangement') == 'rows' ? config('aldebaran.settings.thumbnail_height') : config('aldebaran.settings.thumbnail_width') }}px in {{ config('aldebaran.settings.gallery_arrangement') == 'rows' ? 'height' : 'width' }}, and up to {{ min(ini_get("upload_max_filesize"), ini_get("post_max_size"), '5') }}MB in size.</small>
 

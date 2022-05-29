@@ -50,17 +50,11 @@
     <script src="{{ asset('js/site.js') }}"></script>
     <script src="{{ asset('js/jquery-ui.min.js') }}"></script>
     <script src="{{ asset('js/bootstrap4-toggle.min.js') }}"></script>
-    <script src="{{ asset('js/tinymce.min.js') }}"></script>
-    <script src="{{ asset('js/jquery.tinymce.min.js') }}"></script>
     <script src="{{ asset('js/lightbox.min.js') }}"></script>
-    <script src="{{ asset('js/bootstrap-colorpicker.min.js') }}"></script>
     <script src="{{ asset('js/selectize.min.js') }}"></script>
-    <script src="{{ asset('js/jquery-ui-timepicker-addon.js') }}"></script>
-    <script src="{{ asset('js/croppie.min.js') }}"></script>
-
-    <!-- Fonts -->
-    <link rel="dns-prefetch" href="//fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet" type="text/css">
+    @if(View::hasSection('head-scripts'))
+        @yield('head-scripts')
+    @endif
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
@@ -85,7 +79,9 @@
     <link href="{{ asset('css/croppie.css') }}" rel="stylesheet">
     <link href="{{ asset('css/selectize.bootstrap4.css') }}" rel="stylesheet">
 
-    {!! RecaptchaV3::initJs() !!}
+    @if(config('aldebaran.settings.captcha'))
+        {!! RecaptchaV3::initJs() !!}
+    @endif
 
     @include('feed::links')
 </head>
@@ -103,7 +99,7 @@
                         @endif
                     </div>
                 @endif
-                <div class="main-content {{ config('aldebaran.settings.layout.full_width') ? (View::hasSection('sidebar') ? 'col-lg-10' : 'col-lg-12') : 'col-lg-8' }} p-4">
+                <div class="main-content {{ config('aldebaran.settings.layout.full_width') ? (View::hasSection('sidebar') ? 'col-lg-10' : 'col-lg-12') : 'col-lg-8' }} p-4" id="content">
                     <div>
                         @include('flash::message')
                         @yield('content')
@@ -135,24 +131,6 @@
         <script>
             $(function() {
                 $('[data-toggle="tooltip"]').tooltip({html: true});
-                $('.cp').colorpicker();
-                tinymce.init({
-                    selector: '.wysiwyg',
-                    height: 500,
-                    menubar: false,
-                    convert_urls: false,
-                    plugins: [
-                        'advlist autolink lists link image charmap print preview anchor',
-                        'searchreplace visualblocks code fullscreen',
-                        'insertdatetime media table paste code help wordcount'
-                    ],
-                    toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | removeformat | code',
-                    content_css: [
-                        '{{ asset('css/app.css') }}',
-                        '{{ asset('css/aldebaran.css') }}'
-                    ],
-                    target_list: false
-                });
                 var $mobileMenuButton = $('#mobileMenuButton');
                 var $sidebar = $('#sidebar');
                 $('#mobileMenuButton').on('click', function(e) {

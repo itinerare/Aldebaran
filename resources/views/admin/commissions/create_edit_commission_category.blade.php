@@ -14,13 +14,13 @@
 {!! Form::open(['url' => $category->id ? 'admin/data/commission-categories/edit/'.$category->id : 'admin/data/commission-categories/create']) !!}
 
 <div class="form-group">
-    {!! Form::label('Name') !!}
-    {!! Form::text('name', $category->name, ['class' => 'form-control']) !!}
+    {!! Form::label('name', 'Name') !!}
+    {!! Form::text('name', $category->name, ['class' => 'form-control', 'required']) !!}
 </div>
 
 <div class="form-group">
-    {!! Form::label('Class') !!}
-    {!! Form::select('class_id', $classes, $category->class_id, ['class' => 'form-control', 'placeholder' => 'Select a Class']) !!}
+    {!! Form::label('class_id', 'Class') !!}
+    {!! Form::select('class_id', $classes, $category->class_id, ['class' => 'form-control', 'placeholder' => 'Select a Class', 'required']) !!}
 </div>
 
 <div class="form-group">

@@ -9,6 +9,7 @@ use App\Models\Commission\CommissionPiece;
 use App\Models\Commission\CommissionType;
 use App\Models\Gallery\Piece;
 use App\Models\Gallery\PieceImage;
+use App\Models\Gallery\PieceLiterature;
 use App\Services\GalleryService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -120,6 +121,11 @@ class AdminCommissionTest extends TestCase
                 $image = PieceImage::factory()->piece($piece->id)->create();
                 $this->service->testImages($image);
             }
+
+            if ($pieceData[2]) {
+                $literature = PieceLiterature::factory()
+                    ->piece($piece->id)->create();
+            }
         }
 
         // Adjust commission data as necessary
@@ -140,6 +146,11 @@ class AdminCommissionTest extends TestCase
                     // Check that the image's thumbnail is present/displayed
                     $response->assertSee($image->thumbnailUrl);
                 }
+
+                if ($pieceData[2]) {
+                    // Check that the literature is present/displayed
+                    $response->assertSee('Literature #'.$literature->id);
+                }
             }
 
             if ($pieceData[0]) {
@@ -159,9 +170,10 @@ class AdminCommissionTest extends TestCase
             'complete'     => [null, 0, 'Complete', null, 200],
 
             // $pieceData = [(bool) withImage, (bool) isVisible]
-            'with piece'            => [[0, 1], 0, 'Accepted', null, 200],
-            'with hidden piece'     => [[0, 0], 0, 'Accepted', null, 200],
-            'with piece with image' => [[1, 1], 0, 'Accepted', null, 200],
+            'with piece'                 => [[0, 1, 0], 0, 'Accepted', null, 200],
+            'with hidden piece'          => [[0, 0, 0], 0, 'Accepted', null, 200],
+            'with piece with image'      => [[1, 1, 0], 0, 'Accepted', null, 200],
+            'with piece with literature' => [[0, 1, 1], 0, 'Accepted', null, 200],
 
             // Field testing
             // (string) type, (bool) rules, (bool) choices, value, (string) help, (bool) include category, (bool) include class, (bool) is empty

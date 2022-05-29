@@ -53,7 +53,7 @@
                         <td>{{ isset($type->availability) && $type->availability > 0 ? $type->displaySlots : '-' }}</td>
                         <td>{!! $type->is_active ? '<i class="text-success fas fa-check"></i>' : '-' !!}/{!! $type->is_visible ? '<i class="text-success fas fa-check"></i>' : '-' !!}</td>
                         <td class="text-right">
-                            <a href="{{ url('admin/commissions/new/'.$type->id) }}"  class="btn btn-primary py-0 px-2">New</a>
+                            <a href="{{ url('admin/commissions/new/'.$type->id) }}"  class="btn btn-primary py-0 px-2" data-toggle="tooltip" title="Manually create a new commission of this type.">New</a>
                             <a href="{{ url('admin/data/commission-types/edit/'.$type->id) }}" class="btn btn-primary py-0 px-2">Edit</a>
                         </td>
                     </tr>

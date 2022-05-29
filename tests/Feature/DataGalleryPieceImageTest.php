@@ -98,10 +98,11 @@ class DataGalleryPieceImageTest extends TestCase
      * @dataProvider imageCreateProvider
      *
      * @param bool $withDescription
+     * @param bool $withAltText
      * @param bool $isVisible
      * @param bool $isPrimary
      */
-    public function testPostCreateImage($withDescription, $isVisible, $isPrimary)
+    public function testPostCreateImage($withDescription, $withAltText, $isVisible, $isPrimary)
     {
         $response = $this
             ->actingAs($this->user)
@@ -109,6 +110,7 @@ class DataGalleryPieceImageTest extends TestCase
                 'piece_id'           => $this->piece->id,
                 'image'              => $this->file,
                 'description'        => $withDescription ? $this->caption : null,
+                'alt_text'           => $withAltText ? $this->caption : null,
                 'is_visible'         => $isVisible,
                 'is_primary_image'   => $isPrimary,
                 'watermark_scale'    => '.'.mt_rand(2, 7).'0',
@@ -143,7 +145,7 @@ class DataGalleryPieceImageTest extends TestCase
     public function imageCreateProvider()
     {
         // Get all possible sequences
-        return $this->booleanSequences(3);
+        return $this->booleanSequences(4);
     }
 
     /**
@@ -154,15 +156,17 @@ class DataGalleryPieceImageTest extends TestCase
      *
      * @param bool $withData
      * @param bool $withDescription
+     * @param bool $withAltText
      * @param bool $isVisible
      * @param bool $isPrimary
      */
-    public function testPostEditImage($withData, $withDescription, $isVisible, $isPrimary)
+    public function testPostEditImage($withData, $withDescription, $withAltText, $isVisible, $isPrimary)
     {
         $response = $this
             ->actingAs($this->user)
             ->post('/admin/data/pieces/images/edit/'.($withData ? $this->dataImage->id : $this->image->id), [
                 'description'      => $withDescription ? $this->caption : null,
+                'alt_text'         => $withAltText ? $this->caption : null,
                 'is_visible'       => $isVisible,
                 'is_primary_image' => $isPrimary,
             ]);
@@ -179,7 +183,7 @@ class DataGalleryPieceImageTest extends TestCase
     public function imageEditProvider()
     {
         // Get all possible sequences
-        return $this->booleanSequences(4);
+        return $this->booleanSequences(5);
     }
 
     /**

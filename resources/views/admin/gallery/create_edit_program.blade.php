@@ -14,24 +14,24 @@
 {!! Form::open(['url' => $program->id ? 'admin/data/programs/edit/'.$program->id : 'admin/data/programs/create', 'files' => true]) !!}
 
 <div class="form-group">
-    {!! Form::label('Name') !!}
-    {!! Form::text('name', $program->name, ['class' => 'form-control']) !!}
+    {!! Form::label('name', 'Name') !!}
+    {!! Form::text('name', $program->name, ['class' => 'form-control', 'required']) !!}
 </div>
 
 <div class="row">
     @if($program->has_image)
         <div class="col-md-2 text-center align-self-center">
-            <img class="mw-100" src="{{ $program->imageUrl }}"/>
+            <img class="mw-100" src="{{ $program->imageUrl }}" alt="Icon for {{ $program->name }}" />
         </div>
     @endif
     <div class="col-md">
         <div class="form-group">
-            {!! Form::label('Icon (Optional)') !!}
+            {!! Form::label('image', 'Icon (Optional)') !!}
             <div>{!! Form::file('image') !!}</div>
             <div class="text-muted">Recommended size: 50px x 50px</div>
             @if($program->has_image)
                 <div class="form-check">
-                    {!! Form::checkbox('remove_image', 1, false, ['class' => 'form-check-input']) !!}
+                    {!! Form::checkbox('remove_image', 1, false, ['class' => 'form-check-input', 'id' => 'remove_image']) !!}
                     {!! Form::label('remove_image', 'Remove current image', ['class' => 'form-check-label']) !!}
                 </div>
             @endif

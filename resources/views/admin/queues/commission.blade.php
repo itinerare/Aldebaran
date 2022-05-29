@@ -89,7 +89,7 @@
         </div>
 
         <div class="form-group">
-            {!! Form::label('Link') !!} {!! add_help('The URL of this page, as mentioned above!') !!}
+            {!! Form::label('link', 'Link') !!} {!! add_help('The URL of this page, as mentioned above!') !!}
             {!! Form::text('link', $commission->url, ['class' => 'form-control', 'disabled']) !!}
         </div>
     </div>
@@ -107,7 +107,7 @@
     </div>
 
     @if($commission->pieces->count())
-        <p>The following are all pieces associated with this commission. Click a piece's thumbnail image to go to the edit piece page.</p>
+        <p>The following are all pieces associated with this commission. Click a piece's title to go to the edit piece page.</p>
         <div class="mb-4">
             @foreach($commission->pieces as $piece)
                 <div class="text-center mb-2">
@@ -115,19 +115,42 @@
                         <div class="col-md-4">
                             @if($piece->piece->images->count())
                                 <a href="{{ url('admin/data/pieces/edit/'.$piece->piece_id) }}">
-                                    <img class="image img-thumbnail" style="max-width:100%;" src="{{ $piece->piece->primaryImages->count() ? $piece->piece->primaryImages->random()->thumbnailUrl : $piece->piece->images->first()->thumbnailUrl }}" />
+                                    <img class="image img-thumbnail" style="max-width:100%;" src="{{ $piece->piece->primaryImages->count() ? $piece->piece->primaryImages->random()->thumbnailUrl : $piece->piece->images->first()->thumbnailUrl }}" alt="Thumbnail for piece {{ $piece->name }}" />
                                 </a>
                             @else
                                 <i>No image(s) provided.</i>
                             @endif
                         </div>
                         <div class="col-md align-self-center">
-                            <h4>{{ $piece->piece->name }}</h4>
-                            <p>
-                                {{ $piece->piece->primaryImages->count() }} Primary Image{{ $piece->piece->primaryImages->count() == 1 ? '' : 's' }} ・ {{ $piece->piece->otherImages->count() }} Secondary Image{{ $piece->piece->otherImages->count() == 1 ? '' : 's' }}<br/>
-                                {{ $piece->piece->images->count() }} Image{{ $piece->piece->images->count() == 1 ? '' : 's' }} Total
-                            </p>
+                            <h4><a href="{{ url('admin/data/pieces/edit/'.$piece->piece_id) }}">{{ $piece->piece->name }}</a></h4>
+                            @if($piece->piece->images->count())
+                                <p>
+                                    {{ $piece->piece->primaryImages->count() }} Primary Image{{ $piece->piece->primaryImages->count() == 1 ? '' : 's' }} ・ {{ $piece->piece->otherImages->count() }} Secondary Image{{ $piece->piece->otherImages->count() == 1 ? '' : 's' }}<br/>
+                                    {{ $piece->piece->images->count() }} Image{{ $piece->piece->images->count() == 1 ? '' : 's' }} Total
+                                </p>
+                            @endif
+                            @if($piece->piece->literatures->count())
+                                <p>
+                                    {{ $piece->piece->primaryLiteratures->count() }} Primary Literature{{ $piece->piece->primaryLiteratures->count() == 1 ? '' : 's' }} ・ {{ $piece->piece->otherImages->count() }} Secondary Literature{{ $piece->piece->otherLiteratures->count() == 1 ? '' : 's' }}<br/>
+                                    {{ $piece->piece->literatures->count() }} Literatures{{ $piece->piece->literatures->count() == 1 ? '' : 's' }} Total
+                                </p>
+                            @endif
                         </div>
+                        @if($piece->piece->literatures->count())
+                            <div class="col-md-12">
+                                @foreach($piece->piece->literatures as $literature)
+                                    <div class="card mb-2">
+                                        <h5 class="card-header">
+                                            Literature #{{ $literature->id }}
+                                            <a class="small inventory-collapse-toggle collapse-toggle collapsed" href="#literature-{{ $literature->id }}" data-toggle="collapse">Show</a></h3>
+                                        </h5>
+                                        <div class="card-body collapse" id="literature-{{ $literature->id }}">
+                                            {!! $literature->text !!}
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        @endif
                     </div>
                 </div>
             @endforeach
@@ -173,7 +196,7 @@
     </div>
 
     <div class="form-group">
-        {!! Form::label('Progress') !!}
+        {!! Form::label('progress', 'Progress') !!}
         {!! Form::select('progress', ['Not Started' => 'Not Started', 'Working On' => 'Working On', 'Sketch' => 'Sketch', 'Lines' => 'Lines', 'Color' => 'Color', 'Shading' => 'Shading', 'Finalizing' => 'Finalizing', 'Pending Approval' => 'Pending Approval', 'Finished' => 'Finished'], $commission->progress, ['class' => 'form-control']) !!}
     </div>
 @endif
@@ -300,7 +323,7 @@
                         <div class="row">
                             <div class="col-md-4">
                                 <a href="{{ url('admin/data/pieces/edit/'.$piece->piece_id) }}">
-                                    <img class="image img-thumbnail" style="max-width:100%;" src="{{ $piece->piece->primaryImages->count() ? $piece->piece->primaryImages->random()->thumbnailUrl : $piece->piece->images->first()->thumbnailUrl }}" />
+                                    <img class="image img-thumbnail" style="max-width:100%;" src="{{ $piece->piece->primaryImages->count() ? $piece->piece->primaryImages->random()->thumbnailUrl : $piece->piece->images->first()->thumbnailUrl }}" alt="Thumbnail for piece {{ $piece->name }}" />
                                 </a>
                             </div>
                             <div class="col-md align-self-center">

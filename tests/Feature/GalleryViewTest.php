@@ -323,6 +323,7 @@ class GalleryViewTest extends TestCase
      * @param bool $image
      * @param bool $literature
      * @param bool $description
+     * @param bool $altText
      * @param bool $isVisible
      * @param bool $timestamp
      * @param bool $tag
@@ -330,7 +331,7 @@ class GalleryViewTest extends TestCase
      * @param bool $goodExample
      * @param int  $status
      */
-    public function testGetPiece($user, $image, $literature, $isVisible, $description, $timestamp, $tag, $program, $goodExample, $status)
+    public function testGetPiece($user, $image, $literature, $isVisible, $description, $altText, $timestamp, $tag, $program, $goodExample, $status)
     {
         // Create objects and test images
         $piece = Piece::factory()->create();
@@ -339,6 +340,12 @@ class GalleryViewTest extends TestCase
         if ($image) {
             $image = PieceImage::factory()->piece($piece->id)->create();
             $this->service->testImages($image);
+
+            if ($altText) {
+                $image->update([
+                    'alt_text' => $this->faker->realText(),
+                ]);
+            }
         }
         if ($literature) {
             $literature = PieceLiterature::factory()->piece($piece->id)->create();
@@ -379,53 +386,57 @@ class GalleryViewTest extends TestCase
 
     public function pieceAccessProvider()
     {
-        // ($user, $image, $literature, $isVisible, $description, $timestamp, $tag, $program, $goodExample, $status)
+        // ($user, $image, $literature, $isVisible, $description, $altText, $timestamp, $tag, $program, $goodExample, $status)
 
         return [
-            'visitor, visible with image'      => [0, 1, 0, 1, 0, 0, 0, 0, 0, 200],
-            'visitor, hidden with image'       => [0, 1, 0, 0, 0, 0, 0, 0, 0, 404],
-            'user, visible with image'         => [1, 1, 0, 1, 0, 0, 0, 0, 0, 200],
-            'user, hidden with image'          => [1, 1, 0, 0, 0, 0, 0, 0, 0, 200],
-            'visitor, description with image'  => [0, 1, 0, 1, 1, 0, 0, 0, 0, 200],
-            'user, description with image'     => [1, 1, 0, 1, 1, 0, 0, 0, 0, 200],
-            'visitor, timestamp with image'    => [0, 1, 0, 1, 0, 1, 0, 0, 0, 200],
-            'user, timestamp with image'       => [1, 1, 0, 1, 0, 1, 0, 0, 0, 200],
-            'visitor, tag with image'          => [0, 1, 0, 1, 0, 0, 1, 0, 0, 200],
-            'user, tag with image'             => [1, 1, 0, 1, 0, 0, 1, 0, 0, 200],
-            'visitor, program with image'      => [0, 1, 0, 1, 0, 0, 0, 1, 0, 200],
-            'user, program with image'         => [1, 1, 0, 1, 0, 0, 0, 1, 0, 200],
-            'visitor, good example with image' => [0, 1, 0, 1, 0, 0, 0, 0, 1, 200],
-            'user, good example with image'    => [1, 1, 0, 1, 0, 0, 0, 0, 1, 200],
+            'visitor, visible with image'      => [0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 200],
+            'visitor, hidden with image'       => [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 404],
+            'user, visible with image'         => [1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 200],
+            'user, hidden with image'          => [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 200],
+            'visitor, description with image'  => [0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 200],
+            'user, description with image'     => [1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 200],
+            'visitor, alt text with image'     => [0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 200],
+            'user, alt text with image'        => [1, 1, 0, 1, 1, 1, 0, 0, 0, 0, 200],
+            'visitor, timestamp with image'    => [0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 200],
+            'user, timestamp with image'       => [1, 1, 0, 1, 0, 0, 1, 0, 0, 0, 200],
+            'visitor, tag with image'          => [0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 200],
+            'user, tag with image'             => [1, 1, 0, 1, 0, 0, 0, 1, 0, 0, 200],
+            'visitor, program with image'      => [0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 200],
+            'user, program with image'         => [1, 1, 0, 1, 0, 0, 0, 0, 1, 0, 200],
+            'visitor, good example with image' => [0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 200],
+            'user, good example with image'    => [1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 200],
 
-            'visitor, visible with literature'      => [0, 0, 1, 1, 0, 0, 0, 0, 0, 200],
-            'visitor, hidden with literature'       => [0, 0, 1, 0, 0, 0, 0, 0, 0, 404],
-            'user, visible with literature'         => [1, 0, 1, 1, 0, 0, 0, 0, 0, 200],
-            'user, hidden with literature'          => [1, 0, 1, 0, 0, 0, 0, 0, 0, 200],
-            'visitor, description with literature'  => [0, 0, 1, 1, 1, 0, 0, 0, 0, 200],
-            'user, description with literature'     => [1, 0, 1, 1, 1, 0, 0, 0, 0, 200],
-            'visitor, timestamp with literature'    => [0, 0, 1, 1, 0, 1, 0, 0, 0, 200],
-            'user, timestamp with literature'       => [1, 0, 1, 1, 0, 1, 0, 0, 0, 200],
-            'visitor, tag with literature'          => [0, 0, 1, 1, 0, 0, 1, 0, 0, 200],
-            'user, tag with literature'             => [1, 0, 1, 1, 0, 0, 1, 0, 0, 200],
-            'visitor, program with literature'      => [0, 0, 1, 1, 0, 0, 0, 1, 0, 200],
-            'user, program with literature'         => [1, 0, 1, 1, 0, 0, 0, 1, 0, 200],
-            'visitor, good example with literature' => [0, 0, 1, 1, 0, 0, 0, 0, 1, 200],
-            'user, good example with literature'    => [1, 0, 1, 1, 0, 0, 0, 0, 1, 200],
+            'visitor, visible with literature'      => [0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 200],
+            'visitor, hidden with literature'       => [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 404],
+            'user, visible with literature'         => [1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 200],
+            'user, hidden with literature'          => [1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 200],
+            'visitor, description with literature'  => [0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 200],
+            'user, description with literature'     => [1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 200],
+            'visitor, timestamp with literature'    => [0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 200],
+            'user, timestamp with literature'       => [1, 0, 1, 1, 0, 0, 1, 0, 0, 0, 200],
+            'visitor, tag with literature'          => [0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 200],
+            'user, tag with literature'             => [1, 0, 1, 1, 0, 0, 0, 1, 0, 0, 200],
+            'visitor, program with literature'      => [0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 200],
+            'user, program with literature'         => [1, 0, 1, 1, 0, 0, 0, 0, 1, 0, 200],
+            'visitor, good example with literature' => [0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 200],
+            'user, good example with literature'    => [1, 0, 1, 1, 0, 0, 0, 0, 0, 1, 200],
 
-            'visitor, visible with both'      => [0, 1, 1, 1, 0, 0, 0, 0, 0, 200],
-            'visitor, hidden with both'       => [0, 1, 1, 0, 0, 0, 0, 0, 0, 404],
-            'user, visible with both'         => [1, 1, 1, 1, 0, 0, 0, 0, 0, 200],
-            'user, hidden with both'          => [1, 1, 1, 0, 0, 0, 0, 0, 0, 200],
-            'visitor, description with both'  => [0, 1, 1, 1, 1, 0, 0, 0, 0, 200],
-            'user, description with both'     => [1, 1, 1, 1, 1, 0, 0, 0, 0, 200],
-            'visitor, timestamp with both'    => [0, 1, 1, 1, 0, 1, 0, 0, 0, 200],
-            'user, timestamp with both'       => [1, 1, 1, 1, 0, 1, 0, 0, 0, 200],
-            'visitor, tag with both'          => [0, 1, 1, 1, 0, 0, 1, 0, 0, 200],
-            'user, tag with both'             => [1, 1, 1, 1, 0, 0, 1, 0, 0, 200],
-            'visitor, program with both'      => [0, 1, 1, 1, 0, 0, 0, 1, 0, 200],
-            'user, program with both'         => [1, 1, 1, 1, 0, 0, 0, 1, 0, 200],
-            'visitor, good example with both' => [0, 1, 1, 1, 0, 0, 0, 0, 1, 200],
-            'user, good example with both'    => [1, 1, 1, 1, 0, 0, 0, 0, 1, 200],
+            'visitor, visible with both'      => [0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 200],
+            'visitor, hidden with both'       => [0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 404],
+            'user, visible with both'         => [1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 200],
+            'user, hidden with both'          => [1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 200],
+            'visitor, description with both'  => [0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 200],
+            'user, description with both'     => [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 200],
+            'visitor, alt text with both'     => [0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 200],
+            'user, alt text with both'        => [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 200],
+            'visitor, timestamp with both'    => [0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 200],
+            'user, timestamp with both'       => [1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 200],
+            'visitor, tag with both'          => [0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 200],
+            'user, tag with both'             => [1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 200],
+            'visitor, program with both'      => [0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 200],
+            'user, program with both'         => [1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 200],
+            'visitor, good example with both' => [0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 200],
+            'user, good example with both'    => [1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 200],
         ];
     }
 }

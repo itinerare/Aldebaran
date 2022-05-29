@@ -5,6 +5,13 @@
     @yield('admin-title')
 @endsection
 
+@section('head-scripts')
+    <script src="{{ asset('js/tinymce.min.js') }}"></script>
+    <script src="{{ asset('js/jquery.tinymce.min.js') }}"></script>
+    <script src="{{ asset('js/jquery-ui-timepicker-addon.js') }}"></script>
+    @yield('admin-head-scripts')
+@endsection
+
 @section('sidebar')
     @include('admin._sidebar')
 @endsection
@@ -53,4 +60,25 @@
 
 @section('scripts')
 @parent
+<script>
+    $(function() {
+        tinymce.init({
+            selector: '.wysiwyg',
+            height: 500,
+            menubar: false,
+            convert_urls: false,
+            plugins: [
+                'advlist autolink lists link image charmap print preview anchor',
+                'searchreplace visualblocks code fullscreen',
+                'insertdatetime media table paste code help wordcount'
+            ],
+            toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | removeformat | code',
+            content_css: [
+                '{{ asset('css/app.css') }}',
+                '{{ asset('css/aldebaran.css') }}'
+            ],
+            target_list: false
+        });
+    });
+</script>
 @endsection
