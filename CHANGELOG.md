@@ -4,6 +4,48 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [3.2.0](https://github.com/itinerare/Aldebaran/compare/v3.1.0...v3.2.0) (2022-05-29)
+### Features
+
+* Make captcha optional ([29b830](https://github.com/itinerare/Aldebaran/commit/29b830742f52a312519994599c165c45bdc06d9f))
+
+##### Accessibility
+
+* Add aria labels to ambiguous nav/footer links ([d00aff](https://github.com/itinerare/Aldebaran/commit/d00aff6a48e8281e9659005bf70dcf16603f0e1c))
+* Add configurable alt text for piece images ([acbccf](https://github.com/itinerare/Aldebaran/commit/acbccf9a4703edd407483ec9bf2b81e7816b2708))
+* Add generic alt text to images ([4c117f](https://github.com/itinerare/Aldebaran/commit/4c117f915dd866e49aa7f93affdb01cfd1ab0df5))
+* Add hidden "skip to main content" link to nav ([63107d](https://github.com/itinerare/Aldebaran/commit/63107dda28c1af1db708439c53baf68ac10b73e9))
+* Clearer label for sitename/home link ([243b3f](https://github.com/itinerare/Aldebaran/commit/243b3f65185243613d6308e424dc454ffc0b88d0))
+* Clearer labeling for form fields around the site ([e1f61e](https://github.com/itinerare/Aldebaran/commit/e1f61e52091b2856791da46512dc061c874a9e94))
+* Update site image/css forms with clearer labeling ([2af4a0](https://github.com/itinerare/Aldebaran/commit/2af4a0acf16e2cbb8bd7fe20e5dfa877d59f2c55))
+* Update site settings forms with clearer labeling ([7bf214](https://github.com/itinerare/Aldebaran/commit/7bf214d14a165e5cbe3c8316c9142154d97339f0))
+
+##### Commissions
+
+* Add tooltip to manual comm creation button ([976315](https://github.com/itinerare/Aldebaran/commit/976315db4776bad303bcac9e51e7864ee706fcb0))
+* Better support for literature attached to comms ([70cf7d](https://github.com/itinerare/Aldebaran/commit/70cf7d4124d5c73ad40021a8182fa9d3883bc5f4))
+
+##### Tests
+
+* Extend commission view tests for further literature support ([b0d9a2](https://github.com/itinerare/Aldebaran/commit/b0d9a2ee27469135d476960ac6760e77a0770c33))
+* Extend piece view tests for alt text ([a789ff](https://github.com/itinerare/Aldebaran/commit/a789fff6a66ba149999caf673eb9e2b75329578b))
+* Extend site settings view test to include comms enabled/disabled ([5ccd5f](https://github.com/itinerare/Aldebaran/commit/5ccd5fd85229597cace764993007f57f4e172ed0))
+
+### Bug Fixes
+
+* CSS sidebar background reference ([938f38](https://github.com/itinerare/Aldebaran/commit/938f38a0b223dd7f79edaaabb36922ac56f5ce00))
+
+##### Commands
+
+* Dummy commissioner setup not included in setup command ([a53e1c](https://github.com/itinerare/Aldebaran/commit/a53e1c712d24fd9cd5686ac9279bd4edfa3dccf0))
+
+##### Users
+
+* Move email uniqueness check to service to prevent unnecessary error ([ceb4cb](https://github.com/itinerare/Aldebaran/commit/ceb4cb47bbe69f2739a3f9606dc5c58051bcc002))
+
+
+---
+
 ## [3.1.0](https://github.com/itinerare/Aldebaran/compare/v3.0.0...v3.1.0) (2022-05-22)
 ### Features
 
