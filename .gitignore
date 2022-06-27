@@ -14,3 +14,4 @@ yarn-error.log
 .env.testing
 *.cache
 /.vscode
+public/mix-manifest.json
