@@ -75,7 +75,7 @@
     <link defer href="{{ asset('css/jquery-ui-timepicker-addon.css') }}" rel="stylesheet">
     <link href="{{ asset('css/selectize.bootstrap4.css') }}" rel="stylesheet">
 
-    @if(config('aldebaran.settings.captcha'))
+    @if(config('aldebaran.settings.captcha') && config('app.env') == 'production')
         {!! RecaptchaV3::initJs() !!}
     @endif
 
