@@ -4,6 +4,18 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [3.2.1](https://github.com/itinerare/Aldebaran/compare/v3.2.0...v3.2.1) (2022-07-03)
+
+### Bug Fixes
+
+
+##### Css
+
+* Update font references ([ee8873](https://github.com/itinerare/Aldebaran/commit/ee8873128be46751eb37cf9a42332b99e6a73420))
+
+
+---
+
 ## [3.2.0](https://github.com/itinerare/Aldebaran/compare/v3.1.0...v3.2.0) (2022-05-29)
 ### Features
 
