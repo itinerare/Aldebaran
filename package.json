@@ -14,13 +14,14 @@
         "bootstrap": "4.6.0",
         "buffer": "^6.0.3",
         "jquery": "^3.2",
-        "laravel-mix": "^6.0.43",
         "popper.js": "^1.12",
         "postcss": "^8.1.14",
         "process": "0.11.10",
         "resolve-url-loader": "^5.0.0",
         "sass": "^1.51.0",
-        "sass-loader": "^13.0.0"
+        "sass-loader": "^13.0.0",
+        "vite": "^2.9.12",
+        "laravel-vite-plugin": "^0.2.2"
     },
     "version": "3.2.1"
 }
