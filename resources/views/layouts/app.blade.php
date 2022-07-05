@@ -46,15 +46,15 @@
     <meta property="twitter:description" content="@if(View::hasSection('meta-desc')) @yield('meta-desc') @else {{ Settings::get('site_desc') }} @endif">
 
     <!-- Scripts -->
-    <script src="{{ mix('js/app.js') }}"></script>
-    <script defer src="{{ mix('js/app-secondary.js') }}"></script>
+    @vite('resources/js/app.js')
+    @vite('resources/js/app-secondary.js')
     <script defer src="{{ asset('js/site.js') }}"></script>
     @if(View::hasSection('head-scripts'))
         @yield('head-scripts')
     @endif
 
     <!-- Styles -->
-    <link href="{{ mix('css/app.css') }}" rel="stylesheet">
+    @vite('resources/css/app.css')
     <link href="{{ asset('css/aldebaran.css') }}" rel="stylesheet">
 
     @if(file_exists(public_path(). '/css/custom.css'))
