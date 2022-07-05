@@ -4,11 +4,11 @@
  * building robust, powerful web applications using Vue and Laravel.
  */
 
-require('./bootstrap');
-require('./jquery-ui');
-require('./selectize');
+import './bootstrap';
+import './jquery-ui';
+import './selectize';
 
-//window.Vue = require('vue');
+import Vue from 'vue';
 
 /**
  * The following block of code may be used to automatically register your
