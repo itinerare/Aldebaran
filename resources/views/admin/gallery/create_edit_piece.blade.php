@@ -104,8 +104,8 @@
         <h3>Images</h3>
 
         <div class="text-right">
-            <a href="{{ url('admin/data/pieces/images/create/' . $piece->id) }}" class="btn btn-outline-primary mb-2">Add an
-                Image</a>
+            <a href="{{ url('admin/data/pieces/images/create/' . $piece->id) }}" class="btn btn-outline-primary mb-2">Add
+                an Image</a>
         </div>
 
         @if ($piece->images->count())

@@ -18,7 +18,8 @@
                                 <ul class="list-group list-group-flush">
                                     <li class="list-group-item">
                                         <span class="float-right"><a
-                                                href="{{ url('admin/commissions/' . $class->slug . '/pending') }}">View Queue
+                                                href="{{ url('admin/commissions/' . $class->slug . '/pending') }}">View
+                                                Queue
                                                 <span class="fas fa-caret-right ml-1"></span></a></span>
                                         <h5>Pending @if ($pendingCount[$class->id])
                                                 <span class="badge badge-primary text-light ml-2"
@@ -28,7 +29,8 @@
                                     </li>
                                     <li class="list-group-item">
                                         <span class="float-right"><a
-                                                href="{{ url('admin/commissions/' . $class->slug . '/accepted') }}">View Queue
+                                                href="{{ url('admin/commissions/' . $class->slug . '/accepted') }}">View
+                                                Queue
                                                 <span class="fas fa-caret-right ml-1"></span></a></span>
                                         <h5>Accepted @if ($acceptedCount[$class->id])
                                                 <span class="badge badge-primary text-light ml-2"

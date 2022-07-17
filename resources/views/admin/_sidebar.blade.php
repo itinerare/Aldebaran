@@ -6,7 +6,8 @@
             <div class="sidebar-section-header">Queues</div>
             @foreach ($commissionClasses as $class)
                 <div class="sidebar-item"><a href="{{ url('admin/commissions/' . $class->slug) }}"
-                        class="{{ set_active('admin/commissions/' . $class->slug . '*') }}">{{ $class->name }} Queue</a>
+                        class="{{ set_active('admin/commissions/' . $class->slug . '*') }}">{{ $class->name }}
+                        Queue</a>
                 </div>
             @endforeach
             <div class="sidebar-item"><a href="{{ url('admin/ledger') }}"
