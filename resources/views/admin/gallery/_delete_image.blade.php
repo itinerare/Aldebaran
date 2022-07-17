@@ -1,5 +1,5 @@
-@if($image)
-    {!! Form::open(['url' => 'admin/data/pieces/images/delete/'.$image->id]) !!}
+@if ($image)
+    {!! Form::open(['url' => 'admin/data/pieces/images/delete/' . $image->id]) !!}
 
     <p>You are about to delete this image. This is not reversible.</p>
     <p>Are you sure you want to delete this image?</p>

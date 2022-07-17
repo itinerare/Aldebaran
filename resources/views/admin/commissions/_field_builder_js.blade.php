@@ -8,6 +8,7 @@
             e.preventDefault();
             removeFieldRow($(this));
         })
+
         function addFieldRow() {
             var $clone = $('.field-row').clone();
             $('#fieldList').append($clone);
@@ -18,6 +19,7 @@
             })
             attachFieldTypeListener($clone.find('.form-field-type'));
         }
+
         function removeFieldRow($trigger) {
             $trigger.parent().parent().remove();
         }
@@ -34,7 +36,7 @@
                 $cell.children().addClass('hide');
                 $cell.children().children().val(null);
 
-                if (val == 'choice' || val == 'multiple'){
+                if (val == 'choice' || val == 'multiple') {
                     $cell.children('.choiceOptions').addClass('show');
                     $cell.children('.choiceOptions').removeClass('hide');
                 }
