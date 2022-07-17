@@ -1,7 +1,8 @@
-@if($category)
-    {!! Form::open(['url' => 'admin/data/commission-categories/delete/'.$category->id]) !!}
+@if ($category)
+    {!! Form::open(['url' => 'admin/data/commission-categories/delete/' . $category->id]) !!}
 
-    <p>You are about to delete the category <strong>{{ $category->name }}</strong>. This is not reversible. If commission types in this category exist, you will not be able to delete this category.</p>
+    <p>You are about to delete the category <strong>{{ $category->name }}</strong>. This is not reversible. If
+        commission types in this category exist, you will not be able to delete this category.</p>
     <p>Are you sure you want to delete <strong>{{ $category->name }}</strong>?</p>
 
     <div class="text-right">
