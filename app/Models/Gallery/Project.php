@@ -5,8 +5,7 @@ namespace App\Models\Gallery;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Project extends Model
-{
+class Project extends Model {
     use HasFactory;
 
     /**
@@ -65,8 +64,7 @@ class Project extends Model
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeVisible($query)
-    {
+    public function scopeVisible($query) {
         return $query->where('is_visible', 1);
     }
 
@@ -81,8 +79,7 @@ class Project extends Model
      *
      * @return string
      */
-    public function getSlugAttribute()
-    {
+    public function getSlugAttribute() {
         return str_replace(' ', '_', strtolower($this->name));
     }
 
@@ -91,8 +88,7 @@ class Project extends Model
      *
      * @return string
      */
-    public function getUrlAttribute()
-    {
+    public function getUrlAttribute() {
         return url('/projects/'.$this->slug);
     }
 
@@ -101,8 +97,7 @@ class Project extends Model
      *
      * @return string
      */
-    public function getDisplayNameAttribute()
-    {
+    public function getDisplayNameAttribute() {
         return '<a href="'.$this->url.'">'.$this->name.'</a>';
     }
 }

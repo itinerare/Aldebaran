@@ -12,21 +12,18 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Fortify\Fortify;
 
-class FortifyServiceProvider extends ServiceProvider
-{
+class FortifyServiceProvider extends ServiceProvider {
     /**
      * Register any application services.
      */
-    public function register()
-    {
+    public function register() {
         //
     }
 
     /**
      * Bootstrap any application services.
      */
-    public function boot()
-    {
+    public function boot() {
         Fortify::createUsersUsing(CreateNewUser::class);
         Fortify::updateUserProfileInformationUsing(UpdateUserProfileInformation::class);
         Fortify::updateUserPasswordsUsing(UpdateUserPassword::class);

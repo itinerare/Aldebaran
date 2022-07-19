@@ -5,8 +5,7 @@ namespace App\Models\Gallery;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class PieceLiterature extends Model
-{
+class PieceLiterature extends Model {
     use HasFactory;
 
     /**
@@ -64,8 +63,7 @@ class PieceLiterature extends Model
     /**
      * Get the piece associated with this literature.
      */
-    public function piece()
-    {
+    public function piece() {
         return $this->belongsTo(Piece::class, 'piece_id');
     }
 
@@ -83,8 +81,7 @@ class PieceLiterature extends Model
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeVisible($query, $user = null)
-    {
+    public function scopeVisible($query, $user = null) {
         if ($user) {
             return $query;
         } else {
@@ -103,8 +100,7 @@ class PieceLiterature extends Model
      *
      * @return string
      */
-    public function getImageDirectoryAttribute()
-    {
+    public function getImageDirectoryAttribute() {
         return 'images/literatures/'.floor($this->id / 1000);
     }
 
@@ -113,8 +109,7 @@ class PieceLiterature extends Model
      *
      * @return string
      */
-    public function getImagePathAttribute()
-    {
+    public function getImagePathAttribute() {
         return public_path($this->imageDirectory);
     }
 
@@ -123,8 +118,7 @@ class PieceLiterature extends Model
      *
      * @return string
      */
-    public function getThumbnailFileNameAttribute()
-    {
+    public function getThumbnailFileNameAttribute() {
         return $this->id.'_'.$this->hash.'_th.'.$this->extension;
     }
 
@@ -133,8 +127,7 @@ class PieceLiterature extends Model
      *
      * @return string
      */
-    public function getThumbnailPathAttribute()
-    {
+    public function getThumbnailPathAttribute() {
         return $this->imagePath;
     }
 
@@ -143,8 +136,7 @@ class PieceLiterature extends Model
      *
      * @return string
      */
-    public function getThumbnailUrlAttribute()
-    {
+    public function getThumbnailUrlAttribute() {
         return asset($this->imageDirectory.'/'.$this->thumbnailFileName);
     }
 }

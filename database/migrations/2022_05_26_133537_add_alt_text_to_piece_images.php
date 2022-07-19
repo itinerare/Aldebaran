@@ -8,8 +8,7 @@ return new class extends Migration {
     /**
      * Run the migrations.
      */
-    public function up()
-    {
+    public function up() {
         Schema::table('piece_images', function (Blueprint $table) {
             //
             $table->text('alt_text')->nullable()->default(null);
@@ -19,8 +18,7 @@ return new class extends Migration {
     /**
      * Reverse the migrations.
      */
-    public function down()
-    {
+    public function down() {
         Schema::table('piece_images', function (Blueprint $table) {
             //
             $table->dropColumn('alt_text');

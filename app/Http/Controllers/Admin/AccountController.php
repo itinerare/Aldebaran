@@ -16,8 +16,7 @@ use Illuminate\Support\Facades\Auth;
 use Laravel\Fortify\Contracts\TwoFactorAuthenticationProvider;
 use Laravel\Fortify\RecoveryCode;
 
-class AccountController extends Controller
-{
+class AccountController extends Controller {
     /*
     |--------------------------------------------------------------------------
     | Account Settings Controller
@@ -32,8 +31,7 @@ class AccountController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getAccountSettings()
-    {
+    public function getAccountSettings() {
         return view('admin.account_settings');
     }
 
@@ -42,8 +40,7 @@ class AccountController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function postEmail(Request $request, UserService $service)
-    {
+    public function postEmail(Request $request, UserService $service) {
         $request->validate([
             'email' => 'required|string|email|max:255',
         ]);
@@ -63,8 +60,7 @@ class AccountController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function postPassword(Request $request, UserService $service)
-    {
+    public function postPassword(Request $request, UserService $service) {
         $request->validate([
             'old_password' => 'required|string',
             'new_password' => 'required|string|min:8|confirmed',
@@ -89,10 +85,9 @@ class AccountController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function postEnableTwoFactor(Request $request, UserService $service)
-    {
+    public function postEnableTwoFactor(Request $request, UserService $service) {
         if (!$request->session()->put([
-            'two_factor_secret' => encrypt(app(TwoFactorAuthenticationProvider::class)->generateSecretKey()),
+            'two_factor_secret'         => encrypt(app(TwoFactorAuthenticationProvider::class)->generateSecretKey()),
             'two_factor_recovery_codes' => encrypt(json_encode(Collection::times(8, function () {
                 return RecoveryCode::generate();
             })->all())),
@@ -112,8 +107,7 @@ class AccountController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getConfirmTwoFactor(Request $request)
-    {
+    public function getConfirmTwoFactor(Request $request) {
         // Assemble URL and QR Code svg from session information
         $qrUrl = app(TwoFactorAuthenticationProvider::class)->qrCodeUrl(config('app.name'), $request->user()->email, decrypt($request->session()->get('two_factor_secret')));
         $qrCode = (new Writer(new ImageRenderer(new RendererStyle(192, 0, null, null, Fill::uniformColor(new Rgb(255, 255, 255), new Rgb(45, 55, 72))), new SvgImageBackEnd)))->writeString($qrUrl);
@@ -130,8 +124,7 @@ class AccountController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function postConfirmTwoFactor(Request $request, UserService $service)
-    {
+    public function postConfirmTwoFactor(Request $request, UserService $service) {
         $request->validate([
             'code' => 'required',
         ]);
@@ -152,8 +145,7 @@ class AccountController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function postDisableTwoFactor(Request $request, UserService $service)
-    {
+    public function postDisableTwoFactor(Request $request, UserService $service) {
         $request->validate([
             'code' => 'required',
         ]);

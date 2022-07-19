@@ -5,8 +5,7 @@ namespace App\Models\Commission;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class CommissionPayment extends Model
-{
+class CommissionPayment extends Model {
     use HasFactory;
 
     /**
@@ -50,8 +49,7 @@ class CommissionPayment extends Model
     /**
      * Get the commission associated with this payment.
      */
-    public function commission()
-    {
+    public function commission() {
         return $this->belongsTo(Commission::class, 'commission_id');
     }
 
@@ -66,8 +64,7 @@ class CommissionPayment extends Model
      *
      * @return int
      */
-    public function getTotalWithFeesAttribute()
-    {
+    public function getTotalWithFeesAttribute() {
         $total = 0;
         $total += $this->commission->paymentWithFees($this);
 

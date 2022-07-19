@@ -7,15 +7,13 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
-class CommissionClassFactory extends Factory
-{
+class CommissionClassFactory extends Factory {
     /**
      * Define the model's default state.
      *
      * @return array
      */
-    public function definition()
-    {
+    public function definition() {
         $name = $this->faker->unique()->domainWord();
         $slug = Str::lower($name);
 
@@ -104,8 +102,7 @@ class CommissionClassFactory extends Factory
      *
      * @return \Illuminate\Database\Eloquent\Factories\Factory
      */
-    public function inactive()
-    {
+    public function inactive() {
         return $this->state(function (array $attributes) {
             return [
                 'is_active' => 0,
@@ -120,8 +117,7 @@ class CommissionClassFactory extends Factory
      *
      * @return \Illuminate\Database\Eloquent\Factories\Factory
      */
-    public function testData($page)
-    {
+    public function testData($page) {
         return $this->state(function (array $attributes) use ($page) {
             return [
                 'data' => '{"fields":{"'.$this->faker->unique()->domainWord().'":{"label":"'.$this->faker->unique()->domainWord().'","type":"text","rules":null,"choices":null,"value":null,"help":null}},"pages":{"'.$page->id.'":{"key":"'.$page->key.'","title":"'.$page->name.'"}}}',

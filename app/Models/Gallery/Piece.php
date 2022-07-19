@@ -9,8 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Feed\Feedable;
 use Spatie\Feed\FeedItem;
 
-class Piece extends Model implements Feedable
-{
+class Piece extends Model implements Feedable {
     use HasFactory, SoftDeletes;
 
     /**
@@ -63,72 +62,63 @@ class Piece extends Model implements Feedable
     /**
      * Get the project associated with this piece.
      */
-    public function project()
-    {
+    public function project() {
         return $this->belongsTo(Project::class, 'project_id');
     }
 
     /**
      * Get images associated with this piece.
      */
-    public function images()
-    {
+    public function images() {
         return $this->hasMany(PieceImage::class, 'piece_id')->orderBy('is_primary_image', 'DESC')->orderBy('sort', 'DESC');
     }
 
     /**
      * Get only primary images associated with this piece.
      */
-    public function primaryImages()
-    {
+    public function primaryImages() {
         return $this->hasMany(PieceImage::class, 'piece_id')->where('is_primary_image', 1)->orderBy('sort', 'DESC');
     }
 
     /**
      * Get only non-primary images associated with this piece.
      */
-    public function otherImages()
-    {
+    public function otherImages() {
         return $this->hasMany(PieceImage::class, 'piece_id')->where('is_primary_image', 0)->orderBy('sort', 'DESC');
     }
 
     /**
      * Get literatures associated with this piece.
      */
-    public function literatures()
-    {
+    public function literatures() {
         return $this->hasMany(PieceLiterature::class, 'piece_id')->orderBy('is_primary', 'DESC')->orderBy('sort', 'DESC');
     }
 
     /**
      * Get only primary literatures associated with this piece.
      */
-    public function primaryLiteratures()
-    {
+    public function primaryLiteratures() {
         return $this->hasMany(PieceLiterature::class, 'piece_id')->where('is_primary', 1)->orderBy('sort', 'DESC');
     }
 
     /**
      * Get only non-primary literatures associated with this piece.
      */
-    public function otherLiteratures()
-    {
+    public function otherLiteratures() {
         return $this->hasMany(PieceLiterature::class, 'piece_id')->where('is_primary', 0)->orderBy('sort', 'DESC');
     }
 
     /**
      * Get tags associated with this piece.
      */
-    public function tags()
-    {
+    public function tags() {
         return $this->hasMany(PieceTag::class, 'piece_id');
     }
 
     /**
      * Get programs associated with this piece.
      */
-    public function programs()
-    {
+    public function programs() {
         return $this->hasMany(PieceProgram::class, 'piece_id');
     }
 
@@ -149,8 +139,7 @@ class Piece extends Model implements Feedable
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeVisible($query, $user = null)
-    {
+    public function scopeVisible($query, $user = null) {
         if ($user) {
             return $query->whereIn('id', PieceImage::visible()->pluck('piece_id')->toArray() + PieceLiterature::visible()->pluck('piece_id')->toArray());
         } else {
@@ -165,8 +154,7 @@ class Piece extends Model implements Feedable
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeGallery($query)
-    {
+    public function scopeGallery($query) {
         $hiddenTags = Tag::where('is_active', 0)->pluck('id')->toArray();
 
         return $query->whereNotIn('id', PieceTag::whereIn('tag_id', $hiddenTags)->pluck('piece_id')->toArray());
@@ -179,8 +167,7 @@ class Piece extends Model implements Feedable
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeSort($query)
-    {
+    public function scopeSort($query) {
         return $query->orderByRaw('ifnull(timestamp, created_at) DESC');
     }
 
@@ -195,8 +182,7 @@ class Piece extends Model implements Feedable
      *
      * @return string
      */
-    public function getUrlAttribute()
-    {
+    public function getUrlAttribute() {
         return url('/gallery/pieces/'.$this->id.'.'.$this->slug);
     }
 
@@ -205,8 +191,7 @@ class Piece extends Model implements Feedable
      *
      * @return string
      */
-    public function getSlugAttribute()
-    {
+    public function getSlugAttribute() {
         $string = str_replace(' ', '-', $this->name);
 
         return preg_replace('/[^A-Za-z0-9\-]/', '', $string);
@@ -217,8 +202,7 @@ class Piece extends Model implements Feedable
      *
      * @return string
      */
-    public function getDisplayNameAttribute()
-    {
+    public function getDisplayNameAttribute() {
         return '<a href="'.$this->url.'">'.$this->name.'</a>';
     }
 
@@ -227,8 +211,7 @@ class Piece extends Model implements Feedable
      *
      * @return string
      */
-    public function getThumbnailUrlAttribute()
-    {
+    public function getThumbnailUrlAttribute() {
         if (!$this->images->where('is_visible', 1)->count() && !$this->literatures->where('is_visible', 1)->whereNotNull('hash')->count()) {
             return null;
         }
@@ -258,8 +241,7 @@ class Piece extends Model implements Feedable
      *
      * @return bool
      */
-    public function getShowInGalleryAttribute()
-    {
+    public function getShowInGalleryAttribute() {
         // Check if the piece should be included in the gallery or not
         if ($this->tags->whereIn('tag_id', Tag::where('is_active', 0)->pluck('id')->toArray())->first()) {
             return 0;
@@ -280,8 +262,7 @@ class Piece extends Model implements Feedable
      * @param mixed      $gallery
      * @param mixed|null $project
      */
-    public static function getFeedItems($gallery = true, $project = null)
-    {
+    public static function getFeedItems($gallery = true, $project = null) {
         $pieces = self::visible();
         if ($gallery) {
             return $pieces->gallery()->get();
@@ -297,8 +278,7 @@ class Piece extends Model implements Feedable
      *
      * @return /Spatie/Feed/FeedItem;
      */
-    public function toFeedItem(): FeedItem
-    {
+    public function toFeedItem(): FeedItem {
         $summary = '';
         if ($this->images->count()) {
             $summary = $summary.'<a href="'.$this->url.'"><img src="'.$this->thumbnailUrl.'" alt="Thumbnail for '.$this->name.'" /></a><br/>This piece contains '.$this->images->count().' image'.($this->images->count() > 1 ? 's' : '').'. Click the thumbnail to view in full.<hr/>';

@@ -5,8 +5,7 @@ namespace App\Models\Commission;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Commissioner extends Model
-{
+class Commissioner extends Model {
     use HasFactory;
 
     /**
@@ -51,16 +50,14 @@ class Commissioner extends Model
     /**
      * Get the IP entries associated with this commissioner.
      */
-    public function ips()
-    {
+    public function ips() {
         return $this->hasMany(CommissionerIp::class, 'commissioner_id');
     }
 
     /**
      * Get the commissions associated with this commissioner.
      */
-    public function commissions()
-    {
+    public function commissions() {
         return $this->hasMany(Commission::class, 'commissioner_id');
     }
 
@@ -76,8 +73,7 @@ class Commissioner extends Model
      *
      * @return string
      */
-    public function getNameAttribute()
-    {
+    public function getNameAttribute() {
         if (isset($this->attributes['name'])) {
             return $this->attributes['name'];
         } else {
@@ -93,8 +89,7 @@ class Commissioner extends Model
      *
      * @return string
      */
-    public function getFullNameAttribute()
-    {
+    public function getFullNameAttribute() {
         if (isset($this->attributes['name'])) {
             return $this->attributes['name'].' - '.$this->email;
         } else {
@@ -107,8 +102,7 @@ class Commissioner extends Model
      *
      * @return string
      */
-    public function getDisplayNameAttribute()
-    {
+    public function getDisplayNameAttribute() {
         if ($this->is_banned) {
             return '<s>'.$this->name.'</s>';
         } else {

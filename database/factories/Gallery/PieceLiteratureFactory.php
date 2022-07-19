@@ -7,15 +7,13 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Model>
  */
-class PieceLiteratureFactory extends Factory
-{
+class PieceLiteratureFactory extends Factory {
     /**
      * Define the model's default state.
      *
      * @return array<string, mixed>
      */
-    public function definition()
-    {
+    public function definition() {
         return [
             //
             'text'       => $this->faker->realText(),
@@ -32,8 +30,7 @@ class PieceLiteratureFactory extends Factory
      *
      * @return \Illuminate\Database\Eloquent\Factories\Factory
      */
-    public function piece($id)
-    {
+    public function piece($id) {
         return $this->state(function (array $attributes) use ($id) {
             return [
                 'piece_id' => $id,
@@ -46,8 +43,7 @@ class PieceLiteratureFactory extends Factory
      *
      * @return \Illuminate\Database\Eloquent\Factories\Factory
      */
-    public function thumbnail()
-    {
+    public function thumbnail() {
         return $this->state(function (array $attributes) {
             return [
                 'hash'      => randomString(15),
@@ -61,8 +57,7 @@ class PieceLiteratureFactory extends Factory
      *
      * @return \Illuminate\Database\Eloquent\Factories\Factory
      */
-    public function primary()
-    {
+    public function primary() {
         return $this->state(function (array $attributes) {
             return [
                 'is_primary' => 1,
@@ -75,8 +70,7 @@ class PieceLiteratureFactory extends Factory
      *
      * @return \Illuminate\Database\Eloquent\Factories\Factory
      */
-    public function hidden()
-    {
+    public function hidden() {
         return $this->state(function (array $attributes) {
             return [
                 'is_visible' => 0,

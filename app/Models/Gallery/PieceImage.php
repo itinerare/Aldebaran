@@ -5,8 +5,7 @@ namespace App\Models\Gallery;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class PieceImage extends Model
-{
+class PieceImage extends Model {
     use HasFactory;
 
     /**
@@ -83,8 +82,7 @@ class PieceImage extends Model
     /**
      * Get the piece associated with this image.
      */
-    public function piece()
-    {
+    public function piece() {
         return $this->belongsTo(Piece::class, 'piece_id');
     }
 
@@ -102,8 +100,7 @@ class PieceImage extends Model
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeVisible($query, $user = null)
-    {
+    public function scopeVisible($query, $user = null) {
         if ($user) {
             return $query;
         } else {
@@ -122,8 +119,7 @@ class PieceImage extends Model
      *
      * @return string
      */
-    public function getImageDirectoryAttribute()
-    {
+    public function getImageDirectoryAttribute() {
         return 'images/pieces/'.floor($this->id / 1000);
     }
 
@@ -132,8 +128,7 @@ class PieceImage extends Model
      *
      * @return string
      */
-    public function getImageFileNameAttribute()
-    {
+    public function getImageFileNameAttribute() {
         return $this->id.'_'.$this->hash.'.'.$this->extension;
     }
 
@@ -142,8 +137,7 @@ class PieceImage extends Model
      *
      * @return string
      */
-    public function getImagePathAttribute()
-    {
+    public function getImagePathAttribute() {
         return public_path($this->imageDirectory);
     }
 
@@ -152,8 +146,7 @@ class PieceImage extends Model
      *
      * @return string
      */
-    public function getImageUrlAttribute()
-    {
+    public function getImageUrlAttribute() {
         return asset($this->imageDirectory.'/'.$this->imageFileName);
     }
 
@@ -162,8 +155,7 @@ class PieceImage extends Model
      *
      * @return string
      */
-    public function getThumbnailFileNameAttribute()
-    {
+    public function getThumbnailFileNameAttribute() {
         return $this->id.'_'.$this->hash.'_th.'.$this->extension;
     }
 
@@ -172,8 +164,7 @@ class PieceImage extends Model
      *
      * @return string
      */
-    public function getThumbnailPathAttribute()
-    {
+    public function getThumbnailPathAttribute() {
         return $this->imagePath;
     }
 
@@ -182,8 +173,7 @@ class PieceImage extends Model
      *
      * @return string
      */
-    public function getThumbnailUrlAttribute()
-    {
+    public function getThumbnailUrlAttribute() {
         return asset($this->imageDirectory.'/'.$this->thumbnailFileName);
     }
 
@@ -192,8 +182,7 @@ class PieceImage extends Model
      *
      * @return string
      */
-    public function getFullsizeFileNameAttribute()
-    {
+    public function getFullsizeFileNameAttribute() {
         return $this->id.'_'.$this->fullsize_hash.'_full.'.$this->extension;
     }
 
@@ -202,8 +191,7 @@ class PieceImage extends Model
      *
      * @return string
      */
-    public function getFullsizeUrlAttribute()
-    {
+    public function getFullsizeUrlAttribute() {
         return asset($this->imageDirectory.'/'.$this->fullsizeFileName);
     }
 }

@@ -9,8 +9,7 @@ use App\Services\FileService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class AdminController extends Controller
-{
+class AdminController extends Controller {
     /*
     |--------------------------------------------------------------------------
     | Admin Controller
@@ -25,8 +24,7 @@ class AdminController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getIndex()
-    {
+    public function getIndex() {
         $pendingCount = [];
         $acceptedCount = [];
         foreach ($this->commissionClasses as $class) {
@@ -49,8 +47,7 @@ class AdminController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getSettings()
-    {
+    public function getSettings() {
         return view('admin.settings', [
             'settings' => DB::table('site_settings')->orderBy('key')->get(),
         ]);
@@ -63,8 +60,7 @@ class AdminController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function postEditSetting(Request $request, $key)
-    {
+    public function postEditSetting(Request $request, $key) {
         $fieldname = $key.'_value';
         if (!$request->get($fieldname)) {
             $value = 0;
@@ -87,8 +83,7 @@ class AdminController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getSiteImages()
-    {
+    public function getSiteImages() {
         return view('admin.images', [
             'images' => config('aldebaran.image_files'),
         ]);
@@ -99,8 +94,7 @@ class AdminController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function postUploadImage(Request $request, FileService $service)
-    {
+    public function postUploadImage(Request $request, FileService $service) {
         $key = $request->get('key');
         $fieldname = $key.'_file';
         $request->validate([$fieldname => 'required|file']);
@@ -123,8 +117,7 @@ class AdminController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function postUploadCss(Request $request, FileService $service)
-    {
+    public function postUploadCss(Request $request, FileService $service) {
         $request->validate(['css_file' => 'required|file']);
         $file = $request->file('css_file');
 

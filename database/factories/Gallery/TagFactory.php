@@ -5,15 +5,13 @@ namespace Database\Factories\Gallery;
 use App\Models\Gallery\Tag;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class TagFactory extends Factory
-{
+class TagFactory extends Factory {
     /**
      * Define the model's default state.
      *
      * @return array
      */
-    public function definition()
-    {
+    public function definition() {
         return [
             //
             'name'       => $this->faker->unique()->domainWord(),
@@ -27,8 +25,7 @@ class TagFactory extends Factory
      *
      * @return \Illuminate\Database\Eloquent\Factories\Factory
      */
-    public function description()
-    {
+    public function description() {
         return $this->state(function (array $attributes) {
             return [
                 'description' => $this->faker->unique()->domainWord(),
@@ -41,8 +38,7 @@ class TagFactory extends Factory
      *
      * @return \Illuminate\Database\Eloquent\Factories\Factory
      */
-    public function hidden()
-    {
+    public function hidden() {
         return $this->state(function (array $attributes) {
             return [
                 'is_visible' => 0,
@@ -55,8 +51,7 @@ class TagFactory extends Factory
      *
      * @return \Illuminate\Database\Eloquent\Factories\Factory
      */
-    public function inactive()
-    {
+    public function inactive() {
         return $this->state(function (array $attributes) {
             return [
                 'is_active' => 0,

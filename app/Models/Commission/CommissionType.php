@@ -8,8 +8,7 @@ use App\Models\Gallery\PieceTag;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class CommissionType extends Model
-{
+class CommissionType extends Model {
     use HasFactory;
 
     /**
@@ -79,16 +78,14 @@ class CommissionType extends Model
     /**
      * Get the category associated with this commission type.
      */
-    public function category()
-    {
+    public function category() {
         return $this->belongsTo(CommissionCategory::class, 'category_id');
     }
 
     /**
      * Get the category associated with this commission type.
      */
-    public function commissions()
-    {
+    public function commissions() {
         return $this->hasMany(Commission::class, 'commission_type');
     }
 
@@ -105,8 +102,7 @@ class CommissionType extends Model
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeActive($query)
-    {
+    public function scopeActive($query) {
         return $query->where('is_active', 1);
     }
 
@@ -117,8 +113,7 @@ class CommissionType extends Model
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeVisible($query)
-    {
+    public function scopeVisible($query) {
         return $query->where('is_visible', 1);
     }
 
@@ -133,8 +128,7 @@ class CommissionType extends Model
      *
      * @return string
      */
-    public function getUrlAttribute()
-    {
+    public function getUrlAttribute() {
         return url('/commissions/types/'.$this->key);
     }
 
@@ -143,8 +137,7 @@ class CommissionType extends Model
      *
      * @return string
      */
-    public function getDisplayNameAttribute()
-    {
+    public function getDisplayNameAttribute() {
         if (!$this->is_visible) {
             return $this->category->name.': '.$this->name;
         } else {
@@ -157,8 +150,7 @@ class CommissionType extends Model
      *
      * @return string
      */
-    public function getExtrasAttribute()
-    {
+    public function getExtrasAttribute() {
         if (!$this->id || !isset($this->data['extras'])) {
             return null;
         }
@@ -171,8 +163,7 @@ class CommissionType extends Model
      *
      * @return string
      */
-    public function getPricingAttribute()
-    {
+    public function getPricingAttribute() {
         if (!$this->id) {
             return null;
         }
@@ -204,8 +195,7 @@ class CommissionType extends Model
      *
      * @return bool
      */
-    public function getCanCommissionAttribute()
-    {
+    public function getCanCommissionAttribute() {
         if (!Settings::get($this->category->class->slug.'_comms_open') || !$this->is_active || !$this->category->is_active) {
             return 0;
         } elseif (is_int($this->getSlots($this->category->class)) && $this->getSlots($this->category->class) == 0) {
@@ -228,8 +218,7 @@ class CommissionType extends Model
      *
      * @return int
      */
-    public function getSlotsAttribute()
-    {
+    public function getSlotsAttribute() {
         if ($this->availability == 0 && !is_int($this->getSlots($this->category->class))) {
             return null;
         }
@@ -249,8 +238,7 @@ class CommissionType extends Model
      *
      * @return int
      */
-    public function getCurrentSlotsAttribute()
-    {
+    public function getCurrentSlotsAttribute() {
         if ($this->availability == 0 && !is_int($this->getSlots($this->category->class))) {
             return null;
         }
@@ -266,8 +254,7 @@ class CommissionType extends Model
      *
      * @return string
      */
-    public function getDisplaySlotsAttribute()
-    {
+    public function getDisplaySlotsAttribute() {
         if (!is_numeric($this->slots)) {
             return null;
         }
@@ -280,8 +267,7 @@ class CommissionType extends Model
      *
      * @return array
      */
-    public function getFormFieldsAttribute()
-    {
+    public function getFormFieldsAttribute() {
         $fields = [];
 
         // Fallbacks for testing purposes
@@ -341,8 +327,7 @@ class CommissionType extends Model
      *
      * @return \Illuminate\Support\Collection
      */
-    public function getExamples($user = null, $all = false, $limit = 4)
-    {
+    public function getExamples($user = null, $all = false, $limit = 4) {
         if (!is_array($this->data)) {
             // Fallback for testing purposes
             $this->data = json_decode($this->data, true);
@@ -402,8 +387,7 @@ class CommissionType extends Model
      *
      * @return int
      */
-    public function getSlots($class)
-    {
+    public function getSlots($class) {
         $cap = Settings::get($class->slug.'_overall_slots');
         if ($cap == 0) {
             return null;

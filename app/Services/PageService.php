@@ -4,8 +4,7 @@ namespace App\Services;
 
 use Illuminate\Support\Facades\DB;
 
-class PageService extends Service
-{
+class PageService extends Service {
     /*
     |--------------------------------------------------------------------------
     | Text Page Service
@@ -26,8 +25,7 @@ class PageService extends Service
      *
      * @return \App\Models\TextPage|bool
      */
-    public function updatePage($page, $data, $user)
-    {
+    public function updatePage($page, $data, $user) {
         DB::beginTransaction();
 
         try {

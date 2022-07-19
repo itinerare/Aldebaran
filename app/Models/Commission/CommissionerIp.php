@@ -4,8 +4,7 @@ namespace App\Models\Commission;
 
 use Illuminate\Database\Eloquent\Model;
 
-class CommissionerIp extends Model
-{
+class CommissionerIp extends Model {
     /**
      * The attributes that are mass assignable.
      *
@@ -47,8 +46,7 @@ class CommissionerIp extends Model
     /**
      * Get the category associated with this commission type.
      */
-    public function commissioner()
-    {
+    public function commissioner() {
         return $this->belongsTo(Commissioner::class, 'commissioner_id');
     }
 }

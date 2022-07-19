@@ -4,15 +4,13 @@ namespace Database\Factories\Gallery;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class PieceImageFactory extends Factory
-{
+class PieceImageFactory extends Factory {
     /**
      * Define the model's default state.
      *
      * @return array
      */
-    public function definition()
-    {
+    public function definition() {
         return [
             //
             'hash'             => randomString(15),
@@ -32,8 +30,7 @@ class PieceImageFactory extends Factory
      *
      * @return \Illuminate\Database\Eloquent\Factories\Factory
      */
-    public function piece($id)
-    {
+    public function piece($id) {
         return $this->state(function (array $attributes) use ($id) {
             return [
                 'piece_id' => $id,
@@ -46,8 +43,7 @@ class PieceImageFactory extends Factory
      *
      * @return \Illuminate\Database\Eloquent\Factories\Factory
      */
-    public function caption()
-    {
+    public function caption() {
         return $this->state(function (array $attributes) {
             return [
                 'description' => $this->faker->unique()->domainWord(),
@@ -60,8 +56,7 @@ class PieceImageFactory extends Factory
      *
      * @return \Illuminate\Database\Eloquent\Factories\Factory
      */
-    public function primary()
-    {
+    public function primary() {
         return $this->state(function (array $attributes) {
             return [
                 'is_primary_image' => 1,
@@ -74,8 +69,7 @@ class PieceImageFactory extends Factory
      *
      * @return \Illuminate\Database\Eloquent\Factories\Factory
      */
-    public function hidden()
-    {
+    public function hidden() {
         return $this->state(function (array $attributes) {
             return [
                 'is_visible' => 0,

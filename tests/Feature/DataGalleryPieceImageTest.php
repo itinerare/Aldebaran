@@ -12,16 +12,14 @@ use Illuminate\Support\Facades\File;
 use Intervention\Image;
 use Tests\TestCase;
 
-class DataGalleryPieceImageTest extends TestCase
-{
+class DataGalleryPieceImageTest extends TestCase {
     use RefreshDatabase, WithFaker;
 
     /******************************************************************************
         GALLERY DATA: PIECES/IMAGES
     *******************************************************************************/
 
-    protected function setUp(): void
-    {
+    protected function setUp(): void {
         parent::setUp();
 
         // Create a piece to add an image for
@@ -43,8 +41,7 @@ class DataGalleryPieceImageTest extends TestCase
         $this->caption = $this->faker->unique()->domainWord();
     }
 
-    protected function tearDown(): void
-    {
+    protected function tearDown(): void {
         $this->service->testImages($this->image, false);
         $this->service->testImages($this->dataImage, false);
     }
@@ -57,8 +54,7 @@ class DataGalleryPieceImageTest extends TestCase
      * @param bool $piece
      * @param int  $expected
      */
-    public function testGetCreateImage($piece, $expected)
-    {
+    public function testGetCreateImage($piece, $expected) {
         $this->actingAs($this->user)
             ->get('/admin/data/pieces/images/create/'.($piece ? $this->piece->id : mt_rand(5, 10)))
             ->assertStatus($expected);
@@ -72,8 +68,7 @@ class DataGalleryPieceImageTest extends TestCase
      * @param bool $image
      * @param int  $expected
      */
-    public function testGetEditImage($image, $expected)
-    {
+    public function testGetEditImage($image, $expected) {
         // This sidesteps casts not working correctly in tests,
         // for some reason
         $this->image->data = json_decode($this->image->data, true);
@@ -84,8 +79,7 @@ class DataGalleryPieceImageTest extends TestCase
             ->assertStatus($expected);
     }
 
-    public function imageCreateEditViewProvider()
-    {
+    public function imageCreateEditViewProvider() {
         return [
             'valid'   => [1, 200],
             'invalid' => [0, 404],
@@ -102,8 +96,7 @@ class DataGalleryPieceImageTest extends TestCase
      * @param bool $isVisible
      * @param bool $isPrimary
      */
-    public function testPostCreateImage($withDescription, $withAltText, $isVisible, $isPrimary)
-    {
+    public function testPostCreateImage($withDescription, $withAltText, $isVisible, $isPrimary) {
         $response = $this
             ->actingAs($this->user)
             ->post('/admin/data/pieces/images/create', [
@@ -142,8 +135,7 @@ class DataGalleryPieceImageTest extends TestCase
         $this->service->testImages($image, false);
     }
 
-    public function imageCreateProvider()
-    {
+    public function imageCreateProvider() {
         // Get all possible sequences
         return $this->booleanSequences(4);
     }
@@ -160,8 +152,7 @@ class DataGalleryPieceImageTest extends TestCase
      * @param bool $isVisible
      * @param bool $isPrimary
      */
-    public function testPostEditImage($withData, $withDescription, $withAltText, $isVisible, $isPrimary)
-    {
+    public function testPostEditImage($withData, $withDescription, $withAltText, $isVisible, $isPrimary) {
         $response = $this
             ->actingAs($this->user)
             ->post('/admin/data/pieces/images/edit/'.($withData ? $this->dataImage->id : $this->image->id), [
@@ -180,8 +171,7 @@ class DataGalleryPieceImageTest extends TestCase
         ]);
     }
 
-    public function imageEditProvider()
-    {
+    public function imageEditProvider() {
         // Get all possible sequences
         return $this->booleanSequences(5);
     }
@@ -194,8 +184,7 @@ class DataGalleryPieceImageTest extends TestCase
      * @param bool $image
      * @param int  $expected
      */
-    public function testGetDeleteImage($image, $expected)
-    {
+    public function testGetDeleteImage($image, $expected) {
         $this->actingAs($this->user)
             ->get('/admin/data/pieces/images/delete/'.($image ? $this->image->id : mt_rand(5, 50)))
             ->assertStatus($expected);
@@ -209,8 +198,7 @@ class DataGalleryPieceImageTest extends TestCase
      * @param bool $image
      * @param bool $expected
      */
-    public function testPostDeleteImage($image, $expected)
-    {
+    public function testPostDeleteImage($image, $expected) {
         $response = $this
             ->actingAs($this->user)
             ->post('/admin/data/pieces/images/delete/'.($image ? $this->image->id : mt_rand(5, 50)));
@@ -224,8 +212,7 @@ class DataGalleryPieceImageTest extends TestCase
         }
     }
 
-    public function imageDeleteProvider()
-    {
+    public function imageDeleteProvider() {
         return [
             'valid'   => [1, 200],
             'invalid' => [0, 404],

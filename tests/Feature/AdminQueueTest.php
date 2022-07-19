@@ -12,16 +12,14 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Str;
 use Tests\TestCase;
 
-class AdminQueueTest extends TestCase
-{
+class AdminQueueTest extends TestCase {
     use RefreshDatabase, WithFaker;
 
     /******************************************************************************
         COMMISSION QUEUES
     *******************************************************************************/
 
-    protected function setUp(): void
-    {
+    protected function setUp(): void {
         parent::setUp();
     }
 
@@ -32,8 +30,7 @@ class AdminQueueTest extends TestCase
      *
      * @param bool $withCommission
      */
-    public function testGetIndexWithQueues($withCommission)
-    {
+    public function testGetIndexWithQueues($withCommission) {
         config(['aldebaran.settings.commissions.enabled' => 1]);
 
         if ($withCommission) {
@@ -60,8 +57,7 @@ class AdminQueueTest extends TestCase
         }
     }
 
-    public function adminIndexProvider()
-    {
+    public function adminIndexProvider() {
         return [
             'basic'           => [0],
             'with commission' => [1],
@@ -79,8 +75,7 @@ class AdminQueueTest extends TestCase
      * @param int         $status
      * @param string|null $queue
      */
-    public function testGetQueue($commsEnabled, $commData, $search, $status, $queue = 'Pending')
-    {
+    public function testGetQueue($commsEnabled, $commData, $search, $status, $queue = 'Pending') {
         config(['aldebaran.settings.commissions.enabled' => $commsEnabled]);
 
         if ($commData[0]) {
@@ -120,8 +115,7 @@ class AdminQueueTest extends TestCase
         }
     }
 
-    public function queueProvider()
-    {
+    public function queueProvider() {
         return [
             'basic'                       => [1, [0, null], null, 200],
             'search (successful)'         => [1, [0, null], [1, 1], 200],
@@ -157,8 +151,7 @@ class AdminQueueTest extends TestCase
      * @param bool $cancelledCommission
      * @param int  $status
      */
-    public function testGetLedger($commsEnabled, $withCommission, $pendingCommission, $cancelledCommission, $status)
-    {
+    public function testGetLedger($commsEnabled, $withCommission, $pendingCommission, $cancelledCommission, $status) {
         config(['aldebaran.settings.commissions.enabled' => $commsEnabled]);
 
         if ($withCommission) {
@@ -227,8 +220,7 @@ class AdminQueueTest extends TestCase
         }
     }
 
-    public function ledgerProvider()
-    {
+    public function ledgerProvider() {
         return [
             'basic'                              => [1, 0, 0, 0, 200],
             'with commission'                    => [1, 1, 0, 0, 200],
@@ -247,8 +239,7 @@ class AdminQueueTest extends TestCase
      * @param bool  $isIntl
      * @param mixed $expected
      */
-    public function testFeeCalculation($isIntl, $expected)
-    {
+    public function testFeeCalculation($isIntl, $expected) {
         // Create a commission with payment to calculate for, with a known cost
         // and tip
         $commission = Commission::factory()->has(CommissionPayment::factory()->count(1)->state(function (array $attributes) use ($isIntl) {
@@ -263,8 +254,7 @@ class AdminQueueTest extends TestCase
         $this->assertTrue($expected == $commission->paymentWithFees($payment));
     }
 
-    public function feeCalcProvider()
-    {
+    public function feeCalcProvider() {
         return [
             'non intl' => [0, 100.85],
             'intl'     => [1, 99.27],

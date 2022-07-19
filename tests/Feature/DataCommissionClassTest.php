@@ -10,16 +10,14 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Str;
 use Tests\TestCase;
 
-class DataCommissionClassTest extends TestCase
-{
+class DataCommissionClassTest extends TestCase {
     use RefreshDatabase, WithFaker;
 
     /******************************************************************************
         COMMISSION DATA: CLASSES
     *******************************************************************************/
 
-    protected function setUp(): void
-    {
+    protected function setUp(): void {
         parent::setUp();
 
         // Generate a text page for testing data removal
@@ -41,8 +39,7 @@ class DataCommissionClassTest extends TestCase
     /**
      * Test commission class index access.
      */
-    public function testGetClassIndex()
-    {
+    public function testGetClassIndex() {
         $this->actingAs($this->user)
             ->get('/admin/data/commission-classes')
             ->assertStatus(200);
@@ -51,8 +48,7 @@ class DataCommissionClassTest extends TestCase
     /**
      * Test class create access.
      */
-    public function testGetCreateClass()
-    {
+    public function testGetCreateClass() {
         $this->actingAs($this->user)
             ->get('/admin/data/commission-classes/create')
             ->assertStatus(200);
@@ -61,8 +57,7 @@ class DataCommissionClassTest extends TestCase
     /**
      * Test class edit access.
      */
-    public function testGetEditClass()
-    {
+    public function testGetEditClass() {
         $this->actingAs($this->user)
             ->get('/admin/data/commission-classes/edit/'.$this->class->id)
             ->assertStatus(200);
@@ -75,8 +70,7 @@ class DataCommissionClassTest extends TestCase
      *
      * @param bool $isActive
      */
-    public function testPostCreateClass($isActive)
-    {
+    public function testPostCreateClass($isActive) {
         $response = $this
             ->actingAs($this->user)
             ->post('/admin/data/commission-classes/create', [
@@ -106,8 +100,7 @@ class DataCommissionClassTest extends TestCase
         }
     }
 
-    public function createClassProvider()
-    {
+    public function createClassProvider() {
         return [
             'active'   => [1],
             'inactive' => [0],
@@ -124,8 +117,7 @@ class DataCommissionClassTest extends TestCase
      * @param array|null $fieldData
      * @param bool       $isActive
      */
-    public function testPostEditClass($hasData, $hasPage, $fieldData, $isActive)
-    {
+    public function testPostEditClass($hasData, $hasPage, $fieldData, $isActive) {
         $response = $this
             ->actingAs($this->user)
             ->post('/admin/data/commission-classes/edit/'.($hasData ? $this->dataClass->id : $this->class->id), [
@@ -174,8 +166,7 @@ class DataCommissionClassTest extends TestCase
         }
     }
 
-    public function editClassProvider()
-    {
+    public function editClassProvider() {
         return [
             'basic'           => [0, 0, null, 1],
             'inactive'        => [0, 0, null, 0],
@@ -202,8 +193,7 @@ class DataCommissionClassTest extends TestCase
     /**
      * Test class delete access.
      */
-    public function testGetDeleteClass()
-    {
+    public function testGetDeleteClass() {
         $this->actingAs($this->user)
             ->get('/admin/data/commission-classes/delete/'.$this->class->id)
             ->assertStatus(200);
@@ -217,8 +207,7 @@ class DataCommissionClassTest extends TestCase
      * @param bool $withCategory
      * @param bool $expected
      */
-    public function testPostDeleteClass($withCategory, $expected)
-    {
+    public function testPostDeleteClass($withCategory, $expected) {
         if ($withCategory) {
             CommissionCategory::factory()->class($this->class->id)->create();
         }
@@ -254,8 +243,7 @@ class DataCommissionClassTest extends TestCase
         }
     }
 
-    public function classDeleteProvider()
-    {
+    public function classDeleteProvider() {
         return [
             'basic'         => [0, 1],
             'with category' => [1, 0],

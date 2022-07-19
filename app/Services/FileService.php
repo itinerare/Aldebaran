@@ -4,8 +4,7 @@ namespace App\Services;
 
 use Illuminate\Support\Facades\File;
 
-class FileService extends Service
-{
+class FileService extends Service {
     /*
     |--------------------------------------------------------------------------
     | File Manager
@@ -25,8 +24,7 @@ class FileService extends Service
      *
      * @return bool
      */
-    public function uploadFile($file, $dir, $name, $isFileManager = true)
-    {
+    public function uploadFile($file, $dir, $name, $isFileManager = true) {
         $directory = public_path().($isFileManager ? '/files'.($dir ? '/'.$dir : '') : '/images/assets');
         if (!file_exists($directory)) {
             $this->setError('error', 'Folder does not exist.');
@@ -44,8 +42,7 @@ class FileService extends Service
      *
      * @return bool
      */
-    public function uploadCss($file)
-    {
+    public function uploadCss($file) {
         File::move($file, public_path().'/css/custom.css');
         chmod(public_path().'/css/custom.css', 0755);
 
@@ -59,8 +56,7 @@ class FileService extends Service
      *
      * @return bool
      */
-    public function deleteFile($path)
-    {
+    public function deleteFile($path) {
         if (!file_exists($path)) {
             $this->setError('error', 'File does not exist.');
 
@@ -80,8 +76,7 @@ class FileService extends Service
      *
      * @return bool
      */
-    public function moveFile($oldDir, $newDir, $name)
-    {
+    public function moveFile($oldDir, $newDir, $name) {
         if (!file_exists($oldDir.'/'.$name)) {
             $this->setError('error', 'File does not exist.');
 
@@ -105,8 +100,7 @@ class FileService extends Service
      *
      * @return bool
      */
-    public function renameFile($dir, $oldName, $newName)
-    {
+    public function renameFile($dir, $oldName, $newName) {
         if (!file_exists($dir.'/'.$oldName)) {
             $this->setError('error', 'File does not exist.');
 

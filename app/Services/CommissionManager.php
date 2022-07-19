@@ -16,8 +16,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 
-class CommissionManager extends Service
-{
+class CommissionManager extends Service {
     /*
     |--------------------------------------------------------------------------
     | Commission Manager
@@ -35,8 +34,7 @@ class CommissionManager extends Service
      *
      * @return \App\Models\Commission\Commission|bool
      */
-    public function createCommission($data, $manual = false)
-    {
+    public function createCommission($data, $manual = false) {
         DB::beginTransaction();
 
         try {
@@ -140,8 +138,7 @@ class CommissionManager extends Service
      *
      * @return mixed
      */
-    public function acceptCommission($id, $data, $user)
-    {
+    public function acceptCommission($id, $data, $user) {
         DB::beginTransaction();
 
         try {
@@ -200,8 +197,7 @@ class CommissionManager extends Service
      *
      * @return mixed
      */
-    public function updateCommission($id, $data, $user)
-    {
+    public function updateCommission($id, $data, $user) {
         DB::beginTransaction();
 
         try {
@@ -279,8 +275,7 @@ class CommissionManager extends Service
      *
      * @return mixed
      */
-    public function completeCommission($id, $data, $user)
-    {
+    public function completeCommission($id, $data, $user) {
         DB::beginTransaction();
 
         try {
@@ -318,8 +313,7 @@ class CommissionManager extends Service
      *
      * @return mixed
      */
-    public function declineCommission($id, $data, $user)
-    {
+    public function declineCommission($id, $data, $user) {
         DB::beginTransaction();
 
         try {
@@ -356,8 +350,7 @@ class CommissionManager extends Service
      *
      * @return mixed
      */
-    public function banCommissioner($id, $data, $user)
-    {
+    public function banCommissioner($id, $data, $user) {
         DB::beginTransaction();
 
         try {
@@ -396,8 +389,7 @@ class CommissionManager extends Service
      *
      * @return array
      */
-    private function processCommissioner($data, $processIp = true)
-    {
+    private function processCommissioner($data, $processIp = true) {
         // Attempt to fetch commissioner, first by email, then by IP as a fallback
         // Failing these, create a new commissioner
         $commissioner = Commissioner::where('email', $data['email'])->first();

@@ -7,8 +7,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Fortify\Contracts\TwoFactorAuthenticationProvider;
 
-class UserService extends Service
-{
+class UserService extends Service {
     /*
     |--------------------------------------------------------------------------
     | User Service
@@ -25,8 +24,7 @@ class UserService extends Service
      *
      * @return \App\Models\User
      */
-    public function createUser($data)
-    {
+    public function createUser($data) {
         $user = User::create([
             'name'     => $data['name'],
             'email'    => $data['email'],
@@ -43,8 +41,7 @@ class UserService extends Service
      *
      * @return \App\Models\User
      */
-    public function updateUser($data)
-    {
+    public function updateUser($data) {
         $user = User::find($data['id']);
         if (isset($data['password'])) {
             $data['password'] = Hash::make($data['password']);
@@ -64,8 +61,7 @@ class UserService extends Service
      *
      * @return bool
      */
-    public function updatePassword($data, $user)
-    {
+    public function updatePassword($data, $user) {
         DB::beginTransaction();
 
         try {
@@ -95,8 +91,7 @@ class UserService extends Service
      *
      * @return bool
      */
-    public function updateEmail($data, $user)
-    {
+    public function updateEmail($data, $user) {
         if (User::where('email', $data['email'])->where('id', '!=', $user->id)->first()) {
             throw new \Exception('A user with this email address already exists.');
         }
@@ -116,8 +111,7 @@ class UserService extends Service
      *
      * @return bool
      */
-    public function confirmTwoFactor($code, $data, $user)
-    {
+    public function confirmTwoFactor($code, $data, $user) {
         DB::beginTransaction();
 
         try {
@@ -146,8 +140,7 @@ class UserService extends Service
      *
      * @return bool
      */
-    public function disableTwoFactor($code, $user)
-    {
+    public function disableTwoFactor($code, $user) {
         DB::beginTransaction();
 
         try {

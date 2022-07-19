@@ -4,13 +4,11 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class RemovePriceDataFromCommissions extends Migration
-{
+class RemovePriceDataFromCommissions extends Migration {
     /**
      * Run the migrations.
      */
-    public function up()
-    {
+    public function up() {
         Schema::table('commissions', function (Blueprint $table) {
             //
             $table->dropColumn('paid_status');
@@ -21,8 +19,7 @@ class RemovePriceDataFromCommissions extends Migration
     /**
      * Reverse the migrations.
      */
-    public function down()
-    {
+    public function down() {
         Schema::table('commissions', function (Blueprint $table) {
             //
             $table->bool('paid_status')->default(0);

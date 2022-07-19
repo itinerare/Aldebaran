@@ -5,16 +5,14 @@ namespace Tests\Feature;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-class PageViewTest extends TestCase
-{
+class PageViewTest extends TestCase {
     use RefreshDatabase;
 
     /******************************************************************************
         PUBLIC: PAGES
     *******************************************************************************/
 
-    protected function setUp(): void
-    {
+    protected function setUp(): void {
         parent::setUp();
     }
 
@@ -28,8 +26,7 @@ class PageViewTest extends TestCase
      * @param bool   $user
      * @param int    $status
      */
-    public function testGetPage($page, $setup, $user, $status)
-    {
+    public function testGetPage($page, $setup, $user, $status) {
         if ($setup) {
             $this->artisan('add-text-pages');
         }
@@ -43,8 +40,7 @@ class PageViewTest extends TestCase
         $response->assertStatus($status);
     }
 
-    public function pageProvider()
-    {
+    public function pageProvider() {
         return [
             'about, not set up, visitor'          => ['about', 0, 0, 404],
             'about, not set up, user'             => ['about', 0, 1, 404],

@@ -16,16 +16,14 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Tests\TestCase;
 
-class CommissionFormTest extends TestCase
-{
+class CommissionFormTest extends TestCase {
     use RefreshDatabase, WithFaker;
 
     /******************************************************************************
         PUBLIC: COMMISSIONS
     *******************************************************************************/
 
-    protected function setUp(): void
-    {
+    protected function setUp(): void {
         parent::setUp();
 
         // Set up testing type and default pages (necessary to view new commission page)
@@ -47,8 +45,7 @@ class CommissionFormTest extends TestCase
      * @param array|null $data
      * @param int        $status
      */
-    public function testGetNewCommission($visibility, $user, $data, $status)
-    {
+    public function testGetNewCommission($visibility, $user, $data, $status) {
         // Adjust various settings
         config(['aldebaran.settings.commissions.enabled' => $visibility[0]]);
         $this->type->category->class->update(['is_active' => $visibility[1]]);
@@ -96,8 +93,7 @@ class CommissionFormTest extends TestCase
         $response->assertStatus($status);
     }
 
-    public function commissionFormAccessProvider()
-    {
+    public function commissionFormAccessProvider() {
         // $visibility = [commsEnabled, classActive, commsOpen, typeActive, typeVisible, withKey]
 
         return [
@@ -122,8 +118,7 @@ class CommissionFormTest extends TestCase
         ];
     }
 
-    public function commissionFormProvider()
-    {
+    public function commissionFormProvider() {
         return [
             // (string) type, (bool) rules, (bool) choices, value, (string) help, (bool) include category, (bool) include class, (bool) include class in category
 
@@ -160,8 +155,7 @@ class CommissionFormTest extends TestCase
      * @param bool       $isBanned
      * @param bool       $expected
      */
-    public function testPostNewCommission($withName, $withEmail, $paymentAddr, $visibility, $data, $extras, $slotData, $agree, $isBanned, $expected)
-    {
+    public function testPostNewCommission($withName, $withEmail, $paymentAddr, $visibility, $data, $extras, $slotData, $agree, $isBanned, $expected) {
         // Adjust visibility settings
         config(['aldebaran.settings.commissions.enabled' => $visibility[0]]);
         $this->type->category->class->update(['is_active' => $visibility[1]]);
@@ -304,8 +298,7 @@ class CommissionFormTest extends TestCase
         }
     }
 
-    public function newCommissionProvider()
-    {
+    public function newCommissionProvider() {
         // $visibility = [commsEnabled, classActive, commsOpen, typeActive, typeVisible, withKey]
 
         return [
@@ -366,8 +359,7 @@ class CommissionFormTest extends TestCase
      * @param array|null $pieceData
      * @param mixed      $status
      */
-    public function testGetViewCommission($isValid, $status, $data, $pieceData, $expected)
-    {
+    public function testGetViewCommission($isValid, $status, $data, $pieceData, $expected) {
         if ($data) {
             // Generate some keys so they can be referred back to later
             $fieldKeys = [
@@ -474,8 +466,7 @@ class CommissionFormTest extends TestCase
         }
     }
 
-    public function commissionViewProvider()
-    {
+    public function commissionViewProvider() {
         return [
             'basic'               => [1, 'Pending', null, null, 200],
             'accepted commission' => [1, 'Accepted', null, null, 200],
