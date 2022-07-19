@@ -4,15 +4,13 @@ namespace Database\Factories\Commission;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class CommissionPieceFactory extends Factory
-{
+class CommissionPieceFactory extends Factory {
     /**
      * Define the model's default state.
      *
      * @return array
      */
-    public function definition()
-    {
+    public function definition() {
         return [
             //
         ];
@@ -25,8 +23,7 @@ class CommissionPieceFactory extends Factory
      *
      * @return \Illuminate\Database\Eloquent\Factories\Factory
      */
-    public function commission($id)
-    {
+    public function commission($id) {
         return $this->state(function (array $attributes) use ($id) {
             return [
                 'commission_id' => $id,
@@ -41,8 +38,7 @@ class CommissionPieceFactory extends Factory
      *
      * @return \Illuminate\Database\Eloquent\Factories\Factory
      */
-    public function piece($id)
-    {
+    public function piece($id) {
         return $this->state(function (array $attributes) use ($id) {
             return [
                 'piece_id' => $id,

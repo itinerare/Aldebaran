@@ -5,15 +5,13 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
-class TextPageFactory extends Factory
-{
+class TextPageFactory extends Factory {
     /**
      * Define the model's default state.
      *
      * @return array
      */
-    public function definition()
-    {
+    public function definition() {
         $name = $this->faker->unique()->domainWord();
 
         return [

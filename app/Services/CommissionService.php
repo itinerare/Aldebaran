@@ -10,8 +10,7 @@ use App\Models\TextPage;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
-class CommissionService extends Service
-{
+class CommissionService extends Service {
     /*
     |--------------------------------------------------------------------------
     | Commission Service
@@ -33,8 +32,7 @@ class CommissionService extends Service
      *
      * @return \App\Models\Commission\CommissionClass|bool
      */
-    public function createCommissionClass($data, $user)
-    {
+    public function createCommissionClass($data, $user) {
         DB::beginTransaction();
 
         try {
@@ -67,8 +65,7 @@ class CommissionService extends Service
      *
      * @return \App\Models\Commission\CommissionClass|bool
      */
-    public function updateCommissionClass($class, $data, $user)
-    {
+    public function updateCommissionClass($class, $data, $user) {
         DB::beginTransaction();
 
         try {
@@ -117,8 +114,7 @@ class CommissionService extends Service
      *
      * @return bool
      */
-    public function deleteCommissionClass($class)
-    {
+    public function deleteCommissionClass($class) {
         DB::beginTransaction();
 
         try {
@@ -165,8 +161,7 @@ class CommissionService extends Service
      *
      * @return bool
      */
-    public function sortCommissionClass($data)
-    {
+    public function sortCommissionClass($data) {
         DB::beginTransaction();
 
         try {
@@ -197,8 +192,7 @@ class CommissionService extends Service
      *
      * @return \App\Models\Commission\CommissionCategory|bool
      */
-    public function createCommissionCategory($data, $user)
-    {
+    public function createCommissionCategory($data, $user) {
         DB::beginTransaction();
 
         try {
@@ -230,8 +224,7 @@ class CommissionService extends Service
      *
      * @return \App\Models\Commission\CommissionCategory|bool
      */
-    public function updateCommissionCategory($category, $data, $user)
-    {
+    public function updateCommissionCategory($category, $data, $user) {
         DB::beginTransaction();
 
         try {
@@ -275,8 +268,7 @@ class CommissionService extends Service
      *
      * @return bool
      */
-    public function deleteCommissionCategory($category)
-    {
+    public function deleteCommissionCategory($category) {
         DB::beginTransaction();
 
         try {
@@ -302,8 +294,7 @@ class CommissionService extends Service
      *
      * @return bool
      */
-    public function sortCommissionCategory($data)
-    {
+    public function sortCommissionCategory($data) {
         DB::beginTransaction();
 
         try {
@@ -334,8 +325,7 @@ class CommissionService extends Service
      *
      * @return \App\Models\Commission\CommissionType|bool
      */
-    public function createCommissionType($data, $user)
-    {
+    public function createCommissionType($data, $user) {
         DB::beginTransaction();
 
         try {
@@ -363,8 +353,7 @@ class CommissionService extends Service
      *
      * @return \App\Models\Commission\CommissionType|bool
      */
-    public function updateCommissionType($type, $data, $user)
-    {
+    public function updateCommissionType($type, $data, $user) {
         DB::beginTransaction();
 
         try {
@@ -397,8 +386,7 @@ class CommissionService extends Service
      *
      * @return bool
      */
-    public function deleteCommissionType($type)
-    {
+    public function deleteCommissionType($type) {
         DB::beginTransaction();
 
         try {
@@ -424,8 +412,7 @@ class CommissionService extends Service
      *
      * @return bool
      */
-    public function sortCommissionType($data)
-    {
+    public function sortCommissionType($data) {
         DB::beginTransaction();
 
         try {
@@ -452,8 +439,7 @@ class CommissionService extends Service
      *
      * @return array
      */
-    private function processClassSettings($class, $data)
-    {
+    private function processClassSettings($class, $data) {
         // Add and/or modify site settings
         // If the slug has been changed, check for existing settings and save their values
         if (isset($data['slug_old'])) {
@@ -533,10 +519,10 @@ class CommissionService extends Service
             foreach ($data['page_key'] as $key=>$pageKey) {
                 if ($data['page_id'][$key] == null) {
                     $pages = $pages + [$pageKey => [
-                'name' => $data['page_title'][$key],
-                'text' => '<p>'.$class->name.' commssion info goes here.</p>',
-                'flag' => 'custom',
-            ]];
+                        'name' => $data['page_title'][$key],
+                        'text' => '<p>'.$class->name.' commssion info goes here.</p>',
+                        'flag' => 'custom',
+                    ]];
                 }
             }
         }
@@ -619,8 +605,7 @@ class CommissionService extends Service
      *
      * @return array
      */
-    private function processFormFields($data)
-    {
+    private function processFormFields($data) {
         foreach ($data['field_key'] as $key=>$fieldKey) {
             if (isset($data['field_choices'][$key])) {
                 $data['field_choices'][$key] = explode(',', $data['field_choices'][$key]);
@@ -647,8 +632,7 @@ class CommissionService extends Service
      *
      * @return array
      */
-    private function populateData($data, $type = null)
-    {
+    private function populateData($data, $type = null) {
         // Check toggles
         if (!isset($data['is_active'])) {
             $data['is_active'] = 0;

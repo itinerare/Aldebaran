@@ -8,8 +8,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Laravel\Fortify\Contracts\CreatesNewUsers;
 
-class CreateNewUser implements CreatesNewUsers
-{
+class CreateNewUser implements CreatesNewUsers {
     use PasswordValidationRules;
 
     /**
@@ -17,8 +16,7 @@ class CreateNewUser implements CreatesNewUsers
      *
      * @return \App\Models\User
      */
-    public function create(array $input)
-    {
+    public function create(array $input) {
         Validator::make($input, [
             'name'  => ['required', 'string', 'max:255'],
             'email' => [

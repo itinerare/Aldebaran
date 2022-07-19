@@ -11,16 +11,14 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
-class DataGalleryPieceTest extends TestCase
-{
+class DataGalleryPieceTest extends TestCase {
     use RefreshDatabase, WithFaker;
 
     /******************************************************************************
         GALLERY DATA: PIECES
     *******************************************************************************/
 
-    protected function setUp(): void
-    {
+    protected function setUp(): void {
         parent::setUp();
 
         // Create a piece for editing, etc. purposes
@@ -47,8 +45,7 @@ class DataGalleryPieceTest extends TestCase
      * @param bool       $withPiece
      * @param array|null $search
      */
-    public function testGetPieceIndex($withPiece, $search)
-    {
+    public function testGetPieceIndex($withPiece, $search) {
         // Remove testing pieces if not in use
         if (!$withPiece) {
             Piece::query()->delete();
@@ -83,8 +80,7 @@ class DataGalleryPieceTest extends TestCase
         });
     }
 
-    public function pieceIndexProvider()
-    {
+    public function pieceIndexProvider() {
         return [
             'basic'                             => [0, null],
             'with piece'                        => [1, null],
@@ -100,8 +96,7 @@ class DataGalleryPieceTest extends TestCase
     /**
      * Test piece create access.
      */
-    public function testGetCreatePiece()
-    {
+    public function testGetCreatePiece() {
         $this->actingAs($this->user)
             ->get('/admin/data/pieces/create')
             ->assertStatus(200);
@@ -110,8 +105,7 @@ class DataGalleryPieceTest extends TestCase
     /**
      * Test piece edit access.
      */
-    public function testGetEditPiece()
-    {
+    public function testGetEditPiece() {
         $this->actingAs($this->user)
             ->get('/admin/data/pieces/edit/'.$this->piece->id)
             ->assertStatus(200);
@@ -130,8 +124,7 @@ class DataGalleryPieceTest extends TestCase
      * @param bool $program
      * @param bool $goodExample
      */
-    public function testPostCreatePiece($hasData, $description, $isVisible, $timestamp, $tag, $program, $goodExample)
-    {
+    public function testPostCreatePiece($hasData, $description, $isVisible, $timestamp, $tag, $program, $goodExample) {
         $response = $this
             ->actingAs($this->user)
             ->post('/admin/data/pieces/create', [
@@ -185,8 +178,7 @@ class DataGalleryPieceTest extends TestCase
      * @param bool $program
      * @param bool $goodExample
      */
-    public function testPostEditPiece($hasData, $description, $isVisible, $timestamp, $tag, $program, $goodExample)
-    {
+    public function testPostEditPiece($hasData, $description, $isVisible, $timestamp, $tag, $program, $goodExample) {
         $response = $this
             ->actingAs($this->user)
             ->post('/admin/data/pieces/edit/'.($hasData ? $this->dataPiece->id : $this->piece->id), [
@@ -234,8 +226,7 @@ class DataGalleryPieceTest extends TestCase
         }
     }
 
-    public function pieceProvider()
-    {
+    public function pieceProvider() {
         // ($hasData, $description, $isVisible, $timestamp, $tag, $program, $goodExample)
 
         return [
@@ -258,8 +249,7 @@ class DataGalleryPieceTest extends TestCase
     /**
      * Test piece delete access.
      */
-    public function testGetDeletePiece()
-    {
+    public function testGetDeletePiece() {
         $this->actingAs($this->user)
             ->get('/admin/data/pieces/delete/'.$this->piece->id)
             ->assertStatus(200);
@@ -268,8 +258,7 @@ class DataGalleryPieceTest extends TestCase
     /**
      * Test piece deletion.
      */
-    public function testPostDeletePiece()
-    {
+    public function testPostDeletePiece() {
         $response = $this
             ->actingAs($this->user)
             ->post('/admin/data/pieces/delete/'.$this->piece->id);

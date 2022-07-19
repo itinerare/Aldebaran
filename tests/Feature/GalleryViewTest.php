@@ -16,16 +16,14 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
 use Tests\TestCase;
 
-class GalleryViewTest extends TestCase
-{
+class GalleryViewTest extends TestCase {
     use RefreshDatabase, WithFaker;
 
     /******************************************************************************
         PUBLIC: GALLERY & PROJECTS
     *******************************************************************************/
 
-    protected function setUp(): void
-    {
+    protected function setUp(): void {
         parent::setUp();
 
         // Set up gallery service for image processing
@@ -43,8 +41,7 @@ class GalleryViewTest extends TestCase
      * @param array      $pieceStatus
      * @param int        $status
      */
-    public function testGetGallery($user, $enabled, $search, $pieceStatus, $status)
-    {
+    public function testGetGallery($user, $enabled, $search, $pieceStatus, $status) {
         config(['aldebaran.settings.navigation.gallery' => $enabled]);
 
         if ($pieceStatus[0]) {
@@ -130,8 +127,7 @@ class GalleryViewTest extends TestCase
         }
     }
 
-    public function galleryAccessProvider()
-    {
+    public function galleryAccessProvider() {
         return [
             'visitor, enabled'  => [0, 1, null, [0, 0, 0, 0], 200],
             'visitor, disabled' => [0, 0, null, [0, 0, 0, 0], 404],
@@ -185,8 +181,7 @@ class GalleryViewTest extends TestCase
      * @param array      $pieceStatus
      * @param int        $status
      */
-    public function testGetProject($user, $visible, $search, $pieceStatus, $status)
-    {
+    public function testGetProject($user, $visible, $search, $pieceStatus, $status) {
         $project = Project::factory()->create();
         if (!$visible) {
             $project->update(['is_visible' => 0]);
@@ -272,8 +267,7 @@ class GalleryViewTest extends TestCase
         }
     }
 
-    public function projectAccessProvider()
-    {
+    public function projectAccessProvider() {
         return [
             'visitor, visible' => [0, 1, null, [0, 0, 0, 0], 200],
             'visitor, hidden'  => [0, 0, null, [0, 0, 0, 0], 404],
@@ -331,8 +325,7 @@ class GalleryViewTest extends TestCase
      * @param bool $goodExample
      * @param int  $status
      */
-    public function testGetPiece($user, $image, $literature, $isVisible, $description, $altText, $timestamp, $tag, $program, $goodExample, $status)
-    {
+    public function testGetPiece($user, $image, $literature, $isVisible, $description, $altText, $timestamp, $tag, $program, $goodExample, $status) {
         // Create objects and test images
         $piece = Piece::factory()->create();
 
@@ -384,8 +377,7 @@ class GalleryViewTest extends TestCase
         }
     }
 
-    public function pieceAccessProvider()
-    {
+    public function pieceAccessProvider() {
         // ($user, $image, $literature, $isVisible, $description, $altText, $timestamp, $tag, $program, $goodExample, $status)
 
         return [

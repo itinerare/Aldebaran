@@ -5,15 +5,13 @@ namespace Database\Factories\Gallery;
 use App\Models\Gallery\Project;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class ProjectFactory extends Factory
-{
+class ProjectFactory extends Factory {
     /**
      * Define the model's default state.
      *
      * @return array
      */
-    public function definition()
-    {
+    public function definition() {
         return [
             //
             'name'       => $this->faker->unique()->domainWord(),
@@ -26,8 +24,7 @@ class ProjectFactory extends Factory
      *
      * @return \Illuminate\Database\Eloquent\Factories\Factory
      */
-    public function description()
-    {
+    public function description() {
         return $this->state(function (array $attributes) {
             return [
                 'description' => '<p>'.$this->faker->unique()->domainWord().'</p>',
@@ -40,8 +37,7 @@ class ProjectFactory extends Factory
      *
      * @return \Illuminate\Database\Eloquent\Factories\Factory
      */
-    public function hidden()
-    {
+    public function hidden() {
         return $this->state(function (array $attributes) {
             return [
                 'is_visible' => 0,

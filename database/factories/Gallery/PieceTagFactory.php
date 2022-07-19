@@ -5,15 +5,13 @@ namespace Database\Factories\Gallery;
 use App\Models\Gallery\Tag;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class PieceTagFactory extends Factory
-{
+class PieceTagFactory extends Factory {
     /**
      * Define the model's default state.
      *
      * @return array
      */
-    public function definition()
-    {
+    public function definition() {
         return [
             //
             'tag_id' => Tag::factory()->create()->id,
@@ -27,8 +25,7 @@ class PieceTagFactory extends Factory
      *
      * @return \Illuminate\Database\Eloquent\Factories\Factory
      */
-    public function piece($id)
-    {
+    public function piece($id) {
         return $this->state(function (array $attributes) use ($id) {
             return [
                 'piece_id' => $id,
@@ -43,8 +40,7 @@ class PieceTagFactory extends Factory
      *
      * @return \Illuminate\Database\Eloquent\Factories\Factory
      */
-    public function tag($id)
-    {
+    public function tag($id) {
         return $this->state(function (array $attributes) use ($id) {
             return [
                 'tag_id' => $id,

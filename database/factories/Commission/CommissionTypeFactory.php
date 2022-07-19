@@ -5,15 +5,13 @@ namespace Database\Factories\Commission;
 use App\Models\Commission\CommissionCategory;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class CommissionTypeFactory extends Factory
-{
+class CommissionTypeFactory extends Factory {
     /**
      * Define the model's default state.
      *
      * @return array
      */
-    public function definition()
-    {
+    public function definition() {
         $category = CommissionCategory::factory()->create();
 
         return [
@@ -36,8 +34,7 @@ class CommissionTypeFactory extends Factory
      *
      * @return \Illuminate\Database\Eloquent\Factories\Factory
      */
-    public function category($id)
-    {
+    public function category($id) {
         return $this->state(function (array $attributes) use ($id) {
             return [
                 'category_id' => $id,
@@ -50,8 +47,7 @@ class CommissionTypeFactory extends Factory
      *
      * @return \Illuminate\Database\Eloquent\Factories\Factory
      */
-    public function hidden()
-    {
+    public function hidden() {
         return $this->state(function (array $attributes) {
             return [
                 'is_visible' => 0,
@@ -66,8 +62,7 @@ class CommissionTypeFactory extends Factory
      *
      * @return \Illuminate\Database\Eloquent\Factories\Factory
      */
-    public function slots($slots)
-    {
+    public function slots($slots) {
         return $this->state(function (array $attributes) use ($slots) {
             return [
                 'availability' => $slots,
@@ -86,8 +81,7 @@ class CommissionTypeFactory extends Factory
      *
      * @return \Illuminate\Database\Eloquent\Factories\Factory
      */
-    public function testData($pricing, $tag = null, $includeClass = 0, $includeCategory = 0, $extras = null)
-    {
+    public function testData($pricing, $tag = null, $includeClass = 0, $includeCategory = 0, $extras = null) {
         return $this->state(function (array $attributes) use ($pricing, $extras, $tag, $includeClass, $includeCategory) {
             return [
                 'data' => '{"fields":{"test":{"label":"Test","type":"text","rules":null,"choices":null,"value":null,"help":null}},"include":{"class":'.($includeClass ? 1 : 0).',"category":'.($includeCategory ? 1 : 0).'},"pricing":{"type":"'.($pricing['type'] ?? 'flat').'",'.(isset($pricing['type']) && $pricing['type'] == 'range' ? '"range":{"min":"'.$pricing['min'].'","max":"'.$pricing['max'].'"}' : '"cost":"'.$pricing['cost'].'"').'},"extras":'.(isset($extras) ? '"'.$extras.'"' : 'null').',"tags":'.($tag ? '['.$tag.']' : 'null').'}',

@@ -17,16 +17,14 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Tests\TestCase;
 
-class AdminCommissionTest extends TestCase
-{
+class AdminCommissionTest extends TestCase {
     use RefreshDatabase, WithFaker;
 
     /******************************************************************************
         COMMISSIONS
     *******************************************************************************/
 
-    protected function setUp(): void
-    {
+    protected function setUp(): void {
         parent::setUp();
 
         $this->type = CommissionType::factory()->testData(['type' => 'flat', 'cost' => 10])->create();
@@ -46,8 +44,7 @@ class AdminCommissionTest extends TestCase
      * @param array|null $fieldData
      * @param int        $expected
      */
-    public function testGetViewCommission($pieceData, $withPayment, $status, $fieldData, $expected)
-    {
+    public function testGetViewCommission($pieceData, $withPayment, $status, $fieldData, $expected) {
         if ($fieldData) {
             // Generate some keys so they can be referred back to later
             $fieldKeys = [
@@ -160,8 +157,7 @@ class AdminCommissionTest extends TestCase
         }
     }
 
-    public function commissionViewProvider()
-    {
+    public function commissionViewProvider() {
         return [
             'basic'        => [null, 0, 'Pending', null, 200],
             'with payment' => [null, 1, 'Pending', null, 200],
@@ -211,8 +207,7 @@ class AdminCommissionTest extends TestCase
      * @param array|null $slotData
      * @param bool       $expected
      */
-    public function testPostEditCommissionState($status, $operation, $withComments, $slotData, $expected)
-    {
+    public function testPostEditCommissionState($status, $operation, $withComments, $slotData, $expected) {
         $commission = Commission::factory()->status($status)->create();
         $comments = $withComments ? $this->faker->domainWord() : null;
 
@@ -308,8 +303,7 @@ class AdminCommissionTest extends TestCase
         }
     }
 
-    public function commissionStateProvider()
-    {
+    public function commissionStateProvider() {
         // $slotData = (string) status, (bool) sameType, (bool) expected
 
         return [
@@ -350,8 +344,7 @@ class AdminCommissionTest extends TestCase
      * @param bool       $withComments
      * @param bool       $expected
      */
-    public function testPostUpdateCommission($status, $withPiece, $paymentData, $progress, $withComments, $expected)
-    {
+    public function testPostUpdateCommission($status, $withPiece, $paymentData, $progress, $withComments, $expected) {
         $commission = Commission::factory()->status($status)->create();
         $comments = $withComments ? $this->faker->domainWord() : null;
 
@@ -429,8 +422,7 @@ class AdminCommissionTest extends TestCase
         }
     }
 
-    public function commissionUpdateProvider()
-    {
+    public function commissionUpdateProvider() {
         return [
             'basic'         => ['Accepted', 0, null, 'Not Started', 0, 1],
             'with piece'    => ['Accepted', 1, null, 'Not Started', 0, 1],

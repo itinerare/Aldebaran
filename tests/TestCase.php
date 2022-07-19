@@ -5,12 +5,10 @@ namespace Tests;
 use App\Models\User;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 
-abstract class TestCase extends BaseTestCase
-{
+abstract class TestCase extends BaseTestCase {
     use CreatesApplication;
 
-    protected function setUp(): void
-    {
+    protected function setUp(): void {
         parent::setUp();
 
         // Create a temporary user
@@ -27,8 +25,7 @@ abstract class TestCase extends BaseTestCase
      *
      * @return array
      */
-    public function booleanSequences($length)
-    {
+    public function booleanSequences($length) {
         $totalCombos = pow(2, $length);
 
         $sequences = [];

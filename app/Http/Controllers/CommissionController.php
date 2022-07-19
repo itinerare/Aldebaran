@@ -13,8 +13,7 @@ use App\Models\TextPage;
 use App\Services\CommissionManager;
 use Illuminate\Http\Request;
 
-class CommissionController extends Controller
-{
+class CommissionController extends Controller {
     /*
     |--------------------------------------------------------------------------
     | Commission Controller
@@ -31,8 +30,7 @@ class CommissionController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getInfo($class, Request $request)
-    {
+    public function getInfo($class, Request $request) {
         if (!config('aldebaran.settings.commissions.enabled')) {
             abort(404);
         }
@@ -56,8 +54,7 @@ class CommissionController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getTos($class, Request $request)
-    {
+    public function getTos($class, Request $request) {
         if (!config('aldebaran.settings.commissions.enabled')) {
             abort(404);
         }
@@ -80,8 +77,7 @@ class CommissionController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getClassPage($class, $key, Request $request)
-    {
+    public function getClassPage($class, $key, Request $request) {
         if (!config('aldebaran.settings.commissions.enabled')) {
             abort(404);
         }
@@ -114,8 +110,7 @@ class CommissionController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getQueue($class, Request $request)
-    {
+    public function getQueue($class, Request $request) {
         if (!config('aldebaran.settings.commissions.enabled')) {
             abort(404);
         }
@@ -137,8 +132,7 @@ class CommissionController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getType($key, Request $request)
-    {
+    public function getType($key, Request $request) {
         if (!config('aldebaran.settings.commissions.enabled')) {
             abort(404);
         }
@@ -159,8 +153,7 @@ class CommissionController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getTypeGallery($key, Request $request)
-    {
+    public function getTypeGallery($key, Request $request) {
         if (!config('aldebaran.settings.commissions.enabled')) {
             abort(404);
         }
@@ -224,8 +217,7 @@ class CommissionController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getNewCommission(Request $request)
-    {
+    public function getNewCommission(Request $request) {
         if (!config('aldebaran.settings.commissions.enabled')) {
             abort(404);
         }
@@ -262,8 +254,7 @@ class CommissionController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function postNewCommission(Request $request, CommissionManager $service, $id = null)
-    {
+    public function postNewCommission(Request $request, CommissionManager $service, $id = null) {
         $type = CommissionType::find($request->get('type'));
 
         // Form an array of possible answers based on configured fields,
@@ -291,7 +282,7 @@ class CommissionController extends Controller
 
         $data = $request->only([
             'name', 'email', 'contact', 'paypal', 'type', 'key', 'additional_information',
-            ] + $answerArray);
+        ] + $answerArray);
         $data['ip'] = $request->ip();
 
         if (!$id && $commission = $service->createCommission($data)) {
@@ -314,8 +305,7 @@ class CommissionController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getViewCommission($key)
-    {
+    public function getViewCommission($key) {
         $commission = Commission::where('commission_key', $key)->first();
         if (!$commission) {
             abort(404);

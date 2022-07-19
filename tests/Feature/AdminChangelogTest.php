@@ -7,16 +7,14 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
-class AdminChangelogTest extends TestCase
-{
+class AdminChangelogTest extends TestCase {
     use RefreshDatabase, WithFaker;
 
     /******************************************************************************
         CHANGELOG
     *******************************************************************************/
 
-    protected function setUp(): void
-    {
+    protected function setUp(): void {
         parent::setUp();
 
         // Create a changelog for editing, etc. purposes
@@ -32,8 +30,7 @@ class AdminChangelogTest extends TestCase
     /**
      * Test changelog index access.
      */
-    public function testGetChangelogIndex()
-    {
+    public function testGetChangelogIndex() {
         $response = $this->actingAs($this->user)
             ->get('/admin/changelog')
             ->assertStatus(200);
@@ -42,8 +39,7 @@ class AdminChangelogTest extends TestCase
     /**
      * Test changelog create access.
      */
-    public function testGetCreateChangelog()
-    {
+    public function testGetCreateChangelog() {
         $response = $this->actingAs($this->user)
             ->get('/admin/changelog/create')
             ->assertStatus(200);
@@ -52,8 +48,7 @@ class AdminChangelogTest extends TestCase
     /**
      * Test changelog edit access.
      */
-    public function testGetEditChangelog()
-    {
+    public function testGetEditChangelog() {
         $log = Changelog::factory()->create();
 
         $response = $this->actingAs($this->user)
@@ -70,8 +65,7 @@ class AdminChangelogTest extends TestCase
      * @param bool $title
      * @param bool $isVisible
      */
-    public function testPostCreateChangelog($hasData, $title, $isVisible)
-    {
+    public function testPostCreateChangelog($hasData, $title, $isVisible) {
         $response = $this
             ->actingAs($this->user)
             ->post('/admin/changelog/create', [
@@ -98,8 +92,7 @@ class AdminChangelogTest extends TestCase
      * @param bool $title
      * @param bool $isVisible
      */
-    public function testPostEditChangelog($hasData, $title, $isVisible)
-    {
+    public function testPostEditChangelog($hasData, $title, $isVisible) {
         $response = $this
             ->actingAs($this->user)
             ->post('/admin/changelog/edit/'.($hasData ? $this->dataLog->id : $this->log->id), [
@@ -117,8 +110,7 @@ class AdminChangelogTest extends TestCase
         ]);
     }
 
-    public function changelogProvider()
-    {
+    public function changelogProvider() {
         // Get all possible sequences
         return $this->booleanSequences(3);
     }
@@ -126,8 +118,7 @@ class AdminChangelogTest extends TestCase
     /**
      * Test changelog delete access.
      */
-    public function testGetDeleteChangelog()
-    {
+    public function testGetDeleteChangelog() {
         $this->actingAs($this->user)
             ->get('/admin/changelog/delete/'.$this->log->id)
             ->assertStatus(200);
@@ -136,8 +127,7 @@ class AdminChangelogTest extends TestCase
     /**
      * Test changelog deletion.
      */
-    public function testPostDeleteChangelog()
-    {
+    public function testPostDeleteChangelog() {
         $this
             ->actingAs($this->user)
             ->post('/admin/changelog/delete/'.$this->log->id);

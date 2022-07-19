@@ -5,15 +5,13 @@ namespace Database\Factories\Gallery;
 use App\Models\Gallery\Program;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class PieceProgramFactory extends Factory
-{
+class PieceProgramFactory extends Factory {
     /**
      * Define the model's default state.
      *
      * @return array
      */
-    public function definition()
-    {
+    public function definition() {
         return [
             //
             'program_id' => Program::factory()->create()->id,
@@ -27,8 +25,7 @@ class PieceProgramFactory extends Factory
      *
      * @return \Illuminate\Database\Eloquent\Factories\Factory
      */
-    public function piece($id)
-    {
+    public function piece($id) {
         return $this->state(function (array $attributes) use ($id) {
             return [
                 'piece_id' => $id,
@@ -43,8 +40,7 @@ class PieceProgramFactory extends Factory
      *
      * @return \Illuminate\Database\Eloquent\Factories\Factory
      */
-    public function program($id)
-    {
+    public function program($id) {
         return $this->state(function (array $attributes) use ($id) {
             return [
                 'program_id' => $id,

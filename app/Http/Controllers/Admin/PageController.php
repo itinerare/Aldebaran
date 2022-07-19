@@ -7,8 +7,7 @@ use App\Models\TextPage;
 use App\Services\PageService;
 use Illuminate\Http\Request;
 
-class PageController extends Controller
-{
+class PageController extends Controller {
     /*
     |--------------------------------------------------------------------------
     | Admin / Text Page Controller
@@ -23,8 +22,7 @@ class PageController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getPagesIndex(Request $request)
-    {
+    public function getPagesIndex(Request $request) {
         return view('admin.pages.index', [
             'pages' => TextPage::orderBy('key')->paginate(20)->appends($request->query()),
         ]);
@@ -37,8 +35,7 @@ class PageController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getEditPage($id)
-    {
+    public function getEditPage($id) {
         $page = TextPage::find($id);
         if (!$page) {
             abort(404);
@@ -56,8 +53,7 @@ class PageController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function postEditPage(Request $request, PageService $service, $id = null)
-    {
+    public function postEditPage(Request $request, PageService $service, $id = null) {
         $request->validate(TextPage::$updateRules);
         $data = $request->only(['text']);
 

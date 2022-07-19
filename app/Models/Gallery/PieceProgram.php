@@ -5,8 +5,7 @@ namespace App\Models\Gallery;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class PieceProgram extends Model
-{
+class PieceProgram extends Model {
     use HasFactory;
 
     /**
@@ -50,8 +49,7 @@ class PieceProgram extends Model
     /**
      * Get the program associated with this piece program.
      */
-    public function program()
-    {
+    public function program() {
         return $this->belongsTo(Program::class, 'program_id');
     }
 
@@ -68,8 +66,7 @@ class PieceProgram extends Model
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeVisible($query)
-    {
+    public function scopeVisible($query) {
         return $query->whereIn('program_id', Program::visible()->pluck('id')->toArray());
     }
 }

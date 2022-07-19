@@ -10,16 +10,14 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
-class DataGalleryTagTest extends TestCase
-{
+class DataGalleryTagTest extends TestCase {
     use RefreshDatabase, WithFaker;
 
     /******************************************************************************
         GALLERY DATA: TAGS
     *******************************************************************************/
 
-    protected function setUp(): void
-    {
+    protected function setUp(): void {
         parent::setUp();
 
         // Create a couple tags for editing, etc. purposes
@@ -35,8 +33,7 @@ class DataGalleryTagTest extends TestCase
     /**
      * Test tag index access.
      */
-    public function testGetTagIndex()
-    {
+    public function testGetTagIndex() {
         $this->actingAs($this->user)
             ->get('/admin/data/tags')
             ->assertStatus(200);
@@ -45,8 +42,7 @@ class DataGalleryTagTest extends TestCase
     /**
      * Test tag create access.
      */
-    public function testGetCreateTag()
-    {
+    public function testGetCreateTag() {
         $this->actingAs($this->user)
             ->get('/admin/data/tags/create')
             ->assertStatus(200);
@@ -55,8 +51,7 @@ class DataGalleryTagTest extends TestCase
     /**
      * Test tag edit access.
      */
-    public function testGetEditTag()
-    {
+    public function testGetEditTag() {
         $this->actingAs($this->user)
             ->get('/admin/data/tags/edit/'.$this->tag->id)
             ->assertStatus(200);
@@ -72,8 +67,7 @@ class DataGalleryTagTest extends TestCase
      * @param bool $isVisible
      * @param bool $isActive
      */
-    public function testPostCreateTag($hasData, $hasDescription, $isVisible, $isActive)
-    {
+    public function testPostCreateTag($hasData, $hasDescription, $isVisible, $isActive) {
         $response = $this
             ->actingAs($this->user)
             ->post('/admin/data/tags/create', [
@@ -102,8 +96,7 @@ class DataGalleryTagTest extends TestCase
      * @param bool $isVisible
      * @param bool $isActive
      */
-    public function testPostEditTag($hasData, $hasDescription, $isVisible, $isActive)
-    {
+    public function testPostEditTag($hasData, $hasDescription, $isVisible, $isActive) {
         $response = $this
             ->actingAs($this->user)
             ->post('/admin/data/tags/edit/'.($hasData ? $this->dataTag->id : $this->tag->id), [
@@ -123,8 +116,7 @@ class DataGalleryTagTest extends TestCase
         ]);
     }
 
-    public function tagProvider()
-    {
+    public function tagProvider() {
         // Get all possible sequences
         return $this->booleanSequences(4);
     }
@@ -132,8 +124,7 @@ class DataGalleryTagTest extends TestCase
     /**
      * Test tag delete access.
      */
-    public function testGetDeleteTag()
-    {
+    public function testGetDeleteTag() {
         $this->actingAs($this->user)
             ->get('/admin/data/tags/delete/'.$this->tag->id)
             ->assertStatus(200);
@@ -147,8 +138,7 @@ class DataGalleryTagTest extends TestCase
      * @param array $with
      * @param bool  $expected
      */
-    public function testPostDeleteTag($with, $expected)
-    {
+    public function testPostDeleteTag($with, $expected) {
         if ($with[0] ?? false) {
             $piece = Piece::factory()->create();
             PieceTag::factory()
@@ -172,8 +162,7 @@ class DataGalleryTagTest extends TestCase
         }
     }
 
-    public function tagDeleteProvider()
-    {
+    public function tagDeleteProvider() {
         return [
             'basic'      => [[0, 0], 1],
             'with piece' => [[1, 0], 0],

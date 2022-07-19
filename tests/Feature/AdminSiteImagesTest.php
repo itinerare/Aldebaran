@@ -7,16 +7,14 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
 use Tests\TestCase;
 
-class AdminSiteImagesTest extends TestCase
-{
+class AdminSiteImagesTest extends TestCase {
     use RefreshDatabase;
 
     /******************************************************************************
         SITE IMAGES
     *******************************************************************************/
 
-    protected function setUp(): void
-    {
+    protected function setUp(): void {
         parent::setUp();
 
         // Create a fake file to test image uploading
@@ -26,8 +24,7 @@ class AdminSiteImagesTest extends TestCase
     /**
      * Test site image index access.
      */
-    public function testGetSiteImagesIndex()
-    {
+    public function testGetSiteImagesIndex() {
         $this->actingAs($this->user)
             ->get('/admin/site-images')
             ->assertStatus(200);
@@ -40,8 +37,7 @@ class AdminSiteImagesTest extends TestCase
      *
      * @param string $key
      */
-    public function testPostUploadImage($key)
-    {
+    public function testPostUploadImage($key) {
         // Remove the current file if it exists
         if (File::exists(public_path('images/assets/'.$key.'.png'))) {
             unlink('public/images/assets/'.$key.'.png');
@@ -64,8 +60,7 @@ class AdminSiteImagesTest extends TestCase
         $this->artisan('copy-default-images');
     }
 
-    public function siteImageProvider()
-    {
+    public function siteImageProvider() {
         return [
             'avatar'    => ['avatar'],
             'watermark' => ['watermark'],
@@ -76,8 +71,7 @@ class AdminSiteImagesTest extends TestCase
     /**
      * Test custom css uploading.
      */
-    public function testPostUploadSiteCss()
-    {
+    public function testPostUploadSiteCss() {
         // Create a fake file
         $file = UploadedFile::fake()->create('test.css', 50);
 

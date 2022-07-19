@@ -7,8 +7,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class CommissionRequested extends Mailable
-{
+class CommissionRequested extends Mailable {
     use Queueable, SerializesModels;
 
     /**
@@ -21,8 +20,7 @@ class CommissionRequested extends Mailable
     /**
      * Create a new message instance.
      */
-    public function __construct(Commission $commission)
-    {
+    public function __construct(Commission $commission) {
         //
         $this->commission = $commission;
     }
@@ -32,8 +30,7 @@ class CommissionRequested extends Mailable
      *
      * @return $this
      */
-    public function build()
-    {
+    public function build() {
         return $this
             ->subject('New Commission Request')
             ->view('mail.commission_requested');

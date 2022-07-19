@@ -7,16 +7,14 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
-class AdminTextPageTest extends TestCase
-{
+class AdminTextPageTest extends TestCase {
     use RefreshDatabase, WithFaker;
 
     /******************************************************************************
         TEXT PAGES
     *******************************************************************************/
 
-    protected function setUp(): void
-    {
+    protected function setUp(): void {
         parent::setUp();
 
         $this->text = '<p>'.$this->faker->unique()->domainWord().'</p>';
@@ -25,8 +23,7 @@ class AdminTextPageTest extends TestCase
     /**
      * Test text page index access.
      */
-    public function testGetTextPageIndex()
-    {
+    public function testGetTextPageIndex() {
         $this->actingAs($this->user)
             ->get('/admin/pages')
             ->assertStatus(200);
@@ -39,8 +36,7 @@ class AdminTextPageTest extends TestCase
      *
      * @param string $key
      */
-    public function testPostEditSitePage($key)
-    {
+    public function testPostEditSitePage($key) {
         // Ensure text pages are present to modify
         $this->artisan('add-text-pages');
 
@@ -61,8 +57,7 @@ class AdminTextPageTest extends TestCase
         ]);
     }
 
-    public function textPageProvider()
-    {
+    public function textPageProvider() {
         return [
             'index'          => ['index'],
             'about'          => ['about'],

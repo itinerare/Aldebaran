@@ -7,15 +7,13 @@ use App\Models\Commission\Commissioner;
 use App\Models\Commission\CommissionType;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class CommissionFactory extends Factory
-{
+class CommissionFactory extends Factory {
     /**
      * Define the model's default state.
      *
      * @return array
      */
-    public function definition()
-    {
+    public function definition() {
         $commissioner = Commissioner::factory()->create();
         $commissionType = CommissionType::factory()->testData(['type' => 'flat', 'cost' => 10])->create();
 
@@ -32,8 +30,7 @@ class CommissionFactory extends Factory
      *
      * @return $this
      */
-    public function configure()
-    {
+    public function configure() {
         return $this->afterMaking(function (Commission $commission) {
             //
             $commission->update([
@@ -54,8 +51,7 @@ class CommissionFactory extends Factory
      *
      * @return \Illuminate\Database\Eloquent\Factories\Factory
      */
-    public function type($id)
-    {
+    public function type($id) {
         return $this->state(function (array $attributes) use ($id) {
             return [
                 'commission_type' => $id,
@@ -70,8 +66,7 @@ class CommissionFactory extends Factory
      *
      * @return \Illuminate\Database\Eloquent\Factories\Factory
      */
-    public function status($status)
-    {
+    public function status($status) {
         return $this->state(function (array $attributes) use ($status) {
             return [
                 'status' => $status,

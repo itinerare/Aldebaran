@@ -5,8 +5,7 @@ namespace App\Console\Commands;
 use App\Models\Commission\Commissioner;
 use Illuminate\Console\Command;
 
-class AddDummyCommissioner extends Command
-{
+class AddDummyCommissioner extends Command {
     /**
      * The name and signature of the console command.
      *
@@ -24,8 +23,7 @@ class AddDummyCommissioner extends Command
     /**
      * Create a new command instance.
      */
-    public function __construct()
-    {
+    public function __construct() {
         parent::__construct();
     }
 
@@ -34,8 +32,7 @@ class AddDummyCommissioner extends Command
      *
      * @return mixed
      */
-    public function handle()
-    {
+    public function handle() {
         $url = parse_url(env('APP_URL', 'https://itinerare.net'));
 
         if (!Commissioner::where('email', 'client@'.$url['host'])->first()) {

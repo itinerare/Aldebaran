@@ -9,16 +9,14 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
-class DataCommissionCategoryTest extends TestCase
-{
+class DataCommissionCategoryTest extends TestCase {
     use RefreshDatabase, WithFaker;
 
     /******************************************************************************
         COMMISSION DATA: CATEGORIES
     *******************************************************************************/
 
-    protected function setUp(): void
-    {
+    protected function setUp(): void {
         parent::setUp();
 
         // Create a commission category for editing, etc. purposes
@@ -37,8 +35,7 @@ class DataCommissionCategoryTest extends TestCase
     /**
      * Test commission category index access.
      */
-    public function testGetCategoryIndex()
-    {
+    public function testGetCategoryIndex() {
         $this->actingAs($this->user)
             ->get('/admin/data/commission-categories')
             ->assertStatus(200);
@@ -47,8 +44,7 @@ class DataCommissionCategoryTest extends TestCase
     /**
      * Test category create access.
      */
-    public function testGetCreateCategory()
-    {
+    public function testGetCreateCategory() {
         $this->actingAs($this->user)
             ->get('/admin/data/commission-categories/create')
             ->assertStatus(200);
@@ -57,8 +53,7 @@ class DataCommissionCategoryTest extends TestCase
     /**
      * Test category edit access.
      */
-    public function testGetEditCategory()
-    {
+    public function testGetEditCategory() {
         $this->actingAs($this->user)
             ->get('/admin/data/commission-categories/edit/'.$this->category->id)
             ->assertStatus(200);
@@ -71,8 +66,7 @@ class DataCommissionCategoryTest extends TestCase
      *
      * @param bool $isActive
      */
-    public function testPostCreateCategory($isActive)
-    {
+    public function testPostCreateCategory($isActive) {
         $response = $this
             ->actingAs($this->user)
             ->post('/admin/data/commission-categories/create', [
@@ -88,8 +82,7 @@ class DataCommissionCategoryTest extends TestCase
         ]);
     }
 
-    public function createCategoryProvider()
-    {
+    public function createCategoryProvider() {
         return [
             'active'   => [1],
             'inactive' => [0],
@@ -106,8 +99,7 @@ class DataCommissionCategoryTest extends TestCase
      * @param bool       $isActive
      * @param bool       $include
      */
-    public function testPostEditCategory($hasData, $fieldData, $isActive, $include)
-    {
+    public function testPostEditCategory($hasData, $fieldData, $isActive, $include) {
         $response = $this
             ->actingAs($this->user)
             ->post('/admin/data/commission-categories/edit/'.($hasData ? $this->dataCategory->id : $this->category->id), [
@@ -134,8 +126,7 @@ class DataCommissionCategoryTest extends TestCase
         ]);
     }
 
-    public function editCategoryProvider()
-    {
+    public function editCategoryProvider() {
         return [
             'basic'                => [0, null, 1, 0],
             'inactive'             => [0, null, 0, 0],
@@ -161,8 +152,7 @@ class DataCommissionCategoryTest extends TestCase
     /**
      * Test category delete access.
      */
-    public function testGetDeleteCategory()
-    {
+    public function testGetDeleteCategory() {
         $this->actingAs($this->user)
             ->get('/admin/data/commission-categories/delete/'.$this->category->id)
             ->assertStatus(200);
@@ -176,8 +166,7 @@ class DataCommissionCategoryTest extends TestCase
      * @param bool $withType
      * @param bool $expected
      */
-    public function testPostDeleteCategory($withType, $expected)
-    {
+    public function testPostDeleteCategory($withType, $expected) {
         if ($withType) {
             CommissionType::factory()->category($this->category->id)->create();
         }
@@ -195,8 +184,7 @@ class DataCommissionCategoryTest extends TestCase
         }
     }
 
-    public function categoryDeleteProvider()
-    {
+    public function categoryDeleteProvider() {
         return [
             'basic'     => [0, 1],
             'with type' => [1, 0],

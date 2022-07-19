@@ -19,16 +19,14 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
-class CommissionInfoTest extends TestCase
-{
+class CommissionInfoTest extends TestCase {
     use RefreshDatabase, WithFaker;
 
     /******************************************************************************
         PUBLIC: COMMISSION INFO
     *******************************************************************************/
 
-    protected function setUp(): void
-    {
+    protected function setUp(): void {
         parent::setUp();
 
         // Create testing class
@@ -49,8 +47,7 @@ class CommissionInfoTest extends TestCase
      * @param array|null $data
      * @param int        $status
      */
-    public function testGetCommissionInfo($visibility, $user, $data, $status)
-    {
+    public function testGetCommissionInfo($visibility, $user, $data, $status) {
         // Enable/disable commission components
         config(['aldebaran.settings.commissions.enabled' => $visibility[0]]);
 
@@ -163,8 +160,7 @@ class CommissionInfoTest extends TestCase
         }
     }
 
-    public function commissionInfoProvider()
-    {
+    public function commissionInfoProvider() {
         // $data = [hasCategory, hasType, withExamples, [withPiece, isVisible, isGoodExample, goodExamples, okExamples, hasImage, hasLiterature/[hasLiterature, hasThumb]]]
 
         return [
@@ -204,8 +200,7 @@ class CommissionInfoTest extends TestCase
      * @param array $data
      * @param int   $status
      */
-    public function testGetCommissionTypeInfo($visibility, $user, $data, $status)
-    {
+    public function testGetCommissionTypeInfo($visibility, $user, $data, $status) {
         // Enable/disable commission components
         config(['aldebaran.settings.commissions.enabled' => $visibility[0]]);
 
@@ -319,8 +314,7 @@ class CommissionInfoTest extends TestCase
         }
     }
 
-    public function commissionTypeProvider()
-    {
+    public function commissionTypeProvider() {
         // $visibility = [commsEnabled, classActive, commsOpen, typeActive, typeVisible, withKey]
         // $data = [hasCategory, hasType, withExamples, [withPiece, isVisible, isGoodExample, goodExamples, okExamples, hasImage, hasLiterature/[hasLiterature, hasThumb]]]
 
@@ -368,8 +362,7 @@ class CommissionInfoTest extends TestCase
      * @param array|null $data
      * @param int        $status
      */
-    public function testGetCommissionTypeGallery($visibility, $user, $data, $status)
-    {
+    public function testGetCommissionTypeGallery($visibility, $user, $data, $status) {
         // Enable/disable commission components
         config(['aldebaran.settings.commissions.enabled' => $visibility[0]]);
 
@@ -466,8 +459,7 @@ class CommissionInfoTest extends TestCase
         }
     }
 
-    public function commissionTypeGalleryProvider()
-    {
+    public function commissionTypeGalleryProvider() {
         // $data = [[hasPiece, isVisible, hasImage, hasLiterature/[hasLiterature, hasThumb]], [searchType, expectedResult]]
         // Search is dependent on presence of at least one piece
 
@@ -504,8 +496,7 @@ class CommissionInfoTest extends TestCase
      * @param array|null $data
      * @param int        $status
      */
-    public function testGetCommissionTerms($visibility, $user, $data, $status)
-    {
+    public function testGetCommissionTerms($visibility, $user, $data, $status) {
         // Enable/disable commission components
         config(['aldebaran.settings.commissions.enabled' => $visibility[0]]);
 
@@ -534,8 +525,7 @@ class CommissionInfoTest extends TestCase
      * @param array|null $data
      * @param int        $status
      */
-    public function testGetCommissionQueue($visibility, $user, $data, $status)
-    {
+    public function testGetCommissionQueue($visibility, $user, $data, $status) {
         // Enable/disable commission components
         config(['aldebaran.settings.commissions.enabled' => $visibility[0]]);
 
@@ -553,8 +543,7 @@ class CommissionInfoTest extends TestCase
         $response->assertStatus($status);
     }
 
-    public function commissionQueueProvider()
-    {
+    public function commissionQueueProvider() {
         return [
             //'with commission' => [[1, 1], 0, null, 200],
         ];
@@ -571,8 +560,7 @@ class CommissionInfoTest extends TestCase
      * @param array|null $data
      * @param int        $status
      */
-    public function testGetCommissionPage($visibility, $user, $data, $status)
-    {
+    public function testGetCommissionPage($visibility, $user, $data, $status) {
         // Enable/disable commission components
         config(['aldebaran.settings.commissions.enabled' => $visibility[0]]);
 
@@ -595,16 +583,14 @@ class CommissionInfoTest extends TestCase
         $response->assertStatus($status);
     }
 
-    public function commissionPageProvider()
-    {
+    public function commissionPageProvider() {
         return [
             'with valid page'   => [[1, 1], 0, [1], 200],
             'with invalid page' => [[1, 1], 0, [0], 404],
         ];
     }
 
-    public function commissionAccessProvider()
-    {
+    public function commissionAccessProvider() {
         return [
             'visitor, comms enabled, active'    => [[1, 1], 0, null, 200],
             'visitor, comms enabled, inactive'  => [[1, 0], 0, null, 404],

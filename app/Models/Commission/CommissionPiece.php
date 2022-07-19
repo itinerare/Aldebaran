@@ -6,8 +6,7 @@ use App\Models\Gallery\Piece;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class CommissionPiece extends Model
-{
+class CommissionPiece extends Model {
     use HasFactory;
 
     /**
@@ -51,8 +50,7 @@ class CommissionPiece extends Model
     /**
      * Get the piece associated with this commission piece.
      */
-    public function piece()
-    {
+    public function piece() {
         return $this->belongsTo(Piece::class, 'piece_id');
     }
 }

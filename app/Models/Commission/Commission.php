@@ -5,8 +5,7 @@ namespace App\Models\Commission;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Commission extends Model
-{
+class Commission extends Model {
     use HasFactory;
 
     /**
@@ -91,32 +90,28 @@ class Commission extends Model
     /**
      * Get the type associated with this commission.
      */
-    public function type()
-    {
+    public function type() {
         return $this->belongsTo(CommissionType::class, 'commission_type');
     }
 
     /**
      * Get the type associated with this commission.
      */
-    public function commissioner()
-    {
+    public function commissioner() {
         return $this->belongsTo(Commissioner::class, 'commissioner_id');
     }
 
     /**
      * Get the payments associated with this commission.
      */
-    public function payments()
-    {
+    public function payments() {
         return $this->hasMany(CommissionPayment::class, 'commission_id');
     }
 
     /**
      * Get the pieces associated with this commission.
      */
-    public function pieces()
-    {
+    public function pieces() {
         return $this->hasMany(CommissionPiece::class, 'commission_id');
     }
 
@@ -134,8 +129,7 @@ class Commission extends Model
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeClass($query, $class)
-    {
+    public function scopeClass($query, $class) {
         return $query->whereIn('commission_type', CommissionType::whereIn('category_id', CommissionCategory::byClass($class)->pluck('id')->toArray())->pluck('id')->toArray());
     }
 
@@ -150,8 +144,7 @@ class Commission extends Model
      *
      * @return string
      */
-    public function getUrlAttribute()
-    {
+    public function getUrlAttribute() {
         return url('commissions/view/'.$this->commission_key);
     }
 
@@ -160,8 +153,7 @@ class Commission extends Model
      *
      * @return bool
      */
-    public function getPaidStatusAttribute()
-    {
+    public function getPaidStatusAttribute() {
         if (!$this->payments->count()) {
             return 0;
         }
@@ -179,8 +171,7 @@ class Commission extends Model
      *
      * @return string
      */
-    public function getIsPaidAttribute()
-    {
+    public function getIsPaidAttribute() {
         return $this->paidStatus ?
             '<span class="text-success">Paid</span>' :
             ($this->status == 'Accepted' ? '<span class="text-danger"><strong>Unpaid</strong></span>' : '<s>Unpaid</s>');
@@ -191,8 +182,7 @@ class Commission extends Model
      *
      * @return int
      */
-    public function getCostAttribute()
-    {
+    public function getCostAttribute() {
         $total = 0;
         if ($this->payments->count()) {
             foreach ($this->payments as $payment) {
@@ -208,8 +198,7 @@ class Commission extends Model
      *
      * @return int
      */
-    public function getTipAttribute()
-    {
+    public function getTipAttribute() {
         $total = 0;
         if ($this->payments->count()) {
             foreach ($this->payments as $payment) {
@@ -225,8 +214,7 @@ class Commission extends Model
      *
      * @return string
      */
-    public function getCostWithTipAttribute()
-    {
+    public function getCostWithTipAttribute() {
         return $this->cost + $this->tip;
     }
 
@@ -235,8 +223,7 @@ class Commission extends Model
      *
      * @return int
      */
-    public function getTotalWithFeesAttribute()
-    {
+    public function getTotalWithFeesAttribute() {
         $total = 0;
         // Cycle through payments, getting their total with fees
         if ($this->payments->count()) {
@@ -253,8 +240,7 @@ class Commission extends Model
      *
      * @return int
      */
-    public function getQueuePositionAttribute()
-    {
+    public function getQueuePositionAttribute() {
         // Take the ID of this commission for ease of access
         $id = $this->id;
 
@@ -283,8 +269,7 @@ class Commission extends Model
      *
      * @return int
      */
-    public function paymentWithFees($payment)
-    {
+    public function paymentWithFees($payment) {
         $total = $payment->cost + (isset($payment->tip) && $payment->tip ? $payment->tip : 0);
 
         // Calculate fee and round

@@ -7,16 +7,14 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
-class AdminSiteSettingsTest extends TestCase
-{
+class AdminSiteSettingsTest extends TestCase {
     use RefreshDatabase, WithFaker;
 
     /******************************************************************************
         SITE SETTINGS
     *******************************************************************************/
 
-    protected function setUp(): void
-    {
+    protected function setUp(): void {
         parent::setUp();
 
         // Generate some test data
@@ -34,8 +32,7 @@ class AdminSiteSettingsTest extends TestCase
      * @param bool $commsEnabled
      * @param int  $expected
      */
-    public function testGetSiteSettingsIndex($commsEnabled, $expected)
-    {
+    public function testGetSiteSettingsIndex($commsEnabled, $expected) {
         // Adjust commission enable/disable as appropriate
         config(['aldebaran.settings.commissions.enabled' => $commsEnabled]);
 
@@ -49,8 +46,7 @@ class AdminSiteSettingsTest extends TestCase
             ->assertStatus($expected);
     }
 
-    public function settingsViewProvider()
-    {
+    public function settingsViewProvider() {
         return [
             'basic'               => [0, 200],
             'commissions enabled' => [1, 200],
@@ -65,8 +61,7 @@ class AdminSiteSettingsTest extends TestCase
      * @param string     $key
      * @param mixed|null $value
      */
-    public function testPostEditSiteSetting($key, $value = null)
-    {
+    public function testPostEditSiteSetting($key, $value = null) {
         // Try to post data
         $response = $this
             ->actingAs($this->user)
@@ -79,8 +74,7 @@ class AdminSiteSettingsTest extends TestCase
         ]);
     }
 
-    public function settingsProvider()
-    {
+    public function settingsProvider() {
         // Values here should *not* be the defaults for the setting
         // For settings which ordinarily use a string, provide null;
         // The test will substitute in a generated string

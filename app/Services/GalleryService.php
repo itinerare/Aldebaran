@@ -18,8 +18,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Intervention\Image\Facades\Image;
 
-class GalleryService extends Service
-{
+class GalleryService extends Service {
     /*
     |--------------------------------------------------------------------------
     | Gallery Service
@@ -41,8 +40,7 @@ class GalleryService extends Service
      *
      * @return \App\Models\Gallery\Project|bool
      */
-    public function createProject($data, $user)
-    {
+    public function createProject($data, $user) {
         DB::beginTransaction();
 
         try {
@@ -69,8 +67,7 @@ class GalleryService extends Service
      *
      * @return \App\Models\Gallery\Project|bool
      */
-    public function updateProject($project, $data, $user)
-    {
+    public function updateProject($project, $data, $user) {
         DB::beginTransaction();
 
         try {
@@ -100,8 +97,7 @@ class GalleryService extends Service
      *
      * @return bool
      */
-    public function deleteProject($project)
-    {
+    public function deleteProject($project) {
         DB::beginTransaction();
 
         try {
@@ -127,8 +123,7 @@ class GalleryService extends Service
      *
      * @return bool
      */
-    public function sortProject($data)
-    {
+    public function sortProject($data) {
         DB::beginTransaction();
 
         try {
@@ -159,8 +154,7 @@ class GalleryService extends Service
      *
      * @return \App\Models\Gallery\Piece|bool
      */
-    public function createPiece($data, $user)
-    {
+    public function createPiece($data, $user) {
         DB::beginTransaction();
 
         try {
@@ -193,8 +187,7 @@ class GalleryService extends Service
      *
      * @return \App\Models\Gallery\Piece|bool
      */
-    public function updatePiece($piece, $data, $user)
-    {
+    public function updatePiece($piece, $data, $user) {
         DB::beginTransaction();
 
         try {
@@ -228,8 +221,7 @@ class GalleryService extends Service
      *
      * @return bool
      */
-    public function deletePiece($piece)
-    {
+    public function deletePiece($piece) {
         DB::beginTransaction();
 
         try {
@@ -263,8 +255,7 @@ class GalleryService extends Service
      *
      * @return bool
      */
-    public function sortPieceImages($id, $data)
-    {
+    public function sortPieceImages($id, $data) {
         DB::beginTransaction();
 
         try {
@@ -291,8 +282,7 @@ class GalleryService extends Service
      *
      * @return bool
      */
-    public function sortPieceLiteratures($id, $data)
-    {
+    public function sortPieceLiteratures($id, $data) {
         DB::beginTransaction();
 
         try {
@@ -323,8 +313,7 @@ class GalleryService extends Service
      *
      * @return \App\Models\Gallery\PieceImage|bool
      */
-    public function createImage($data, $user)
-    {
+    public function createImage($data, $user) {
         DB::beginTransaction();
 
         try {
@@ -379,8 +368,7 @@ class GalleryService extends Service
      *
      * @return \App\Models\Gallery\PieceIamge|bool
      */
-    public function updateImage($image, $data, $user)
-    {
+    public function updateImage($image, $data, $user) {
         DB::beginTransaction();
 
         try {
@@ -420,8 +408,7 @@ class GalleryService extends Service
      *
      * @return bool
      */
-    public function deletePieceImage($image)
-    {
+    public function deletePieceImage($image) {
         DB::beginTransaction();
 
         try {
@@ -457,8 +444,7 @@ class GalleryService extends Service
      *
      * @return \App\Models\Gallery\PieceLiterature|bool
      */
-    public function createLiterature($data, $user)
-    {
+    public function createLiterature($data, $user) {
         DB::beginTransaction();
 
         try {
@@ -513,8 +499,7 @@ class GalleryService extends Service
      *
      * @return \App\Models\Gallery\PieceLiterature|bool
      */
-    public function updateLiterature($literature, $data, $user)
-    {
+    public function updateLiterature($literature, $data, $user) {
         DB::beginTransaction();
 
         try {
@@ -573,8 +558,7 @@ class GalleryService extends Service
      *
      * @return bool
      */
-    public function deleteLiterature($literature)
-    {
+    public function deleteLiterature($literature) {
         DB::beginTransaction();
 
         try {
@@ -610,8 +594,7 @@ class GalleryService extends Service
      *
      * @return \App\Models\Gallery\Tag|bool
      */
-    public function createTag($data, $user)
-    {
+    public function createTag($data, $user) {
         DB::beginTransaction();
 
         try {
@@ -641,8 +624,7 @@ class GalleryService extends Service
      *
      * @return \App\Models\Gallery\Tag|bool
      */
-    public function updateTag($tag, $data, $user)
-    {
+    public function updateTag($tag, $data, $user) {
         DB::beginTransaction();
 
         try {
@@ -675,8 +657,7 @@ class GalleryService extends Service
      *
      * @return bool
      */
-    public function deleteTag($tag)
-    {
+    public function deleteTag($tag) {
         DB::beginTransaction();
 
         try {
@@ -711,8 +692,7 @@ class GalleryService extends Service
      *
      * @return \App\Models\Gallery\Program|bool
      */
-    public function createProgram($data, $user)
-    {
+    public function createProgram($data, $user) {
         DB::beginTransaction();
 
         try {
@@ -752,8 +732,7 @@ class GalleryService extends Service
      *
      * @return \App\Models\Gallery\Program|bool
      */
-    public function updateProgram($program, $data, $user)
-    {
+    public function updateProgram($program, $data, $user) {
         DB::beginTransaction();
 
         try {
@@ -802,8 +781,7 @@ class GalleryService extends Service
      *
      * @return bool
      */
-    public function deleteProgram($program)
-    {
+    public function deleteProgram($program) {
         DB::beginTransaction();
 
         try {
@@ -832,8 +810,7 @@ class GalleryService extends Service
      *
      * @return bool
      */
-    public function testImages($image, $create = true)
-    {
+    public function testImages($image, $create = true) {
         if ($create) {// Generate the fake files to save
             $file['fullsize'] = UploadedFile::fake()->image('test_image.png');
             $file['image'] = UploadedFile::fake()->image('test_watermarked.png');
@@ -861,8 +838,7 @@ class GalleryService extends Service
      *
      * @return array
      */
-    private function populateData($data, $piece = null)
-    {
+    private function populateData($data, $piece = null) {
         // Check toggles
         if (!isset($data['is_visible'])) {
             $data['is_visible'] = 0;
@@ -882,8 +858,7 @@ class GalleryService extends Service
      *
      * @return array
      */
-    private function processTags($data, $piece)
-    {
+    private function processTags($data, $piece) {
         if ($piece->id && $piece->tags->count()) {
             // Collect old tags and delete them
             $oldTags = $piece->tags();
@@ -897,8 +872,8 @@ class GalleryService extends Service
                 }
 
                 PieceTag::create([
-                'piece_id' => $piece->id,
-                'tag_id'   => $tag,
+                    'piece_id' => $piece->id,
+                    'tag_id'   => $tag,
                 ]);
             }
         }
@@ -914,8 +889,7 @@ class GalleryService extends Service
      *
      * @return array
      */
-    private function processPrograms($data, $piece)
-    {
+    private function processPrograms($data, $piece) {
         if ($piece->id && $piece->programs->count()) {
             // Collect old tags and delete them
             $oldPrograms = $piece->programs();
@@ -929,8 +903,8 @@ class GalleryService extends Service
                 }
 
                 PieceProgram::create([
-                'piece_id'   => $piece->id,
-                'program_id' => $program,
+                    'piece_id'   => $piece->id,
+                    'program_id' => $program,
                 ]);
             }
         }
@@ -948,8 +922,7 @@ class GalleryService extends Service
      *
      * @return array
      */
-    private function processImage($data, $image, $reupload = false, $regen = false)
-    {
+    private function processImage($data, $image, $reupload = false, $regen = false) {
         // If the image is a reupload, unlink the old image and regenerate the hashes
         // as well as re-setting the extension.
         if ($reupload) {

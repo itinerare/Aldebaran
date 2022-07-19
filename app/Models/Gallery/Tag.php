@@ -5,8 +5,7 @@ namespace App\Models\Gallery;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Tag extends Model
-{
+class Tag extends Model {
     use HasFactory;
 
     /**
@@ -65,8 +64,7 @@ class Tag extends Model
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeVisible($query)
-    {
+    public function scopeVisible($query) {
         return $query->where('is_visible', 1);
     }
 
@@ -83,8 +81,7 @@ class Tag extends Model
      *
      * @return string
      */
-    public function getUrl($source = null)
-    {
+    public function getUrl($source = null) {
         return url('/'.($source ? $source : 'gallery').'?tags[]='.$this->id);
     }
 
@@ -95,8 +92,7 @@ class Tag extends Model
      *
      * @return string
      */
-    public function getDisplayName($source = null)
-    {
+    public function getDisplayName($source = null) {
         return '<a href="'.$this->getUrl($source).'">'.$this->name.'</a>';
     }
 }

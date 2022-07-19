@@ -5,8 +5,7 @@ namespace App\Models\Gallery;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class PieceTag extends Model
-{
+class PieceTag extends Model {
     use HasFactory;
 
     /**
@@ -50,8 +49,7 @@ class PieceTag extends Model
     /**
      * Get the tag associated with this piece tag.
      */
-    public function tag()
-    {
+    public function tag() {
         return $this->belongsTo(Tag::class, 'tag_id');
     }
 
@@ -68,8 +66,7 @@ class PieceTag extends Model
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeVisible($query)
-    {
+    public function scopeVisible($query) {
         return $query->whereIn('tag_id', Tag::visible()->pluck('id')->toArray());
     }
 }

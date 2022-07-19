@@ -13,8 +13,7 @@ use App\Models\Gallery\Tag;
 use App\Services\GalleryService;
 use Illuminate\Http\Request;
 
-class GalleryController extends Controller
-{
+class GalleryController extends Controller {
     /*
     |--------------------------------------------------------------------------
     | Admin / Gallery Data Controller
@@ -33,8 +32,7 @@ class GalleryController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getProjectIndex()
-    {
+    public function getProjectIndex() {
         return view('admin.gallery.projects', [
             'projects' => Project::orderBy('sort', 'DESC')->get(),
         ]);
@@ -45,8 +43,7 @@ class GalleryController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getCreateProject()
-    {
+    public function getCreateProject() {
         return view('admin.gallery.create_edit_project', [
             'project' => new Project,
         ]);
@@ -59,8 +56,7 @@ class GalleryController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getEditProject($id)
-    {
+    public function getEditProject($id) {
         $project = Project::find($id);
         if (!$project) {
             abort(404);
@@ -78,8 +74,7 @@ class GalleryController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function postCreateEditProject(Request $request, GalleryService $service, $id = null)
-    {
+    public function postCreateEditProject(Request $request, GalleryService $service, $id = null) {
         $id ? $request->validate(Project::$updateRules) : $request->validate(Project::$createRules);
         $data = $request->only([
             'name', 'description', 'is_visible',
@@ -106,8 +101,7 @@ class GalleryController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getDeleteProject($id)
-    {
+    public function getDeleteProject($id) {
         $project = Project::find($id);
 
         return view('admin.gallery._delete_project', [
@@ -122,8 +116,7 @@ class GalleryController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function postDeleteProject(Request $request, GalleryService $service, $id)
-    {
+    public function postDeleteProject(Request $request, GalleryService $service, $id) {
         if ($id && $service->deleteProject(Project::find($id))) {
             flash('Project deleted successfully.')->success();
         } else {
@@ -140,8 +133,7 @@ class GalleryController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function postSortProject(Request $request, GalleryService $service)
-    {
+    public function postSortProject(Request $request, GalleryService $service) {
         if ($service->sortProject($request->get('sort'))) {
             flash('Project order updated successfully.')->success();
         } else {
@@ -162,8 +154,7 @@ class GalleryController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getPieceIndex(Request $request)
-    {
+    public function getPieceIndex(Request $request) {
         $query = Piece::query();
         $data = $request->only(['project_id', 'name', 'tags']);
         if (isset($data['project_id']) && $data['project_id'] != 'none') {
@@ -190,8 +181,7 @@ class GalleryController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getCreatePiece()
-    {
+    public function getCreatePiece() {
         return view('admin.gallery.create_edit_piece', [
             'piece'    => new Piece,
             'projects' => Project::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
@@ -207,8 +197,7 @@ class GalleryController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getEditPiece($id)
-    {
+    public function getEditPiece($id) {
         $piece = Piece::find($id);
         if (!$piece) {
             abort(404);
@@ -229,8 +218,7 @@ class GalleryController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function postCreateEditPiece(Request $request, GalleryService $service, $id = null)
-    {
+    public function postCreateEditPiece(Request $request, GalleryService $service, $id = null) {
         $request->validate(Piece::$rules);
         $data = $request->only([
             'name', 'project_id', 'description', 'is_visible', 'timestamp', 'tags', 'programs', 'good_example',
@@ -257,8 +245,7 @@ class GalleryController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getDeletePiece($id)
-    {
+    public function getDeletePiece($id) {
         $piece = Piece::find($id);
 
         return view('admin.gallery._delete_piece', [
@@ -273,8 +260,7 @@ class GalleryController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function postDeletePiece(Request $request, GalleryService $service, $id)
-    {
+    public function postDeletePiece(Request $request, GalleryService $service, $id) {
         if ($id && $service->deletePiece(Piece::find($id))) {
             flash('Piece deleted successfully.')->success();
         } else {
@@ -293,8 +279,7 @@ class GalleryController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function postSortPieceImages($id, Request $request, GalleryService $service)
-    {
+    public function postSortPieceImages($id, Request $request, GalleryService $service) {
         if ($service->sortPieceImages($id, $request->get('sort'))) {
             flash('Image order updated successfully.')->success();
         } else {
@@ -313,8 +298,7 @@ class GalleryController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function postSortPieceLiteratures($id, Request $request, GalleryService $service)
-    {
+    public function postSortPieceLiteratures($id, Request $request, GalleryService $service) {
         if ($service->sortPieceLiteratures($id, $request->get('sort'))) {
             flash('Literature order updated successfully.')->success();
         } else {
@@ -337,8 +321,7 @@ class GalleryController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getCreateImage($id)
-    {
+    public function getCreateImage($id) {
         $piece = Piece::find($id);
         if (!$piece) {
             abort(404);
@@ -357,8 +340,7 @@ class GalleryController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getEditImage($id)
-    {
+    public function getEditImage($id) {
         $image = PieceImage::find($id);
         if (!$image) {
             abort(404);
@@ -377,8 +359,7 @@ class GalleryController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function postCreateEditImage(Request $request, GalleryService $service, $id = null)
-    {
+    public function postCreateEditImage(Request $request, GalleryService $service, $id = null) {
         $id ? $request->validate(PieceImage::$updateRules) : $request->validate(PieceImage::$createRules);
         $data = $request->only([
             'image', 'description', 'is_primary_image', 'piece_id', 'alt_text', 'is_visible',
@@ -408,8 +389,7 @@ class GalleryController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getDeleteImage($id)
-    {
+    public function getDeleteImage($id) {
         $image = PieceImage::find($id);
         if (!$image) {
             abort(404);
@@ -427,8 +407,7 @@ class GalleryController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function postDeleteImage(Request $request, GalleryService $service, $id)
-    {
+    public function postDeleteImage(Request $request, GalleryService $service, $id) {
         $image = PieceImage::find($id);
         $piece = $image ? $image->piece : null;
         if ($id && $service->deletePieceImage($image)) {
@@ -453,8 +432,7 @@ class GalleryController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getCreateLiterature($id)
-    {
+    public function getCreateLiterature($id) {
         $piece = Piece::find($id);
         if (!$piece) {
             abort(404);
@@ -473,8 +451,7 @@ class GalleryController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getEditLiterature($id)
-    {
+    public function getEditLiterature($id) {
         $literature = PieceLiterature::find($id);
         if (!$literature) {
             abort(404);
@@ -493,8 +470,7 @@ class GalleryController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function postCreateEditLiterature(Request $request, GalleryService $service, $id = null)
-    {
+    public function postCreateEditLiterature(Request $request, GalleryService $service, $id = null) {
         $id ? $request->validate(PieceLiterature::$updateRules) : $request->validate(PieceLiterature::$createRules);
         $data = $request->only([
             'piece_id', 'image', 'remove_image', 'text', 'is_primary', 'is_visible',
@@ -522,8 +498,7 @@ class GalleryController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getDeleteLiterature($id)
-    {
+    public function getDeleteLiterature($id) {
         $literature = PieceLiterature::find($id);
         if (!$literature) {
             abort(404);
@@ -541,8 +516,7 @@ class GalleryController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function postDeleteLiterature(Request $request, GalleryService $service, $id)
-    {
+    public function postDeleteLiterature(Request $request, GalleryService $service, $id) {
         $literature = PieceLiterature::find($id);
         $piece = $literature ? $literature->piece : null;
         if ($id && $service->deleteLiterature($literature)) {
@@ -565,8 +539,7 @@ class GalleryController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getTagIndex(Request $request)
-    {
+    public function getTagIndex(Request $request) {
         return view('admin.gallery.tags', [
             'tags' => Tag::orderBy('name', 'ASC')->paginate(20)->appends($request->query()),
         ]);
@@ -577,8 +550,7 @@ class GalleryController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getCreateTag()
-    {
+    public function getCreateTag() {
         return view('admin.gallery.create_edit_tag', [
             'tag' => new Tag,
         ]);
@@ -591,8 +563,7 @@ class GalleryController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getEditTag($id)
-    {
+    public function getEditTag($id) {
         $tag = Tag::find($id);
         if (!$tag) {
             abort(404);
@@ -610,8 +581,7 @@ class GalleryController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function postCreateEditTag(Request $request, GalleryService $service, $id = null)
-    {
+    public function postCreateEditTag(Request $request, GalleryService $service, $id = null) {
         $id ? $request->validate(Tag::$updateRules) : $request->validate(Tag::$createRules);
         $data = $request->only([
             'name', 'description', 'is_active', 'is_visible',
@@ -638,8 +608,7 @@ class GalleryController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getDeleteTag($id)
-    {
+    public function getDeleteTag($id) {
         $tag = Tag::find($id);
 
         return view('admin.gallery._delete_tag', [
@@ -654,8 +623,7 @@ class GalleryController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function postDeleteTag(Request $request, GalleryService $service, $id)
-    {
+    public function postDeleteTag(Request $request, GalleryService $service, $id) {
         if ($id && $service->deleteTag(Tag::find($id))) {
             flash('Tag deleted successfully.')->success();
         } else {
@@ -676,8 +644,7 @@ class GalleryController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getProgramIndex(Request $request)
-    {
+    public function getProgramIndex(Request $request) {
         return view('admin.gallery.programs', [
             'programs' => Program::orderBy('name', 'ASC')->paginate(20)->appends($request->query()),
         ]);
@@ -688,8 +655,7 @@ class GalleryController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getCreateProgram()
-    {
+    public function getCreateProgram() {
         return view('admin.gallery.create_edit_program', [
             'program' => new Program,
         ]);
@@ -702,8 +668,7 @@ class GalleryController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getEditProgram($id)
-    {
+    public function getEditProgram($id) {
         $program = Program::find($id);
         if (!$program) {
             abort(404);
@@ -721,8 +686,7 @@ class GalleryController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function postCreateEditProgram(Request $request, GalleryService $service, $id = null)
-    {
+    public function postCreateEditProgram(Request $request, GalleryService $service, $id = null) {
         $id ? $request->validate(Program::$updateRules) : $request->validate(Program::$createRules);
         $data = $request->only([
             'name', 'image', 'is_visible', 'remove_image',
@@ -749,8 +713,7 @@ class GalleryController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getDeleteProgram($id)
-    {
+    public function getDeleteProgram($id) {
         $program = Program::find($id);
 
         return view('admin.gallery._delete_program', [
@@ -765,8 +728,7 @@ class GalleryController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function postDeleteProgram(Request $request, GalleryService $service, $id)
-    {
+    public function postDeleteProgram(Request $request, GalleryService $service, $id) {
         if ($id && $service->deleteProgram(Program::find($id))) {
             flash('Program deleted successfully.')->success();
         } else {
