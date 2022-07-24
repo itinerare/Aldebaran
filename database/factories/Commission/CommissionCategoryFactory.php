@@ -5,15 +5,13 @@ namespace Database\Factories\Commission;
 use App\Models\Commission\CommissionClass;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class CommissionCategoryFactory extends Factory
-{
+class CommissionCategoryFactory extends Factory {
     /**
      * Define the model's default state.
      *
      * @return array
      */
-    public function definition()
-    {
+    public function definition() {
         $class = CommissionClass::factory()->create();
 
         return [
@@ -32,8 +30,7 @@ class CommissionCategoryFactory extends Factory
      *
      * @return \Illuminate\Database\Eloquent\Factories\Factory
      */
-    public function class($id)
-    {
+    public function class($id) {
         return $this->state(function (array $attributes) use ($id) {
             return [
                 'class_id' => $id,
@@ -46,8 +43,7 @@ class CommissionCategoryFactory extends Factory
      *
      * @return \Illuminate\Database\Eloquent\Factories\Factory
      */
-    public function inactive()
-    {
+    public function inactive() {
         return $this->state(function (array $attributes) {
             return [
                 'is_active' => 0,
@@ -62,8 +58,7 @@ class CommissionCategoryFactory extends Factory
      *
      * @return \Illuminate\Database\Eloquent\Factories\Factory
      */
-    public function testData($include)
-    {
+    public function testData($include) {
         return $this->state(function (array $attributes) use ($include) {
             return [
                 'data' => '{"fields":{"'.$this->faker->unique()->domainWord().'":{"label":"'.$this->faker->unique()->domainWord().'","type":"text","rules":null,"choices":null,"value":null,"help":"null}},"include":{"class":'.($include ? 1 : 0).'}}',

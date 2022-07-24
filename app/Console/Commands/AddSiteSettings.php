@@ -5,8 +5,7 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 
-class AddSiteSettings extends Command
-{
+class AddSiteSettings extends Command {
     /**
      * The name and signature of the console command.
      *
@@ -24,8 +23,7 @@ class AddSiteSettings extends Command
     /**
      * Create a new command instance.
      */
-    public function __construct()
-    {
+    public function __construct() {
         parent::__construct();
     }
 
@@ -34,8 +32,7 @@ class AddSiteSettings extends Command
      *
      * @return mixed
      */
-    public function handle()
-    {
+    public function handle() {
         $this->info('*********************');
         $this->info('* ADD SITE SETTINGS *');
         $this->info('*********************'."\n");
@@ -57,8 +54,7 @@ class AddSiteSettings extends Command
      * @param int    $value
      * @param string $description
      */
-    private function addSiteSetting($key, $value, $description)
-    {
+    private function addSiteSetting($key, $value, $description) {
         if (!DB::table('site_settings')->where('key', $key)->exists()) {
             DB::table('site_settings')->insert([
                 [

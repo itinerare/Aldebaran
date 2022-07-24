@@ -5,15 +5,13 @@ namespace Database\Factories;
 use App\Models\Changelog;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class ChangelogFactory extends Factory
-{
+class ChangelogFactory extends Factory {
     /**
      * Define the model's default state.
      *
      * @return array
      */
-    public function definition()
-    {
+    public function definition() {
         return [
             //
             'name'       => null,
@@ -27,8 +25,7 @@ class ChangelogFactory extends Factory
      *
      * @return \Illuminate\Database\Eloquent\Factories\Factory
      */
-    public function title()
-    {
+    public function title() {
         return $this->state(function (array $attributes) {
             return [
                 'name' => $this->faker->unique()->domainWord(),
@@ -41,8 +38,7 @@ class ChangelogFactory extends Factory
      *
      * @return \Illuminate\Database\Eloquent\Factories\Factory
      */
-    public function hidden()
-    {
+    public function hidden() {
         return $this->state(function (array $attributes) {
             return [
                 'is_visible' => 0,

@@ -12,16 +12,14 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
-class FeedViewTest extends TestCase
-{
+class FeedViewTest extends TestCase {
     use RefreshDatabase, WithFaker;
 
     /******************************************************************************
         PUBLIC: RSS FEEDS
     *******************************************************************************/
 
-    protected function setUp(): void
-    {
+    protected function setUp(): void {
         parent::setUp();
 
         // Set up gallery service for image processing
@@ -32,8 +30,7 @@ class FeedViewTest extends TestCase
     /**
      * Test feed index access.
      */
-    public function testGetFeedIndex()
-    {
+    public function testGetFeedIndex() {
         $this->get('feeds')
             ->assertStatus(200);
     }
@@ -47,8 +44,7 @@ class FeedViewTest extends TestCase
      * @param array  $entry
      * @param int    $status
      */
-    public function testGetFeed($feed, $entry, $status)
-    {
+    public function testGetFeed($feed, $entry, $status) {
         if ($entry[0]) {
             if ($feed == 'gallery' || $feed == 'all') {
                 // Create a couple of pieces, one which should appear in the gallery
@@ -115,8 +111,7 @@ class FeedViewTest extends TestCase
         }
     }
 
-    public function feedProvider()
-    {
+    public function feedProvider() {
         return [
             'gallery'                     => ['gallery', [0, 0], 200],
             'gallery with piece'          => ['gallery', [1, 1], 200],

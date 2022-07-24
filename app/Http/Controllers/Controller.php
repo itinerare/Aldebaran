@@ -13,15 +13,13 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\View;
 
-class Controller extends BaseController
-{
+class Controller extends BaseController {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
     /**
      * Create a new controller instance.
      */
-    public function __construct(Request $request)
-    {
+    public function __construct(Request $request) {
         $this->commissionClasses = CommissionClass::orderBy('sort', 'DESC')->get();
 
         View::share('visibleProjects', Project::visible()->orderBy('sort', 'DESC')->get());
@@ -35,8 +33,7 @@ class Controller extends BaseController
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getIndex()
-    {
+    public function getIndex() {
         $page = TextPage::where('key', 'index')->first();
 
         return view('index', [
@@ -49,8 +46,7 @@ class Controller extends BaseController
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getAbout()
-    {
+    public function getAbout() {
         $page = TextPage::where('key', 'about')->first();
         if (!$page) {
             abort(404);
@@ -66,8 +62,7 @@ class Controller extends BaseController
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getPrivacyPolicy()
-    {
+    public function getPrivacyPolicy() {
         $page = TextPage::where('key', 'privacy')->first();
         if (!$page) {
             abort(404);
@@ -83,8 +78,7 @@ class Controller extends BaseController
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getChangelog(Request $request)
-    {
+    public function getChangelog(Request $request) {
         return view('changelog', [
             'changelogs' => Changelog::visible()->orderBy('created_at', 'DESC')->paginate(20)->appends($request->query()),
         ]);
@@ -95,8 +89,7 @@ class Controller extends BaseController
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getFeeds()
-    {
+    public function getFeeds() {
         return view('feed_index');
     }
 
@@ -105,8 +98,7 @@ class Controller extends BaseController
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getPlaceholder()
-    {
+    public function getPlaceholder() {
         return view('placeholder');
     }
 }

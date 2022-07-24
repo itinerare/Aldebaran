@@ -10,8 +10,7 @@ use App\Models\TextPage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class GalleryController extends Controller
-{
+class GalleryController extends Controller {
     /*
     |--------------------------------------------------------------------------
     | Gallery Controller
@@ -26,8 +25,7 @@ class GalleryController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getGallery(Request $request)
-    {
+    public function getGallery(Request $request) {
         if (!config('aldebaran.settings.navigation.gallery')) {
             abort(404);
         }
@@ -84,8 +82,7 @@ class GalleryController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getProject($name, Request $request)
-    {
+    public function getProject($name, Request $request) {
         $project = Project::where('name', str_replace('_', ' ', $name))->first();
         if (!$project || (!Auth::check() && !$project->is_visible)) {
             abort(404);
@@ -136,8 +133,7 @@ class GalleryController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getPiece($id, $slug = null)
-    {
+    public function getPiece($id, $slug = null) {
         $piece = Piece::find($id);
         if (!$piece || (!Auth::check() && !$piece->is_visible)) {
             abort(404);

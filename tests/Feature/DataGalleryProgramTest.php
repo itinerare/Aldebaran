@@ -12,16 +12,14 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
 use Tests\TestCase;
 
-class DataGalleryProgramTest extends TestCase
-{
+class DataGalleryProgramTest extends TestCase {
     use RefreshDatabase, WithFaker;
 
     /******************************************************************************
         GALLERY DATA: PROGRAMS
     *******************************************************************************/
 
-    protected function setUp(): void
-    {
+    protected function setUp(): void {
         parent::setUp();
 
         // Create a program for editing, etc. purposes
@@ -32,8 +30,7 @@ class DataGalleryProgramTest extends TestCase
         $this->file = UploadedFile::fake()->image('test_image.png');
     }
 
-    protected function tearDown(): void
-    {
+    protected function tearDown(): void {
         if (File::exists(public_path('images/programs/'.$this->program->id.'-image.png'))) {
             unlink('public/images/programs/'.$this->program->id.'-image.png');
         }
@@ -42,8 +39,7 @@ class DataGalleryProgramTest extends TestCase
     /**
      * Test program index access.
      */
-    public function testGetProgramIndex()
-    {
+    public function testGetProgramIndex() {
         $this->actingAs($this->user)
             ->get('/admin/data/programs')
             ->assertStatus(200);
@@ -52,8 +48,7 @@ class DataGalleryProgramTest extends TestCase
     /**
      * Test program create access.
      */
-    public function testGetCreateProgram()
-    {
+    public function testGetCreateProgram() {
         $this->actingAs($this->user)
             ->get('/admin/data/programs/create')
             ->assertStatus(200);
@@ -62,8 +57,7 @@ class DataGalleryProgramTest extends TestCase
     /**
      * Test program edit access.
      */
-    public function testGetEditProgram()
-    {
+    public function testGetEditProgram() {
         $this->actingAs($this->user)
             ->get('/admin/data/programs/edit/'.$this->program->id)
             ->assertStatus(200);
@@ -77,8 +71,7 @@ class DataGalleryProgramTest extends TestCase
      * @param bool $image
      * @param bool $isVisible
      */
-    public function testPostCreateProgram($image, $isVisible)
-    {
+    public function testPostCreateProgram($image, $isVisible) {
         $response = $this
             ->actingAs($this->user)
             ->post('/admin/data/programs/create', [
@@ -103,8 +96,7 @@ class DataGalleryProgramTest extends TestCase
         }
     }
 
-    public function programCreateProvider()
-    {
+    public function programCreateProvider() {
         return $this->booleanSequences(2);
     }
 
@@ -118,8 +110,7 @@ class DataGalleryProgramTest extends TestCase
      * @param bool $removeImage
      * @param bool $isVisible
      */
-    public function testPostEditProgram($hasImage, $image, $removeImage, $isVisible)
-    {
+    public function testPostEditProgram($hasImage, $image, $removeImage, $isVisible) {
         if ($hasImage) {
             (new GalleryService)->handleImage(UploadedFile::fake()->image('alt_test_image.png'), $this->program->imagePath, $this->program->imageFileName);
             $this->program->update(['has_image' => 1]);
@@ -150,16 +141,14 @@ class DataGalleryProgramTest extends TestCase
         }
     }
 
-    public function programEditProvider()
-    {
+    public function programEditProvider() {
         return $this->booleanSequences(4);
     }
 
     /**
      * Test program delete access.
      */
-    public function testGetDeleteProgram()
-    {
+    public function testGetDeleteProgram() {
         $this->actingAs($this->user)
             ->get('/admin/data/programs/delete/'.$this->program->id)
             ->assertStatus(200);
@@ -173,8 +162,7 @@ class DataGalleryProgramTest extends TestCase
      * @param bool $withPiece
      * @param bool $expected
      */
-    public function testPostDeleteProgram($withPiece, $expected)
-    {
+    public function testPostDeleteProgram($withPiece, $expected) {
         if ($withPiece) {
             $piece = Piece::factory()->create();
             PieceProgram::factory()
@@ -195,8 +183,7 @@ class DataGalleryProgramTest extends TestCase
         }
     }
 
-    public function programDeleteProvider()
-    {
+    public function programDeleteProvider() {
         return [
             'basic'      => [0, 1],
             'with piece' => [1, 0],

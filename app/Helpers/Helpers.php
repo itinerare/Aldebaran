@@ -17,8 +17,7 @@
  *
  * @return string
  */
-function set_active($path, $class = 'active')
-{
+function set_active($path, $class = 'active') {
     return call_user_func_array('Request::is', (array) $path) ? $class : '';
 }
 
@@ -29,8 +28,7 @@ function set_active($path, $class = 'active')
  *
  * @return string
  */
-function add_help($text)
-{
+function add_help($text) {
     return '<i class="fas fa-question-circle help-icon" data-toggle="tooltip" title="'.$text.'"></i>';
 }
 
@@ -41,8 +39,7 @@ function add_help($text)
  *
  * @return string
  */
-function breadcrumbs($links)
-{
+function breadcrumbs($links) {
     $ret = '<nav><ol class="breadcrumb">';
     $count = 0;
     $ret .= '<li class="breadcrumb-item"><a href="'.url('/').'">Home</a></li>';
@@ -80,12 +77,10 @@ function breadcrumbs($links)
  *
  * @return string
  */
-function format_date($timestamp, $showTime = true)
-{
+function format_date($timestamp, $showTime = true) {
     return $timestamp->format('j F Y'.($showTime ? ', H:i:s' : '')).($showTime ? ' <abbr data-toggle="tooltip" title="UTC'.$timestamp->timezone->toOffsetName().'">'.strtoupper($timestamp->timezone->getAbbreviatedName($timestamp->isDST())).'</abbr>' : '');
 }
-function pretty_date($timestamp, $showTime = true)
-{
+function pretty_date($timestamp, $showTime = true) {
     return '<abbr data-toggle="tooltip" title="'.$timestamp->format('F j Y'.($showTime ? ', H:i:s' : '')).' '.strtoupper($timestamp->timezone->getAbbreviatedName($timestamp->isDST())).'">'.$timestamp->diffForHumans().'</abbr>';
 }
 
@@ -96,8 +91,7 @@ function pretty_date($timestamp, $showTime = true)
  *
  * @return string
  */
-function randomString($characters)
-{
+function randomString($characters) {
     $src = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     $code = '';
     for ($i = 0; $i < $characters; $i++) {
@@ -114,8 +108,7 @@ function randomString($characters)
  *
  * @return blob
  */
-function screenshot($url)
-{
+function screenshot($url) {
     // Check that relevant ENV values are set
     if (config('aldebaran.settings.thum_io.key') && config('aldebaran.settings.thum_io.id')) {
         // Validate URL

@@ -8,8 +8,7 @@ return new class extends Migration {
     /**
      * Run the migrations.
      */
-    public function up()
-    {
+    public function up() {
         Schema::create('piece_literatures', function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->increments('id');
@@ -30,8 +29,7 @@ return new class extends Migration {
     /**
      * Reverse the migrations.
      */
-    public function down()
-    {
+    public function down() {
         Schema::dropIfExists('piece_literatures');
     }
 };

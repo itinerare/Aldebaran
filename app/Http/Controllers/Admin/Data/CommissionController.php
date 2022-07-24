@@ -12,8 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Spatie\ValidationRules\Rules\Delimited;
 
-class CommissionController extends Controller
-{
+class CommissionController extends Controller {
     /*
     |--------------------------------------------------------------------------
     | Admin / Commission Data Controller
@@ -32,8 +31,7 @@ class CommissionController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getCommissionClassIndex()
-    {
+    public function getCommissionClassIndex() {
         if (!config('aldebaran.settings.commissions.enabled')) {
             abort(404);
         }
@@ -48,8 +46,7 @@ class CommissionController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getCreateCommissionClass()
-    {
+    public function getCreateCommissionClass() {
         if (!config('aldebaran.settings.commissions.enabled')) {
             abort(404);
         }
@@ -67,8 +64,7 @@ class CommissionController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getEditCommissionClass($id)
-    {
+    public function getEditCommissionClass($id) {
         if (!config('aldebaran.settings.commissions.enabled')) {
             abort(404);
         }
@@ -90,8 +86,7 @@ class CommissionController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function postCreateEditCommissionClass(Request $request, CommissionService $service, $id = null)
-    {
+    public function postCreateEditCommissionClass(Request $request, CommissionService $service, $id = null) {
         $id ? $request->validate(CommissionClass::$updateRules) : $request->validate(CommissionClass::$createRules);
         $data = $request->only([
             'name', 'is_active', 'page_id', 'page_title', 'page_key',
@@ -147,8 +142,7 @@ class CommissionController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getDeleteCommissionClass($id)
-    {
+    public function getDeleteCommissionClass($id) {
         if (!config('aldebaran.settings.commissions.enabled')) {
             abort(404);
         }
@@ -166,8 +160,7 @@ class CommissionController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function postDeleteCommissionClass(Request $request, CommissionService $service, $id)
-    {
+    public function postDeleteCommissionClass(Request $request, CommissionService $service, $id) {
         if ($id && $service->deleteCommissionClass(CommissionClass::find($id))) {
             flash('Class deleted successfully.')->success();
         } else {
@@ -184,8 +177,7 @@ class CommissionController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function postSortCommissionClass(Request $request, CommissionService $service)
-    {
+    public function postSortCommissionClass(Request $request, CommissionService $service) {
         if ($service->sortCommissionClass($request->get('sort'))) {
             flash('Class order updated successfully.')->success();
         } else {
@@ -206,8 +198,7 @@ class CommissionController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getIndex()
-    {
+    public function getIndex() {
         if (!config('aldebaran.settings.commissions.enabled')) {
             abort(404);
         }
@@ -222,8 +213,7 @@ class CommissionController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getCreateCommissionCategory()
-    {
+    public function getCreateCommissionCategory() {
         if (!config('aldebaran.settings.commissions.enabled')) {
             abort(404);
         }
@@ -242,8 +232,7 @@ class CommissionController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getEditCommissionCategory($id)
-    {
+    public function getEditCommissionCategory($id) {
         if (!config('aldebaran.settings.commissions.enabled')) {
             abort(404);
         }
@@ -266,8 +255,7 @@ class CommissionController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function postCreateEditCommissionCategory(Request $request, CommissionService $service, $id = null)
-    {
+    public function postCreateEditCommissionCategory(Request $request, CommissionService $service, $id = null) {
         $id ? $request->validate(CommissionCategory::$updateRules) : $request->validate(CommissionCategory::$createRules);
         $data = $request->only([
             'name', 'class_id', 'is_active',
@@ -323,8 +311,7 @@ class CommissionController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getDeleteCommissionCategory($id)
-    {
+    public function getDeleteCommissionCategory($id) {
         if (!config('aldebaran.settings.commissions.enabled')) {
             abort(404);
         }
@@ -342,8 +329,7 @@ class CommissionController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function postDeleteCommissionCategory(Request $request, CommissionService $service, $id)
-    {
+    public function postDeleteCommissionCategory(Request $request, CommissionService $service, $id) {
         if ($id && $service->deleteCommissionCategory(CommissionCategory::find($id))) {
             flash('Category deleted successfully.')->success();
         } else {
@@ -360,8 +346,7 @@ class CommissionController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function postSortCommissionCategory(Request $request, CommissionService $service)
-    {
+    public function postSortCommissionCategory(Request $request, CommissionService $service) {
         if ($service->sortCommissionCategory($request->get('sort'))) {
             flash('Category order updated successfully.')->success();
         } else {
@@ -382,8 +367,7 @@ class CommissionController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getCommissionTypeIndex(Request $request)
-    {
+    public function getCommissionTypeIndex(Request $request) {
         if (!config('aldebaran.settings.commissions.enabled')) {
             abort(404);
         }
@@ -407,8 +391,7 @@ class CommissionController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getCreateCommissionType()
-    {
+    public function getCreateCommissionType() {
         if (!config('aldebaran.settings.commissions.enabled')) {
             abort(404);
         }
@@ -428,8 +411,7 @@ class CommissionController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getEditCommissionType($id)
-    {
+    public function getEditCommissionType($id) {
         if (!config('aldebaran.settings.commissions.enabled')) {
             abort(404);
         }
@@ -453,8 +435,7 @@ class CommissionController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function postCreateEditCommissionType(Request $request, CommissionService $service, $id = null)
-    {
+    public function postCreateEditCommissionType(Request $request, CommissionService $service, $id = null) {
         $request->validate(CommissionType::$rules);
         $data = $request->only([
             'category_id', 'name', 'description', 'is_active', 'is_visible', 'availability',
@@ -512,8 +493,7 @@ class CommissionController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getDeleteCommissionType($id)
-    {
+    public function getDeleteCommissionType($id) {
         if (!config('aldebaran.settings.commissions.enabled')) {
             abort(404);
         }
@@ -531,8 +511,7 @@ class CommissionController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function postDeleteCommissionType(Request $request, CommissionService $service, $id)
-    {
+    public function postDeleteCommissionType(Request $request, CommissionService $service, $id) {
         if ($id && $service->deleteCommissionType(CommissionType::find($id))) {
             flash('Commission type deleted successfully.')->success();
         } else {
@@ -549,8 +528,7 @@ class CommissionController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function postSortCommissionType(Request $request, CommissionService $service)
-    {
+    public function postSortCommissionType(Request $request, CommissionService $service) {
         if ($service->sortCommissionType($request->get('sort'))) {
             flash('Type order updated successfully.')->success();
         } else {

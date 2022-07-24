@@ -4,6 +4,15 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [3.3.0](https://github.com/itinerare/Aldebaran/compare/v3.2.1...v3.3.0) (2022-07-24)
+
+### Features
+
+* Add format to npm scripts ([3ef34c](https://github.com/itinerare/Aldebaran/commit/3ef34c103c0dc90f3827f9510b79771d234ea9e2))
+
+
+---
+
 ## [3.2.1](https://github.com/itinerare/Aldebaran/compare/v3.2.0...v3.2.1) (2022-07-03)
 
 ### Bug Fixes

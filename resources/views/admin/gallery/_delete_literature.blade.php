@@ -1,5 +1,5 @@
-@if($literature)
-    {!! Form::open(['url' => 'admin/data/pieces/literatures/delete/'.$literature->id]) !!}
+@if ($literature)
+    {!! Form::open(['url' => 'admin/data/pieces/literatures/delete/' . $literature->id]) !!}
 
     <p>You are about to delete this literature. This is not reversible.</p>
     <p>Are you sure you want to delete this literature?</p>

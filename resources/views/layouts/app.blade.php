@@ -1,55 +1,62 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <?php
-        header("Permissions-Policy: interest-cohort=()");
+    header('Permissions-Policy: interest-cohort=()');
     ?>
 
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ Settings::get('site_name') }} @if(View::hasSection('title'))・@yield('title') @endif</title>
+    <title>{{ Settings::get('site_name') }} @if (View::hasSection('title'))
+            ・@yield('title') @endif
+    </title>
 
     <!-- Primary Meta Tags -->
-    <meta name="title" content="{{ Settings::get('site_name') }} @if(View::hasSection('title')) ・@yield('title') @endif">
-    <meta name="description" content="@if(View::hasSection('meta-desc')) @yield('meta-desc') @else {{ Settings::get('site_desc') }} @endif">
+    <meta name="title"
+        content="{{ Settings::get('site_name') }} @if (View::hasSection('title')) ・@yield('title') @endif">
+    <meta name="description"
+        content="@if (View::hasSection('meta-desc')) @yield('meta-desc') @else {{ Settings::get('site_desc') }} @endif">
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ config('app.url', 'http://localhost') }}">
-    <meta property="og:image" content="@if(View::hasSection('meta-img')) @yield('meta-img') @else @if(screenshot(url()->current())){{ screenshot(url()->current()) }}@else{{ asset('images/assets/avatar.png') }}@endif @endif">
+    <meta property="og:image"
+        content="@if (View::hasSection('meta-img')) @yield('meta-img') @else @if (screenshot(url()->current())){{ screenshot(url()->current()) }}@else{{ asset('images/assets/avatar.png') }} @endif @endif">
     <meta property="og:site_name" content="{{ Settings::get('site_name') }}" />
-    <meta property="og:title" content="
-        @if(View::hasSection('title'))
-            @yield('title')
+    <meta property="og:title"
+        content="
+        @if (View::hasSection('title')) @yield('title')
         @else
-            {{ Settings::get('site_name') }}
-        @endif
+            {{ Settings::get('site_name') }} @endif
     ">
-    <meta property="og:description" content="@if(View::hasSection('meta-desc')) @yield('meta-desc') @else {{ Settings::get('site_desc') }} @endif">
+    <meta property="og:description"
+        content="@if (View::hasSection('meta-desc')) @yield('meta-desc') @else {{ Settings::get('site_desc') }} @endif">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="{{ config('app.url', 'http://localhost') }}">
-    <meta property="twitter:image" content="@if(View::hasSection('meta-img')) @yield('meta-img') @else @if(screenshot(url()->current())){{ screenshot(url()->current()) }}@else{{ asset('images/assets/avatar.png') }}@endif @endif">
+    <meta property="twitter:image"
+        content="@if (View::hasSection('meta-img')) @yield('meta-img') @else @if (screenshot(url()->current())){{ screenshot(url()->current()) }}@else{{ asset('images/assets/avatar.png') }} @endif @endif">
     <meta name="twitter:site" content="@{{ Settings::get('site_name') }}" />
-    <meta property="twitter:title" content="
-        @if(View::hasSection('title'))
-            @yield('title')
+    <meta property="twitter:title"
+        content="
+        @if (View::hasSection('title')) @yield('title')
         @else
-            {{ Settings::get('site_name') }}
-        @endif
+            {{ Settings::get('site_name') }} @endif
     ">
-    <meta property="twitter:description" content="@if(View::hasSection('meta-desc')) @yield('meta-desc') @else {{ Settings::get('site_desc') }} @endif">
+    <meta property="twitter:description"
+        content="@if (View::hasSection('meta-desc')) @yield('meta-desc') @else {{ Settings::get('site_desc') }} @endif">
 
     <!-- Scripts -->
     <script src="{{ mix('js/app.js') }}"></script>
     <script defer src="{{ mix('js/app-secondary.js') }}"></script>
     <script defer src="{{ asset('js/site.js') }}"></script>
-    @if(View::hasSection('head-scripts'))
+    @if (View::hasSection('head-scripts'))
         @yield('head-scripts')
     @endif
 
@@ -57,7 +64,7 @@
     <link href="{{ mix('css/app.css') }}" rel="stylesheet">
     <link href="{{ asset('css/aldebaran.css') }}" rel="stylesheet">
 
-    @if(file_exists(public_path(). '/css/custom.css'))
+    @if (file_exists(public_path() . '/css/custom.css'))
         <link href="{{ asset('css/custom.css') }}" rel="stylesheet">
     @endif
 
@@ -75,12 +82,13 @@
     <link defer href="{{ asset('css/jquery-ui-timepicker-addon.css') }}" rel="stylesheet">
     <link href="{{ asset('css/selectize.bootstrap4.css') }}" rel="stylesheet">
 
-    @if(config('aldebaran.settings.captcha') && config('app.env') == 'production')
+    @if (config('aldebaran.settings.captcha') && config('app.env') == 'production')
         {!! RecaptchaV3::initJs() !!}
     @endif
 
     @include('feed::links')
 </head>
+
 <body>
     <div id="app">
         @include('layouts._nav')
@@ -88,14 +96,15 @@
         <main class="container-fluid">
             <div class="row">
 
-                @if(!config('aldebaran.settings.layout.full_width') || View::hasSection('sidebar'))
+                @if (!config('aldebaran.settings.layout.full_width') || View::hasSection('sidebar'))
                     <div class="sidebar col-lg-2" id="sidebar">
-                        @if(View::hasSection('sidebar'))
+                        @if (View::hasSection('sidebar'))
                             @yield('sidebar')
                         @endif
                     </div>
                 @endif
-                <div class="main-content {{ config('aldebaran.settings.layout.full_width') ? (View::hasSection('sidebar') ? 'col-lg-10' : 'col-lg-12') : 'col-lg-8' }} p-4" id="content">
+                <div class="main-content {{ config('aldebaran.settings.layout.full_width') ? (View::hasSection('sidebar') ? 'col-lg-10' : 'col-lg-12') : 'col-lg-8' }} p-4"
+                    id="content">
                     <div>
                         @include('flash::message')
                         @yield('content')
@@ -126,7 +135,9 @@
         @yield('scripts')
         <script>
             $(function() {
-                $('[data-toggle="tooltip"]').tooltip({html: true});
+                $('[data-toggle="tooltip"]').tooltip({
+                    html: true
+                });
                 var $mobileMenuButton = $('#mobileMenuButton');
                 var $sidebar = $('#sidebar');
                 $('#mobileMenuButton').on('click', function(e) {
@@ -137,4 +148,5 @@
         </script>
     </div>
 </body>
+
 </html>

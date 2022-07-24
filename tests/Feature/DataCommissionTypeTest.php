@@ -9,16 +9,14 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
-class DataCommissionTypeTest extends TestCase
-{
+class DataCommissionTypeTest extends TestCase {
     use RefreshDatabase, WithFaker;
 
     /******************************************************************************
         COMMISSION DATA: TYPES
     *******************************************************************************/
 
-    protected function setUp(): void
-    {
+    protected function setUp(): void {
         parent::setUp();
 
         // Create a test tag
@@ -45,8 +43,7 @@ class DataCommissionTypeTest extends TestCase
      * @param bool       $withType
      * @param array|null $search
      */
-    public function testGetTypeIndex($withType, $search)
-    {
+    public function testGetTypeIndex($withType, $search) {
         // Remove testing types if not in use
         if (!$withType) {
             CommissionType::query()->delete();
@@ -79,8 +76,7 @@ class DataCommissionTypeTest extends TestCase
         });
     }
 
-    public function typeIndexProvider()
-    {
+    public function typeIndexProvider() {
         return [
             'basic'                             => [0, null],
             'with type'                         => [1, null],
@@ -94,8 +90,7 @@ class DataCommissionTypeTest extends TestCase
     /**
      * Test type create access.
      */
-    public function testGetCreateType()
-    {
+    public function testGetCreateType() {
         $this->actingAs($this->user)
             ->get('/admin/data/commission-types/create')
             ->assertStatus(200);
@@ -104,8 +99,7 @@ class DataCommissionTypeTest extends TestCase
     /**
      * Test type edit access.
      */
-    public function testGetEditType()
-    {
+    public function testGetEditType() {
         // This sidesteps casts not working correctly in tests,
         // for some reason
         $this->type->data = json_decode($this->type->data, true);
@@ -130,8 +124,7 @@ class DataCommissionTypeTest extends TestCase
      * @param bool     $withTag
      * @param bool     $showExamples
      */
-    public function testPostCreateType($withDescription, $pricing, $withExtras, $isActive, $isVisible, $slots, $withTag, $showExamples)
-    {
+    public function testPostCreateType($withDescription, $pricing, $withExtras, $isActive, $isVisible, $slots, $withTag, $showExamples) {
         $response = $this
             ->actingAs($this->user)
             ->post('/admin/data/commission-types/create', [
@@ -165,8 +158,7 @@ class DataCommissionTypeTest extends TestCase
         ]);
     }
 
-    public function createTypeProvider()
-    {
+    public function createTypeProvider() {
         // $withDescription, $pricing, $withExtras, $isActive, $isVisible, $slots, $withTag, $showExamples
         return [
             'basic'            => [0, ['type' => 'flat', 'cost' => mt_rand(1, 100)], 0, 1, 1, null, 0, 1],
@@ -202,8 +194,7 @@ class DataCommissionTypeTest extends TestCase
      * @param bool       $includeCategory
      * @param array|null $fieldData
      */
-    public function testPostEditType($withDescription, $pricing, $withExtras, $isActive, $isVisible, $slots, $withTag, $showExamples, $includeClass, $includeCategory, $fieldData)
-    {
+    public function testPostEditType($withDescription, $pricing, $withExtras, $isActive, $isVisible, $slots, $withTag, $showExamples, $includeClass, $includeCategory, $fieldData) {
         $response = $this
             ->actingAs($this->user)
             ->post('/admin/data/commission-types/edit/'.$this->type->id, [
@@ -247,8 +238,7 @@ class DataCommissionTypeTest extends TestCase
         ]);
     }
 
-    public function editTypeProvider()
-    {
+    public function editTypeProvider() {
         // $withDescription, $pricing, $withExtras, $isActive, $isVisible, $slots, $withTag, $showExamples, $includeClass, $includeCategory, $fieldData
         return [
             'basic'                      => [0, ['type' => 'flat', 'cost' => mt_rand(1, 100)], 0, 1, 1, null, 0, 1, 0, 0, null],
@@ -286,8 +276,7 @@ class DataCommissionTypeTest extends TestCase
     /**
      * Test type delete access.
      */
-    public function testGetDeleteType()
-    {
+    public function testGetDeleteType() {
         $this->actingAs($this->user)
             ->get('/admin/data/commission-types/delete/'.$this->type->id)
             ->assertStatus(200);
@@ -296,8 +285,7 @@ class DataCommissionTypeTest extends TestCase
     /**
      * Test type deletion.
      */
-    public function testPostDeleteType()
-    {
+    public function testPostDeleteType() {
         $response = $this
             ->actingAs($this->user)
             ->post('/admin/data/commission-types/delete/'.$this->type->id);

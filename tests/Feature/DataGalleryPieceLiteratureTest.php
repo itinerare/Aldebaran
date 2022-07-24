@@ -11,16 +11,14 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
 use Tests\TestCase;
 
-class DataGalleryPieceLiteratureTest extends TestCase
-{
+class DataGalleryPieceLiteratureTest extends TestCase {
     use RefreshDatabase, WithFaker;
 
     /******************************************************************************
         GALLERY DATA: PIECES/LITERATURES
     *******************************************************************************/
 
-    protected function setUp(): void
-    {
+    protected function setUp(): void {
         parent::setUp();
 
         // Setup service for image handling purposes
@@ -45,8 +43,7 @@ class DataGalleryPieceLiteratureTest extends TestCase
         $this->text = $this->faker->realText();
     }
 
-    protected function tearDown(): void
-    {
+    protected function tearDown(): void {
         if (File::exists($this->dataLiterature->imagePath.'/'.$this->dataLiterature->thumbnailFilename)) {
             // Remove test thumbnail file
             unlink($this->dataLiterature->imagePath.'/'.$this->dataLiterature->thumbnailFileName);
@@ -61,8 +58,7 @@ class DataGalleryPieceLiteratureTest extends TestCase
      * @param bool $piece
      * @param int  $expected
      */
-    public function testGetCreateLiterature($piece, $expected)
-    {
+    public function testGetCreateLiterature($piece, $expected) {
         $this->actingAs($this->user)
             ->get('/admin/data/pieces/literatures/create/'.($piece ? $this->piece->id : mt_rand(5, 10)))
             ->assertStatus($expected);
@@ -76,15 +72,13 @@ class DataGalleryPieceLiteratureTest extends TestCase
      * @param bool $literature
      * @param int  $expected
      */
-    public function testGetEditLiterature($literature, $expected)
-    {
+    public function testGetEditLiterature($literature, $expected) {
         $this->actingAs($this->user)
             ->get('/admin/data/pieces/literatures/edit/'.($literature ? $this->literature->id : mt_rand(5, 10)))
             ->assertStatus($expected);
     }
 
-    public function literatureCreateEditViewProvider()
-    {
+    public function literatureCreateEditViewProvider() {
         return [
             'valid'   => [1, 200],
             'invalid' => [0, 404],
@@ -100,8 +94,7 @@ class DataGalleryPieceLiteratureTest extends TestCase
      * @param bool $isVisible
      * @param bool $isPrimary
      */
-    public function testPostCreateLiterature($withImage, $isVisible, $isPrimary)
-    {
+    public function testPostCreateLiterature($withImage, $isVisible, $isPrimary) {
         $response = $this
             ->actingAs($this->user)
             ->post('/admin/data/pieces/literatures/create', [
@@ -138,8 +131,7 @@ class DataGalleryPieceLiteratureTest extends TestCase
         }
     }
 
-    public function literatureCreateProvider()
-    {
+    public function literatureCreateProvider() {
         // Get all possible sequences
         return $this->booleanSequences(3);
     }
@@ -155,8 +147,7 @@ class DataGalleryPieceLiteratureTest extends TestCase
      * @param bool $isVisible
      * @param bool $isPrimary
      */
-    public function testPostEditLiterature($withData, $withImage, $removeImage, $isVisible, $isPrimary)
-    {
+    public function testPostEditLiterature($withData, $withImage, $removeImage, $isVisible, $isPrimary) {
         // Specify which model will be used, for convenience
         $literature = $withData ? $this->dataLiterature : $this->literature;
 
@@ -206,8 +197,7 @@ class DataGalleryPieceLiteratureTest extends TestCase
         }
     }
 
-    public function literatureEditProvider()
-    {
+    public function literatureEditProvider() {
         // Get all possible sequences
         return $this->booleanSequences(5);
     }
@@ -220,8 +210,7 @@ class DataGalleryPieceLiteratureTest extends TestCase
      * @param bool $literature
      * @param int  $expected
      */
-    public function testGetDeleteLiterature($literature, $expected)
-    {
+    public function testGetDeleteLiterature($literature, $expected) {
         $this->actingAs($this->user)
             ->get('/admin/data/pieces/literatures/delete/'.($literature ? $this->literature->id : mt_rand(5, 50)))
             ->assertStatus($expected);
@@ -235,8 +224,7 @@ class DataGalleryPieceLiteratureTest extends TestCase
      * @param bool $literature
      * @param bool $expected
      */
-    public function testPostDeleteImage($literature, $expected)
-    {
+    public function testPostDeleteImage($literature, $expected) {
         $response = $this
             ->actingAs($this->user)
             ->post('/admin/data/pieces/literatures/delete/'.($literature ? $this->literature->id : mt_rand(5, 50)));
@@ -250,8 +238,7 @@ class DataGalleryPieceLiteratureTest extends TestCase
         }
     }
 
-    public function literatureDeleteProvider()
-    {
+    public function literatureDeleteProvider() {
         return [
             'valid'   => [1, 200],
             'invalid' => [0, 404],

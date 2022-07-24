@@ -7,15 +7,13 @@ use App\Models\Gallery\Project;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class PieceFactory extends Factory
-{
+class PieceFactory extends Factory {
     /**
      * Define the model's default state.
      *
      * @return array
      */
-    public function definition()
-    {
+    public function definition() {
         return [
             //
             'name'       => $this->faker->unique()->domainWord(),
@@ -31,8 +29,7 @@ class PieceFactory extends Factory
      *
      * @return \Illuminate\Database\Eloquent\Factories\Factory
      */
-    public function project($id)
-    {
+    public function project($id) {
         return $this->state(function (array $attributes) use ($id) {
             return [
                 'project_id' => $id,
@@ -45,8 +42,7 @@ class PieceFactory extends Factory
      *
      * @return \Illuminate\Database\Eloquent\Factories\Factory
      */
-    public function description()
-    {
+    public function description() {
         return $this->state(function (array $attributes) {
             return [
                 'description' => '<p>'.$this->faker->unique()->domainWord().'</p>',
@@ -59,8 +55,7 @@ class PieceFactory extends Factory
      *
      * @return \Illuminate\Database\Eloquent\Factories\Factory
      */
-    public function hidden()
-    {
+    public function hidden() {
         return $this->state(function (array $attributes) {
             return [
                 'is_visible' => 0,
@@ -73,8 +68,7 @@ class PieceFactory extends Factory
      *
      * @return \Illuminate\Database\Eloquent\Factories\Factory
      */
-    public function goodExample()
-    {
+    public function goodExample() {
         return $this->state(function (array $attributes) {
             return [
                 'good_example' => 1,
@@ -87,8 +81,7 @@ class PieceFactory extends Factory
      *
      * @return \Illuminate\Database\Eloquent\Factories\Factory
      */
-    public function timestamp()
-    {
+    public function timestamp() {
         return $this->state(function (array $attributes) {
             return [
                 'timestamp' => Carbon::now(),

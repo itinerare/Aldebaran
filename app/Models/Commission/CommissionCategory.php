@@ -5,8 +5,7 @@ namespace App\Models\Commission;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class CommissionCategory extends Model
-{
+class CommissionCategory extends Model {
     use HasFactory;
 
     /**
@@ -79,16 +78,14 @@ class CommissionCategory extends Model
     /**
      * Get the class this commission category belongs to.
      */
-    public function class()
-    {
+    public function class() {
         return $this->belongsTo(CommissionClass::class, 'class_id');
     }
 
     /**
      * Get the types associated with this commission category.
      */
-    public function types()
-    {
+    public function types() {
         return $this->hasMany(CommissionType::class, 'category_id')->orderBy('sort', 'DESC');
     }
 
@@ -105,8 +102,7 @@ class CommissionCategory extends Model
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeActive($query)
-    {
+    public function scopeActive($query) {
         return $query->where('is_active', 1);
     }
 
@@ -118,8 +114,7 @@ class CommissionCategory extends Model
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeByClass($query, $class)
-    {
+    public function scopeByClass($query, $class) {
         return $query->where('class_id', $class);
     }
 
@@ -134,8 +129,7 @@ class CommissionCategory extends Model
      *
      * @return string
      */
-    public function getFullNameAttribute()
-    {
+    public function getFullNameAttribute() {
         return ucfirst($this->class->name).' ・ '.$this->name;
     }
 }

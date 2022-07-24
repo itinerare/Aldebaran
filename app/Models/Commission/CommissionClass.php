@@ -5,8 +5,7 @@ namespace App\Models\Commission;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class CommissionClass extends Model
-{
+class CommissionClass extends Model {
     use HasFactory;
 
     /**
@@ -84,8 +83,7 @@ class CommissionClass extends Model
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeActive($query, $user = null)
-    {
+    public function scopeActive($query, $user = null) {
         if ($user) {
             return $query->whereNotNull('id');
         } else {

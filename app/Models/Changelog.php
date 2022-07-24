@@ -8,8 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Spatie\Feed\Feedable;
 use Spatie\Feed\FeedItem;
 
-class Changelog extends Model implements Feedable
-{
+class Changelog extends Model implements Feedable {
     use HasFactory;
 
     /**
@@ -68,8 +67,7 @@ class Changelog extends Model implements Feedable
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeVisible($query)
-    {
+    public function scopeVisible($query) {
         return $query->where('is_visible', 1);
     }
 
@@ -82,8 +80,7 @@ class Changelog extends Model implements Feedable
     /**
      * Returns all feed items.
      */
-    public static function getFeedItems()
-    {
+    public static function getFeedItems() {
         return self::visible()->get();
     }
 
@@ -92,8 +89,7 @@ class Changelog extends Model implements Feedable
      *
      * @return /Spatie/Feed/FeedItem;
      */
-    public function toFeedItem(): FeedItem
-    {
+    public function toFeedItem(): FeedItem {
         return FeedItem::create([
             'id'         => '/changelog/'.$this->id,
             'title'      => $this->name ? $this->name : $this->created_at->toFormattedDateString(),

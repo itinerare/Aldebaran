@@ -7,16 +7,14 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
-class ChangelogViewTest extends TestCase
-{
+class ChangelogViewTest extends TestCase {
     use RefreshDatabase, WithFaker;
 
     /******************************************************************************
         PUBLIC: CHANGELOG
     *******************************************************************************/
 
-    protected function setUp(): void
-    {
+    protected function setUp(): void {
         parent::setUp();
     }
 
@@ -29,8 +27,7 @@ class ChangelogViewTest extends TestCase
      * @param array $changelogStatus
      * @param int   $status
      */
-    public function testGetChangelog($user, $changelogStatus, $status)
-    {
+    public function testGetChangelog($user, $changelogStatus, $status) {
         if ($changelogStatus[0]) {
             // Create a changelog to view
             $changelog = Changelog::factory()->create();
@@ -63,8 +60,7 @@ class ChangelogViewTest extends TestCase
         }
     }
 
-    public function changelogProvider()
-    {
+    public function changelogProvider() {
         return [
             'visitor'                               => [0, [0, 0, 0], 200],
             'user'                                  => [1, [0, 0, 0], 200],

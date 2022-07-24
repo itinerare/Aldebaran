@@ -5,8 +5,7 @@ namespace App\Services;
 use App\Models\Changelog;
 use Illuminate\Support\Facades\DB;
 
-class ChangelogService extends Service
-{
+class ChangelogService extends Service {
     /*
     |--------------------------------------------------------------------------
     | Changelog Service
@@ -24,8 +23,7 @@ class ChangelogService extends Service
      *
      * @return \App\Models\Changelog|bool
      */
-    public function createLog($data, $user)
-    {
+    public function createLog($data, $user) {
         DB::beginTransaction();
 
         try {
@@ -52,8 +50,7 @@ class ChangelogService extends Service
      *
      * @return \App\Models\Changelog|bool
      */
-    public function updateLog($log, $data, $user)
-    {
+    public function updateLog($log, $data, $user) {
         DB::beginTransaction();
 
         try {
@@ -78,8 +75,7 @@ class ChangelogService extends Service
      *
      * @return bool
      */
-    public function deleteLog($log)
-    {
+    public function deleteLog($log) {
         DB::beginTransaction();
 
         try {

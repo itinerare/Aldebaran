@@ -8,16 +8,14 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
-class DataGalleryProjectTest extends TestCase
-{
+class DataGalleryProjectTest extends TestCase {
     use RefreshDatabase, WithFaker;
 
     /******************************************************************************
         GALLERY DATA: PROJECTS
     *******************************************************************************/
 
-    protected function setUp(): void
-    {
+    protected function setUp(): void {
         parent::setUp();
 
         // Create a project for editing, etc. purposes
@@ -33,8 +31,7 @@ class DataGalleryProjectTest extends TestCase
     /**
      * Test project index access.
      */
-    public function testGetProjectIndex()
-    {
+    public function testGetProjectIndex() {
         $this->actingAs($this->user)
             ->get('/admin/data/projects')
             ->assertStatus(200);
@@ -43,8 +40,7 @@ class DataGalleryProjectTest extends TestCase
     /**
      * Test project create access.
      */
-    public function testGetCreateProject()
-    {
+    public function testGetCreateProject() {
         $this->actingAs($this->user)
             ->get('/admin/data/projects/create')
             ->assertStatus(200);
@@ -53,8 +49,7 @@ class DataGalleryProjectTest extends TestCase
     /**
      * Test project edit access.
      */
-    public function testGetEditProject()
-    {
+    public function testGetEditProject() {
         $this->actingAs($this->user)
             ->get('/admin/data/projects/edit/'.$this->project->id)
             ->assertStatus(200);
@@ -69,8 +64,7 @@ class DataGalleryProjectTest extends TestCase
      * @param bool $hasDescription
      * @param bool $isVisible
      */
-    public function testPostCreateProject($hasData, $hasDescription, $isVisible)
-    {
+    public function testPostCreateProject($hasData, $hasDescription, $isVisible) {
         $response = $this
             ->actingAs($this->user)
             ->post('/admin/data/projects/create', [
@@ -96,8 +90,7 @@ class DataGalleryProjectTest extends TestCase
      * @param bool $hasDescription
      * @param bool $isVisible
      */
-    public function testPostEditProject($hasData, $hasDescription, $isVisible)
-    {
+    public function testPostEditProject($hasData, $hasDescription, $isVisible) {
         $response = $this
             ->actingAs($this->user)
             ->post('/admin/data/projects/edit/'.($hasData ? $this->dataProject->id : $this->project->id), [
@@ -115,16 +108,14 @@ class DataGalleryProjectTest extends TestCase
         ]);
     }
 
-    public function projectProvider()
-    {
+    public function projectProvider() {
         return $this->booleanSequences(3);
     }
 
     /**
      * Test project delete access.
      */
-    public function testGetDeleteProject()
-    {
+    public function testGetDeleteProject() {
         $this->actingAs($this->user)
             ->get('/admin/data/projects/delete/'.$this->project->id)
             ->assertStatus(200);
@@ -138,8 +129,7 @@ class DataGalleryProjectTest extends TestCase
      * @param bool $withPiece
      * @param bool $expected
      */
-    public function testPostDeleteProject($withPiece, $expected)
-    {
+    public function testPostDeleteProject($withPiece, $expected) {
         if ($withPiece) {
             $piece = Piece::factory()->project($this->project->id)->create();
         }
@@ -157,8 +147,7 @@ class DataGalleryProjectTest extends TestCase
         }
     }
 
-    public function projectDeleteProvider()
-    {
+    public function projectDeleteProvider() {
         return [
             'basic'      => [0, 1],
             'with piece' => [1, 0],

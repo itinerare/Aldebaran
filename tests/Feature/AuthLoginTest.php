@@ -6,8 +6,7 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-class AuthLoginTest extends TestCase
-{
+class AuthLoginTest extends TestCase {
     use RefreshDatabase;
 
     // These tests center on basic user authentication
@@ -20,8 +19,7 @@ class AuthLoginTest extends TestCase
     /**
      * Test login form access.
      */
-    public function testGetLoginForm()
-    {
+    public function testGetLoginForm() {
         $this
             ->get('/login')
             ->assertStatus(200);
@@ -31,8 +29,7 @@ class AuthLoginTest extends TestCase
      * Test login as a valid user.
      * This should work.
      */
-    public function testPostValidLogin()
-    {
+    public function testPostValidLogin() {
         $user = User::factory()->create();
 
         $this
@@ -48,8 +45,7 @@ class AuthLoginTest extends TestCase
      * Test login as an invalid user.
      * This shouldn't work.
      */
-    public function testnotPostInvalidLogin()
-    {
+    public function testnotPostInvalidLogin() {
         $user = User::factory()->create();
 
         $this
@@ -64,8 +60,7 @@ class AuthLoginTest extends TestCase
     /**
      * Test user logout.
      */
-    public function testPostLogout()
-    {
+    public function testPostLogout() {
         $this
             ->actingAs(User::factory()->create())
             ->post('/logout')

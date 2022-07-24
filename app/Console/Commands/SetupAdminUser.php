@@ -6,8 +6,7 @@ use App\Models\User;
 use App\Services\UserService;
 use Illuminate\Console\Command;
 
-class SetupAdminUser extends Command
-{
+class SetupAdminUser extends Command {
     /**
      * The name and signature of the console command.
      *
@@ -25,8 +24,7 @@ class SetupAdminUser extends Command
     /**
      * Create a new command instance.
      */
-    public function __construct()
-    {
+    public function __construct() {
         parent::__construct();
     }
 
@@ -35,8 +33,7 @@ class SetupAdminUser extends Command
      *
      * @return mixed
      */
-    public function handle()
-    {
+    public function handle() {
         $this->info('********************');
         $this->info('* ADMIN USER SETUP *');
         $this->info('********************'."\n");

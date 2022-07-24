@@ -7,8 +7,7 @@ use App\Models\Changelog;
 use App\Services\ChangelogService;
 use Illuminate\Http\Request;
 
-class ChangelogController extends Controller
-{
+class ChangelogController extends Controller {
     /*
     |--------------------------------------------------------------------------
     | Admin / Changelog Controller
@@ -23,8 +22,7 @@ class ChangelogController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getChangelogIndex(Request $request)
-    {
+    public function getChangelogIndex(Request $request) {
         return view('admin.changelog.index', [
             'logs' => Changelog::orderBy('created_at', 'DESC')->paginate(20)->appends($request->query()),
         ]);
@@ -35,8 +33,7 @@ class ChangelogController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getCreateLog()
-    {
+    public function getCreateLog() {
         return view('admin.changelog.create_edit_log', [
             'log' => new Changelog,
         ]);
@@ -49,8 +46,7 @@ class ChangelogController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getEditLog($id)
-    {
+    public function getEditLog($id) {
         $log = Changelog::find($id);
         if (!$log) {
             abort(404);
@@ -68,8 +64,7 @@ class ChangelogController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function postCreateEditLog(Request $request, ChangelogService $service, $id = null)
-    {
+    public function postCreateEditLog(Request $request, ChangelogService $service, $id = null) {
         $id ? $request->validate(Changelog::$updateRules) : $request->validate(Changelog::$createRules);
         $data = $request->only([
             'name', 'text', 'is_visible',
@@ -96,8 +91,7 @@ class ChangelogController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getDeleteLog($id)
-    {
+    public function getDeleteLog($id) {
         $log = Changelog::find($id);
 
         return view('admin.changelog._delete_log', [
@@ -112,8 +106,7 @@ class ChangelogController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function postDeleteLog(Request $request, ChangelogService $service, $id)
-    {
+    public function postDeleteLog(Request $request, ChangelogService $service, $id) {
         if ($id && $service->deleteLog(Changelog::find($id))) {
             flash('Entry deleted successfully.')->success();
         } else {

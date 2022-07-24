@@ -13,8 +13,7 @@ use App\Services\CommissionManager;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
-class CommissionController extends Controller
-{
+class CommissionController extends Controller {
     /*
     |--------------------------------------------------------------------------
     | Admin / Commission Controller
@@ -32,8 +31,7 @@ class CommissionController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getCommissionIndex(Request $request, $class, $status = null)
-    {
+    public function getCommissionIndex(Request $request, $class, $status = null) {
         if (!config('aldebaran.settings.commissions.enabled')) {
             abort(404);
         }
@@ -76,8 +74,7 @@ class CommissionController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getNewCommission($id)
-    {
+    public function getNewCommission($id) {
         if (!config('aldebaran.settings.commissions.enabled')) {
             abort(404);
         }
@@ -102,8 +99,7 @@ class CommissionController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function postNewCommission(Request $request, CommissionManager $service, $id = null)
-    {
+    public function postNewCommission(Request $request, CommissionManager $service, $id = null) {
         if (!config('aldebaran.settings.commissions.enabled')) {
             abort(404);
         }
@@ -150,8 +146,7 @@ class CommissionController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getCommission($id)
-    {
+    public function getCommission($id) {
         $commission = Commission::find($id);
         if (!$commission) {
             abort(404);
@@ -172,8 +167,7 @@ class CommissionController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function postCommission($id, $action, Request $request, CommissionManager $service)
-    {
+    public function postCommission($id, $action, Request $request, CommissionManager $service) {
         switch ($action) {
             default:
                 flash('Invalid action selected.')->error();
@@ -203,8 +197,7 @@ class CommissionController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getLedger(Request $request)
-    {
+    public function getLedger(Request $request) {
         if (!config('aldebaran.settings.commissions.enabled')) {
             abort(404);
         }
@@ -254,8 +247,7 @@ class CommissionController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    private function postAcceptCommission($id, Request $request, CommissionManager $service)
-    {
+    private function postAcceptCommission($id, Request $request, CommissionManager $service) {
         if ($service->acceptCommission($id, $request->only(['comments']), $request->user())) {
             flash('Commission accepted successfully.')->success();
         } else {
@@ -274,8 +266,7 @@ class CommissionController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    private function postUpdateCommission($id, Request $request, CommissionManager $service)
-    {
+    private function postUpdateCommission($id, Request $request, CommissionManager $service) {
         $request->validate(Commission::$updateRules);
         $data = $request->only(['pieces', 'paid_status', 'progress', 'comments', 'cost', 'tip', 'is_paid', 'is_intl', 'paid_at']);
         if ($service->updateCommission($id, $data, $request->user())) {
@@ -296,8 +287,7 @@ class CommissionController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    private function postCompleteCommission($id, Request $request, CommissionManager $service)
-    {
+    private function postCompleteCommission($id, Request $request, CommissionManager $service) {
         if ($service->completeCommission($id, $request->only(['comments']), $request->user())) {
             flash('Commission marked complete successfully.')->success();
         } else {
@@ -316,8 +306,7 @@ class CommissionController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    private function postDeclineCommission($id, Request $request, CommissionManager $service)
-    {
+    private function postDeclineCommission($id, Request $request, CommissionManager $service) {
         if ($service->declineCommission($id, $request->only(['comments']), $request->user())) {
             flash('Commission declined successfully.')->success();
         } else {
@@ -336,8 +325,7 @@ class CommissionController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    private function postBanCommissioner($id, Request $request, CommissionManager $service)
-    {
+    private function postBanCommissioner($id, Request $request, CommissionManager $service) {
         if ($service->banCommissioner($id, $request->only(['comments']), $request->user())) {
             flash('Commissioner banned successfully.')->success();
         } else {

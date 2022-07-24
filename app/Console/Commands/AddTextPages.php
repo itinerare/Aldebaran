@@ -7,8 +7,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 
-class AddTextPages extends Command
-{
+class AddTextPages extends Command {
     /**
      * The name and signature of the console command.
      *
@@ -26,8 +25,7 @@ class AddTextPages extends Command
     /**
      * Create a new command instance.
      */
-    public function __construct()
-    {
+    public function __construct() {
         parent::__construct();
     }
 
@@ -36,8 +34,7 @@ class AddTextPages extends Command
      *
      * @return mixed
      */
-    public function handle()
-    {
+    public function handle() {
         //
         $pages = config('aldebaran.text_pages');
 
@@ -59,8 +56,7 @@ class AddTextPages extends Command
      * @param string $key
      * @param array  $page
      */
-    private function addTextPage($key, $page)
-    {
+    private function addTextPage($key, $page) {
         if (!DB::table('text_pages')->where('key', $key)->exists()) {
             DB::table('text_pages')->insert([
                 [

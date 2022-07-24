@@ -5,8 +5,7 @@ namespace App\Models\Gallery;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Program extends Model
-{
+class Program extends Model {
     use HasFactory;
 
     /**
@@ -65,8 +64,7 @@ class Program extends Model
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeVisible($query)
-    {
+    public function scopeVisible($query) {
         return $query->where('is_visible', 1);
     }
 
@@ -81,8 +79,7 @@ class Program extends Model
      *
      * @return string
      */
-    public function getImageDirectoryAttribute()
-    {
+    public function getImageDirectoryAttribute() {
         return 'images/programs';
     }
 
@@ -91,8 +88,7 @@ class Program extends Model
      *
      * @return string
      */
-    public function getImageFileNameAttribute()
-    {
+    public function getImageFileNameAttribute() {
         return $this->id.'-image.png';
     }
 
@@ -101,8 +97,7 @@ class Program extends Model
      *
      * @return string
      */
-    public function getImagePathAttribute()
-    {
+    public function getImagePathAttribute() {
         return public_path($this->imageDirectory);
     }
 
@@ -111,8 +106,7 @@ class Program extends Model
      *
      * @return string
      */
-    public function getImageUrlAttribute()
-    {
+    public function getImageUrlAttribute() {
         if (!$this->has_image) {
             return null;
         }
