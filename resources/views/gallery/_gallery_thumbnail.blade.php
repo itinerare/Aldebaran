@@ -47,8 +47,7 @@
                             <br />
                             @foreach ($piece->tags()->visible()->get()->sortBy(function ($tags) {
             return $tags->tag->name;
-        })
-    as $tag)
+        }) as $tag)
                                 {!! $tag->tag->name !!}{{ !$loop->last ? ', ' : '' }}
                             @endforeach
                         @endif

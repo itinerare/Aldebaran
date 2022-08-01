@@ -83,8 +83,7 @@
                 <!-- Authentication Links -->
                 @guest
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('login') }}" aria-label="Login"><i
-                                class="fas fa-crown"></i></a>
+                        <a class="nav-link" href="{{ route('login') }}" aria-label="Login"><i class="fas fa-crown"></i></a>
                     </li>
                     @if (Settings::get('is_registration_open') == 1)
                         <li class="nav-item">

@@ -36,8 +36,7 @@
                             {!! $project->is_visible ? '<i class="text-success fas fa-check"></i>' : '-' !!}
                         </td>
                         <td class="text-right">
-                            <a href="{{ url('admin/data/projects/edit/' . $project->id) }}"
-                                class="btn btn-primary">Edit</a>
+                            <a href="{{ url('admin/data/projects/edit/' . $project->id) }}" class="btn btn-primary">Edit</a>
                         </td>
                     </tr>
                 @endforeach

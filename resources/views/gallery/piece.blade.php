@@ -45,8 +45,7 @@
                 <div class="col-md text-center align-self-center mb-2">
                     <a href="{{ $image->imageUrl }}" data-lightbox="entry"
                         data-title="{{ isset($image->description) ? $image->description : '' }}">
-                        <img class="img-thumbnail p-2" src="{{ $image->imageUrl }}"
-                            style="max-width:100%; max-height:60vh;"
+                        <img class="img-thumbnail p-2" src="{{ $image->imageUrl }}" style="max-width:100%; max-height:60vh;"
                             alt="{{ $image->alt_text ?? 'Primary image ' . $loop->iteration . ' for ' . $piece->name }}" />
                     </a>
                 </div>
@@ -96,8 +95,7 @@
                     <small>
                         @foreach ($piece->tags()->visible()->get()->sortBy(function ($tags) {
                 return $tags->tag->name;
-            })
-        as $tag)
+            }) as $tag)
                             {!! $tag->tag->getDisplayName(Request::get('source') ? Request::get('source') : null) !!}{{ !$loop->last ? ', ' : '' }}
                         @endforeach
                     </small>
@@ -106,8 +104,7 @@
                     <small class="float-right mb-2">
                         @foreach ($piece->programs()->visible()->get()->sortBy(function ($programs) {
                 return $programs->program->name;
-            })
-        as $program)
+            }) as $program)
                             @if ($program->program->has_image)
                                 <img class="mw-100" style="height:16px;" src="{{ $program->program->imageUrl }}"
                                     alt="Icon for {{ $program->name }}" />
