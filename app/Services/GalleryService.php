@@ -985,7 +985,6 @@ class GalleryService extends Service {
         }
 
         if (isset($data['watermark_image']) && $data['watermark_image']) {
-
             // Add text watermark if necessary
             if (isset($data['text_watermark']) && $data['text_watermark']) {
                 $watermarkText = null;
@@ -1015,7 +1014,7 @@ class GalleryService extends Service {
                     $x = -100;
 
                     while ($x < $processImage->width() + 150) {
-                        foreach ($watermarkText as $key=>$text) {
+                        foreach ($watermarkText as $key=> $text) {
                             $processImage->text($text, $key == 0 && count($watermarkText) > 1 ? $x + (22 + ($offset * 5)) : $x, $key > 0 ? $y + $i : $y, function ($font) use ($data) {
                                 $font->file(public_path('webfonts/RobotoCondensed-Regular.ttf'));
                                 $font->size(24);

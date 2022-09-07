@@ -132,7 +132,7 @@ class CommissionService extends Service {
 
             // Clean up custom pages
             if (isset($class->data) && isset($class->data['pages'])) {
-                foreach ($class->data['pages'] as $id=>$page) {
+                foreach ($class->data['pages'] as $id=> $page) {
                     TextPage::where('id', $id)->first()->delete();
                 }
             }
@@ -508,7 +508,7 @@ class CommissionService extends Service {
 
         // Check that entered page keys do not already have associated pages
         if (isset($data['page_key'])) {
-            foreach ($data['page_key'] as $key=>$pageKey) {
+            foreach ($data['page_key'] as $key=> $pageKey) {
                 if (TextPage::where('key', $pageKey)->exists() && $data['page_id'][$key] == null) {
                     throw new \Exception('One or more page keys have already been taken.');
                 }
@@ -516,7 +516,7 @@ class CommissionService extends Service {
         }
 
         if (isset($data['page_key'])) {
-            foreach ($data['page_key'] as $key=>$pageKey) {
+            foreach ($data['page_key'] as $key=> $pageKey) {
                 if ($data['page_id'][$key] == null) {
                     $pages = $pages + [$pageKey => [
                         'name' => $data['page_title'][$key],
@@ -540,7 +540,7 @@ class CommissionService extends Service {
 
         // Update and/or remove old pages
         if (isset($data['pages_old'])) {
-            foreach ($data['pages_old'] as $id=>$oldPage) {
+            foreach ($data['pages_old'] as $id=> $oldPage) {
                 $page = TextPage::find($id);
                 // Check to see if the page is still among the results/should still exist
                 if (isset($data['page_id'])) {
@@ -553,7 +553,7 @@ class CommissionService extends Service {
 
                 // If so, update it if necessary
                 if (isset($pageExists[$page->id]) && $pageExists[$id]) {
-                    foreach ($data['page_id'] as $key=>$id) {
+                    foreach ($data['page_id'] as $key=> $id) {
                         if ($id == $page->id) {
                             if (isset($data['page_key'][$key]) && $data['page_key'][$key] != $page->key) {
                                 $page->key = $data['page_key'][$key];
@@ -571,7 +571,7 @@ class CommissionService extends Service {
         }
 
         // Create pages if necessary
-        foreach ($pages as $key=>$page) {
+        foreach ($pages as $key=> $page) {
             if (!DB::table('text_pages')->where('key', $key)->exists()) {
                 DB::table('text_pages')->insert([
                     [
@@ -587,7 +587,7 @@ class CommissionService extends Service {
         }
 
         if (isset($data['page_key'])) {
-            foreach ($data['page_key'] as $key=>$pageKey) {
+            foreach ($data['page_key'] as $key=> $pageKey) {
                 $data['data']['pages'][TextPage::where('key', $pageKey)->first()->id] = [
                     'key'   => $data['page_key'][$key],
                     'title' => $data['page_title'][$key],
@@ -606,7 +606,7 @@ class CommissionService extends Service {
      * @return array
      */
     private function processFormFields($data) {
-        foreach ($data['field_key'] as $key=>$fieldKey) {
+        foreach ($data['field_key'] as $key=> $fieldKey) {
             if (isset($data['field_choices'][$key])) {
                 $data['field_choices'][$key] = explode(',', $data['field_choices'][$key]);
             }
