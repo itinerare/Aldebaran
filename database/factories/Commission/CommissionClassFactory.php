@@ -72,7 +72,7 @@ class CommissionClassFactory extends Factory {
             ],
         ];
 
-        foreach ($pages as $key=>$page) {
+        foreach ($pages as $key=> $page) {
             if (!DB::table('text_pages')->where('key', $key)->exists()) {
                 DB::table('text_pages')->insert([
                     [

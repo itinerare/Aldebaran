@@ -262,7 +262,7 @@ class CommissionController extends Controller {
         // and collect any custom validation rules for the configured fields
         $answerArray = [];
         $validationRules = Commission::$createRules;
-        foreach ($type->formFields as $key=>$field) {
+        foreach ($type->formFields as $key=> $field) {
             $answerArray[$key] = null;
             if (isset($field['rules'])) {
                 $validationRules[$key] = $field['rules'];
