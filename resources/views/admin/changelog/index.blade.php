@@ -12,8 +12,7 @@
     <p>This is a list of entries in the site's changelog. Entries are displayed from most to least recent, assuming they are
         set to be visible.</p>
 
-    <div class="text-right mb-3"><a class="btn btn-primary" href="{{ url('admin/changelog/create') }}"><i
-                class="fas fa-plus"></i> Create New Entry</a></div>
+    <div class="text-right mb-3"><a class="btn btn-primary" href="{{ url('admin/changelog/create') }}"><i class="fas fa-plus"></i> Create New Entry</a></div>
     @if (!count($logs))
         <p>No changelog entries found.</p>
     @else
@@ -31,8 +30,7 @@
                     <div class="col-12 col-md-4">{{ $log->name }}</div>
                     <div class="col-6 col-md-3">{!! pretty_date($log->created_at) !!}</div>
                     <div class="col-6 col-md-2">{!! pretty_date($log->updated_at) !!}</div>
-                    <div class="col-3 col-md-1 text-right"><a href="{{ url('admin/changelog/edit/' . $log->id) }}"
-                            class="btn btn-primary py-0 px-2">Edit</a></div>
+                    <div class="col-3 col-md-1 text-right"><a href="{{ url('admin/changelog/edit/' . $log->id) }}" class="btn btn-primary py-0 px-2">Edit</a></div>
                 </div>
             @endforeach
         </div>

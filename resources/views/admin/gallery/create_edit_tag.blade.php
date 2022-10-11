@@ -45,9 +45,7 @@
                     'class' => 'form-check-input',
                     'data-toggle' => 'toggle',
                 ]) !!}
-                {!! Form::label('is_active', 'Show in Gallery', ['class' => 'form-check-label ml-3']) !!} {!! add_help(
-                    'If this is turned off, pieces with this tag will not appear in the overall gallery. They may still, however, be displayed otherwise.',
-                ) !!}
+                {!! Form::label('is_active', 'Show in Gallery', ['class' => 'form-check-label ml-3']) !!} {!! add_help('If this is turned off, pieces with this tag will not appear in the overall gallery. They may still, however, be displayed otherwise.') !!}
             </div>
         </div>
     </div>

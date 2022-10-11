@@ -7,8 +7,7 @@
 @section('admin-content')
     {!! breadcrumbs([
         'Admin Panel' => 'admin',
-        ucfirst($commission->type->category->class->slug) . ' Commission Queue' =>
-            'admin/commissions/' . $commission->type->category->class->slug . '/pending',
+        ucfirst($commission->type->category->class->slug) . ' Commission Queue' => 'admin/commissions/' . $commission->type->category->class->slug . '/pending',
         'Commission (#' . $commission->id . ')' => 'admin/commissions/edit/' . $commission->id,
     ]) !!}
 
@@ -70,9 +69,7 @@
                         <h5>Commission Type</h5>
                     </div>
                     <div class="col-md">{!! $commission->type->displayName !!}
-                        @if ($commission->status == 'Pending' &&
-                            isset($commission->type->availability) &&
-                            $commission->type->availability > 0)
+                        @if ($commission->status == 'Pending' && isset($commission->type->availability) && $commission->type->availability > 0)
                             ({{ $commission->type->currentSlots . '/' . $commission->type->slots }}
                             Slot{{ $commission->type->slots == 1 ? '' : 's' }} Available)
                         @endif
@@ -119,9 +116,7 @@
                     <h5>Additional Information</h5>
                 </div>
                 <div class="col-md">
-                    {!! isset($commission->data['additional_information'])
-                        ? nl2br(htmlentities($commission->data['additional_information']))
-                        : '-' !!}
+                    {!! isset($commission->data['additional_information']) ? nl2br(htmlentities($commission->data['additional_information'])) : '-' !!}
                 </div>
             </div>
 
@@ -139,9 +134,7 @@
             <h2>Piece Information</h2>
 
             <div class="form-group">
-                {!! Form::label('pieces[]', 'Associated Pieces (Optional)') !!} {!! add_help(
-                    'You can select up to 10 pieces at once. These pieces will be displayed to the commissioner at their full size. Note that visiblity does not matter; pieces will be displayed to the commissioner regardless of their state.',
-                ) !!}
+                {!! Form::label('pieces[]', 'Associated Pieces (Optional)') !!} {!! add_help('You can select up to 10 pieces at once. These pieces will be displayed to the commissioner at their full size. Note that visiblity does not matter; pieces will be displayed to the commissioner regardless of their state.') !!}
                 {!! Form::select('pieces[]', $pieces, $commission->pieces->pluck('piece_id')->toArray(), [
                     'id' => 'piecesList',
                     'class' => 'form-control',
@@ -159,8 +152,7 @@
                                 <div class="col-md-4">
                                     @if ($piece->piece->images->count())
                                         <a href="{{ url('admin/data/pieces/edit/' . $piece->piece_id) }}">
-                                            <img class="image img-thumbnail" style="max-width:100%;"
-                                                src="{{ $piece->piece->primaryImages->count() ? $piece->piece->primaryImages->random()->thumbnailUrl : $piece->piece->images->first()->thumbnailUrl }}"
+                                            <img class="image img-thumbnail" style="max-width:100%;" src="{{ $piece->piece->primaryImages->count() ? $piece->piece->primaryImages->random()->thumbnailUrl : $piece->piece->images->first()->thumbnailUrl }}"
                                                 alt="Thumbnail for piece {{ $piece->name }}" />
                                         </a>
                                     @else
@@ -168,8 +160,7 @@
                                     @endif
                                 </div>
                                 <div class="col-md align-self-center">
-                                    <h4><a
-                                            href="{{ url('admin/data/pieces/edit/' . $piece->piece_id) }}">{{ $piece->piece->name }}</a>
+                                    <h4><a href="{{ url('admin/data/pieces/edit/' . $piece->piece_id) }}">{{ $piece->piece->name }}</a>
                                     </h4>
                                     @if ($piece->piece->images->count())
                                         <p>
@@ -198,9 +189,7 @@
                                             <div class="card mb-2">
                                                 <h5 class="card-header">
                                                     Literature #{{ $literature->id }}
-                                                    <a class="small inventory-collapse-toggle collapse-toggle collapsed"
-                                                        href="#literature-{{ $literature->id }}"
-                                                        data-toggle="collapse">Show</a></h3>
+                                                    <a class="small inventory-collapse-toggle collapse-toggle collapsed" href="#literature-{{ $literature->id }}" data-toggle="collapse">Show</a></h3>
                                                 </h5>
                                                 <div class="card-body collapse" id="literature-{{ $literature->id }}">
                                                     {!! $literature->text !!}
@@ -255,8 +244,7 @@
                                     </div>
                                     <span class="input-group-text">After Fees:
                                         ${{ $commission->paymentWithFees($payment) }}</span>
-                                    <button class="remove-payment btn btn-outline-danger" type="button"
-                                        id="button-addon2">X</button>
+                                    <button class="remove-payment btn btn-outline-danger" type="button" id="button-addon2">X</button>
                                 </div>
                             </div>
                         @endforeach
@@ -414,8 +402,7 @@
                             <div class="row">
                                 <div class="col-md-4">
                                     <a href="{{ url('admin/data/pieces/edit/' . $piece->piece_id) }}">
-                                        <img class="image img-thumbnail" style="max-width:100%;"
-                                            src="{{ $piece->piece->primaryImages->count() ? $piece->piece->primaryImages->random()->thumbnailUrl : $piece->piece->images->first()->thumbnailUrl }}"
+                                        <img class="image img-thumbnail" style="max-width:100%;" src="{{ $piece->piece->primaryImages->count() ? $piece->piece->primaryImages->random()->thumbnailUrl : $piece->piece->images->first()->thumbnailUrl }}"
                                             alt="Thumbnail for piece {{ $piece->name }}" />
                                     </a>
                                 </div>

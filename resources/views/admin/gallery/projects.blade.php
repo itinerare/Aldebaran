@@ -12,8 +12,7 @@
     <p>This is a list of projects that will be used to sort pieces. Creating projects is required, as pieces must be
         assigned to a project.</p>
 
-    <div class="text-right mb-3"><a class="btn btn-primary" href="{{ url('admin/data/projects/create') }}"><i
-                class="fas fa-plus"></i> Create New Project</a></div>
+    <div class="text-right mb-3"><a class="btn btn-primary" href="{{ url('admin/data/projects/create') }}"><i class="fas fa-plus"></i> Create New Project</a></div>
     @if (!count($projects))
         <p>No projects found.</p>
     @else

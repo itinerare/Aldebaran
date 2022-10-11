@@ -5,8 +5,7 @@
             {{ Settings::get('site_name') }}
         </a>
 
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
             <span class="navbar-toggler-icon"></span>
         </button>
 
@@ -32,8 +31,7 @@
                         @endforeach
                     @else
                         <li class="nav-item dropdown">
-                            <a id="projectDropdown" class="nav-link dropdown-toggle" href="#" role="button"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                            <a id="projectDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                 Projects
                             </a>
 
@@ -50,8 +48,7 @@
 
                 @if (config('aldebaran.settings.commissions.enabled') && isset($commissionClasses) && $commissionClasses->count())
                     <li class="nav-item dropdown">
-                        <a id="commDropdown" class="nav-link dropdown-toggle" href="#" role="button"
-                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                        <a id="commDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                             Commissions
                         </a>
 
@@ -87,19 +84,16 @@
                     </li>
                     @if (Settings::get('is_registration_open') == 1)
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ route('register') }}"
-                                aria-label="Register">{{ __('Register') }}</a>
+                            <a class="nav-link" href="{{ route('register') }}" aria-label="Register">{{ __('Register') }}</a>
                         </li>
                     @endif
                 @else
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url('admin') }}" aria-label="Admin Panel"><i
-                                class="fas fa-crown"></i></a>
+                        <a class="nav-link" href="{{ url('admin') }}" aria-label="Admin Panel"><i class="fas fa-crown"></i></a>
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('logout') }}"
-                            onclick="event.preventDefault();
+                        <a class="nav-link" href="{{ route('logout') }}" onclick="event.preventDefault();
                                             document.getElementById('logout-form').submit();">
                             {{ __('Logout') }}
                         </a>

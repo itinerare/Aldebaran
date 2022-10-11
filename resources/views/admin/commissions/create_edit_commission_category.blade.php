@@ -8,9 +8,7 @@
     {!! breadcrumbs([
         'Admin Panel' => 'admin',
         'Commission Categories' => 'admin/data/commission-categories',
-        ($category->id ? 'Edit' : 'Create') . ' Category' => $category->id
-            ? 'admin/data/commission-categories/edit/' . $category->id
-            : 'admin/data/commission-categories/create',
+        ($category->id ? 'Edit' : 'Create') . ' Category' => $category->id ? 'admin/data/commission-categories/edit/' . $category->id : 'admin/data/commission-categories/create',
     ]) !!}
 
     <h1>{{ $category->id ? 'Edit' : 'Create' }} Category
@@ -20,9 +18,7 @@
     </h1>
 
     {!! Form::open([
-        'url' => $category->id
-            ? 'admin/data/commission-categories/edit/' . $category->id
-            : 'admin/data/commission-categories/create',
+        'url' => $category->id ? 'admin/data/commission-categories/edit/' . $category->id : 'admin/data/commission-categories/create',
     ]) !!}
 
     <div class="form-group">
@@ -55,15 +51,8 @@
         </p>
 
         <div class="form-group">
-            {!! Form::checkbox(
-                'include_class',
-                1,
-                isset($category->data['include']['class']) ? $category->data['include']['class'] : 0,
-                ['class' => 'form-check-input', 'data-toggle' => 'toggle'],
-            ) !!}
-            {!! Form::label('include_class', 'Include Class Form Fields', ['class' => 'form-check-label ml-3']) !!} {!! add_help(
-                'If this is on, the form fields from this category\'s class will be included in this category\'s forms.',
-            ) !!}
+            {!! Form::checkbox('include_class', 1, isset($category->data['include']['class']) ? $category->data['include']['class'] : 0, ['class' => 'form-check-input', 'data-toggle' => 'toggle']) !!}
+            {!! Form::label('include_class', 'Include Class Form Fields', ['class' => 'form-check-label ml-3']) !!} {!! add_help('If this is on, the form fields from this category\'s class will be included in this category\'s forms.') !!}
         </div>
 
         <p>These fields will be used to populate the commission request form for this category if a type has no set fields,

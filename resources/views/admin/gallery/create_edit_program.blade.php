@@ -8,9 +8,7 @@
     {!! breadcrumbs([
         'Admin Panel' => 'admin',
         'Media & Programs' => 'admin/data/programs',
-        ($program->id ? 'Edit' : 'Add') . ' Program' => $program->id
-            ? 'admin/data/programs/edit/' . $program->id
-            : 'admin/data/programs/create',
+        ($program->id ? 'Edit' : 'Add') . ' Program' => $program->id ? 'admin/data/programs/edit/' . $program->id : 'admin/data/programs/create',
     ]) !!}
 
     <h1>{{ $program->id ? 'Edit' : 'Add' }} Media/Program

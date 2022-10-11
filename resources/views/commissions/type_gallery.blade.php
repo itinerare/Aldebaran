@@ -14,8 +14,7 @@
         <h1>
             Example Gallery: {{ $type->name }}
             <div class="float-right ml-2">
-                <a class="btn btn-secondary"
-                    href="{{ url(isset($source) && $source == 'key' ? 'commissions/types/' . $type->key : 'commissions/' . $type->category->class->slug) }}">Back
+                <a class="btn btn-secondary" href="{{ url(isset($source) && $source == 'key' ? 'commissions/types/' . $type->key : 'commissions/' . $type->category->class->slug) }}">Back
                     to Commission Info</a>
             </div>
         </h1>
@@ -60,8 +59,7 @@
 
         @include('gallery._flex_' . config('aldebaran.settings.gallery_arrangement'), [
             'pieces' => $pieces,
-            'source' =>
-                'commissions/types/' . (isset($source) && $source == 'key' ? $type->key : $type->id) . '/gallery',
+            'source' => 'commissions/types/' . (isset($source) && $source == 'key' ? $type->key : $type->id) . '/gallery',
         ])
 
         {!! $pieces->render() !!}

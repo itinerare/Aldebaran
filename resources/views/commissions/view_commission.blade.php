@@ -6,8 +6,7 @@
 
 @section('content')
     {!! breadcrumbs([
-        $commission->type->category->class->name . ' Commissions' =>
-            'commissions/' . $commission->type->category->class->slug,
+        $commission->type->category->class->name . ' Commissions' => 'commissions/' . $commission->type->category->class->slug,
         $commission->type->name . ' Commission' => 'commissions/view/' . $commission->commission_key,
     ]) !!}
 
@@ -101,9 +100,7 @@
                     <h5>Additional Information</h5>
                 </div>
                 <div class="col-md">
-                    {!! isset($commission->data['additional_information'])
-                        ? nl2br(htmlentities($commission->data['additional_information']))
-                        : '-' !!}
+                    {!! isset($commission->data['additional_information']) ? nl2br(htmlentities($commission->data['additional_information'])) : '-' !!}
                 </div>
             </div>
 
@@ -132,9 +129,7 @@
                                         @foreach ($piece->piece->primaryImages as $image)
                                             <div class="col-md text-center align-self-center mb-2">
                                                 <a href="{{ $image->fullsizeUrl }}"">
-                                                    <img class="img-thumbnail p-2" src="{{ $image->thumbnailUrl }}"
-                                                        style="max-width:100%; max-height:60vh;"
-                                                        alt="Thumbnail for image #{{ $image->id }} from piece {{ $piece->name }}" />
+                                                    <img class="img-thumbnail p-2" src="{{ $image->thumbnailUrl }}" style="max-width:100%; max-height:60vh;" alt="Thumbnail for image #{{ $image->id }} from piece {{ $piece->name }}" />
                                                 </a>
                                             </div>
                                             {!! $loop->odd ? '<div class="w-100"></div>' : '' !!}
@@ -145,9 +140,7 @@
                                         @foreach ($piece->piece->otherImages as $image)
                                             <div class="col-sm text-center align-self-center mb-2">
                                                 <a href="{{ $image->fullsizeUrl }}">
-                                                    <img class="img-thumbnail p-2" src="{{ $image->thumbnailUrl }}"
-                                                        style="max-width:100%; max-height:60vh;"
-                                                        alt="Thumbnail for image #{{ $image->id }} from piece {{ $piece->name }}" />
+                                                    <img class="img-thumbnail p-2" src="{{ $image->thumbnailUrl }}" style="max-width:100%; max-height:60vh;" alt="Thumbnail for image #{{ $image->id }} from piece {{ $piece->name }}" />
                                                 </a>
                                             </div>
                                             {!! $loop->even ? '<div class="w-100"></div>' : '' !!}
@@ -163,8 +156,7 @@
                                         <h4>
                                             {{ $piece->piece->name }}
                                             @if ($piece->piece->is_visible)
-                                                <span class="float-right"><a class="btn btn-primary"
-                                                        href="{{ $piece->piece->url }}">View in Gallery</a></span>
+                                                <span class="float-right"><a class="btn btn-primary" href="{{ $piece->piece->url }}">View in Gallery</a></span>
                                             @endif
                                         </h4>
                                         @if ($piece->piece->images->count())
@@ -197,9 +189,7 @@
                                         <div class="card mb-2">
                                             <h5 class="card-header">
                                                 Literature #{{ $literature->id }}
-                                                <a class="small inventory-collapse-toggle collapse-toggle collapsed"
-                                                    href="#literature-{{ $literature->id }}"
-                                                    data-toggle="collapse">Show</a></h3>
+                                                <a class="small inventory-collapse-toggle collapse-toggle collapsed" href="#literature-{{ $literature->id }}" data-toggle="collapse">Show</a></h3>
                                             </h5>
                                             <div class="card-body collapse" id="literature-{{ $literature->id }}">
                                                 {!! $literature->text !!}

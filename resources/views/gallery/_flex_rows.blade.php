@@ -3,9 +3,7 @@
         @foreach ($group as $piece)
             @include('gallery._gallery_thumbnail', [
                 'piece' => $piece,
-                'source' =>
-                    (isset($source) ? $source : 'gallery') .
-                    (Request::get('page') ? '&page=' . Request::get('page') : ''),
+                'source' => (isset($source) ? $source : 'gallery') . (Request::get('page') ? '&page=' . Request::get('page') : ''),
                 'project' => isset($project) ? $project : false,
             ])
         @endforeach

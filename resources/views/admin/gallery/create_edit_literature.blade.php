@@ -9,9 +9,7 @@
         'Admin Panel' => 'admin',
         'Pieces' => 'admin/data/pieces',
         'Edit Piece' => 'admin/data/pieces/edit/' . $piece->id,
-        ($literature->id ? 'Edit' : 'Create') . ' Literature' => $literature->id
-            ? 'admin/data/pieces/literatures/edit/' . $literature->id
-            : 'admin/data/pieces/literatures/create/' . $piece->id,
+        ($literature->id ? 'Edit' : 'Create') . ' Literature' => $literature->id ? 'admin/data/pieces/literatures/edit/' . $literature->id : 'admin/data/pieces/literatures/create/' . $piece->id,
     ]) !!}
 
     <h1>{{ $literature->id ? 'Edit' : 'Create' }} Literature
@@ -21,9 +19,7 @@
     </h1>
 
     {!! Form::open([
-        'url' => $literature->id
-            ? 'admin/data/pieces/literatures/edit/' . $literature->id
-            : 'admin/data/pieces/literatures/create',
+        'url' => $literature->id ? 'admin/data/pieces/literatures/edit/' . $literature->id : 'admin/data/pieces/literatures/create',
         'id' => 'literatureForm',
         'files' => true,
     ]) !!}
@@ -47,18 +43,15 @@
                     <div class="card mb-2" id="existingThumbnail">
                         <div class="card-body text-center">
                             Thumbnail:<br />
-                            <a href="{{ $literature->thumbnailUrl }}" data-lightbox="entry"
-                                data-title="Literature Thumbnail">
-                                <img class="p-2" src="{{ $literature->thumbnailUrl }}"
-                                    style="max-width:100%; max-height:60vh;" alt="Thumbnail image" />
+                            <a href="{{ $literature->thumbnailUrl }}" data-lightbox="entry" data-title="Literature Thumbnail">
+                                <img class="p-2" src="{{ $literature->thumbnailUrl }}" style="max-width:100%; max-height:60vh;" alt="Thumbnail image" />
                             </a>
                         </div>
                     </div>
                 @endif
                 <div class="card mb-2 hide" id="thumbnailContainer">
                     <div class="card-body text-center">
-                        <img src="#" id="thumbnail" style="max-width:100%; max-height:60vh;"
-                            alt="Thumbnail image preview" />
+                        <img src="#" id="thumbnail" style="max-width:100%; max-height:60vh;" alt="Thumbnail image preview" />
                     </div>
                 </div>
                 <div class="card mb-2 {{ $literature->hash ? 'hide' : '' }}" id="placeholderContainer">
@@ -99,9 +92,7 @@
                 'class' => 'form-check-input',
                 'data-toggle' => 'toggle',
             ]) !!}
-            {!! Form::label('is_primary', 'Is Primary', ['class' => 'form-check-label ml-3']) !!} {!! add_help(
-                'Whether or not this is a primary literature for the piece. Primary literatures are preferred for a piece\'s thumbnail or text preview.',
-            ) !!}
+            {!! Form::label('is_primary', 'Is Primary', ['class' => 'form-check-label ml-3']) !!} {!! add_help('Whether or not this is a primary literature for the piece. Primary literatures are preferred for a piece\'s thumbnail or text preview.') !!}
         </div>
         <div class="col-md form-group">
             {!! Form::checkbox('is_visible', 1, $literature->id ? $literature->is_visible : 1, [

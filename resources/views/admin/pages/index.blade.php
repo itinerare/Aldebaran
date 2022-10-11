@@ -28,8 +28,7 @@
                     <div class="col-12 col-md-5">{{ $page->name }}</div>
                     <div class="col-3 col-md-3">{{ $page->key }}</div>
                     <div class="col-6 col-md-3">{!! pretty_date($page->updated_at) !!}</div>
-                    <div class="col-3 col-md-1 text-right"><a href="{{ url('admin/pages/edit/' . $page->id) }}"
-                            class="btn btn-primary py-0 px-2">Edit</a></div>
+                    <div class="col-3 col-md-1 text-right"><a href="{{ url('admin/pages/edit/' . $page->id) }}" class="btn btn-primary py-0 px-2">Edit</a></div>
                 </div>
             @endforeach
         </div>

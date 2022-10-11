@@ -4,9 +4,7 @@
         <div class="row">
             <div class="col-md">
                 <div class="form-group">
-                    {!! Form::label('field_key[]', 'Field Key') !!} {!! add_help(
-                        'Internal key. Can\'t be duplicated within one form, or duplicate instances will overwrite each other. <strong>Changing this will break any existing commissions\' form responses if they use this form.',
-                    ) !!}
+                    {!! Form::label('field_key[]', 'Field Key') !!} {!! add_help('Internal key. Can\'t be duplicated within one form, or duplicate instances will overwrite each other. <strong>Changing this will break any existing commissions\' form responses if they use this form.') !!}
                     {!! Form::text('field_key[]', $key, [
                         'class' => 'form-control',
                         'placeholder' => 'Internal key. Can\'t be duplicated',
@@ -35,12 +33,9 @@
                 </div>
             </div>
             <div class="chooseOptions col-md-12">
-                <div
-                    class="choiceOptions {{ $field['type'] == 'choice' || $field['type'] == 'multiple' ? '' : 'hide' }}">
+                <div class="choiceOptions {{ $field['type'] == 'choice' || $field['type'] == 'multiple' ? '' : 'hide' }}">
                     <div class="form-group">
-                        {!! Form::label('field_choices[]', 'Field Options') !!} {!! add_help(
-                            'Enter options, separated by commas. <strong>Changing this will break any existing commissions\' form responses if they use this form.',
-                        ) !!}
+                        {!! Form::label('field_choices[]', 'Field Options') !!} {!! add_help('Enter options, separated by commas. <strong>Changing this will break any existing commissions\' form responses if they use this form.') !!}
                         {!! Form::text('field_choices[]', isset($field['choices']) ? implode(',', $field['choices']) : null, [
                             'class' => 'form-control',
                             'placeholder' => 'Enter options, separated by commas',
@@ -50,8 +45,7 @@
             </div>
             <div class="col-md">
                 <div class="form-group">
-                    {!! Form::label('field_rules[]', 'Field Rules (Optional)') !!} (See rules <a
-                        href="https://laravel.com/docs/8.x/validation#available-validation-rules">here</a>)
+                    {!! Form::label('field_rules[]', 'Field Rules (Optional)') !!} (See rules <a href="https://laravel.com/docs/8.x/validation#available-validation-rules">here</a>)
                     {!! Form::text('field_rules[]', isset($field['rules']) ? $field['rules'] : null, [
                         'class' => 'form-control',
                         'placeholder' => 'Any custom validation rules',

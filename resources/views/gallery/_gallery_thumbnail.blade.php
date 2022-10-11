@@ -1,23 +1,17 @@
-<div
-    class="{{ config('aldebaran.settings.gallery_arrangement') == 'rows' ? 'flex-fill' : '' }} img-fluid align-self-center text-center m-1">
+<div class="{{ config('aldebaran.settings.gallery_arrangement') == 'rows' ? 'flex-fill' : '' }} img-fluid align-self-center text-center m-1">
     <div class="container">
         <div class="content align-self-center" style="min-height:100px;">
             @if ($piece->images->where('is_visible', 1)->count() + $piece->literatures->where('is_visible', 1)->count() > 1)
                 <div class="image-badge badge-primary">
                     @if ($piece->images->where('is_visible', 1)->count())
-                        <abbr data-toggle="tooltip"
-                            title="{{ $piece->images->where('is_visible', 1)->count() }} Image{{ $piece->images->where('is_visible', 1)->count() == 1 ? '' : 's' }}">{!! $piece->images->where('is_visible', 1)->count() == 1
-                                ? '<i class="fas fa-image"></i>'
-                                : '<i class="fas fa-images"></i>' !!}
+                        <abbr data-toggle="tooltip" title="{{ $piece->images->where('is_visible', 1)->count() }} Image{{ $piece->images->where('is_visible', 1)->count() == 1 ? '' : 's' }}">{!! $piece->images->where('is_visible', 1)->count() == 1 ? '<i class="fas fa-image"></i>' : '<i class="fas fa-images"></i>' !!}
                             {{ $piece->images->where('is_visible', 1)->count() }}</abbr>
                     @endif
                     @if ($piece->images->where('is_visible', 1)->count() && $piece->literatures->where('is_visible', 1)->count())
                         /
                     @endif
                     @if ($piece->literatures->where('is_visible', 1)->count())
-                        <abbr data-toggle="tooltip"
-                            title="{{ $piece->literatures->where('is_visible', 1)->count() }} Literature{{ $piece->literatures->where('is_visible', 1)->count() == 1 ? '' : 's' }}"><i
-                                class="fas fa-book"></i>
+                        <abbr data-toggle="tooltip" title="{{ $piece->literatures->where('is_visible', 1)->count() }} Literature{{ $piece->literatures->where('is_visible', 1)->count() == 1 ? '' : 's' }}"><i class="fas fa-book"></i>
                             {{ $piece->literatures->where('is_visible', 1)->count() }}</abbr>
                     @endif
                 </div>

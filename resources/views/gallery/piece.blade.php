@@ -16,9 +16,7 @@
 
 @section('content')
     {!! breadcrumbs([
-        $piece->showInGallery ? 'Gallery' : $piece->project->name => $piece->showInGallery
-            ? 'gallery'
-            : 'projects/' . $piece->project->slug,
+        $piece->showInGallery ? 'Gallery' : $piece->project->name => $piece->showInGallery ? 'gallery' : 'projects/' . $piece->project->slug,
         $piece->name => 'pieces/' . $piece->id,
     ]) !!}
 
@@ -30,8 +28,7 @@
             {{ $piece->name }}
             @if (Request::get('source'))
                 <div class="float-right ml-2">
-                    <a class="btn btn-secondary"
-                        href="{{ url(Request::get('source') . (Request::get('page') ? '?page=' . Request::get('page') : '')) }}">Go
+                    <a class="btn btn-secondary" href="{{ url(Request::get('source') . (Request::get('page') ? '?page=' . Request::get('page') : '')) }}">Go
                         Back</a>
                 </div>
             @endif
@@ -43,10 +40,8 @@
         <div class="row">
             @foreach ($piece->primaryImages->where('is_visible', 1) as $image)
                 <div class="col-md text-center align-self-center mb-2">
-                    <a href="{{ $image->imageUrl }}" data-lightbox="entry"
-                        data-title="{{ isset($image->description) ? $image->description : '' }}">
-                        <img class="img-thumbnail p-2" src="{{ $image->imageUrl }}" style="max-width:100%; max-height:60vh;"
-                            alt="{{ $image->alt_text ?? 'Primary image ' . $loop->iteration . ' for ' . $piece->name }}" />
+                    <a href="{{ $image->imageUrl }}" data-lightbox="entry" data-title="{{ isset($image->description) ? $image->description : '' }}">
+                        <img class="img-thumbnail p-2" src="{{ $image->imageUrl }}" style="max-width:100%; max-height:60vh;" alt="{{ $image->alt_text ?? 'Primary image ' . $loop->iteration . ' for ' . $piece->name }}" />
                     </a>
                 </div>
                 {!! $loop->odd && $loop->count > 2 ? '<div class="w-100"></div>' : '' !!}
@@ -56,11 +51,8 @@
         <div class="row mb-2">
             @foreach ($piece->otherImages->where('is_visible', 1) as $image)
                 <div class="col-sm text-center align-self-center mb-2">
-                    <a href="{{ $image->imageUrl }}" data-lightbox="entry"
-                        data-title="{{ isset($image->description) ? $image->description : '' }}">
-                        <img class="img-thumbnail p-2" src="{{ $image->thumbnailUrl }}"
-                            style="max-width:100%; max-height:60vh;"
-                            alt="{{ $image->alt_text ?? 'Thumbnail for secondary image ' . $loop->iteration . ' for ' . $piece->name }}" />
+                    <a href="{{ $image->imageUrl }}" data-lightbox="entry" data-title="{{ isset($image->description) ? $image->description : '' }}">
+                        <img class="img-thumbnail p-2" src="{{ $image->thumbnailUrl }}" style="max-width:100%; max-height:60vh;" alt="{{ $image->alt_text ?? 'Thumbnail for secondary image ' . $loop->iteration . ' for ' . $piece->name }}" />
                     </a>
                 </div>
                 {!! $loop->iteration % ($loop->count % 4 == 0 ? 4 : 3) == 0 ? '<div class="w-100"></div>' : '' !!}
@@ -106,8 +98,7 @@
                 return $programs->program->name;
             }) as $program)
                             @if ($program->program->has_image)
-                                <img class="mw-100" style="height:16px;" src="{{ $program->program->imageUrl }}"
-                                    alt="Icon for {{ $program->name }}" />
+                                <img class="mw-100" style="height:16px;" src="{{ $program->program->imageUrl }}" alt="Icon for {{ $program->name }}" />
                             @endif{!! $program->program->name !!}{{ !$loop->last ? ', ' : '' }}
                         @endforeach
                     </small>

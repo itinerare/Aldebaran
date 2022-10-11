@@ -17,40 +17,32 @@
     </title>
 
     <!-- Primary Meta Tags -->
-    <meta name="title"
-        content="{{ Settings::get('site_name') }} @if (View::hasSection('title')) ・@yield('title') @endif">
-    <meta name="description"
-        content="@if (View::hasSection('meta-desc')) @yield('meta-desc') @else {{ Settings::get('site_desc') }} @endif">
+    <meta name="title" content="{{ Settings::get('site_name') }} @if (View::hasSection('title')) ・@yield('title') @endif">
+    <meta name="description" content="@if (View::hasSection('meta-desc')) @yield('meta-desc') @else {{ Settings::get('site_desc') }} @endif">
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ config('app.url', 'http://localhost') }}">
-    <meta property="og:image"
-        content="@if (View::hasSection('meta-img')) @yield('meta-img') @else @if (screenshot(url()->current())){{ screenshot(url()->current()) }}@else{{ asset('images/assets/avatar.png') }} @endif @endif">
+    <meta property="og:image" content="@if (View::hasSection('meta-img')) @yield('meta-img') @else @if (screenshot(url()->current())){{ screenshot(url()->current()) }}@else{{ asset('images/assets/avatar.png') }} @endif @endif">
     <meta property="og:site_name" content="{{ Settings::get('site_name') }}" />
-    <meta property="og:title"
-        content="
+    <meta property="og:title" content="
         @if (View::hasSection('title')) @yield('title')
         @else
             {{ Settings::get('site_name') }} @endif
     ">
-    <meta property="og:description"
-        content="@if (View::hasSection('meta-desc')) @yield('meta-desc') @else {{ Settings::get('site_desc') }} @endif">
+    <meta property="og:description" content="@if (View::hasSection('meta-desc')) @yield('meta-desc') @else {{ Settings::get('site_desc') }} @endif">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="{{ config('app.url', 'http://localhost') }}">
-    <meta property="twitter:image"
-        content="@if (View::hasSection('meta-img')) @yield('meta-img') @else @if (screenshot(url()->current())){{ screenshot(url()->current()) }}@else{{ asset('images/assets/avatar.png') }} @endif @endif">
+    <meta property="twitter:image" content="@if (View::hasSection('meta-img')) @yield('meta-img') @else @if (screenshot(url()->current())){{ screenshot(url()->current()) }}@else{{ asset('images/assets/avatar.png') }} @endif @endif">
     <meta name="twitter:site" content="@{{ Settings::get('site_name') }}" />
-    <meta property="twitter:title"
-        content="
+    <meta property="twitter:title" content="
         @if (View::hasSection('title')) @yield('title')
         @else
             {{ Settings::get('site_name') }} @endif
     ">
-    <meta property="twitter:description"
-        content="@if (View::hasSection('meta-desc')) @yield('meta-desc') @else {{ Settings::get('site_desc') }} @endif">
+    <meta property="twitter:description" content="@if (View::hasSection('meta-desc')) @yield('meta-desc') @else {{ Settings::get('site_desc') }} @endif">
 
     <!-- Scripts -->
     <script src="{{ mix('js/app.js') }}"></script>
@@ -103,8 +95,7 @@
                         @endif
                     </div>
                 @endif
-                <div class="main-content {{ config('aldebaran.settings.layout.full_width') ? (View::hasSection('sidebar') ? 'col-lg-10' : 'col-lg-12') : 'col-lg-8' }} p-4"
-                    id="content">
+                <div class="main-content {{ config('aldebaran.settings.layout.full_width') ? (View::hasSection('sidebar') ? 'col-lg-10' : 'col-lg-12') : 'col-lg-8' }} p-4" id="content">
                     <div>
                         @include('flash::message')
                         @yield('content')
