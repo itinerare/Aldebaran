@@ -26,7 +26,7 @@
 
     <div class="form-group">
         {!! Form::label('text', 'Content') !!}
-        {!! Form::textarea('text', $log->text, ['class' => 'form-control wysiwyg', 'required']) !!}
+        {!! Form::textarea('text', $log->text, ['class' => 'form-control wysiwyg']) !!}
     </div>
 
     <div class="form-group">
