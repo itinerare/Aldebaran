@@ -21,7 +21,7 @@
         "postcss": "^8.4.17",
         "process": "0.11.10",
         "resolve-url-loader": "^5.0.0",
-        "sass": "^1.54.9",
+        "sass": "^1.55.0",
         "sass-loader": "^13.1.0"
     },
     "version": "3.3.0"
