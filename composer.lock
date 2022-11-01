@@ -4240,16 +4240,16 @@
         },
         {
             "name": "spatie/laravel-feed",
-            "version": "4.1.4",
+            "version": "4.1.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/laravel-feed.git",
-                "reference": "8cf053e3ac7ed10363ded43c0c61c54d756b43cf"
+                "reference": "d239ea72588e8352d9b3229330db57a113bb2d92"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/laravel-feed/zipball/8cf053e3ac7ed10363ded43c0c61c54d756b43cf",
-                "reference": "8cf053e3ac7ed10363ded43c0c61c54d756b43cf",
+                "url": "https://api.github.com/repos/spatie/laravel-feed/zipball/d239ea72588e8352d9b3229330db57a113bb2d92",
+                "reference": "d239ea72588e8352d9b3229330db57a113bb2d92",
                 "shasum": ""
             },
             "require": {
@@ -4316,7 +4316,7 @@
                 "spatie"
             ],
             "support": {
-                "source": "https://github.com/spatie/laravel-feed/tree/4.1.4"
+                "source": "https://github.com/spatie/laravel-feed/tree/4.1.5"
             },
             "funding": [
                 {
@@ -4328,7 +4328,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2022-05-27T08:51:00+00:00"
+            "time": "2022-10-26T10:22:31+00:00"
         },
         {
             "name": "spatie/laravel-honeypot",
