@@ -26,9 +26,7 @@
     <meta property="og:image" content="@if (View::hasSection('meta-img')) @yield('meta-img') @else @if (screenshot(url()->current())){{ screenshot(url()->current()) }}@else{{ asset('images/assets/avatar.png') }} @endif @endif">
     <meta property="og:site_name" content="{{ Settings::get('site_name') }}" />
     <meta property="og:title" content="
-        @if (View::hasSection('title')) @yield('title')
-        @else
-            {{ Settings::get('site_name') }} @endif
+        @if (View::hasSection('title')) @yield('title') @else {{ Settings::get('site_name') }} @endif
     ">
     <meta property="og:description" content="@if (View::hasSection('meta-desc')) @yield('meta-desc') @else {{ Settings::get('site_desc') }} @endif">
 
@@ -36,11 +34,9 @@
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="{{ config('app.url', 'http://localhost') }}">
     <meta property="twitter:image" content="@if (View::hasSection('meta-img')) @yield('meta-img') @else @if (screenshot(url()->current())){{ screenshot(url()->current()) }}@else{{ asset('images/assets/avatar.png') }} @endif @endif">
-    <meta name="twitter:site" content="@{{ Settings::get('site_name') }}" />
+    <meta name="twitter:site" content="{{ Settings::get('site_name') }}" />
     <meta property="twitter:title" content="
-        @if (View::hasSection('title')) @yield('title')
-        @else
-            {{ Settings::get('site_name') }} @endif
+        @if (View::hasSection('title')) @yield('title') @else {{ Settings::get('site_name') }} @endif
     ">
     <meta property="twitter:description" content="@if (View::hasSection('meta-desc')) @yield('meta-desc') @else {{ Settings::get('site_desc') }} @endif">
 
