@@ -927,8 +927,12 @@ class GalleryService extends Service {
         // as well as re-setting the extension.
         if ($reupload) {
             // Unlink images as necessary
-            unlink($image->imagePath.'/'.$image->thumbnailFileName);
-            unlink($image->imagePath.'/'.$image->imageFileName);
+            if (file_exists($image->imagePath.'/'.$image->thumbnailFileName)) {
+                unlink($image->imagePath.'/'.$image->thumbnailFileName);
+            }
+            if (file_exists($image->imagePath.'/'.$image->imageFileName)) {
+                unlink($image->imagePath.'/'.$image->imageFileName);
+            }
             if (!$regen) {
                 unlink($image->imagePath.'/'.$image->fullsizeFileName);
             }
