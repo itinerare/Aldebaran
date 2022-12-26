@@ -1016,7 +1016,7 @@ class GalleryService extends Service {
                     while ($x < $processImage->width() + 150) {
                         foreach ($watermarkText as $key=> $text) {
                             $processImage->text($text, $key == 0 && count($watermarkText) > 1 ? $x + (22 + ($offset * 5)) : $x, $key > 0 ? $y + $i : $y, function ($font) use ($data) {
-                                $font->file(public_path('webfonts/RobotoCondensed-Regular.ttf'));
+                                $font->file(public_path('fonts/RobotoCondensed-Regular.ttf'));
                                 $font->size(24);
                                 $font->color([255, 255, 255, $data['text_opacity']]);
                                 $font->valign(500);
