@@ -170,10 +170,10 @@ class DataCommissionTypeTest extends TestCase {
             'no examples'      => [0, ['type' => 'flat', 'cost' => mt_rand(1, 100)], 0, 1, 1, null, 0, 0],
 
             // Different pricing types
-            'flat cost'   => [1, ['type' => 'flat', 'cost' => mt_rand(1, 100)], 0, 1, 1, null, 0, 1],
-            'range'       => [1, ['type' => 'range', 'cost' => ['min' => mt_rand(1, 50), 'max' => mt_rand(51, 100)]], 0, 1, 1, null, 0, 1],
-            'minimum'     => [1, ['type' => 'min', 'cost' => mt_rand(1, 100)], 0, 1, 1, null, 0, 1],
-            'hourly rate' => [1, ['type' => 'rate', 'cost' => mt_rand(1, 100)], 0, 1, 1, null, 0, 1],
+            'flat cost'        => [1, ['type' => 'flat', 'cost' => mt_rand(1, 100)], 0, 1, 1, null, 0, 1],
+            'range'            => [1, ['type' => 'range', 'cost' => ['min' => mt_rand(1, 50), 'max' => mt_rand(51, 100)]], 0, 1, 1, null, 0, 1],
+            'minimum'          => [1, ['type' => 'min', 'cost' => mt_rand(1, 100)], 0, 1, 1, null, 0, 1],
+            'hourly rate'      => [1, ['type' => 'rate', 'cost' => mt_rand(1, 100)], 0, 1, 1, null, 0, 1],
         ];
     }
 
@@ -254,22 +254,22 @@ class DataCommissionTypeTest extends TestCase {
             'include class and category' => [0, ['type' => 'flat', 'cost' => mt_rand(1, 100)], 0, 1, 1, null, 0, 1, 1, 1, null],
 
             // Different pricing types
-            'flat cost'   => [1, ['type' => 'flat', 'cost' => mt_rand(1, 100)], 0, 1, 1, null, 0, 1, 0, 0, null],
-            'range'       => [1, ['type' => 'range', 'cost' => ['min' => mt_rand(1, 50), 'max' => mt_rand(51, 100)]], 0, 1, 1, null, 0, 1, 0, 0, null],
-            'minimum'     => [1, ['type' => 'min', 'cost' => mt_rand(1, 100)], 0, 1, 1, null, 0, 1, 0, 0, null],
-            'hourly rate' => [1, ['type' => 'rate', 'cost' => mt_rand(1, 100)], 0, 1, 1, null, 0, 1, 0, 0, null],
+            'flat cost'                  => [1, ['type' => 'flat', 'cost' => mt_rand(1, 100)], 0, 1, 1, null, 0, 1, 0, 0, null],
+            'range'                      => [1, ['type' => 'range', 'cost' => ['min' => mt_rand(1, 50), 'max' => mt_rand(51, 100)]], 0, 1, 1, null, 0, 1, 0, 0, null],
+            'minimum'                    => [1, ['type' => 'min', 'cost' => mt_rand(1, 100)], 0, 1, 1, null, 0, 1, 0, 0, null],
+            'hourly rate'                => [1, ['type' => 'rate', 'cost' => mt_rand(1, 100)], 0, 1, 1, null, 0, 1, 0, 0, null],
 
             // Field type tests
             // (string) type, (bool) rules, (bool) choices, value, (string) help
-            'text field'            => [0, ['type' => 'flat', 'cost' => mt_rand(1, 100)], 0, 1, 1, null, 0, 1, 0, 0, ['text', 0, 0, null, null]],
-            'text field with rule'  => [0, ['type' => 'flat', 'cost' => mt_rand(1, 100)], 0, 1, 1, null, 0, 1, 0, 0, ['text', 1, 0, null, null]],
-            'text field with value' => [0, ['type' => 'flat', 'cost' => mt_rand(1, 100)], 0, 1, 1, null, 0, 1, 0, 0, ['text', 0, 0, 'test', null]],
-            'text field with help'  => [0, ['type' => 'flat', 'cost' => mt_rand(1, 100)], 0, 1, 1, null, 0, 1, 0, 0, ['text', 0, 0, null, 'test']],
-            'textbox field'         => [0, ['type' => 'flat', 'cost' => mt_rand(1, 100)], 0, 1, 1, null, 0, 1, 0, 0, ['textarea', 0, 0, null, null]],
-            'number field'          => [0, ['type' => 'flat', 'cost' => mt_rand(1, 100)], 0, 1, 1, null, 0, 1, 0, 0, ['number', 0, 0, null, null]],
-            'checkbox field'        => [0, ['type' => 'flat', 'cost' => mt_rand(1, 100)], 0, 1, 1, null, 0, 1, 0, 0, ['checkbox', 0, 0, null, null]],
-            'choose one field'      => [0, ['type' => 'flat', 'cost' => mt_rand(1, 100)], 0, 1, 1, null, 0, 1, 0, 0, ['choice', 0, 0, null, null]],
-            'choose multiple field' => [0, ['type' => 'flat', 'cost' => mt_rand(1, 100)], 0, 1, 1, null, 0, 1, 0, 0, ['multiple', 0, 0, null, null]],
+            'text field'                 => [0, ['type' => 'flat', 'cost' => mt_rand(1, 100)], 0, 1, 1, null, 0, 1, 0, 0, ['text', 0, 0, null, null]],
+            'text field with rule'       => [0, ['type' => 'flat', 'cost' => mt_rand(1, 100)], 0, 1, 1, null, 0, 1, 0, 0, ['text', 1, 0, null, null]],
+            'text field with value'      => [0, ['type' => 'flat', 'cost' => mt_rand(1, 100)], 0, 1, 1, null, 0, 1, 0, 0, ['text', 0, 0, 'test', null]],
+            'text field with help'       => [0, ['type' => 'flat', 'cost' => mt_rand(1, 100)], 0, 1, 1, null, 0, 1, 0, 0, ['text', 0, 0, null, 'test']],
+            'textbox field'              => [0, ['type' => 'flat', 'cost' => mt_rand(1, 100)], 0, 1, 1, null, 0, 1, 0, 0, ['textarea', 0, 0, null, null]],
+            'number field'               => [0, ['type' => 'flat', 'cost' => mt_rand(1, 100)], 0, 1, 1, null, 0, 1, 0, 0, ['number', 0, 0, null, null]],
+            'checkbox field'             => [0, ['type' => 'flat', 'cost' => mt_rand(1, 100)], 0, 1, 1, null, 0, 1, 0, 0, ['checkbox', 0, 0, null, null]],
+            'choose one field'           => [0, ['type' => 'flat', 'cost' => mt_rand(1, 100)], 0, 1, 1, null, 0, 1, 0, 0, ['choice', 0, 0, null, null]],
+            'choose multiple field'      => [0, ['type' => 'flat', 'cost' => mt_rand(1, 100)], 0, 1, 1, null, 0, 1, 0, 0, ['multiple', 0, 0, null, null]],
         ];
     }
 

@@ -2,7 +2,7 @@
 
 return [
     'feeds' => [
-        'main' => [
+        'main'      => [
             /*
              * Here you can specify which class and method will return
              * the items that should appear in the feed. For example:
@@ -11,12 +11,12 @@ return [
              * You can also pass an argument to that method:
              * ['App\Model@getAllFeedItems', 'argument']
              */
-            'items' => 'App\Models\Gallery\Piece@getFeedItems',
+            'items'       => 'App\Models\Gallery\Piece@getFeedItems',
 
             /*
              * The feed will be available on this url.
              */
-            'url' => '/gallery',
+            'url'         => '/gallery',
 
             'title'       => env('APP_NAME', 'Laravel').' ・ Gallery',
             'description' => 'Pieces from the main gallery.',
@@ -25,17 +25,17 @@ return [
             /*
              * The format of the feed.  Acceptable values are 'rss', 'atom', or 'json'.
              */
-            'format' => 'atom',
+            'format'      => 'atom',
 
             /*
              * The view that will render the feed.
              */
-            'view' => 'feed::atom',
+            'view'        => 'feed::atom',
 
             /*
              * The type to be used in the <link> tag
              */
-            'type' => '',
+            'type'        => '',
 
             /*
              * The content type for the feed response.  Set to an empty string to automatically
@@ -44,7 +44,7 @@ return [
             'contentType' => '',
         ],
 
-        'all' => [
+        'all'       => [
             /*
              * Here you can specify which class and method will return
              * the items that should appear in the feed. For example:
@@ -53,12 +53,12 @@ return [
              * You can also pass an argument to that method:
              * ['App\Model@getAllFeedItems', 'argument']
              */
-            'items' => ['App\Models\Gallery\Piece@getFeedItems', 'gallery' => false],
+            'items'       => ['App\Models\Gallery\Piece@getFeedItems', 'gallery' => false],
 
             /*
              * The feed will be available on this url.
              */
-            'url' => '/all',
+            'url'         => '/all',
 
             'title'       => env('APP_NAME', 'Laravel').' ・ All',
             'description' => 'All pieces, regardless of their appearance in the main gallery.',
@@ -67,17 +67,17 @@ return [
             /*
              * The format of the feed.  Acceptable values are 'rss', 'atom', or 'json'.
              */
-            'format' => 'atom',
+            'format'      => 'atom',
 
             /*
              * The view that will render the feed.
              */
-            'view' => 'feed::atom',
+            'view'        => 'feed::atom',
 
             /*
              * The type to be used in the <link> tag
              */
-            'type' => '',
+            'type'        => '',
 
             /*
              * The content type for the feed response.  Set to an empty string to automatically
@@ -95,12 +95,12 @@ return [
              * You can also pass an argument to that method:
              * ['App\Model@getAllFeedItems', 'argument']
              */
-            'items' => 'App\Models\Changelog@getFeedItems',
+            'items'       => 'App\Models\Changelog@getFeedItems',
 
             /*
              * The feed will be available on this url.
              */
-            'url' => '/changelog',
+            'url'         => '/changelog',
 
             'title'       => env('APP_NAME', 'Laravel').' ・ Changelog',
             'description' => 'Changelog entries.',
@@ -109,17 +109,17 @@ return [
             /*
              * The format of the feed.  Acceptable values are 'rss', 'atom', or 'json'.
              */
-            'format' => 'atom',
+            'format'      => 'atom',
 
             /*
              * The view that will render the feed.
              */
-            'view' => 'feed::atom',
+            'view'        => 'feed::atom',
 
             /*
              * The type to be used in the <link> tag
              */
-            'type' => '',
+            'type'        => '',
 
             /*
              * The content type for the feed response.  Set to an empty string to automatically

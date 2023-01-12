@@ -494,7 +494,7 @@ class CommissionService extends Service {
 
         // Add and/or modify text pages
         $pages = [
-            $class->slug.'tos' => [
+            $class->slug.'tos'  => [
                 'name' => $class->name.' Commission Terms of Service',
                 'text' => '<p>'.$class->name.' commssion terms of service go here.</p>',
                 'flag' => 'tos',

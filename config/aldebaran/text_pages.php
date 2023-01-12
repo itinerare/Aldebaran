@@ -16,17 +16,17 @@ return [
     |
     */
 
-    'index' => [
+    'index'          => [
         'name' => 'Homepage Text',
         'text' => '<p>The text here will be displayed on the home page of the site.</p>',
     ],
 
-    'about' => [
+    'about'          => [
         'name' => 'About',
         'text' => '<p>The text here will be displayed on the about page.</p>',
     ],
 
-    'gallery' => [
+    'gallery'        => [
         'name' => 'Gallery Text',
         'text' => '<p>The text here will be displayed on the gallery page.</p>',
     ],
@@ -36,7 +36,7 @@ return [
         'text' => '<p>The text here will be displayed on the commission request form.</p>',
     ],
 
-    'privacy' => [
+    'privacy'        => [
         'name' => 'Privacy Policy',
         'text' => 'text',
     ],

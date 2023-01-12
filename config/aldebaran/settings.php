@@ -21,10 +21,10 @@ return [
     |
     */
 
-    'navigation' => [
+    'navigation'          => [
         // This enables the main gallery page and shows the nav bar item
         // By default, this is enabled (1) but can be set to 0 to disable
-        'gallery' => 1,
+        'gallery'      => 1,
 
         // By default, projects are in a drop-down on the nav bar; this
         // makes each project its own item on the nav bar
@@ -33,7 +33,7 @@ return [
         'projects_nav' => 0,
     ],
 
-    'layout' => [
+    'layout'              => [
         // Whether or not the site should be full-width
         // By default content is confined to the center portion
         // This is overridden for the admin panel/anywhere there is a navigation sidebar
@@ -47,9 +47,9 @@ return [
 
     // Image dimensions, in px.
     // Which thumbnail dimension is used depends on the setting above
-    'thumbnail_width'    => 250,
-    'thumbnail_height'   => 200,
-    'display_image_size' => 2000,
+    'thumbnail_width'     => 250,
+    'thumbnail_height'    => 200,
+    'display_image_size'  => 2000,
 
     /*
     |--------------------------------------------------------------------------
@@ -63,12 +63,12 @@ return [
     |
     */
 
-    'commissions' => [
+    'commissions'         => [
         // Enables and displays the site's commission components
         'enabled' => 0,
 
         // Fee information. Current for PayPal as of Aug 10 2021
-        'fee' => [
+        'fee'     => [
             'base'         => .49,
             'percent'      => 3.49,
             'percent_intl' => 4.99,
@@ -91,7 +91,7 @@ return [
     |
     */
 
-    'captcha' => 0,
+    'captcha'             => 0,
 
     /*
     |--------------------------------------------------------------------------
@@ -109,7 +109,7 @@ return [
     |
     */
 
-    'enable_backups' => 0,
+    'enable_backups'      => 0,
 
     /*
     |--------------------------------------------------------------------------
@@ -121,7 +121,7 @@ return [
     |
     */
 
-    'version' => '3.3.0',
+    'version'             => '3.3.0',
 
     /*
     |--------------------------------------------------------------------------
@@ -139,13 +139,13 @@ return [
 
     // The email information for the site.
     // Used to send commission notifications if enabeled.
-    'admin_email' => [
+    'admin_email'         => [
         'address'  => env('MAIL_USERNAME', false),
         'password' => env('MAIL_PASSWORD', false),
     ],
 
     // thum.io info, used for generating meta tag preview images if enabled
-    'thum_io' => [
+    'thum_io'             => [
         'key' => env('THUM_IO_KEY', false),
         'id'  => env('THUM_IO_ID', false),
     ],
