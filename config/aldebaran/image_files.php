@@ -12,13 +12,13 @@ return [
     |
     */
 
-    'avatar' => [
+    'avatar'     => [
         'name'        => 'Avatar',
         'description' => 'Personal avatar. Used for meta tags.',
         'filename'    => 'avatar.png',
     ],
 
-    'watermark' => [
+    'watermark'  => [
         'name'        => 'Watermark',
         'description' => 'Personal watermark, used to automatically watermark images. Should be opaque (opacity will be adjusted in processing).',
         'filename'    => 'watermark.png',

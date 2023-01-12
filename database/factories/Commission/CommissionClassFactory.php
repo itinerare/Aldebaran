@@ -60,7 +60,7 @@ class CommissionClassFactory extends Factory {
 
         // Create text pages
         $pages = [
-            $slug.'tos' => [
+            $slug.'tos'  => [
                 'name' => $name.' Commission Terms of Service',
                 'text' => '<p>'.$name.' commssion terms of service go here.</p>',
                 'flag' => 'tos',

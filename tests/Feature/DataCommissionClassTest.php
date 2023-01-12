@@ -168,10 +168,10 @@ class DataCommissionClassTest extends TestCase {
 
     public function editClassProvider() {
         return [
-            'basic'           => [0, 0, null, 1],
-            'inactive'        => [0, 0, null, 0],
-            'with page'       => [0, 1, null, 1],
-            'additional page' => [1, 1, null, 1],
+            'basic'                 => [0, 0, null, 1],
+            'inactive'              => [0, 0, null, 0],
+            'with page'             => [0, 1, null, 1],
+            'additional page'       => [1, 1, null, 1],
 
             // Field type tests
             // (string) type, (bool) rules, (bool) choices, value, (string) help
