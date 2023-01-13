@@ -14,8 +14,7 @@ class PieceImage extends Model {
      * @var array
      */
     protected $fillable = [
-        'piece_id', 'hash', 'fullsize_hash', 'extension', 'description',
-        'is_primary_image', 'data', 'is_visible', 'sort', 'alt_text',
+        'piece_id', 'hash', 'fullsize_hash', 'extension', 'display_extension', 'description', 'is_primary_image', 'data', 'is_visible', 'sort', 'alt_text',
     ];
 
     /**
@@ -48,7 +47,7 @@ class PieceImage extends Model {
      */
     public static $createRules = [
         //
-        'image'              => 'required|mimes:png,jpg,jpeg,gif|max:5000',
+        'image'              => 'required|mimes:png,jpg,jpeg,gif,webp|max:10000',
         'watermark_scale'    => 'required',
         'watermark_opacity'  => 'required',
         'watermark_position' => 'required',
@@ -64,7 +63,7 @@ class PieceImage extends Model {
      */
     public static $updateRules = [
         //
-        'image'              => 'mimes:png,jpg,jpeg,gif|max:5000',
+        'image'              => 'mimes:png,jpg,jpeg,gif,webp|max:10000',
         'watermark_scale'    => 'required_with:image,regenerate_watermark',
         'watermark_opacity'  => 'required_with:image,regenerate_watermark',
         'watermark_position' => 'required_with:image,regenerate_watermark',
@@ -129,7 +128,7 @@ class PieceImage extends Model {
      * @return string
      */
     public function getImageFileNameAttribute() {
-        return $this->id.'_'.$this->hash.'.'.$this->extension;
+        return $this->id.'_'.$this->hash.'.'.($this->display_extension ?? $this->extension);
     }
 
     /**
@@ -156,7 +155,7 @@ class PieceImage extends Model {
      * @return string
      */
     public function getThumbnailFileNameAttribute() {
-        return $this->id.'_'.$this->hash.'_th.'.$this->extension;
+        return $this->id.'_'.$this->hash.'_th.'.($this->display_extension ?? $this->extension);
     }
 
     /**
@@ -169,7 +168,7 @@ class PieceImage extends Model {
     }
 
     /**
-     * Gets the URL of the model's image.
+     * Gets the URL of the model's thumbnail.
      *
      * @return string
      */
@@ -187,7 +186,7 @@ class PieceImage extends Model {
     }
 
     /**
-     * Gets the file name of the model's fullsize image.
+     * Gets the URL of the model's fullsize image.
      *
      * @return string
      */

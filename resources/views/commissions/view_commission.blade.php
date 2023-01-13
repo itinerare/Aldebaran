@@ -128,7 +128,7 @@
                                     <div class="row">
                                         @foreach ($piece->piece->primaryImages as $image)
                                             <div class="col-md text-center align-self-center mb-2">
-                                                <a href="{{ $image->fullsizeUrl }}"">
+                                                <a href="{{ url('commissions/view/' . $commission->commission_key . '/' . $image->id) }}">
                                                     <img class="img-thumbnail p-2" src="{{ $image->thumbnailUrl }}" style="max-width:100%; max-height:60vh;" alt="Thumbnail for image #{{ $image->id }} from piece {{ $piece->name }}" />
                                                 </a>
                                             </div>
@@ -139,7 +139,7 @@
                                     <div class="row mb-2">
                                         @foreach ($piece->piece->otherImages as $image)
                                             <div class="col-sm text-center align-self-center mb-2">
-                                                <a href="{{ $image->fullsizeUrl }}">
+                                                <a href="{{ url('commissions/view/' . $commission->commission_key . '/' . $image->id) }}">
                                                     <img class="img-thumbnail p-2" src="{{ $image->thumbnailUrl }}" style="max-width:100%; max-height:60vh;" alt="Thumbnail for image #{{ $image->id }} from piece {{ $piece->name }}" />
                                                 </a>
                                             </div>

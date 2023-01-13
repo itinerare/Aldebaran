@@ -35,22 +35,22 @@
             <div class="card mb-2" id="existingImage">
                 <div class="card-body text-center">
                     Watermarked/Display Image:<br />
-                    <a href="{{ $image->imageUrl }}" data-lightbox="entry" data-title="Watermarked Image">
-                        <img class="p-2" src="{{ $image->imageUrl }}" style="max-width:100%; max-height:60vh;" alt="Watermarked view" />
+                    <a href="{{ url('admin/data/pieces/images/view/' . $image->id . '/display') }}" data-lightbox="entry" data-title="Watermarked Image">
+                        <img class="p-2" src="{{ url('admin/data/pieces/images/view/' . $image->id . '/display') }}" style="max-width:100%; max-height:60vh;" alt="Watermarked view" />
                     </a>
 
                 </div>
                 <div class="row">
                     <div class="col-md-6 text-center">
                         Fullsize:<br />
-                        <a href="{{ $image->fullsizeUrl }}" data-lightbox="entry" data-title="Fullsize Image">
-                            <img class="p-2" src="{{ $image->fullsizeUrl }}" style="max-width:100%; max-height:60vh;" alt="Full-size view" />
+                        <a href="{{ url('admin/data/pieces/images/view/' . $image->id . '/full') }}" data-lightbox="entry" data-title="Fullsize Image">
+                            <img class="p-2" src="{{ url('admin/data/pieces/images/view/' . $image->id . '/full') }}" style="max-width:100%; max-height:60vh;" alt="Full-size view" />
                         </a>
                     </div>
                     <div class="col-md-6 text-center">
                         Thumbnail:<br />
-                        <a href="{{ $image->thumbnailUrl }}" data-lightbox="entry" data-title="Thumbnail Image">
-                            <img class="p-2" src="{{ $image->thumbnailUrl }}" style="max-width:100%; max-height:60vh;" alt="Thumbnail view" />
+                        <a href="{{ url('admin/data/pieces/images/view/' . $image->id . '/thumb') }}" data-lightbox="entry" data-title="Thumbnail Image">
+                            <img class="p-2" src="{{ url('admin/data/pieces/images/view/' . $image->id . '/thumb') }}" style="max-width:100%; max-height:60vh;" alt="Thumbnail view" />
                         </a>
                     </div>
                 </div>
@@ -64,8 +64,8 @@
         <div class="card p-2">
             {!! Form::label('mainImage', 'Upload File') !!}
             {!! Form::file('image', ['id' => 'mainImage']) !!}
-            <small>Images may be PNG, GIF, or JPG and up to
-                {{ min(ini_get('upload_max_filesize'), ini_get('post_max_size'), '5') }}MB in size.</small>
+            <small>Images may be PNG, GIF, JPEG, or WebP and up to
+                {{ min(ini_get('upload_max_filesize'), ini_get('post_max_size'), '10') }}MB in size.</small>
         </div>
     </div>
 
