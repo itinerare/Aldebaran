@@ -118,9 +118,11 @@ class DataGalleryPieceImageTest extends TestCase {
 
         $response->assertSessionHasNoErrors();
         $this->assertDatabaseHas('piece_images', [
-            'description'      => $withDescription ? $this->caption : null,
-            'is_visible'       => $isVisible,
-            'is_primary_image' => $isPrimary,
+            'description'       => $withDescription ? $this->caption : null,
+            'is_visible'        => $isVisible,
+            'is_primary_image'  => $isPrimary,
+            'extension'         => config('aldebaran.settings.image_formats.full', 'png'),
+            'display_extension' => null,
         ]);
 
         // Check that the associated image files are present
