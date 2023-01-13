@@ -39,8 +39,8 @@ class AdminSiteImagesTest extends TestCase {
      */
     public function testPostUploadImage($key) {
         // Remove the current file if it exists
-        if (File::exists(public_path('images/assets/'.$key.'.png'))) {
-            unlink('public/images/assets/'.$key.'.png');
+        if (File::exists(public_path('images/assets/'.$key.'.'.config('aldebaran.settings.image_formats.site_images', 'png')))) {
+            unlink('public/images/assets/'.$key.'.'.config('aldebaran.settings.image_formats.site_images', 'png'));
         }
 
         // Try to post data
@@ -54,7 +54,7 @@ class AdminSiteImagesTest extends TestCase {
         $response->assertSessionHasNoErrors();
         // Check that the file is now present
         $this->
-            assertTrue(File::exists(public_path('images/assets/'.$key.'.png')));
+            assertTrue(File::exists(public_path('images/assets/'.$key.'.'.config('aldebaran.settings.image_formats.site_images', 'png'))));
 
         // Replace with default images for tidiness
         $this->artisan('copy-default-images');
