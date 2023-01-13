@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\File;
+use Intervention\Image\Facades\Image;
 
 class FileService extends Service {
     /*
@@ -30,6 +31,11 @@ class FileService extends Service {
             $this->setError('error', 'Folder does not exist.');
         }
         File::move($file, $directory.'/'.$name);
+
+        if (config('aldebaran.settings.image_formats.site_images')) {
+            Image::make($directory.'/'.$name)->save($directory.'/'.$name, null, config('aldebaran.settings.image_formats.site_images', 'png'));
+        }
+
         chmod($directory.'/'.$name, 0755);
 
         return true;

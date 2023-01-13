@@ -44,7 +44,7 @@ class CopyDefaultImages extends Command {
 
         foreach ($images as $image) {
             $this->line('Copying image: '.$image['filename']."\n");
-            copy($sourceDir.$image['filename'], $destDir.$image['filename']);
+            copy($sourceDir.$image['filename'].'.'.config('aldebaran.settings.image_formats.site_images', 'png'), $destDir.$image['filename'].'.'.config('aldebaran.settings.image_formats.site_images', 'png'));
         }
         $this->line('Done!');
     }

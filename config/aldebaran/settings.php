@@ -45,11 +45,54 @@ return [
     // It's recommended to use rows!
     'gallery_arrangement' => 'rows',
 
-    // Image dimensions, in px.
-    // Which thumbnail dimension is used depends on the setting above
+    /*
+    |--------------------------------------------------------------------------
+    | Image Settings
+    |--------------------------------------------------------------------------
+    |
+    | These are settings related to the site's images.
+    |
+    */
+
+    // Image dimensions, in px. Which thumbnail dimension is used
+    // depends on the "gallery_arrangement" setting above
+    // Note that these settings are not retroactive!
     'thumbnail_width'     => 250,
     'thumbnail_height'    => 200,
     'display_image_size'  => 2000,
+
+    // What format(s) images should be saved in. Supported formats are:
+    // JPEG, PNG, GIF, BMP, or WebP; for more information, see
+    // https://image.intervention.io/v2/introduction/formats
+    // WebP is recommended for display images at minimum due to both
+    // transparency support as well as better compression
+    // Note that these settings are not retroactive!
+    'image_formats'       => [
+        // Includes full-sized images; setting this to WebP is recommended if storage
+        // space is a concern, as these are likely to be the largest use of storage for
+        // the site, especially if there are many images
+        // Setting this value to null will maintain images' existing format(s)
+        'full'            => 'webp',
+        // Includes watermarked/display image and thumbnails
+        // Has no impact unless different from the setting above
+        // Setting to null will maintain either the existing format (if the above is not set) or defer to the setting above (if it is)
+        'display'         => null,
+
+        // What format to display full-size images to on-demand when accessed via
+        // the commission interface. Allows commissioners, etc. to retrieve images
+        // in a more broadly supported format as appropriate
+        // Only applies if "full" above is not null
+        'commission_full' => 'png',
+        // What format to display images in on-demand when accessed via the admin
+        // panel, i.e. when editing a piece image. Allows retrieving images in a
+        // more broadly supported format as appropriate
+        // Only applies if "full" above is not null
+        'admin_view'      => 'png',
+
+        // What format site images uploaded through the admin panel should be stored in
+        // Supports PNG or WebP, cannot be null
+        'site_images'     => 'webp',
+    ],
 
     /*
     |--------------------------------------------------------------------------

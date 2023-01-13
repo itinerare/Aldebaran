@@ -54,6 +54,7 @@ Route::group(['prefix' => 'data', 'namespace' => 'Data'], function () {
     Route::post('pieces/images/edit/{id}', 'GalleryController@postCreateEditImage');
     Route::get('pieces/images/delete/{id}', 'GalleryController@getDeleteImage');
     Route::post('pieces/images/delete/{id}', 'GalleryController@postDeleteImage');
+    Route::get('pieces/images/view/{id}/{type}', 'GalleryController@getImageFile');
 
     Route::post('pieces/{id}/sort-images', 'GalleryController@postSortPieceImages');
 

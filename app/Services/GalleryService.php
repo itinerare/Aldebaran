@@ -933,20 +933,25 @@ class GalleryService extends Service {
             if (file_exists($image->imagePath.'/'.$image->imageFileName)) {
                 unlink($image->imagePath.'/'.$image->imageFileName);
             }
-            if (!$regen) {
+            if (!$regen && file_exists($image->imagePath.'/'.$image->fullsizeFileName)) {
                 unlink($image->imagePath.'/'.$image->fullsizeFileName);
             }
 
             $image->update([
-                'hash'          => randomString(15),
-                'fullsize_hash' => $regen ? $image->fullsize_hash : randomString(15),
-                'extension'     => $regen ? $image->extension : $data['image']->getClientOriginalExtension(),
+                'hash'              => randomString(15),
+                'fullsize_hash'     => $regen ? $image->fullsize_hash : randomString(15),
+                'extension'         => $regen ? $image->extension : (config('aldebaran.settings.image_formats.full') ?? $data['image']->getClientOriginalExtension()),
+                'display_extension' => config('aldebaran.settings.image_formats.display') ?? null,
             ]);
         }
 
         // Save fullsize image before doing any processing
         if (!$regen) {
             $this->handleImage($data['image'], $image->imagePath, $image->fullsizeFileName);
+
+            if (config('aldebaran.settings.image_formats.full')) {
+                Image::make($image->imagePath.'/'.$image->fullsizeFileName)->save($image->imagePath.'/'.$image->fullsizeFileName, null, config('aldebaran.settings.image_formats.full'));
+            }
         }
 
         // Process and save thumbnail from the fullsize image
@@ -963,7 +968,7 @@ class GalleryService extends Service {
                 $constraint->upsize();
             });
         }
-        $thumbnail->save($image->thumbnailPath.'/'.$image->thumbnailFileName);
+        $thumbnail->save($image->thumbnailPath.'/'.$image->thumbnailFileName, null, config('aldebaran.settings.image_formats.display') ?? $image->extension);
         $thumbnail->destroy();
 
         // Process and save watermarked image
@@ -1035,7 +1040,7 @@ class GalleryService extends Service {
             }
 
             // Process the watermark in preparation for watermarking the image
-            $watermark = Image::make('images/assets/watermark.png');
+            $watermark = Image::make('images/assets/watermark.'.config('aldebaran.settings.image_formats.site_images', 'png'));
             // Colorize the watermark if called for
             if (isset($data['watermark_color'])) {
                 // Convert hex code to RGB
@@ -1060,7 +1065,7 @@ class GalleryService extends Service {
             $processImage->insert($watermark, $data['watermark_position']);
         }
 
-        $processImage->save($image->imagePath.'/'.$image->imageFileName);
+        $processImage->save($image->imagePath.'/'.$image->imageFileName, null, config('aldebaran.settings.image_formats.display') ?? $image->extension);
 
         if ($reupload) {
             $data['data'] = [
