@@ -121,8 +121,8 @@ class DataGalleryPieceImageTest extends TestCase {
             'description'       => $withDescription ? $this->caption : null,
             'is_visible'        => $isVisible,
             'is_primary_image'  => $isPrimary,
-            'extension'         => config('aldebaran.settings.image_formats.full', 'png'),
-            'display_extension' => null,
+            'extension'         => 'png',
+            'display_extension' => config('aldebaran.settings.image_formats.display', 'png'),
         ]);
 
         // Check that the associated image files are present
