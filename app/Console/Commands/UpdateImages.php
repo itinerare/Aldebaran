@@ -76,7 +76,7 @@ class UpdateImages extends Command {
                 $bar->finish();
                 $this->line("\n");
             } else {
-                if (config('aldebaran.settings.image_formats.full') && (config('aldebaran.settings.image_formats.display') == config('aldebaran.settings.image_formats.full') || config('aldebaran.settings.image_formats.display') == null) && $this->confirm('Do you want to update all piece images to '.config('aldebaran.settings.image_formats.full').' now?'.(config('aldebaran.settings.image_formats.admin_view') ? ' Note that they will appear as '.config('aldebaran.settings.image_formats.admin_view').' files in the admin panel for convenience.' : ''))) {
+                if (config('aldebaran.settings.image_formats.full') && (config('aldebaran.settings.image_formats.display') == config('aldebaran.settings.image_formats.full') || config('aldebaran.settings.image_formats.display') == null) && $this->confirm('Do you want to update all piece images to '.config('aldebaran.settings.image_formats.full').' now?'.(config('aldebaran.settings.image_formats.full') && config('aldebaran.settings.image_formats.admin_view') ? ' Note that they will appear as '.config('aldebaran.settings.image_formats.admin_view').' files in the admin panel for convenience.' : ''))) {
                     $this->line('Updating all piece images...');
                     $bar = $this->output->createProgressBar(PieceImage::all()->count());
                     $bar->start();
@@ -129,7 +129,7 @@ class UpdateImages extends Command {
                     $bar->finish();
                     $this->line("\n");
                 } else {
-                    if (config('aldebaran.settings.image_formats.full') && $this->confirm('Do you want to update piece full-size images to '.config('aldebaran.settings.image_formats.full').' now?'.(config('aldebaran.settings.image_formats.admin_view') ? ' Note that they will appear as '.config('aldebaran.settings.image_formats.admin_view').' files in the admin panel for convenience.' : ''))) {
+                    if (config('aldebaran.settings.image_formats.full') && $this->confirm('Do you want to update piece full-size images to '.config('aldebaran.settings.image_formats.full').' now?'.(config('aldebaran.settings.image_formats.full') && config('aldebaran.settings.image_formats.admin_view') ? ' Note that they will appear as '.config('aldebaran.settings.image_formats.admin_view').' files in the admin panel for convenience.' : ''))) {
                         $this->line('Updating piece full-size images...');
                         $bar = $this->output->createProgressBar(PieceImage::all()->count());
                         $bar->start();
@@ -157,7 +157,7 @@ class UpdateImages extends Command {
                         }
                         $bar->finish();
                         $this->line("\n");
-                    } elseif ((config('aldebaran.settings.image_formats.display') || config('aldebaran.settings.image_formats.full')) && $this->confirm('Do you want to update piece display and thumbnail images to '.(config('aldebaran.settings.image_formats.display') ?? config('aldebaran.settings.image_formats.full')).' now?'.(config('aldebaran.settings.image_formats.admin_view') ? ' Note that they will appear as '.config('aldebaran.settings.image_formats.admin_view').' files in the admin panel for convenience.' : ''))) {
+                    } elseif ((config('aldebaran.settings.image_formats.display') || config('aldebaran.settings.image_formats.full')) && $this->confirm('Do you want to update piece display and thumbnail images to '.(config('aldebaran.settings.image_formats.display') ?? config('aldebaran.settings.image_formats.full')).' now? You may also do this by regenerating them via the admin panel, if you prefer.'.((config('aldebaran.settings.image_formats.display') || config('aldebaran.settings.image_formats.full')) && config('aldebaran.settings.image_formats.admin_view') ? ' Note that they will appear as '.config('aldebaran.settings.image_formats.admin_view').' files in the admin panel for convenience.' : ''))) {
                         $format = config('aldebaran.settings.image_formats.display') ?? config('aldebaran.settings.image_formats.full');
                         $bar = $this->output->createProgressBar(PieceImage::all()->count());
                         $bar->start();
