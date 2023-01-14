@@ -503,4 +503,55 @@ class CommissionFormTest extends TestCase {
             'include from category and class' => [1, 'Pending', ['text', 0, 0, null, null, 1, 1, 1], null, 200],
         ];
     }
+
+    /**
+     * Test commission image view access.
+     *
+     * @dataProvider commissionImageViewProvider
+     *
+     * @param bool $withImage
+     * @param bool $withConversion
+     * @param int  $expected
+     */
+    public function testGetCommissionImage($withImage, $withConversion, $expected) {
+        if ($withConversion) {
+            // Mock-set full-size image storage to WebP so that there will
+            // be an attempt to convert the displayed full-size
+            config(['aldebaran.settings.image_formats.full' => 'webp']);
+        }
+
+        // Create a commission to view
+        $commission = Commission::factory()
+            ->type($this->type->id)->status('Complete')
+            ->create();
+
+        // Create a piece and link to the commission
+        $piece = Piece::factory()->create([
+            'is_visible' => 1,
+        ]);
+        CommissionPiece::factory()->piece($piece->id)->commission($commission->id)->create();
+
+        if ($withImage) {
+            // Create images and test files
+            $image = PieceImage::factory()->piece($piece->id)->create();
+            $this->service->testImages($image);
+        }
+
+        $this->actingAs($this->user)
+            ->get($commission->url.'/'.($withImage ? $image->id : mt_rand(5, 10)))
+            ->assertStatus($expected);
+
+        if ($withImage) {
+            // Clean up test images
+            $this->service->testImages($image, false);
+        }
+    }
+
+    public function commissionImageViewProvider() {
+        return [
+            'valid image'     => [1, 0, 302],
+            'converted image' => [1, 1, 200],
+            'invalid image'   => [0, 0, 404],
+        ];
+    }
 }

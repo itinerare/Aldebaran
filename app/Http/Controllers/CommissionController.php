@@ -338,7 +338,7 @@ class CommissionController extends Controller {
         }
 
         if (config('aldebaran.settings.image_formats.full') && config('aldebaran.settings.image_formats.commission_full')) {
-            $file = Image::make($image->imageDirectory.'/'.$image->fullsizeFileName);
+            $file = Image::make($image->imagePath.'/'.$image->fullsizeFileName);
 
             return $file->response(config('aldebaran.settings.image_formats.commission_full'));
         }
