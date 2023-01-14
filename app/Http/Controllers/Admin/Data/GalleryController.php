@@ -371,21 +371,21 @@ class GalleryController extends Controller {
         switch ($type) {
             case 'full':
                 if (config('aldebaran.settings.image_formats.full') && config('aldebaran.settings.image_formats.admin_view')) {
-                    $output = Image::make($image->imageDirectory.'/'.$image->fullsizeFileName);
+                    $output = Image::make($image->imagePath.'/'.$image->fullsizeFileName);
                 } else {
                     $output = $image->fullsizeUrl;
                 }
                 break;
             case 'display':
                 if (config('aldebaran.settings.image_formats.display') && config('aldebaran.settings.image_formats.admin_view')) {
-                    $output = Image::make($image->imageDirectory.'/'.$image->imageFileName);
+                    $output = Image::make($image->imagePath.'/'.$image->imageFileName);
                 } else {
                     $output = $image->imageUrl;
                 }
                 break;
             case 'thumb':
                 if (config('aldebaran.settings.image_formats.display') && config('aldebaran.settings.image_formats.admin_view')) {
-                    $output = Image::make($image->imageDirectory.'/'.$image->thumbnailFileName);
+                    $output = Image::make($image->imagePath.'/'.$image->thumbnailFileName);
                 } else {
                     $output = $image->thumbnailUrl;
                 }
