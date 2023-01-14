@@ -74,6 +74,7 @@ class UpdateImages extends Command {
                 }
 
                 $bar->finish();
+                $this->line("\n");
             } else {
                 if (config('aldebaran.settings.image_formats.full') && (config('aldebaran.settings.image_formats.display') == config('aldebaran.settings.image_formats.full') || config('aldebaran.settings.image_formats.display') == null) && $this->confirm('Do you want to update all piece images to '.config('aldebaran.settings.image_formats.full').' now?'.(config('aldebaran.settings.image_formats.admin_view') ? ' Note that they will appear as '.config('aldebaran.settings.image_formats.admin_view').' files in the admin panel for convenience.' : ''))) {
                     $this->line('Updating all piece images...');
