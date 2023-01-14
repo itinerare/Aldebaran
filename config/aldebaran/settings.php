@@ -72,11 +72,11 @@ return [
         // space is a concern, as these are likely to be the largest use of storage for
         // the site, especially if there are many images
         // Setting this value to null will maintain images' existing format(s)
-        'full'            => 'webp',
+        'full'            => null,
         // Includes watermarked/display image and thumbnails
         // Has no impact unless different from the setting above
         // Setting to null will maintain either the existing format (if the above is not set) or defer to the setting above (if it is)
-        'display'         => null,
+        'display'         => 'webp',
 
         // What format to display full-size images to on-demand when accessed via
         // the commission interface. Allows commissioners, etc. to retrieve images
