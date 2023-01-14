@@ -61,32 +61,32 @@ return [
     'thumbnail_height'    => 200,
     'display_image_size'  => 2000,
 
-    // What format(s) images should be saved in. Supported formats are:
-    // JPEG, PNG, GIF, BMP, or WebP; for more information, see
-    // https://image.intervention.io/v2/introduction/formats
-    // WebP is recommended for display images at minimum due to both
-    // transparency support as well as better compression
+    // What format(s) images should be saved/displayed in
+    // Supported formats are JPEG, PNG, GIF, BMP, or WebP
+    // For more information, see https://image.intervention.io/v2/introduction/formats
+    // WebP is recommended for display images at minimum due to both transparency support as well as better compression
+    // Broadly these settings should be left at default as they have been balanced around compatibility/convenience, image fidelity (where relevant), and performance/space saving
     // Note that these settings are not retroactive!
     'image_formats'       => [
-        // Includes full-sized images; setting this to WebP is recommended if storage
-        // space is a concern, as these are likely to be the largest use of storage for
-        // the site, especially if there are many images
+        // Includes full-sized images; setting this to WebP is recommended if storage space is a significant concern,
+        // as these are likely to be the largest use of storage for the site, especially if there are many and/or large images
+        // However at present this does not preserve DPI, so it is disabled by default as this may be relevant
         // Setting this value to null will maintain images' existing format(s)
         'full'            => null,
-        // Includes watermarked/display image and thumbnails
-        // Has no impact unless different from the setting above
+
+        // Includes watermarked/display image and thumbnails. Has no impact unless different from the setting above
+        // Again this is highly recommended to be kept at default (WebP)
         // Setting to null will maintain either the existing format (if the above is not set) or defer to the setting above (if it is)
         'display'         => 'webp',
 
-        // What format to display full-size images to on-demand when accessed via
-        // the commission interface. Allows commissioners, etc. to retrieve images
-        // in a more broadly supported format as appropriate
+        // What format to display full-size images to on-demand when accessed via the commission interface
+        // Allows commissioners, etc. to retrieve images in a more broadly supported format as appropriate
         // Only applies if "full" above is not null
         'commission_full' => 'png',
-        // What format to display images in on-demand when accessed via the admin
-        // panel, i.e. when editing a piece image. Allows retrieving images in a
-        // more broadly supported format as appropriate
-        // Only applies if "full" above is not null
+
+        // What format to display images in on-demand when accessed via the admin panel, i.e. when editing a piece image
+        // Allows retrieving images in a more broadly supported format as appropriate
+        // Only applies if "full" and/or "display" above are not null (only converts images for which the relevant value is set)
         'admin_view'      => 'png',
 
         // What format site images uploaded through the admin panel should be stored in
