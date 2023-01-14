@@ -67,7 +67,7 @@ class UpdateImages extends Command {
 
                 foreach (PieceImage::all() as $image) {
                     $image->update([
-                        'extension'         => config('aldebaran.settings.image_formats.full'),
+                        'extension'         => config('aldebaran.settings.image_formats.full') ?? Image::make($image->imagePath.'/'.$image->fullsizeFileName)->mime(),
                         'display_extension' => config('aldebaran.settings.image_formats.display') && config('aldebaran.settings.image_formats.display') != config('aldebaran.settings.image_formats.full') ? config('aldebaran.settings.image_formats.display') : null,
                     ]);
                     $bar->advance();
