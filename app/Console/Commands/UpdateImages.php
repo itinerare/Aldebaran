@@ -63,15 +63,27 @@ class UpdateImages extends Command {
                 foreach (PieceImage::all() as $image) {
                     if (file_exists($image->imagePath.'/'.$image->fullsizeFileName)) {
                         $fullFile = Image::make($image->imagePath.'/'.$image->fullsizeFileName);
-                        unlink($image->imagePath.'/'.$image->fullsizeFileName);
+                        if ($fullFile->mime() != config('aldebaran.settings.image_formats.full')) {
+                            unlink($image->imagePath.'/'.$image->fullsizeFileName);
+                        } else {
+                            unset($fullFile);
+                        }
                     }
                     if (file_exists($image->imagePath.'/'.$image->imageFileName)) {
                         $displayFile = Image::make($image->imagePath.'/'.$image->imageFileName);
-                        unlink($image->imagePath.'/'.$image->imageFileName);
+                        if ($displayFile->mime() != config('aldebaran.settings.image_formats.full')) {
+                            unlink($image->imagePath.'/'.$image->imageFileName);
+                        } else {
+                            unset($displayFile);
+                        }
                     }
                     if (file_exists($image->imagePath.'/'.$image->thumbnailFileName)) {
                         $thumbFile = Image::make($image->imagePath.'/'.$image->thumbnailFileName);
-                        unlink($image->imagePath.'/'.$image->thumbnailFileName);
+                        if ($thumbFile->mime() != config('aldebaran.settings.image_formats.full')) {
+                            unlink($image->imagePath.'/'.$image->thumbnailFileName);
+                        } else {
+                            unset($thumbFile);
+                        }
                     }
 
                     $image->update([
@@ -98,7 +110,11 @@ class UpdateImages extends Command {
                     foreach (PieceImage::all() as $image) {
                         if (file_exists($image->imagePath.'/'.$image->fullsizeFileName)) {
                             $file = Image::make($image->imagePath.'/'.$image->fullsizeFileName);
-                            unlink($image->imagePath.'/'.$image->fullsizeFileName);
+                            if ($file->mime() != config('aldebaran.settings.image_formats.full')) {
+                                unlink($image->imagePath.'/'.$image->fullsizeFileName);
+                            } else {
+                                unset($file);
+                            }
 
                             // Set the display extension to ensure the display image/thumbnail
                             // remain accessible even if display images are not likewise updated
@@ -106,8 +122,10 @@ class UpdateImages extends Command {
                             $image->extension = config('aldebaran.settings.image_formats.full');
                             $image->save();
 
-                            $file->save($image->imagePath.'/'.$image->fullsizeFileName, null, config('aldebaran.settings.image_formats.full'));
-                            unset($file);
+                            if (isset($file)) {
+                                $file->save($image->imagePath.'/'.$image->fullsizeFileName, null, config('aldebaran.settings.image_formats.full'));
+                                unset($file);
+                            }
                         }
                     }
                 } elseif ((config('aldebaran.settings.image_formats.display') || config('aldebaran.settings.image_formats.full')) && $this->confirm('Do you want to update piece display and thumbnail images to '.(config('aldebaran.settings.image_formats.display') ?? config('aldebaran.settings.image_formats.full')).' now?'.(config('aldebaran.settings.image_formats.admin_view') ? ' Note that they will appear as '.config('aldebaran.settings.image_formats.admin_view').' files in the admin panel for convenience.' : ''))) {
@@ -115,11 +133,19 @@ class UpdateImages extends Command {
                     foreach (PieceImage::all() as $image) {
                         if (file_exists($image->imagePath.'/'.$image->imageFileName)) {
                             $displayFile = Image::make($image->imagePath.'/'.$image->imageFileName);
-                            unlink($image->imagePath.'/'.$image->imageFileName);
+                            if ($displayFile->mime() != $format) {
+                                unlink($image->imagePath.'/'.$image->imageFileName);
+                            } else {
+                                unset($displayFile);
+                            }
                         }
                         if (file_exists($image->imagePath.'/'.$image->thumbnailFileName)) {
                             $thumbFile = Image::make($image->imagePath.'/'.$image->thumbnailFileName);
-                            unlink($image->imagePath.'/'.$image->thumbnailFileName);
+                            if ($thumbFile->mime() != $format) {
+                                unlink($image->imagePath.'/'.$image->thumbnailFileName);
+                            } else {
+                                unset($thumbFile);
+                            }
                         }
 
                         if (config('aldebaran.settings.image_formats.display') && (config('aldebaran.settings.image_formats.display') != config('aldebaran.settings.image_formats.full'))) {
