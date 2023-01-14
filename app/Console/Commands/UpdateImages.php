@@ -60,6 +60,8 @@ class UpdateImages extends Command {
 
             if (config('aldebaran.settings.image_formats.full') && (config('aldebaran.settings.image_formats.display') == config('aldebaran.settings.image_formats.full') || config('aldebaran.settings.image_formats.display') == null) && $this->confirm('Do you want to update all piece images to '.config('aldebaran.settings.image_formats.full').' now?'.(config('aldebaran.settings.image_formats.admin_view') ? ' Note that they will appear as '.config('aldebaran.settings.image_formats.admin_view').' files in the admin panel for convenience.' : ''))) {
                 $this->line('Updating all piece images...');
+                $bar = $this->output->createProgressBar(PieceImage::all()->count());
+                $bar->start();
                 foreach (PieceImage::all() as $image) {
                     if (file_exists($image->imagePath.'/'.$image->fullsizeFileName)) {
                         $fullFile = Image::make($image->imagePath.'/'.$image->fullsizeFileName);
@@ -103,10 +105,16 @@ class UpdateImages extends Command {
                         $thumbFile->save($image->imagePath.'/'.$image->thumbnailFileName, null, config('aldebaran.settings.image_formats.full'));
                         unset($thumbFile);
                     }
+
+                    $bar->advance();
                 }
+                $bar->finish();
+                $this->line("\n");
             } else {
                 if (config('aldebaran.settings.image_formats.full') && $this->confirm('Do you want to update piece full-size images to '.config('aldebaran.settings.image_formats.full').' now?'.(config('aldebaran.settings.image_formats.admin_view') ? ' Note that they will appear as '.config('aldebaran.settings.image_formats.admin_view').' files in the admin panel for convenience.' : ''))) {
                     $this->line('Updating piece full-size images...');
+                    $bar = $this->output->createProgressBar(PieceImage::all()->count());
+                    $bar->start();
                     foreach (PieceImage::all() as $image) {
                         if (file_exists($image->imagePath.'/'.$image->fullsizeFileName)) {
                             $file = Image::make($image->imagePath.'/'.$image->fullsizeFileName);
@@ -127,9 +135,14 @@ class UpdateImages extends Command {
                                 unset($file);
                             }
                         }
+                        $bar->advance();
                     }
+                    $bar->finish();
+                    $this->line("\n");
                 } elseif ((config('aldebaran.settings.image_formats.display') || config('aldebaran.settings.image_formats.full')) && $this->confirm('Do you want to update piece display and thumbnail images to '.(config('aldebaran.settings.image_formats.display') ?? config('aldebaran.settings.image_formats.full')).' now?'.(config('aldebaran.settings.image_formats.admin_view') ? ' Note that they will appear as '.config('aldebaran.settings.image_formats.admin_view').' files in the admin panel for convenience.' : ''))) {
                     $format = config('aldebaran.settings.image_formats.display') ?? config('aldebaran.settings.image_formats.full');
+                    $bar = $this->output->createProgressBar(PieceImage::all()->count());
+                    $bar->start();
                     foreach (PieceImage::all() as $image) {
                         if (file_exists($image->imagePath.'/'.$image->imageFileName)) {
                             $displayFile = Image::make($image->imagePath.'/'.$image->imageFileName);
@@ -165,7 +178,10 @@ class UpdateImages extends Command {
                             $thumbFile->save($image->imagePath.'/'.$image->thumbnailFileName, null, $format);
                             unset($thumbFile);
                         }
+                        $bar->advance();
                     }
+                    $bar->finish();
+                    $this->line("\n");
                 } else {
                     $this->line('Skipped updating piece images.');
                 }
