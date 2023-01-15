@@ -4,6 +4,57 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [3.4.0](https://github.com/itinerare/Aldebaran/compare/v3.3.0...v3.4.0) (2023-01-15)
+
+### Features
+
+
+##### Commands
+
+* Add option to update-images to just update DB ([173746](https://github.com/itinerare/Aldebaran/commit/1737466fc3c39cd9546de44bebeeb2e790ae4ab8))
+* Add overall confirm to update images command for convenience ([69dc4f](https://github.com/itinerare/Aldebaran/commit/69dc4f6777d3701b818c615f604cf6c2a2cd25fc))
+* Add progress bar(s) to update images ([97c62e](https://github.com/itinerare/Aldebaran/commit/97c62e14de7c7e42463f7c633fd3614202364bc3))
+
+##### Pieces
+
+* Add image format settings/switch image storage to WebP ([890306](https://github.com/itinerare/Aldebaran/commit/890306401cf2668ac9035b7ba8fdc1faf28df0b6))
+* Adust image format settings ([bc6eb8](https://github.com/itinerare/Aldebaran/commit/bc6eb8e288184f21c75aa1fa4c777c2598b19b34))
+
+##### Tests
+
+* Add commission image view tests ([bf40bf](https://github.com/itinerare/Aldebaran/commit/bf40bf5cbdb488d98aeb1cdcd7c31cc8ff961f92))
+* Add piece image view tests ([c18a34](https://github.com/itinerare/Aldebaran/commit/c18a34a8994583d3ec77d4dc18d14b85df4cc2c9))
+* Update piece image tests ([8c2464](https://github.com/itinerare/Aldebaran/commit/8c246436107fa205fb3ac82a0979d28d53bfe5b4))
+
+### Bug Fixes
+
+* Error creating changelog entries ([06d52f](https://github.com/itinerare/Aldebaran/commit/06d52f49bd49de945f79ecf7f29b76ddde6b52a6))
+* Error reading default images ([3390de](https://github.com/itinerare/Aldebaran/commit/3390de8de28f316afd43d948fb13b56b8ae7c01f))
+* Meta tag formatting ([1ebb43](https://github.com/itinerare/Aldebaran/commit/1ebb4304b4d87ca2c29c54afcbc8ea7bc1914b8b))
+* PNG file specified in CSS ([52c4f3](https://github.com/itinerare/Aldebaran/commit/52c4f3ffbf9d30f84e637952dd0ffeb61c4aa34a))
+
+##### Commands
+
+* Add mime check to update images command ([b6d9cb](https://github.com/itinerare/Aldebaran/commit/b6d9cb613298f0041177bc9dca43c3ef24cdb68d))
+* Add newline after update images progress bar for tidiness ([68969a](https://github.com/itinerare/Aldebaran/commit/68969a0daa87fb333640e88d48d2a8947354ab1d))
+* Allow update images to detect existing fullsize mime types ([7fc379](https://github.com/itinerare/Aldebaran/commit/7fc379e5c9390b8734c637b80b62e62dab8b0af2))
+* Error in update images info text ([0fb778](https://github.com/itinerare/Aldebaran/commit/0fb7785589a6abc64de528923143d6297a13fbe8))
+
+##### Pieces
+
+* Adjust default image format settings for the moment ([0b6e49](https://github.com/itinerare/Aldebaran/commit/0b6e492a18634e0226bfbe808974c32dfdbebaca))
+* Check for file existence when regenerating thumb/watermarked image ([4a7542](https://github.com/itinerare/Aldebaran/commit/4a754205e65c9450a369dc12ce9e618956d081b9))
+* Error applying text watermarks ([4ab49a](https://github.com/itinerare/Aldebaran/commit/4ab49a79d69f19fdde6641392d98aeb648790460))
+* Image extension not properly set per config on image creation ([4e222e](https://github.com/itinerare/Aldebaran/commit/4e222efdfd8c7f0334cfe0d2d27e808a50fe527d))
+
+##### Tests
+
+* Adjust site image tests ([3cab80](https://github.com/itinerare/Aldebaran/commit/3cab80c648e39469172c2d11db67c044a26cd58f))
+* Update piece image tests ([bef295](https://github.com/itinerare/Aldebaran/commit/bef295fbaeb68f77ef652c181f31cf27d981566f))
+
+
+---
+
 ## [3.3.0](https://github.com/itinerare/Aldebaran/compare/v3.2.1...v3.3.0) (2022-07-24)
 
 ### Features
