@@ -85,7 +85,7 @@ class CommissionManager extends Service {
             }
 
             // Collect and form responses related to the commission itself
-            foreach ($type->formFields as $key=>$field) {
+            foreach ($type->formFields as $key=> $field) {
                 if (isset($data[$key])) {
                     if ($field['type'] != 'multiple') {
                         $data['data'][$key] = strip_tags($data[$key]);
@@ -240,7 +240,7 @@ class CommissionManager extends Service {
                 CommissionPayment::where('commission_id', $commission->id)->delete();
 
                 // Create payment record for each
-                foreach ($data['cost'] as $key=>$cost) {
+                foreach ($data['cost'] as $key=> $cost) {
                     CommissionPayment::create([
                         'commission_id' => $commission->id,
                         'cost'          => $cost,

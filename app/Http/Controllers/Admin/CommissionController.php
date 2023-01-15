@@ -111,7 +111,7 @@ class CommissionController extends Controller {
 
         $answerArray = [];
         $validationRules = Commission::$manualCreateRules;
-        foreach ($type->formFields as $key=>$field) {
+        foreach ($type->formFields as $key=> $field) {
             $answerArray[$key] = null;
             if (isset($field['rules'])) {
                 $validationRules[$key] = $field['rules'];

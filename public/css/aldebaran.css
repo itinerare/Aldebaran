@@ -220,7 +220,7 @@ main > .row {
 /* Sidebar */
 
 .sidebar {
-    background: url('/images/assets/sidebar_bg.png') no-repeat;
+    background: url('/images/assets/sidebar_bg.webp') no-repeat;
     background-position: top;
     background-color: #ddd;
     -webkit-background-size: auto;

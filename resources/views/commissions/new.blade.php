@@ -41,9 +41,7 @@
         updates) and invoice you.</p>
 
     <div class="form-group">
-        {!! Form::label('name', 'Name (Optional)') !!} {!! add_help(
-            'You don\'t strictly need to provide this, but it helps identify you! Of course, it can be whatever name you prefer to be called. If left unfilled, your email address (minus the domain) will be used instead.',
-        ) !!}
+        {!! Form::label('name', 'Name (Optional)') !!} {!! add_help('You don\'t strictly need to provide this, but it helps identify you! Of course, it can be whatever name you prefer to be called. If left unfilled, your email address (minus the domain) will be used instead.') !!}
         {!! Form::text('name', old('name'), ['class' => 'form-control']) !!}
     </div>
 
@@ -53,9 +51,7 @@
     </div>
 
     <div class="form-group">
-        {!! Form::label('contact', 'Preferred Method of Contact') !!} {!! add_help(
-            'Please specify at least one of: email (address not necessary-- I will use the one entered above), discord tag (including following numbers), or twitter @ (you must be able to accept DMs from me).',
-        ) !!}
+        {!! Form::label('contact', 'Preferred Method of Contact') !!} {!! add_help('Please specify at least one of: email (address not necessary-- I will use the one entered above), discord tag (including following numbers), or twitter @ (you must be able to accept DMs from me).') !!}
         {!! Form::text('contact', old('contact'), ['class' => 'form-control', 'required']) !!}
     </div>
 
@@ -109,8 +105,7 @@
     @endif
 
     <div class="text-right">
-        <input onclick="this.disabled=true;this.value='Submiting...';this.form.submit();" class="btn btn-primary"
-            type="submit" value="Submit"></input>
+        <input onclick="this.disabled=true;this.value='Submiting...';this.form.submit();" class="btn btn-primary" type="submit" value="Submit"></input>
     </div>
 
     {!! Form::close() !!}

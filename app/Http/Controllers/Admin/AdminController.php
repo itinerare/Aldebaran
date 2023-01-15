@@ -99,7 +99,7 @@ class AdminController extends Controller {
         $fieldname = $key.'_file';
         $request->validate([$fieldname => 'required|file']);
         $file = $request->file($fieldname);
-        $filename = config('aldebaran.image_files.'.$key)['filename'];
+        $filename = config('aldebaran.image_files.'.$key)['filename'].'.'.config('aldebaran.settings.image_formats.site_images', 'png');
 
         if ($service->uploadFile($file, null, $filename, false)) {
             flash('Image uploaded successfully.')->success();

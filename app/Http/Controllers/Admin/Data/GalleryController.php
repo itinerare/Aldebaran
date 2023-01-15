@@ -12,6 +12,7 @@ use App\Models\Gallery\Project;
 use App\Models\Gallery\Tag;
 use App\Services\GalleryService;
 use Illuminate\Http\Request;
+use Intervention\Image\Facades\Image;
 
 class GalleryController extends Controller {
     /*
@@ -350,6 +351,55 @@ class GalleryController extends Controller {
             'image' => $image,
             'piece' => Piece::find($image->piece_id),
         ]);
+    }
+
+    /**
+     * Display images (potentially in a specified format) for viewing
+     * in the edit image panel.
+     *
+     * @param int    $id
+     * @param string $type
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getImageFile($id, $type) {
+        $image = PieceImage::where('id', $id)->first();
+        if (!$image) {
+            abort(404);
+        }
+
+        switch ($type) {
+            case 'full':
+                if (config('aldebaran.settings.image_formats.full') && config('aldebaran.settings.image_formats.admin_view')) {
+                    $output = Image::make($image->imagePath.'/'.$image->fullsizeFileName);
+                } else {
+                    $output = $image->fullsizeUrl;
+                }
+                break;
+            case 'display':
+                if (config('aldebaran.settings.image_formats.display') && config('aldebaran.settings.image_formats.admin_view')) {
+                    $output = Image::make($image->imagePath.'/'.$image->imageFileName);
+                } else {
+                    $output = $image->imageUrl;
+                }
+                break;
+            case 'thumb':
+                if (config('aldebaran.settings.image_formats.display') && config('aldebaran.settings.image_formats.admin_view')) {
+                    $output = Image::make($image->imagePath.'/'.$image->thumbnailFileName);
+                } else {
+                    $output = $image->thumbnailUrl;
+                }
+                break;
+        }
+        if (!isset($output)) {
+            abort(404);
+        }
+
+        if (is_object($output)) {
+            return $output->response(config('aldebaran.settings.image_formats.admin_view'));
+        }
+
+        return redirect()->to($output);
     }
 
     /**

@@ -12,8 +12,7 @@
     <p>This is a list of tags that will be used to sort pieces. Creating tags is semi-required, as pieces must be tagged to
         be displayed as commission examples.</p>
 
-    <div class="text-right mb-3"><a class="btn btn-primary" href="{{ url('admin/data/tags/create') }}"><i
-                class="fas fa-plus"></i> Create New Tag</a></div>
+    <div class="text-right mb-3"><a class="btn btn-primary" href="{{ url('admin/data/tags/create') }}"><i class="fas fa-plus"></i> Create New Tag</a></div>
 
     @if (!count($tags))
         <p>No tags found.</p>

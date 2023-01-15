@@ -87,6 +87,32 @@ class DataGalleryPieceImageTest extends TestCase {
     }
 
     /**
+     * Test image view access.
+     *
+     * @dataProvider imageViewProvider
+     *
+     * @param bool   $image
+     * @param string $type
+     * @param int    $expected
+     */
+    public function testGetViewImage($image, $type, $expected) {
+        $this->actingAs($this->user)
+            ->get('/admin/data/pieces/images/view/'.($image ? $this->image->id : mt_rand(5, 10)).'/'.$type)
+            ->assertStatus($expected);
+    }
+
+    public function imageViewProvider() {
+        return [
+            'valid full'      => [1, 'full', 302],
+            'valid display'   => [1, 'display', 200],
+            'valid thumb'     => [1, 'thumb', 200],
+            'invalid full'    => [0, 'full', 404],
+            'invalid display' => [0, 'display', 404],
+            'invalid thumb'   => [0, 'thumb', 404],
+        ];
+    }
+
+    /**
      * Test image creation.
      *
      * @dataProvider imageCreateProvider
@@ -118,9 +144,11 @@ class DataGalleryPieceImageTest extends TestCase {
 
         $response->assertSessionHasNoErrors();
         $this->assertDatabaseHas('piece_images', [
-            'description'      => $withDescription ? $this->caption : null,
-            'is_visible'       => $isVisible,
-            'is_primary_image' => $isPrimary,
+            'description'       => $withDescription ? $this->caption : null,
+            'is_visible'        => $isVisible,
+            'is_primary_image'  => $isPrimary,
+            'extension'         => 'png',
+            'display_extension' => config('aldebaran.settings.image_formats.display', 'png'),
         ]);
 
         // Check that the associated image files are present

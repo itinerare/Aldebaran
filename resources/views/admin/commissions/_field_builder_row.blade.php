@@ -45,8 +45,7 @@
             </div>
             <div class="col-md">
                 <div class="form-group">
-                    {!! Form::label('field_rules[]', 'Field Rules (Optional)') !!} (See rules <a
-                        href="https://laravel.com/docs/8.x/validation#available-validation-rules">here</a>)
+                    {!! Form::label('field_rules[]', 'Field Rules (Optional)') !!} (See rules <a href="https://laravel.com/docs/8.x/validation#available-validation-rules">here</a>)
                     {!! Form::text('field_rules[]', null, [
                         'class' => 'form-control',
                         'placeholder' => 'Any custom validation rules',

@@ -8,9 +8,7 @@
     {!! breadcrumbs([
         'Admin Panel' => 'admin',
         'Pieces' => 'admin/data/pieces',
-        ($piece->id ? 'Edit' : 'Create') . ' Piece' => $piece->id
-            ? 'admin/data/pieces/edit/' . $piece->id
-            : 'admin/data/pieces/create',
+        ($piece->id ? 'Edit' : 'Create') . ' Piece' => $piece->id ? 'admin/data/pieces/edit/' . $piece->id : 'admin/data/pieces/create',
     ]) !!}
 
     <h1>{{ $piece->id ? 'Edit' : 'Create' }} Piece
@@ -53,9 +51,7 @@
     <h3>Other Information</h3>
 
     <div class="form-group">
-        {!! Form::label('timestamp', 'Timestamp (Optional)') !!} {!! add_help(
-            'If this is set, it will be displayed instead of the upload time for the time of the piece\'s creation.',
-        ) !!}
+        {!! Form::label('timestamp', 'Timestamp (Optional)') !!} {!! add_help('If this is set, it will be displayed instead of the upload time for the time of the piece\'s creation.') !!}
         {!! Form::text('timestamp', $piece->timestamp, ['class' => 'form-control datepicker']) !!}
     </div>
 
@@ -124,8 +120,7 @@
                         <tr class="sort-item" data-id="{{ $image->id }}">
                             <td style="min-width: 100px;">
                                 <a class="fas fa-arrows-alt-v handle mr-3" href="#" aria-label="Sort handle"></a>
-                                <img src="{{ $image->thumbnailUrl }}" style="height:50px; width:auto; max-width:100%;"
-                                    alt="Thumbnail for image #{{ $image->id }}" />
+                                <img src="{{ $image->thumbnailUrl }}" style="height:50px; width:auto; max-width:100%;" alt="Thumbnail for image #{{ $image->id }}" />
                             </td>
                             <td>
                                 {!! isset($image->description) ? $image->description : null !!}
@@ -137,8 +132,7 @@
                                 {!! $image->is_visible ? '<i class="text-success fas fa-check"></i>' : '-' !!}
                             </td>
                             <td class="text-right">
-                                <a href="{{ url('admin/data/pieces/images/edit/' . $image->id) }}"
-                                    class="btn btn-primary">Edit</a>
+                                <a href="{{ url('admin/data/pieces/images/edit/' . $image->id) }}" class="btn btn-primary">Edit</a>
                             </td>
                         </tr>
                     @endforeach
@@ -160,8 +154,7 @@
         <h3>Literatures</h3>
 
         <div class="text-right">
-            <a href="{{ url('admin/data/pieces/literatures/create/' . $piece->id) }}"
-                class="btn btn-outline-primary mb-2">Add a Literature</a>
+            <a href="{{ url('admin/data/pieces/literatures/create/' . $piece->id) }}" class="btn btn-outline-primary mb-2">Add a Literature</a>
         </div>
 
         @if ($piece->literatures->count())
@@ -179,8 +172,7 @@
                     @foreach ($piece->literatures as $literature)
                         <tr class="sort-item" data-id="{{ $literature->id }}">
                             <td>
-                                <a class="fas fa-arrows-alt-v handle float-left mr-3" href="#"
-                                    aria-label="Sort handle"></a>
+                                <a class="fas fa-arrows-alt-v handle float-left mr-3" href="#" aria-label="Sort handle"></a>
                                 {!! Str::limit($literature->text, 50) !!}
                             </td>
                             <td>
@@ -193,8 +185,7 @@
                                 {!! $literature->is_visible ? '<i class="text-success fas fa-check"></i>' : '-' !!}
                             </td>
                             <td class="text-right">
-                                <a href="{{ url('admin/data/pieces/literatures/edit/' . $literature->id) }}"
-                                    class="btn btn-primary">Edit</a>
+                                <a href="{{ url('admin/data/pieces/literatures/edit/' . $literature->id) }}" class="btn btn-primary">Edit</a>
                             </td>
                         </tr>
                     @endforeach

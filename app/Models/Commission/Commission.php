@@ -56,7 +56,7 @@ class Commission extends Model {
         'paypal'  => 'email|nullable|min:3|max:191',
 
         // Other
-        'terms' => 'accepted',
+        'terms'   => 'accepted',
     ];
 
     /**

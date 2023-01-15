@@ -8,9 +8,7 @@
     {!! breadcrumbs([
         'Admin Panel' => 'admin',
         'Commission Classes' => 'admin/data/commission-classes',
-        ($class->id ? 'Edit' : 'Create') . ' Class' => $class->id
-            ? 'admin/data/commission-classes/edit/' . $class->id
-            : 'admin/data/commission-classes/create',
+        ($class->id ? 'Edit' : 'Create') . ' Class' => $class->id ? 'admin/data/commission-classes/edit/' . $class->id : 'admin/data/commission-classes/create',
     ]) !!}
 
     <h1>{{ $class->id ? 'Edit' : 'Create' }} Class
@@ -45,9 +43,7 @@
             'class' => 'form-check-input',
             'data-toggle' => 'toggle',
         ]) !!}
-        {!! Form::label('is_active', 'Is Active', ['class' => 'form-check-label ml-3']) !!} {!! add_help(
-            'If this is turned off, visitors will not be able to see this class. It will remain visible to you, however, including its queue etc. However, simply closing commissions for this class is recommended instead.',
-        ) !!}
+        {!! Form::label('is_active', 'Is Active', ['class' => 'form-check-label ml-3']) !!} {!! add_help('If this is turned off, visitors will not be able to see this class. It will remain visible to you, however, including its queue etc. However, simply closing commissions for this class is recommended instead.') !!}
     </div>
 
     @if ($class->id)

@@ -44,6 +44,10 @@ class UpdateAldebaran extends Command {
             $this->line("\n".'Updating site pages and settings...');
             $this->call('add-site-settings');
             $this->call('add-text-pages');
+
+            // Update images
+            $this->line("\n".'Updating images...');
+            $this->call('update-images');
         } else {
             $this->line('Aborting! Please run composer install and then run this command again.');
         }

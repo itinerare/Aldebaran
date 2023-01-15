@@ -8,10 +8,12 @@ use App\Models\Commission\CommissionCategory;
 use App\Models\Commission\CommissionClass;
 use App\Models\Commission\CommissionType;
 use App\Models\Gallery\Piece;
+use App\Models\Gallery\PieceImage;
 use App\Models\Gallery\Project;
 use App\Models\TextPage;
 use App\Services\CommissionManager;
 use Illuminate\Http\Request;
+use Intervention\Image\Facades\Image;
 
 class CommissionController extends Controller {
     /*
@@ -262,7 +264,7 @@ class CommissionController extends Controller {
         // and collect any custom validation rules for the configured fields
         $answerArray = [];
         $validationRules = Commission::$createRules;
-        foreach ($type->formFields as $key=>$field) {
+        foreach ($type->formFields as $key=> $field) {
             $answerArray[$key] = null;
             if (isset($field['rules'])) {
                 $validationRules[$key] = $field['rules'];
@@ -314,5 +316,33 @@ class CommissionController extends Controller {
         return view('commissions.view_commission', [
             'commission' => $commission,
         ]);
+    }
+
+    /**
+     * Show the full size for a commission image.
+     *
+     * @param string $key
+     * @param int    $id
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getViewCommissionImage($key, $id) {
+        $commission = Commission::where('commission_key', $key)->first();
+        if (!$commission) {
+            abort(404);
+        }
+
+        $image = PieceImage::where('id', $id)->first();
+        if (!$image) {
+            abort(404);
+        }
+
+        if (config('aldebaran.settings.image_formats.full') && config('aldebaran.settings.image_formats.commission_full')) {
+            $file = Image::make($image->imagePath.'/'.$image->fullsizeFileName);
+
+            return $file->response(config('aldebaran.settings.image_formats.commission_full'));
+        }
+
+        return redirect()->to($image->fullsizeUrl);
     }
 }

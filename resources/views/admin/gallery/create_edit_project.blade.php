@@ -8,9 +8,7 @@
     {!! breadcrumbs([
         'Admin Panel' => 'admin',
         'Projects' => 'admin/data/projects',
-        ($project->id ? 'Edit' : 'Create') . ' Project' => $project->id
-            ? 'admin/data/projects/edit/' . $project->id
-            : 'admin/data/projects/create',
+        ($project->id ? 'Edit' : 'Create') . ' Project' => $project->id ? 'admin/data/projects/edit/' . $project->id : 'admin/data/projects/create',
     ]) !!}
 
     <h1>{{ $project->id ? 'Edit' : 'Create' }} Project

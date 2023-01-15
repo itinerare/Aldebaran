@@ -63,8 +63,7 @@
                     <div class="col-md-2">
                         {{ isset($piece->timestamp) ? $piece->timestamp->year : $piece->created_at->year }} </div>
                     <div class="col-3 col-md-1 text-right">
-                        <a href="{{ url('admin/data/pieces/edit/' . $piece->id) }}"
-                            class="btn btn-primary py-0 px-2">Edit</a>
+                        <a href="{{ url('admin/data/pieces/edit/' . $piece->id) }}" class="btn btn-primary py-0 px-2">Edit</a>
                     </div>
                 </div>
             @endforeach

@@ -21,8 +21,7 @@
         <div class="card">
             <h5 class="card-header inventory-header">
                 Mobile Navigation
-                <a class="small inventory-collapse-toggle collapse-toggle collapsed" href="#mobileNav"
-                    data-toggle="collapse">Show</a></h3>
+                <a class="small inventory-collapse-toggle collapse-toggle collapsed" href="#mobileNav" data-toggle="collapse">Show</a></h3>
             </h5>
             <div class="card-body inventory-body collapse" id="mobileNav">
                 <h5>

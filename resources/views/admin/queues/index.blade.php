@@ -24,20 +24,16 @@
 
     <ul class="nav nav-tabs mb-3">
         <li class="nav-item">
-            <a class="nav-link {{ set_active('admin/commissions/' . $class->slug . '/pending*') }} {{ set_active('admin/commissions/' . $class->slug) }}"
-                href="{{ url('admin/commissions/' . $class->slug . '/pending') }}">Pending</a>
+            <a class="nav-link {{ set_active('admin/commissions/' . $class->slug . '/pending*') }} {{ set_active('admin/commissions/' . $class->slug) }}" href="{{ url('admin/commissions/' . $class->slug . '/pending') }}">Pending</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link {{ set_active('admin/commissions/' . $class->slug . '/accepted*') }}"
-                href="{{ url('admin/commissions/' . $class->slug . '/accepted') }}">Accepted</a>
+            <a class="nav-link {{ set_active('admin/commissions/' . $class->slug . '/accepted*') }}" href="{{ url('admin/commissions/' . $class->slug . '/accepted') }}">Accepted</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link {{ set_active('admin/commissions/' . $class->slug . '/complete*') }}"
-                href="{{ url('admin/commissions/' . $class->slug . '/complete') }}">Complete</a>
+            <a class="nav-link {{ set_active('admin/commissions/' . $class->slug . '/complete*') }}" href="{{ url('admin/commissions/' . $class->slug . '/complete') }}">Complete</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link {{ set_active('admin/commissions/' . $class->slug . '/declined*') }}"
-                href="{{ url('admin/commissions/' . $class->slug . '/declined') }}">Declined</a>
+            <a class="nav-link {{ set_active('admin/commissions/' . $class->slug . '/declined*') }}" href="{{ url('admin/commissions/' . $class->slug . '/declined') }}">Declined</a>
         </li>
     </ul>
 
@@ -83,11 +79,9 @@
                 <div class="col-6 col-md-2">{!! pretty_date($commission->created_at) !!}</div>
                 <div class="col-3 col-md-2">{{ $commission->progress }}</div>
                 <div class="col-3 col-md">
-                    <span
-                        class="btn btn-{{ $commission->status == 'Pending' ? 'secondary' : ($commission->status == 'Accepted' || $commission->status == 'Complete' ? 'success' : 'danger') }} btn-sm py-0 px-1">{{ $commission->status }}</span>
+                    <span class="btn btn-{{ $commission->status == 'Pending' ? 'secondary' : ($commission->status == 'Accepted' || $commission->status == 'Complete' ? 'success' : 'danger') }} btn-sm py-0 px-1">{{ $commission->status }}</span>
                 </div>
-                <div class="col-3 col-md-1"><a href="{{ url('admin/commissions/edit/' . $commission->id) }}"
-                        class="btn btn-primary btn-sm py-0 px-1">Details</a></div>
+                <div class="col-3 col-md-1"><a href="{{ url('admin/commissions/edit/' . $commission->id) }}" class="btn btn-primary btn-sm py-0 px-1">Details</a></div>
             </div>
         @endforeach
 

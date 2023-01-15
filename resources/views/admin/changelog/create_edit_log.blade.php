@@ -8,9 +8,7 @@
     {!! breadcrumbs([
         'Admin Panel' => 'admin',
         'Changelog' => 'admin/changelog',
-        ($log->id ? 'Edit' : 'Create') . ' Entry' => $log->id
-            ? 'admin/changelog/edit/' . $log->id
-            : 'admin/changelog/create',
+        ($log->id ? 'Edit' : 'Create') . ' Entry' => $log->id ? 'admin/changelog/edit/' . $log->id : 'admin/changelog/create',
     ]) !!}
 
     <h1>{{ $log->id ? 'Edit' : 'Create' }} Changelog Entry
@@ -28,7 +26,7 @@
 
     <div class="form-group">
         {!! Form::label('text', 'Content') !!}
-        {!! Form::textarea('text', $log->text, ['class' => 'form-control wysiwyg', 'required']) !!}
+        {!! Form::textarea('text', $log->text, ['class' => 'form-control wysiwyg']) !!}
     </div>
 
     <div class="form-group">

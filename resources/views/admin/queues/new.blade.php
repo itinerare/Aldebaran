@@ -67,16 +67,12 @@
             </div>
 
             <div class="form-group">
-                {!! Form::label('contact', 'Preferred Method of Contact') !!} {!! add_help(
-                    'Please specify at least one of: email (address only necessary if different from the above), discord tag (including following numbers), or twitter @.',
-                ) !!}
+                {!! Form::label('contact', 'Preferred Method of Contact') !!} {!! add_help('Please specify at least one of: email (address only necessary if different from the above), discord tag (including following numbers), or twitter @.') !!}
                 {!! Form::text('contact', null, ['class' => 'form-control']) !!}
             </div>
 
             <div class="form-group">
-                {!! Form::label('paypal', 'Paypal Address') !!} {!! add_help(
-                    'If different from the email address provided above. If this field is left blank, the above email address will automatically be used instead.',
-                ) !!}
+                {!! Form::label('paypal', 'Paypal Address') !!} {!! add_help('If different from the email address provided above. If this field is left blank, the above email address will automatically be used instead.') !!}
                 {!! Form::text('paypal', null, ['class' => 'form-control']) !!}
             </div>
         </div>
@@ -94,8 +90,7 @@
     </div>
 
     <div class="text-right">
-        <input onclick="this.disabled=true;this.value='Submiting...';this.form.submit();" class="btn btn-primary"
-            type="submit" value="Submit"></input>
+        <input onclick="this.disabled=true;this.value='Submiting...';this.form.submit();" class="btn btn-primary" type="submit" value="Submit"></input>
     </div>
 
     {!! Form::close() !!}

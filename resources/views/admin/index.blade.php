@@ -17,24 +17,20 @@
                                 <h4 class="card-title">{{ $class->name }} Queues</h4>
                                 <ul class="list-group list-group-flush">
                                     <li class="list-group-item">
-                                        <span class="float-right"><a
-                                                href="{{ url('admin/commissions/' . $class->slug . '/pending') }}">View
+                                        <span class="float-right"><a href="{{ url('admin/commissions/' . $class->slug . '/pending') }}">View
                                                 Queue
                                                 <span class="fas fa-caret-right ml-1"></span></a></span>
                                         <h5>Pending @if ($pendingCount[$class->id])
-                                                <span class="badge badge-primary text-light ml-2"
-                                                    style="font-size: 1em;">{{ $pendingCount[$class->id] }}</span>
+                                                <span class="badge badge-primary text-light ml-2" style="font-size: 1em;">{{ $pendingCount[$class->id] }}</span>
                                             @endif
                                         </h5>
                                     </li>
                                     <li class="list-group-item">
-                                        <span class="float-right"><a
-                                                href="{{ url('admin/commissions/' . $class->slug . '/accepted') }}">View
+                                        <span class="float-right"><a href="{{ url('admin/commissions/' . $class->slug . '/accepted') }}">View
                                                 Queue
                                                 <span class="fas fa-caret-right ml-1"></span></a></span>
                                         <h5>Accepted @if ($acceptedCount[$class->id])
-                                                <span class="badge badge-primary text-light ml-2"
-                                                    style="font-size: 1em;">{{ $acceptedCount[$class->id] }}</span>
+                                                <span class="badge badge-primary text-light ml-2" style="font-size: 1em;">{{ $acceptedCount[$class->id] }}</span>
                                             @endif
                                         </h5>
                                     </li>
@@ -45,8 +41,7 @@
                 @endforeach
             </div>
         @else
-            <p>There are no commission classes to display queues for. Go <a
-                    href="{{ url('admin/data/commission-classes') }}">here</a> to create one!</p>
+            <p>There are no commission classes to display queues for. Go <a href="{{ url('admin/data/commission-classes') }}">here</a> to create one!</p>
         @endif
     @endif
 

@@ -13,9 +13,7 @@
         'Admin Panel' => 'admin',
         'Pieces' => 'admin/data/pieces',
         'Edit Piece' => 'admin/data/pieces/edit/' . $piece->id,
-        ($image->id ? 'Edit' : 'Create') . ' Image' => $image->id
-            ? 'admin/data/pieces/images/edit/' . $image->id
-            : 'admin/data/pieces/images/create/' . $piece->id,
+        ($image->id ? 'Edit' : 'Create') . ' Image' => $image->id ? 'admin/data/pieces/images/edit/' . $image->id : 'admin/data/pieces/images/create/' . $piece->id,
     ]) !!}
 
     <h1>{{ $image->id ? 'Edit' : 'Create' }} Image
@@ -37,25 +35,22 @@
             <div class="card mb-2" id="existingImage">
                 <div class="card-body text-center">
                     Watermarked/Display Image:<br />
-                    <a href="{{ $image->imageUrl }}" data-lightbox="entry" data-title="Watermarked Image">
-                        <img class="p-2" src="{{ $image->imageUrl }}" style="max-width:100%; max-height:60vh;"
-                            alt="Watermarked view" />
+                    <a href="{{ url('admin/data/pieces/images/view/' . $image->id . '/display') }}" data-lightbox="entry" data-title="Watermarked Image">
+                        <img class="p-2" src="{{ url('admin/data/pieces/images/view/' . $image->id . '/display') }}" style="max-width:100%; max-height:60vh;" alt="Watermarked view" />
                     </a>
 
                 </div>
                 <div class="row">
                     <div class="col-md-6 text-center">
                         Fullsize:<br />
-                        <a href="{{ $image->fullsizeUrl }}" data-lightbox="entry" data-title="Fullsize Image">
-                            <img class="p-2" src="{{ $image->fullsizeUrl }}" style="max-width:100%; max-height:60vh;"
-                                alt="Full-size view" />
+                        <a href="{{ url('admin/data/pieces/images/view/' . $image->id . '/full') }}" data-lightbox="entry" data-title="Fullsize Image">
+                            <img class="p-2" src="{{ url('admin/data/pieces/images/view/' . $image->id . '/full') }}" style="max-width:100%; max-height:60vh;" alt="Full-size view" />
                         </a>
                     </div>
                     <div class="col-md-6 text-center">
                         Thumbnail:<br />
-                        <a href="{{ $image->thumbnailUrl }}" data-lightbox="entry" data-title="Thumbnail Image">
-                            <img class="p-2" src="{{ $image->thumbnailUrl }}" style="max-width:100%; max-height:60vh;"
-                                alt="Thumbnail view" />
+                        <a href="{{ url('admin/data/pieces/images/view/' . $image->id . '/thumb') }}" data-lightbox="entry" data-title="Thumbnail Image">
+                            <img class="p-2" src="{{ url('admin/data/pieces/images/view/' . $image->id . '/thumb') }}" style="max-width:100%; max-height:60vh;" alt="Thumbnail view" />
                         </a>
                     </div>
                 </div>
@@ -69,8 +64,8 @@
         <div class="card p-2">
             {!! Form::label('mainImage', 'Upload File') !!}
             {!! Form::file('image', ['id' => 'mainImage']) !!}
-            <small>Images may be PNG, GIF, or JPG and up to
-                {{ min(ini_get('upload_max_filesize'), ini_get('post_max_size'), '5') }}MB in size.</small>
+            <small>Images may be PNG, GIF, JPEG, or WebP and up to
+                {{ min(ini_get('upload_max_filesize'), ini_get('post_max_size'), '10') }}MB in size.</small>
         </div>
     </div>
 
@@ -78,12 +73,7 @@
         <div class="row no-gutters col-md-6 form-group">
             <div class="col-md-8 form-group">
                 {!! Form::label('watermark_scale', 'Watermark Scale') !!} {!! add_help('This adjusts the image watermark.') !!}
-                {!! Form::select(
-                    'watermark_scale',
-                    ['.20' => '20%', '.30' => '30%', '.40' => '40%', '.50' => '50%', '.60' => '60%', '.70' => '70%'],
-                    $image->id ? $image->data['scale'] : '.30',
-                    ['class' => 'form-control', 'placeholder' => 'Select a Scale'],
-                ) !!}
+                {!! Form::select('watermark_scale', ['.20' => '20%', '.30' => '30%', '.40' => '40%', '.50' => '50%', '.60' => '60%', '.70' => '70%'], $image->id ? $image->data['scale'] : '.30', ['class' => 'form-control', 'placeholder' => 'Select a Scale']) !!}
             </div>
             <div class="col-md-4 pl-2 form-group">
                 {!! Form::label('watermark_opacity', 'Opacity') !!}
@@ -204,12 +194,7 @@
             </div>
         @endif
         <div class="col-md form-group">
-            {!! Form::checkbox(
-                'watermark_image',
-                1,
-                $image->id && isset($image->data['watermarked']) ? $image->data['watermarked'] : 1,
-                ['class' => 'form-check-input', 'data-toggle' => 'toggle'],
-            ) !!}
+            {!! Form::checkbox('watermark_image', 1, $image->id && isset($image->data['watermarked']) ? $image->data['watermarked'] : 1, ['class' => 'form-check-input', 'data-toggle' => 'toggle']) !!}
             {!! Form::label('watermark_image', 'Watermark Image', ['class' => 'form-check-label ml-3']) !!}
         </div>
     </div>
@@ -228,9 +213,7 @@
     </div>
 
     <div class="form-group">
-        {!! Form::label('alt_text', 'Alt. Text (Optional)') !!} {!! add_help(
-            'Will be used instead of the generic alt text for the image as well as listed alongside the piece\'s description.',
-        ) !!}
+        {!! Form::label('alt_text', 'Alt. Text (Optional)') !!} {!! add_help('Will be used instead of the generic alt text for the image as well as listed alongside the piece\'s description.') !!}
         {!! Form::textarea('alt_text', $image->alt_text, ['class' => 'form-control']) !!}
     </div>
 
@@ -240,9 +223,7 @@
                 'class' => 'form-check-input',
                 'data-toggle' => 'toggle',
             ]) !!}
-            {!! Form::label('is_primary_image', 'Is Primary Image', ['class' => 'form-check-label ml-3']) !!} {!! add_help(
-                'Whether or not this is a primary image for the piece. Primary images are displayed front and center, while other images are sidelined but still visible.',
-            ) !!}
+            {!! Form::label('is_primary_image', 'Is Primary Image', ['class' => 'form-check-label ml-3']) !!} {!! add_help('Whether or not this is a primary image for the piece. Primary images are displayed front and center, while other images are sidelined but still visible.') !!}
         </div>
         <div class="col-md form-group">
             {!! Form::checkbox('is_visible', 1, $image->id ? $image->is_visible : 1, [

@@ -12,21 +12,21 @@ return [
     |
     */
 
-    'avatar' => [
+    'avatar'     => [
         'name'        => 'Avatar',
         'description' => 'Personal avatar. Used for meta tags.',
-        'filename'    => 'avatar.png',
+        'filename'    => 'avatar',
     ],
 
-    'watermark' => [
+    'watermark'  => [
         'name'        => 'Watermark',
         'description' => 'Personal watermark, used to automatically watermark images. Should be opaque (opacity will be adjusted in processing).',
-        'filename'    => 'watermark.png',
+        'filename'    => 'watermark',
     ],
 
     'sidebar_bg' => [
         'name'        => 'Sidebar Background',
         'description' => 'Background used for the sidebar. Optional.',
-        'filename'    => 'sidebar_bg.png',
+        'filename'    => 'sidebar_bg',
     ],
 ];

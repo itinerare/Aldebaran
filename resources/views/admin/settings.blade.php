@@ -71,12 +71,7 @@
                         <div class="form-group h-100">
                             <strong>{!! Form::label($class->slug . '_comms_open_value', 'Commissions Open') !!}:</strong>
                             {{ $settings->where('key', $class->slug . '_comms_open')->first()->description }}<br />
-                            {!! Form::checkbox(
-                                $class->slug . '_comms_open_value',
-                                1,
-                                $settings->where('key', $class->slug . '_comms_open')->first()->value,
-                                ['class' => 'form-check-input mb-3', 'data-toggle' => 'toggle'],
-                            ) !!}
+                            {!! Form::checkbox($class->slug . '_comms_open_value', 1, $settings->where('key', $class->slug . '_comms_open')->first()->value, ['class' => 'form-check-input mb-3', 'data-toggle' => 'toggle']) !!}
                             <div class="form-group text-right mb-3">
                                 {!! Form::submit('Edit', ['class' => 'btn btn-primary']) !!}
                             </div>
@@ -88,11 +83,7 @@
                         <div class="form-group h-100">
                             <strong>{!! Form::label($class->slug . '_overall_slots_value', 'Overall Slots') !!}:</strong>
                             {{ $settings->where('key', $class->slug . '_overall_slots')->first()->description }}
-                            {!! Form::number(
-                                $class->slug . '_overall_slots_value',
-                                $settings->where('key', $class->slug . '_overall_slots')->first()->value,
-                                ['class' => 'form-control'],
-                            ) !!}
+                            {!! Form::number($class->slug . '_overall_slots_value', $settings->where('key', $class->slug . '_overall_slots')->first()->value, ['class' => 'form-control']) !!}
                         </div>
                         <div class="form-group text-right mb-3">
                             {!! Form::submit('Edit', ['class' => 'btn btn-primary']) !!}
@@ -104,11 +95,7 @@
                         <div class="form-group h-100">
                             <strong>{!! Form::label($class->slug . '_status_value', 'Status Message') !!}:</strong>
                             {{ $settings->where('key', $class->slug . '_status')->first()->description }}
-                            {!! Form::text(
-                                $class->slug . '_status_value',
-                                $settings->where('key', $class->slug . '_status')->first()->value,
-                                ['class' => 'form-control'],
-                            ) !!}
+                            {!! Form::text($class->slug . '_status_value', $settings->where('key', $class->slug . '_status')->first()->value, ['class' => 'form-control']) !!}
                         </div>
                         <div class="form-group text-right mb-3">
                             {!! Form::submit('Edit', ['class' => 'btn btn-primary']) !!}

@@ -337,15 +337,16 @@ class GalleryService extends Service {
 
             // Record data for the image
             $image = PieceImage::create([
-                'piece_id'         => $piece->id,
-                'hash'             => randomString(15),
-                'fullsize_hash'    => randomString(15),
-                'extension'        => $data['image']->getClientOriginalExtension(),
-                'description'      => $data['description'] ?? null,
-                'alt_text'         => $data['alt_text'],
-                'is_primary_image' => $data['is_primary_image'] ?? 0,
-                'is_visible'       => $data['is_visible'] ?? 0,
-                'data'             => $data['data'],
+                'piece_id'          => $piece->id,
+                'hash'              => randomString(15),
+                'fullsize_hash'     => randomString(15),
+                'extension'         => config('aldebaran.settings.image_formats.full') ?? $data['image']->getClientOriginalExtension(),
+                'description'       => $data['description'] ?? null,
+                'alt_text'          => $data['alt_text'],
+                'is_primary_image'  => $data['is_primary_image'] ?? 0,
+                'is_visible'        => $data['is_visible'] ?? 0,
+                'data'              => $data['data'],
+                'display_extension' => config('aldebaran.settings.image_formats.display') && config('aldebaran.settings.image_formats.display') != config('aldebaran.settings.image_formats.full') ? config('aldebaran.settings.image_formats.display') : null,
             ]);
 
             $this->processImage($data, $image);
@@ -927,22 +928,31 @@ class GalleryService extends Service {
         // as well as re-setting the extension.
         if ($reupload) {
             // Unlink images as necessary
-            unlink($image->imagePath.'/'.$image->thumbnailFileName);
-            unlink($image->imagePath.'/'.$image->imageFileName);
-            if (!$regen) {
+            if (file_exists($image->imagePath.'/'.$image->thumbnailFileName)) {
+                unlink($image->imagePath.'/'.$image->thumbnailFileName);
+            }
+            if (file_exists($image->imagePath.'/'.$image->imageFileName)) {
+                unlink($image->imagePath.'/'.$image->imageFileName);
+            }
+            if (!$regen && file_exists($image->imagePath.'/'.$image->fullsizeFileName)) {
                 unlink($image->imagePath.'/'.$image->fullsizeFileName);
             }
 
             $image->update([
-                'hash'          => randomString(15),
-                'fullsize_hash' => $regen ? $image->fullsize_hash : randomString(15),
-                'extension'     => $regen ? $image->extension : $data['image']->getClientOriginalExtension(),
+                'hash'              => randomString(15),
+                'fullsize_hash'     => $regen ? $image->fullsize_hash : randomString(15),
+                'extension'         => $regen ? $image->extension : (config('aldebaran.settings.image_formats.full') ?? $data['image']->getClientOriginalExtension()),
+                'display_extension' => config('aldebaran.settings.image_formats.display') ?? null,
             ]);
         }
 
         // Save fullsize image before doing any processing
         if (!$regen) {
             $this->handleImage($data['image'], $image->imagePath, $image->fullsizeFileName);
+
+            if (config('aldebaran.settings.image_formats.full')) {
+                Image::make($image->imagePath.'/'.$image->fullsizeFileName)->save($image->imagePath.'/'.$image->fullsizeFileName, null, config('aldebaran.settings.image_formats.full'));
+            }
         }
 
         // Process and save thumbnail from the fullsize image
@@ -959,7 +969,7 @@ class GalleryService extends Service {
                 $constraint->upsize();
             });
         }
-        $thumbnail->save($image->thumbnailPath.'/'.$image->thumbnailFileName);
+        $thumbnail->save($image->thumbnailPath.'/'.$image->thumbnailFileName, null, config('aldebaran.settings.image_formats.display') ?? $image->extension);
         $thumbnail->destroy();
 
         // Process and save watermarked image
@@ -985,7 +995,6 @@ class GalleryService extends Service {
         }
 
         if (isset($data['watermark_image']) && $data['watermark_image']) {
-
             // Add text watermark if necessary
             if (isset($data['text_watermark']) && $data['text_watermark']) {
                 $watermarkText = null;
@@ -1015,9 +1024,9 @@ class GalleryService extends Service {
                     $x = -100;
 
                     while ($x < $processImage->width() + 150) {
-                        foreach ($watermarkText as $key=>$text) {
+                        foreach ($watermarkText as $key=> $text) {
                             $processImage->text($text, $key == 0 && count($watermarkText) > 1 ? $x + (22 + ($offset * 5)) : $x, $key > 0 ? $y + $i : $y, function ($font) use ($data) {
-                                $font->file(public_path('webfonts/RobotoCondensed-Regular.ttf'));
+                                $font->file(public_path('fonts/RobotoCondensed-Regular.ttf'));
                                 $font->size(24);
                                 $font->color([255, 255, 255, $data['text_opacity']]);
                                 $font->valign(500);
@@ -1032,7 +1041,7 @@ class GalleryService extends Service {
             }
 
             // Process the watermark in preparation for watermarking the image
-            $watermark = Image::make('images/assets/watermark.png');
+            $watermark = Image::make('images/assets/watermark.'.config('aldebaran.settings.image_formats.site_images', 'png'));
             // Colorize the watermark if called for
             if (isset($data['watermark_color'])) {
                 // Convert hex code to RGB
@@ -1057,7 +1066,7 @@ class GalleryService extends Service {
             $processImage->insert($watermark, $data['watermark_position']);
         }
 
-        $processImage->save($image->imagePath.'/'.$image->imageFileName);
+        $processImage->save($image->imagePath.'/'.$image->imageFileName, null, config('aldebaran.settings.image_formats.display') ?? $image->extension);
 
         if ($reupload) {
             $data['data'] = [
