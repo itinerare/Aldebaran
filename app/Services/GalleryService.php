@@ -14,6 +14,7 @@ use App\Models\Gallery\Program;
 use App\Models\Gallery\Project;
 use App\Models\Gallery\Tag;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Intervention\Image\Facades\Image;
@@ -476,7 +477,9 @@ class GalleryService extends Service {
             }
 
             // Create the literature
-            $literature = PieceLiterature::create($data);
+            $literature = PieceLiterature::create(Arr::only($data, [
+                'piece_id', 'text', 'hash', 'extension', 'is_visible', 'is_primary',
+            ]));
 
             // Save image if necessary
             if ($image) {
@@ -537,7 +540,9 @@ class GalleryService extends Service {
                 $data['is_primary'] = 0;
             }
 
-            $literature->update($data);
+            $literature->update(Arr::only($data, [
+                'text', 'hash', 'extension', 'is_visible', 'is_primary',
+            ]));
 
             // Save image if necessary
             if ($image) {
