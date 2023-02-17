@@ -260,11 +260,11 @@ class Piece extends Model implements Feedable {
      */
     public function getShowInGalleryAttribute() {
         // Check if the piece should be included in the gallery or not
-        if ($this->tags->whereIn('tag_id', Tag::where('is_active', 0)->pluck('id')->toArray())->first()) {
+        if ($this->whereRelation('tags.tag', 'is_active', false)->count()) {
             return 0;
-        } else {
-            return 1;
         }
+
+        return 1;
     }
 
     /**********************************************************************************************

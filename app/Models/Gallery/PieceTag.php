@@ -74,6 +74,6 @@ class PieceTag extends Model {
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeVisible($query) {
-        return $query->whereIn('tag_id', Tag::visible()->pluck('id')->toArray());
+        return $query->whereRelation('tag', 'is_visible', true);
     }
 }
