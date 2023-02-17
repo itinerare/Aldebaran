@@ -13,6 +13,7 @@ use App\Models\Commission\CommissionType;
 use App\Models\Gallery\Piece;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 
@@ -256,7 +257,9 @@ class CommissionManager extends Service {
             }
 
             // Update the commission
-            $commission->update($data);
+            $commission->update(Arr::only($data, [
+                'progress', 'status', 'description', 'data', 'comments',
+            ]));
 
             return $this->commitReturn($commission);
         } catch (\Exception $e) {

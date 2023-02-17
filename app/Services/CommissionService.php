@@ -8,6 +8,7 @@ use App\Models\Commission\CommissionClass;
 use App\Models\Commission\CommissionType;
 use App\Models\TextPage;
 use Carbon\Carbon;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 
 class CommissionService extends Service {
@@ -44,7 +45,9 @@ class CommissionService extends Service {
             $data['name'] = strip_tags($data['name']);
             $data['slug'] = strtolower(str_replace(' ', '_', $data['name']));
 
-            $class = CommissionClass::create($data);
+            $class = CommissionClass::create(Arr::only($data, [
+                'name', 'slug', 'is_active',
+            ]));
 
             $this->processClassSettings($class, $data);
 
@@ -97,7 +100,9 @@ class CommissionService extends Service {
             }
             $data = $this->processClassSettings($class, $data);
 
-            $class->update($data);
+            $class->update(Arr::only($data, [
+                'name', 'slug', 'is_active', 'data',
+            ]));
 
             return $this->commitReturn($class);
         } catch (\Exception $e) {
@@ -205,7 +210,9 @@ class CommissionService extends Service {
                 $data['is_active'] = 0;
             }
 
-            $category = CommissionCategory::create($data);
+            $category = CommissionCategory::create(Arr::only($data, [
+                'name', 'class_id', 'is_active', 'data',
+            ]));
 
             return $this->commitReturn($category);
         } catch (\Exception $e) {
@@ -251,7 +258,9 @@ class CommissionService extends Service {
                 $data['data']['include']['class'] = $data['include_class'];
             }
 
-            $category->update($data);
+            $category->update(Arr::only($data, [
+                'name', 'class_id', 'is_active', 'data',
+            ]));
 
             return $this->commitReturn($category);
         } catch (\Exception $e) {
@@ -334,7 +343,10 @@ class CommissionService extends Service {
             }
 
             $data = $this->populateData($data);
-            $type = CommissionType::create($data);
+            $type = CommissionType::create(Arr::only($data, [
+                'category_id', 'name', 'availability', 'description', 'data', 'key',
+                'is_active', 'is_visible', 'show_examples',
+            ]));
 
             return $this->commitReturn($type);
         } catch (\Exception $e) {
@@ -369,7 +381,10 @@ class CommissionService extends Service {
             }
             $data = $this->populateData($data, $type);
 
-            $type->update($data);
+            $type->update(Arr::only($data, [
+                'category_id', 'name', 'availability', 'description', 'data', 'key',
+                'is_active', 'is_visible', 'show_examples',
+            ]));
 
             return $this->commitReturn($type);
         } catch (\Exception $e) {

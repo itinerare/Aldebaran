@@ -153,7 +153,7 @@
                                     @if ($piece->piece->images->count())
                                         <a href="{{ url('admin/data/pieces/edit/' . $piece->piece_id) }}">
                                             <img class="image img-thumbnail" style="max-width:100%;" src="{{ $piece->piece->primaryImages->count() ? $piece->piece->primaryImages->random()->thumbnailUrl : $piece->piece->images->first()->thumbnailUrl }}"
-                                                alt="Thumbnail for piece {{ $piece->name }}" />
+                                                alt="Thumbnail for piece {{ $piece->piece->name }}" />
                                         </a>
                                     @else
                                         <i>No image(s) provided.</i>

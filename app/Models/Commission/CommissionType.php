@@ -38,6 +38,13 @@ class CommissionType extends Model {
     ];
 
     /**
+     * The relationships that should always be loaded.
+     *
+     * @var array
+     */
+    protected $with = ['category'];
+
+    /**
      * Whether the model contains timestamps to be saved and updated.
      *
      * @var string

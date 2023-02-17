@@ -38,6 +38,16 @@ class Piece extends Model implements Feedable {
     ];
 
     /**
+     * The relationships that should always be loaded.
+     *
+     * @var array
+     */
+    protected $with = [
+        'project:id,name,is_visible',
+        'primaryImages', 'primaryLiteratures',
+    ];
+
+    /**
      * Whether the model contains timestamps to be saved and updated.
      *
      * @var string
@@ -141,10 +151,16 @@ class Piece extends Model implements Feedable {
      */
     public function scopeVisible($query, $user = null) {
         if ($user) {
-            return $query->whereIn('id', PieceImage::visible()->pluck('piece_id')->toArray() + PieceLiterature::visible()->pluck('piece_id')->toArray());
-        } else {
-            return $query->where('is_visible', 1)->whereIn('id', PieceImage::visible($user ? $user : null)->pluck('piece_id')->toArray() + PieceLiterature::visible($user ? $user : null)->pluck('piece_id')->toArray());
+            return $query->has('images')->orHas('literatures');
         }
+
+        return $query
+            ->where('is_visible', 1)
+            ->whereRelation('project', 'is_visible', true)
+            ->where(function ($query) {
+                $query->whereRelation('images', 'is_visible', true)
+                ->orWhereRelation('literatures', 'is_visible', true);
+            });
     }
 
     /**
@@ -155,9 +171,9 @@ class Piece extends Model implements Feedable {
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeGallery($query) {
-        $hiddenTags = Tag::where('is_active', 0)->pluck('id')->toArray();
-
-        return $query->whereNotIn('id', PieceTag::whereIn('tag_id', $hiddenTags)->pluck('piece_id')->toArray());
+        return $query
+            ->whereRelation('tags.tag', 'is_active', true)
+            ->orWhereDoesntHave('tags');
     }
 
     /**
@@ -212,7 +228,7 @@ class Piece extends Model implements Feedable {
      * @return string
      */
     public function getThumbnailUrlAttribute() {
-        if (!$this->images->where('is_visible', 1)->count() && !$this->literatures->where('is_visible', 1)->whereNotNull('hash')->count()) {
+        if (!$this->whereRelation('images', 'is_visible', true)->count() && !$this->literatures()->visible()->whereNotNull('hash')->count()) {
             return null;
         }
 
@@ -263,7 +279,7 @@ class Piece extends Model implements Feedable {
      * @param mixed|null $project
      */
     public static function getFeedItems($gallery = true, $project = null) {
-        $pieces = self::visible();
+        $pieces = self::visible()->with(['images', 'literatures', 'tags']);
         if ($gallery) {
             return $pieces->gallery()->get();
         } elseif (isset($project) && $project) {
@@ -280,11 +296,11 @@ class Piece extends Model implements Feedable {
      */
     public function toFeedItem(): FeedItem {
         $summary = '';
-        if ($this->images->count()) {
-            $summary = $summary.'<a href="'.$this->url.'"><img src="'.$this->thumbnailUrl.'" alt="Thumbnail for '.$this->name.'" /></a><br/>This piece contains '.$this->images->count().' image'.($this->images->count() > 1 ? 's' : '').'. Click the thumbnail to view in full.<hr/>';
+        if ($this->images()->visible()->count()) {
+            $summary = $summary.'<a href="'.$this->url.'"><img src="'.$this->thumbnailUrl.'" alt="Thumbnail for '.$this->name.'" /></a><br/>This piece contains '.$this->images->count().' image'.($this->images()->visible()->count() > 1 ? 's' : '').'. Click the thumbnail to view in full.<hr/>';
         }
-        if ($this->literatures->count()) {
-            foreach ($this->literatures as $literature) {
+        if ($this->literatures()->visible()->count()) {
+            foreach ($this->literatures()->visible()->get() as $literature) {
                 $summary = $summary.$literature->text.'<hr/>';
             }
         }

@@ -25,6 +25,13 @@ class PieceTag extends Model {
     protected $table = 'piece_tags';
 
     /**
+     * The relationships that should always be loaded.
+     *
+     * @var array
+     */
+    protected $with = ['tag'];
+
+    /**
      * Whether the model contains timestamps to be saved and updated.
      *
      * @var string
