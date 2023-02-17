@@ -715,7 +715,9 @@ class GalleryService extends Service {
                 $data['is_visible'] = 0;
             }
 
-            $program = Program::create($data);
+            $program = Program::create(Arr::only($data, [
+                'name', 'has_image', 'is_visible',
+            ]));
 
             if ($image) {
                 $this->handleImage($image, $program->imagePath, $program->imageFileName);
@@ -766,7 +768,9 @@ class GalleryService extends Service {
                 $data['is_visible'] = 0;
             }
 
-            $program->update($data);
+            $program->update(Arr::only($data, [
+                'name', 'has_image', 'is_visible',
+            ]));
 
             if ($image) {
                 $this->handleImage($image, $program->imagePath, $program->imageFileName);
