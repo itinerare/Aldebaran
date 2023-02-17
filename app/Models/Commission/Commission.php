@@ -42,7 +42,7 @@ class Commission extends Model {
      * @var array
      */
     protected $with = [
-        'type:id,category_id,name,is_visible', 'commissioner', 'pieces',
+        'type:id,category_id,name,is_visible', 'pieces',
     ];
 
     /**
