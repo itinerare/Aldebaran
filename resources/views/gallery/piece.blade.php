@@ -16,7 +16,7 @@
 
 @section('content')
     {!! breadcrumbs([
-        ($piece->showInGallery ? 'Gallery' : $piece->project->name) => ($piece->showInGallery ? 'gallery' : 'projects/' . $piece->project->slug),
+        $piece->showInGallery ? 'Gallery' : $piece->project->name => $piece->showInGallery ? 'gallery' : 'projects/' . $piece->project->slug,
         $piece->name => 'pieces/' . $piece->id,
     ]) !!}
 
