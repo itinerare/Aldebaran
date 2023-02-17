@@ -166,7 +166,7 @@ class GalleryController extends Controller {
         }
         if (isset($data['tags'])) {
             foreach ($data['tags'] as $tag) {
-                $query->whereIn('id', PieceTag::where('tag_id', $tag)->pluck('piece_id')->toArray());
+                $query->whereRelation('tags.tag', 'id', $tag);
             }
         }
 
