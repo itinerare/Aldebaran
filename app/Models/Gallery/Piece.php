@@ -171,7 +171,9 @@ class Piece extends Model implements Feedable {
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeGallery($query) {
-        return $query->whereRelation('tags.tag', 'is_active', true);
+        return $query
+            ->whereRelation('tags.tag', 'is_active', true)
+            ->orWhereDoesntHave('tags');
     }
 
     /**
@@ -277,9 +279,9 @@ class Piece extends Model implements Feedable {
      * @param mixed|null $project
      */
     public static function getFeedItems($gallery = true, $project = null) {
-        $pieces = self::visible()->with(['images', 'literatures']);
+        $pieces = self::visible()->with(['images', 'literatures', 'tags']);
         if ($gallery) {
-            return $pieces->with('tags')->gallery()->get();
+            return $pieces->gallery()->get();
         } elseif (isset($project) && $project) {
             return $pieces->where('project_id', $project)->get();
         }
