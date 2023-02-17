@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Gallery\Piece;
 use App\Models\Gallery\PieceImage;
 use App\Models\Gallery\PieceLiterature;
-use App\Models\Gallery\PieceTag;
 use App\Models\Gallery\Program;
 use App\Models\Gallery\Project;
 use App\Models\Gallery\Tag;
