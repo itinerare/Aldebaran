@@ -371,7 +371,7 @@ class CommissionController extends Controller {
         if (!config('aldebaran.settings.commissions.enabled')) {
             abort(404);
         }
-        $query = CommissionType::query()->with('category:id,name,class_id')->with('commissions:id,commission_type,status');
+        $query = CommissionType::query()->with(['category:id,name,class_id', 'commissions:id,commission_type,status']);
         $data = $request->only(['category_id', 'name']);
         if (isset($data['category_id']) && $data['category_id'] != 'none') {
             $query->where('category_id', $data['category_id']);
