@@ -170,9 +170,7 @@ class Piece extends Model implements Feedable {
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeGallery($query) {
-        $hiddenTags = Tag::where('is_active', 0)->pluck('id')->toArray();
-
-        return $query->whereNotIn('id', PieceTag::whereIn('tag_id', $hiddenTags)->pluck('piece_id')->toArray());
+        return $query->whereRelation('tags.tag', 'is_active', true);
     }
 
     /**
