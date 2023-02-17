@@ -45,6 +45,7 @@ class Piece extends Model implements Feedable {
     protected $with = [
         'project:id,name,is_visible',
         'primaryImages', 'primaryLiteratures',
+        'images', 'literatures',
     ];
 
     /**
@@ -233,20 +234,20 @@ class Piece extends Model implements Feedable {
         }
 
         // Cycle through conditions attempting to locate a valid thumbnail
-        if ($this->primaryImages->where('is_visible', 1)->count()) {
+        if ($this->primaryImages()->visible()->count()) {
             // First check for primary images; if so select a random one
-            return $this->primaryImages->where('is_visible', 1)->random()->thumbnailUrl;
-        } elseif ($this->images->where('is_visible', 1)->count()) {
+            return $this->primaryImages()->visible()->get()->random()->thumbnailUrl;
+        } elseif ($this->images()->visible()->count()) {
             // Otherwise, if there are non-primary images, select a random one
-            return $this->images->where('is_visible', 1)->random()->thumbnailUrl;
-        } elseif ($this->literatures->where('is_visible', 1)->whereNotNull('hash')->where('is_primary', 1)->count()) {
+            return $this->images()->visible()->get()->random()->thumbnailUrl;
+        } elseif ($this->literatures()->visible()->whereNotNull('hash')->where('is_primary', 1)->count()) {
             // Otherwise, check for primary literatures with thumbnails,
             // and select one
-            return $this->literatures->where('is_visible', 1)->whereNotNull('hash')->where('is_primary', 1)->random()->thumbnailUrl;
-        } elseif ($this->literatures->where('is_visible', 1)->whereNotNull('hash')->count()) {
+            return $this->literatures()->visible()->whereNotNull('hash')->where('is_primary', 1)->get()->random()->thumbnailUrl;
+        } elseif ($this->literatures()->visible()->whereNotNull('hash')->count()) {
             // Otherwise, check for non-primary literatures with thumbnails,
             // and select one
-            return $this->literatures->where('is_visible', 1)->whereNotNull('hash')->random()->thumbnailUrl;
+            return $this->literatures()->visible()->whereNotNull('hash')->get()->random()->thumbnailUrl;
         }
 
         return null;
