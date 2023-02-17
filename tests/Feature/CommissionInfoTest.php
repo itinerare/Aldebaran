@@ -63,7 +63,7 @@ class CommissionInfoTest extends TestCase {
                 $tag = Tag::factory()->create();
                 $type = CommissionType::factory()->category($category->id)->testData(['type' => 'flat', 'cost' => 10], $tag->id, true, true, $this->faker->unique()->domainWord())->create();
 
-                $this->class->update(['show_examples' => $data[1]]);
+                $type->update(['show_examples' => $data[1]]);
 
                 if ($data[3][0]) {
                     $piece = Piece::factory()->create();
@@ -225,7 +225,7 @@ class CommissionInfoTest extends TestCase {
                     'is_visible' => $visibility[4],
                 ]);
 
-                $this->class->update(['show_examples' => $data[1]]);
+                $type->update(['show_examples' => $data[1]]);
 
                 if ($data[3][0]) {
                     $piece = Piece::factory()->create();
