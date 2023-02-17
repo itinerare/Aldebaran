@@ -155,6 +155,7 @@ class Piece extends Model implements Feedable {
         }
 
         return $query
+            ->where('is_visible', 1)
             ->whereRelation('project', 'is_visible', true)
             ->where(function ($query) {
                 $query->whereRelation('images', 'is_visible', true)
@@ -225,7 +226,7 @@ class Piece extends Model implements Feedable {
      * @return string
      */
     public function getThumbnailUrlAttribute() {
-        if (!$this->images->where('is_visible', 1)->count() && !$this->literatures->where('is_visible', 1)->whereNotNull('hash')->count()) {
+        if (!$this->whereRelation('images', 'is_visible', true)->count() && !$this->literatures()->visible()->whereNotNull('hash')->count()) {
             return null;
         }
 
@@ -278,7 +279,7 @@ class Piece extends Model implements Feedable {
     public static function getFeedItems($gallery = true, $project = null) {
         $pieces = self::visible()->with(['images', 'literatures']);
         if ($gallery) {
-            return $pieces->gallery()->get();
+            return $pieces->with('tags')->gallery()->get();
         } elseif (isset($project) && $project) {
             return $pieces->where('project_id', $project)->get();
         }
