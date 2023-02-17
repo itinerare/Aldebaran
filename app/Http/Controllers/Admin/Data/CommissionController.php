@@ -204,7 +204,7 @@ class CommissionController extends Controller {
         }
 
         return view('admin.commissions.commission_categories', [
-            'categories' => CommissionCategory::orderBy('sort', 'DESC')->get(),
+            'categories' => CommissionCategory::with('class')->orderBy('sort', 'DESC')->get(),
         ]);
     }
 
