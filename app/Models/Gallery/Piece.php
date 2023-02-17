@@ -38,6 +38,13 @@ class Piece extends Model implements Feedable {
     ];
 
     /**
+     * The relationships that should always be loaded.
+     *
+     * @var array
+     */
+    protected $with = ['primaryImages', 'primaryLiteratures'];
+
+    /**
      * Whether the model contains timestamps to be saved and updated.
      *
      * @var string
@@ -263,7 +270,7 @@ class Piece extends Model implements Feedable {
      * @param mixed|null $project
      */
     public static function getFeedItems($gallery = true, $project = null) {
-        $pieces = self::visible();
+        $pieces = self::visible()->with(['images', 'literatures']);
         if ($gallery) {
             return $pieces->gallery()->get();
         } elseif (isset($project) && $project) {
@@ -280,11 +287,11 @@ class Piece extends Model implements Feedable {
      */
     public function toFeedItem(): FeedItem {
         $summary = '';
-        if ($this->images->count()) {
-            $summary = $summary.'<a href="'.$this->url.'"><img src="'.$this->thumbnailUrl.'" alt="Thumbnail for '.$this->name.'" /></a><br/>This piece contains '.$this->images->count().' image'.($this->images->count() > 1 ? 's' : '').'. Click the thumbnail to view in full.<hr/>';
+        if ($this->images()->visible()->count()) {
+            $summary = $summary.'<a href="'.$this->url.'"><img src="'.$this->thumbnailUrl.'" alt="Thumbnail for '.$this->name.'" /></a><br/>This piece contains '.$this->images->count().' image'.($this->images()->visible()->count() > 1 ? 's' : '').'. Click the thumbnail to view in full.<hr/>';
         }
-        if ($this->literatures->count()) {
-            foreach ($this->literatures as $literature) {
+        if ($this->literatures()->visible()->count()) {
+            foreach ($this->literatures()->visible()->get() as $literature) {
                 $summary = $summary.$literature->text.'<hr/>';
             }
         }
