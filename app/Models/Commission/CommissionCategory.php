@@ -34,6 +34,13 @@ class CommissionCategory extends Model {
     ];
 
     /**
+     * The relationships that should always be loaded.
+     *
+     * @var array
+     */
+    protected $with = ['class'];
+
+    /**
      * Whether the model contains timestamps to be saved and updated.
      *
      * @var string

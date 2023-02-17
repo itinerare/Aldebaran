@@ -204,7 +204,7 @@ class CommissionController extends Controller {
         }
 
         return view('admin.commissions.commission_categories', [
-            'categories' => CommissionCategory::with('class')->orderBy('sort', 'DESC')->get(),
+            'categories' => CommissionCategory::orderBy('sort', 'DESC')->get(),
         ]);
     }
 
@@ -371,7 +371,7 @@ class CommissionController extends Controller {
         if (!config('aldebaran.settings.commissions.enabled')) {
             abort(404);
         }
-        $query = CommissionType::query();
+        $query = CommissionType::query()->with('category')->with('commissions:id,status');
         $data = $request->only(['category_id', 'name']);
         if (isset($data['category_id']) && $data['category_id'] != 'none') {
             $query->where('category_id', $data['category_id']);
