@@ -164,7 +164,9 @@ class GalleryService extends Service {
             }
 
             $data = $this->populateData($data);
-            $piece = Piece::create($data);
+            $piece = Piece::create(Arr::only($data, [
+                'name', 'project_id', 'description', 'timestamp', 'is_visible', 'good_example',
+            ]));
 
             // If tags are selected, validate and create data for them
             $data = $this->processTags($data, $piece);
@@ -205,7 +207,9 @@ class GalleryService extends Service {
             // If programs are selected, validate and create data for them
             $data = $this->processPrograms($data, $piece);
 
-            $piece->update($data);
+            $piece->update(Arr::only($data, [
+                'name', 'project_id', 'description', 'timestamp', 'is_visible', 'good_example',
+            ]));
 
             return $this->commitReturn($piece);
         } catch (\Exception $e) {
