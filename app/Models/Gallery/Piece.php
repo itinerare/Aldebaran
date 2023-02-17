@@ -42,7 +42,10 @@ class Piece extends Model implements Feedable {
      *
      * @var array
      */
-    protected $with = ['primaryImages', 'primaryLiteratures'];
+    protected $with = [
+        'project:id,name,is_visible',
+        'primaryImages', 'primaryLiteratures',
+    ];
 
     /**
      * Whether the model contains timestamps to be saved and updated.
@@ -148,10 +151,15 @@ class Piece extends Model implements Feedable {
      */
     public function scopeVisible($query, $user = null) {
         if ($user) {
-            return $query->whereIn('id', PieceImage::visible()->pluck('piece_id')->toArray() + PieceLiterature::visible()->pluck('piece_id')->toArray());
-        } else {
-            return $query->where('is_visible', 1)->whereIn('id', PieceImage::visible($user ? $user : null)->pluck('piece_id')->toArray() + PieceLiterature::visible($user ? $user : null)->pluck('piece_id')->toArray());
+            return $query->has('images')->orHas('literatures');
         }
+
+        return $query
+            ->whereRelation('project', 'is_visible', true)
+            ->where(function ($query) {
+                $query->whereRelation('images', 'is_visible', true)
+                ->orWhereRelation('literatures', 'is_visible', true);
+            });
     }
 
     /**
