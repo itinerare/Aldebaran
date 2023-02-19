@@ -44,7 +44,7 @@ class CommissionController extends Controller {
         return view('commissions.info', [
             'class'      => $class,
             'page'       => TextPage::where('key', $class->slug.'info')->first(),
-            'categories' => CommissionCategory::byClass($class->id)->active()->orderBy('sort', 'DESC')->whereIn('id', CommissionType::visible()->pluck('category_id')->toArray())->get(),
+            'categories' => CommissionCategory::byClass($class->id)->active()->orderBy('sort', 'DESC')->whereRelation('types', 'is_visible', true)->get(),
             'count'      => new CommissionType,
         ]);
     }

@@ -14,6 +14,7 @@ use App\Models\Gallery\Program;
 use App\Models\Gallery\Project;
 use App\Models\Gallery\Tag;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Intervention\Image\Facades\Image;
@@ -163,7 +164,9 @@ class GalleryService extends Service {
             }
 
             $data = $this->populateData($data);
-            $piece = Piece::create($data);
+            $piece = Piece::create(Arr::only($data, [
+                'name', 'project_id', 'description', 'timestamp', 'is_visible', 'good_example',
+            ]));
 
             // If tags are selected, validate and create data for them
             $data = $this->processTags($data, $piece);
@@ -204,7 +207,9 @@ class GalleryService extends Service {
             // If programs are selected, validate and create data for them
             $data = $this->processPrograms($data, $piece);
 
-            $piece->update($data);
+            $piece->update(Arr::only($data, [
+                'name', 'project_id', 'description', 'timestamp', 'is_visible', 'good_example',
+            ]));
 
             return $this->commitReturn($piece);
         } catch (\Exception $e) {
@@ -476,7 +481,9 @@ class GalleryService extends Service {
             }
 
             // Create the literature
-            $literature = PieceLiterature::create($data);
+            $literature = PieceLiterature::create(Arr::only($data, [
+                'piece_id', 'text', 'hash', 'extension', 'is_visible', 'is_primary',
+            ]));
 
             // Save image if necessary
             if ($image) {
@@ -537,7 +544,9 @@ class GalleryService extends Service {
                 $data['is_primary'] = 0;
             }
 
-            $literature->update($data);
+            $literature->update(Arr::only($data, [
+                'text', 'hash', 'extension', 'is_visible', 'is_primary',
+            ]));
 
             // Save image if necessary
             if ($image) {
@@ -710,7 +719,9 @@ class GalleryService extends Service {
                 $data['is_visible'] = 0;
             }
 
-            $program = Program::create($data);
+            $program = Program::create(Arr::only($data, [
+                'name', 'has_image', 'is_visible',
+            ]));
 
             if ($image) {
                 $this->handleImage($image, $program->imagePath, $program->imageFileName);
@@ -761,7 +772,9 @@ class GalleryService extends Service {
                 $data['is_visible'] = 0;
             }
 
-            $program->update($data);
+            $program->update(Arr::only($data, [
+                'name', 'has_image', 'is_visible',
+            ]));
 
             if ($image) {
                 $this->handleImage($image, $program->imagePath, $program->imageFileName);

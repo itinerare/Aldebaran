@@ -26,6 +26,16 @@ class CommissionPiece extends Model {
     protected $table = 'commission_pieces';
 
     /**
+     * The relationships that should always be loaded.
+     *
+     * @var array
+     */
+    protected $with = [
+        'piece.images', 'piece.otherImages',
+        'piece.literatures', 'piece.otherLiteratures',
+    ];
+
+    /**
      * Whether the model contains timestamps to be saved and updated.
      *
      * @var string

@@ -67,6 +67,6 @@ class PieceProgram extends Model {
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeVisible($query) {
-        return $query->whereIn('program_id', Program::visible()->pluck('id')->toArray());
+        return $query->whereRelation('program', 'is_visible', true);
     }
 }

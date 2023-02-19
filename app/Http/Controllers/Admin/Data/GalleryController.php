@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Gallery\Piece;
 use App\Models\Gallery\PieceImage;
 use App\Models\Gallery\PieceLiterature;
-use App\Models\Gallery\PieceTag;
 use App\Models\Gallery\Program;
 use App\Models\Gallery\Project;
 use App\Models\Gallery\Tag;
@@ -156,7 +155,7 @@ class GalleryController extends Controller {
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function getPieceIndex(Request $request) {
-        $query = Piece::query();
+        $query = Piece::query()->with(['images:id,piece_id', 'literatures:id,piece_id']);
         $data = $request->only(['project_id', 'name', 'tags']);
         if (isset($data['project_id']) && $data['project_id'] != 'none') {
             $query->where('project_id', $data['project_id']);
@@ -166,7 +165,7 @@ class GalleryController extends Controller {
         }
         if (isset($data['tags'])) {
             foreach ($data['tags'] as $tag) {
-                $query->whereIn('id', PieceTag::where('tag_id', $tag)->pluck('piece_id')->toArray());
+                $query->whereRelation('tags.tag', 'id', $tag);
             }
         }
 

@@ -50,6 +50,7 @@
                 <div class="col-md-1 font-weight-bold">Visible</div>
                 <div class="col-md font-weight-bold">Name</div>
                 <div class="col-md-2 font-weight-bold">Images</div>
+                <div class="col-md-2 font-weight-bold">Literatures</div>
                 <div class="col-md font-weight-bold">Project</div>
                 <div class="col-md-2 font-weight-bold">Year</div>
                 <div class="col-3 col-md-1"></div>
@@ -59,6 +60,7 @@
                     <div class="col-md-1">{!! $piece->is_visible ? '<i class="text-success fas fa-check"></i>' : '' !!}</div>
                     <div class="col-md"> {{ $piece->name }} </div>
                     <div class="col-md-2"> {{ $piece->images->count() }} </div>
+                    <div class="col-md-2"> {{ $piece->literatures->count() }} </div>
                     <div class="col-md"> {{ $piece->project->name }} </div>
                     <div class="col-md-2">
                         {{ isset($piece->timestamp) ? $piece->timestamp->year : $piece->created_at->year }} </div>

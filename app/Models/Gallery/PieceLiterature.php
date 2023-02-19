@@ -84,9 +84,9 @@ class PieceLiterature extends Model {
     public function scopeVisible($query, $user = null) {
         if ($user) {
             return $query;
-        } else {
-            return $query->where('is_visible', 1);
         }
+
+        return $query->where('is_visible', 1);
     }
 
     /**********************************************************************************************
