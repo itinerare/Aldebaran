@@ -4,6 +4,54 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [3.5.0](https://github.com/itinerare/Aldebaran/compare/v3.4.0...v3.5.0) (2023-02-18)
+
+### Features
+
+* Implement model correctness/performance checks ([365e4d](https://github.com/itinerare/Aldebaran/commit/365e4d9a805f59716688886891dc681cf8ce678f))
+
+##### Pieces
+
+* Show literatures count in admin index ([96ea73](https://github.com/itinerare/Aldebaran/commit/96ea7382ee2809549a4a411a2035cc779ab4777e))
+
+### Bug Fixes
+
+
+##### Commissions
+
+* Better data filtering on class/category/type create/update ([2efd90](https://github.com/itinerare/Aldebaran/commit/2efd9063edabbf0f45c50410d7abe2bfeccec1c8))
+* Better data filtering on commission update ([9686c5](https://github.com/itinerare/Aldebaran/commit/9686c570d529897934727e353d4a0d8457c2b8dd))
+* Commission type not eager loaded in type index ([5b62a6](https://github.com/itinerare/Aldebaran/commit/5b62a69e4900de61080857e385ecba14f9879437))
+* Correct piece name fetching in alt text on commission view ([e822c5](https://github.com/itinerare/Aldebaran/commit/e822c53d1a1b274398150b04046d0270c870e741))
+* Do not always attempt to eager load commissioner on commission object ([8dab6c](https://github.com/itinerare/Aldebaran/commit/8dab6c9e3d86ccbd77f84ab2732f248b52327ab0))
+* Eager load info in type admin panel ([3bc6bf](https://github.com/itinerare/Aldebaran/commit/3bc6bf5f80f2b68a197028498cd552983b930cda))
+* Eager load information in category admin panel ([d48ed4](https://github.com/itinerare/Aldebaran/commit/d48ed4e2dc7e16d20be0a382f2e5a40a793b1161))
+* Eager load ledger info ([b4bafe](https://github.com/itinerare/Aldebaran/commit/b4bafe4804fba261717fc36bc74003e31afe9c97))
+
+##### Gallery
+
+* Correctly hide pieces on hidden projects ([fb75c2](https://github.com/itinerare/Aldebaran/commit/fb75c2045f7b79b185e5d6afd864d9135537b189))
+* Include pieces with no tags in gallery by default ([5108b9](https://github.com/itinerare/Aldebaran/commit/5108b9c1c7ce3f7a3d4b6667ec4c6074b94076fc))
+
+##### Pieces
+
+* Better data filtering on create/update ([cbe457](https://github.com/itinerare/Aldebaran/commit/cbe4574e7e30bdc8c8dc7554a78ca558abc39b59))
+* Better data filtering on literature create/update ([d0f0ac](https://github.com/itinerare/Aldebaran/commit/d0f0aca25123d2adcce0438771c888c3bc62923f))
+* Eager load info for feeds ([6c3950](https://github.com/itinerare/Aldebaran/commit/6c3950a9cd988d890a055c278fa8c0c9237efbd1))
+* Eager load tag info on piece tags by default ([233861](https://github.com/itinerare/Aldebaran/commit/233861891ac64290a8d56efd6744ca1e90c37006))
+* Properly hide hidden pieces ([8345d4](https://github.com/itinerare/Aldebaran/commit/8345d4856cef358e8ddadfa9737c7702a1543f52))
+
+##### Programs
+
+* Better data filtering on create/update ([15605b](https://github.com/itinerare/Aldebaran/commit/15605bfe15ada0f0347b026fa0e617ae203e32b2))
+
+##### Tests
+
+* Properly update show_examples on type ([c9367f](https://github.com/itinerare/Aldebaran/commit/c9367f8072a9ed779cb18419db93408464904024))
+
+
+---
+
 ## [3.4.0](https://github.com/itinerare/Aldebaran/compare/v3.3.0...v3.4.0) (2023-01-15)
 
 ### Features
