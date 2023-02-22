@@ -116,6 +116,17 @@ Route::group(['prefix' => 'data', 'namespace' => 'Data'], function () {
     Route::post('commission-types/sort', 'CommissionController@postSortCommissionType');
 });
 
+// MAILING LISTS
+Route::group(['prefix' => 'mailing-lists'], function () {
+    Route::get('/', 'MailingListController@getMailingListIndex');
+    Route::get('create', 'MailingListController@getCreateMailingList');
+    Route::get('edit/{id}', 'MailingListController@getEditMailingList');
+    Route::get('delete/{id}', 'MailingListController@getDeleteMailingList');
+    Route::post('create', 'MailingListController@postCreateEditMailingList');
+    Route::post('edit/{id?}', 'MailingListController@postCreateEditMailingList');
+    Route::post('delete/{id}', 'MailingListController@postDeleteMailingList');
+});
+
 // TEXT PAGES
 Route::group(['prefix' => 'pages'], function () {
     Route::get('/', 'PageController@getPagesIndex');

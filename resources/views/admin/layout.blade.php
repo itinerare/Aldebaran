@@ -45,6 +45,8 @@
                         <a href="{{ url('admin/data/commission-categories') }}">Commission Categories</a> ・
                         <a href="{{ url('admin/data/commission-types') }}">Commission Types</a><br />
                     @endif
+                    Mailing Lists:
+                    <a href="{{ url('admin/mailing-lists') }}">Mailing Lists</a><br />
                     Maintenance:
                     <a href="{{ url('admin/pages') }}">Text Pages</a> ・
                     <a href="{{ url('admin/changelog') }}">Changelog</a> ・
