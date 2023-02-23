@@ -19,14 +19,16 @@
         <div class="row ml-md-2">
             <div class="d-flex row flex-wrap col-12 pb-1 px-0 ubt-bottom">
                 <div class="col-12 col-md-2 font-weight-bold">Open</div>
-                <div class="col-12 col-md-5 font-weight-bold">Name</div>
-                <div class="col-6 col-md-4 font-weight-bold">Last Entry</div>
+                <div class="col-12 col-md-4 font-weight-bold">Name</div>
+                <div class="col-6 col-md-2 font-weight-bold">Subscribers</div>
+                <div class="col-6 col-md-3 font-weight-bold">Last Entry</div>
             </div>
             @foreach ($mailingLists as $list)
                 <div class="d-flex row flex-wrap col-12 mt-1 pt-2 px-0 ubt-top">
                     <div class="col-12 col-md-2">{!! $list->is_open ? '<i class="text-success fas fa-check"></i>' : '' !!}</div>
-                    <div class="col-12 col-md-5">{{ $list->name }}</div>
-                    <div class="col-6 col-md-4">{!! $list->entries->count() ? $list->entries->first()->subject . ' - ' . pretty_date($list->entries->first()->created_at) : 'None!' !!}</div>
+                    <div class="col-12 col-md-4">{{ $list->name }}</div>
+                    <div class="col-6 col-md-2">{{ $list->subscribers->count() }}</div>
+                    <div class="col-6 col-md-3">{!! $list->entries->count() ? $list->entries->first()->subject . ' - ' . pretty_date($list->entries->first()->created_at) : 'None!' !!}</div>
                     <div class="col-3 col-md-1 text-right"><a href="{{ url('admin/mailing-lists/edit/' . $list->id) }}" class="btn btn-primary py-0 px-2">Edit</a></div>
                 </div>
             @endforeach

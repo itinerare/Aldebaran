@@ -28,7 +28,7 @@ class MailingListController extends Controller {
         }
 
         return view('admin.mailing_lists.index', [
-            'mailingLists' => MailingList::with('entries')->orderBy('name')->paginate(20)->appends($request->query()),
+            'mailingLists' => MailingList::with(['entries', 'subscribers:id,mailing_list_id'])->orderBy('name')->paginate(20)->appends($request->query()),
         ]);
     }
 
