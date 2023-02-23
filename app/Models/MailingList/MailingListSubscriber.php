@@ -14,7 +14,7 @@ class MailingListSubscriber extends Model {
      * @var array
      */
     protected $fillable = [
-        'mailing_list_id', 'email', 'last_entry_sent',
+        'mailing_list_id', 'email', 'token', 'is_verified', 'last_entry_sent',
     ];
 
     /**
@@ -23,6 +23,13 @@ class MailingListSubscriber extends Model {
      * @var string
      */
     protected $table = 'mailing_list_subscribers';
+
+    /**
+     * The relationships that should always be loaded.
+     *
+     * @var array
+     */
+    protected $with = ['mailingList'];
 
     /**
      * Whether the model contains timestamps to be saved and updated.
@@ -50,4 +57,49 @@ class MailingListSubscriber extends Model {
         //
         'email' => 'required',
     ];
+
+    /**********************************************************************************************
+
+        RELATIONS
+
+    **********************************************************************************************/
+
+    /**
+     * Get the mailing list associated with this subscriber.
+     */
+    public function mailingList() {
+        return $this->belongsTo(MailingList::class, 'mailing_list_id');
+    }
+
+    /**********************************************************************************************
+
+        SCOPES
+
+    **********************************************************************************************/
+
+    /**
+     * Scope a query to return only verified subscribers.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeVerified($query) {
+        return $query->where('is_verified', 1);
+    }
+
+    /**********************************************************************************************
+
+        ACCESSORS
+
+    **********************************************************************************************/
+
+    /**
+     * Get the verify subscription url.
+     *
+     * @return string
+     */
+    public function getVerifyUrlAttribute() {
+        return url('/mailing-lists/verify/'.$this->id.'?token='.$this->token);
+    }
 }

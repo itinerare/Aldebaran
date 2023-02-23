@@ -70,4 +70,36 @@ class MailingList extends Model {
     public function subscribers() {
         return $this->hasMany(MailingListSubscriber::class, 'mailing_list_id');
     }
+
+    /**********************************************************************************************
+
+        SCOPES
+
+    **********************************************************************************************/
+
+    /**
+     * Scope a query to return only open mailing lists.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeOpen($query) {
+        return $query->where('is_open', 1);
+    }
+
+    /**********************************************************************************************
+
+        ACCESSORS
+
+    **********************************************************************************************/
+
+    /**
+     * Get the mailing list's url.
+     *
+     * @return string
+     */
+    public function getUrlAttribute() {
+        return url('/mailing-lists/'.$this->id);
+    }
 }

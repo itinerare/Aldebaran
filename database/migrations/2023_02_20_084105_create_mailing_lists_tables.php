@@ -36,6 +36,8 @@ return new class extends Migration {
             $table->integer('mailing_list_id')->unsigned()->index();
 
             $table->string('email');
+            $table->boolean('is_verified')->default(0);
+            $table->string('token');
             $table->integer('last_entry_sent')->nullable()->default(null);
 
             $table->timestamps();
