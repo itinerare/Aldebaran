@@ -54,6 +54,10 @@ class MailingListService extends Service {
         DB::beginTransaction();
 
         try {
+            if (MailingList::where('name', $data['name'])->where('id', '!=', $mailingList->id)->exists()) {
+                throw new \Exception('A mailing list with this name already exists.');
+            }
+
             if (!isset($data['is_open'])) {
                 $data['is_open'] = 0;
             }

@@ -38,7 +38,7 @@ class MailingList extends Model {
      */
     public static $createRules = [
         //
-        'name' => 'required',
+        'name' => 'required:unique',
     ];
 
     /**
