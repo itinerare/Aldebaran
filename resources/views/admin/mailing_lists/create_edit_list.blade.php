@@ -8,7 +8,7 @@
     {!! breadcrumbs([
         'Admin Panel' => 'admin',
         'Mailing Lists' => 'admin/mailing-lists',
-        ($mailingList->id ? 'Edit' : 'Create') . ' Entry' => $mailingList->id ? 'admin/mailing-lists/edit/' . $mailingList->id : 'admin/mailing-lists/create',
+        ($mailingList->id ? 'Edit' : 'Create') . ' Mailing List' => $mailingList->id ? 'admin/mailing-lists/edit/' . $mailingList->id : 'admin/mailing-lists/create',
     ]) !!}
 
     <h1>{{ $mailingList->id ? 'Edit' : 'Create' }} Mailing List
