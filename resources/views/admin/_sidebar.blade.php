@@ -30,10 +30,12 @@
         </li>
     @endif
 
-    <li class="sidebar-section">
-        <div class="sidebar-section-header">Mailing Lists</div>
-        <div class="sidebar-item"><a href="{{ url('admin/mailing-lists') }}" class="{{ set_active('admin/mailing-lists*') }}">Mailing Lists</a></div>
-    </li>
+    @if (config('aldebaran.settings.email_features'))
+        <li class="sidebar-section">
+            <div class="sidebar-section-header">Mailing Lists</div>
+            <div class="sidebar-item"><a href="{{ url('admin/mailing-lists') }}" class="{{ set_active('admin/mailing-lists*') }}">Mailing Lists</a></div>
+        </li>
+    @endif
 
     <li class="sidebar-section">
         <div class="sidebar-section-header">Maintenance</div>

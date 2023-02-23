@@ -118,7 +118,7 @@ class CommissionManager extends Service {
 
             // If desired, send an email notification to the admin account
             // that a commission request was submitted
-            if (Settings::get('notif_emails') && !$manual && (config('aldebaran.settings.admin_email.address') && config('aldebaran.settings.admin_email.password'))) {
+            if (config('aldebaran.settings.email_features') && Settings::get('notif_emails') && !$manual && (config('aldebaran.settings.admin_email.address') && config('aldebaran.settings.admin_email.password'))) {
                 Mail::to(User::find(1))->send(new CommissionRequested($commission));
             }
 

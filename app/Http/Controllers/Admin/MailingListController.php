@@ -23,6 +23,10 @@ class MailingListController extends Controller {
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function getMailingListIndex(Request $request) {
+        if (!config('aldebaran.settings.email_features')) {
+            abort(404);
+        }
+
         return view('admin.mailing_lists.index', [
             'mailingLists' => MailingList::with('entries')->orderBy('name')->paginate(20)->appends($request->query()),
         ]);
@@ -34,6 +38,10 @@ class MailingListController extends Controller {
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function getCreateMailingList() {
+        if (!config('aldebaran.settings.email_features')) {
+            abort(404);
+        }
+
         return view('admin.mailing_lists.create_edit_list', [
             'mailingList' => new MailingList,
         ]);
@@ -47,6 +55,10 @@ class MailingListController extends Controller {
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function getEditMailingList($id) {
+        if (!config('aldebaran.settings.email_features')) {
+            abort(404);
+        }
+
         $mailingList = MailingList::find($id);
         if (!$mailingList) {
             abort(404);
@@ -92,6 +104,10 @@ class MailingListController extends Controller {
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function getDeleteMailingList($id) {
+        if (!config('aldebaran.settings.email_features')) {
+            abort(404);
+        }
+
         $mailingList = MailingList::find($id);
 
         return view('admin.mailing_lists._delete_list', [
