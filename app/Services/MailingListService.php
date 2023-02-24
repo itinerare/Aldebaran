@@ -2,9 +2,12 @@
 
 namespace App\Services;
 
+use App\Mail\MailListEntry;
 use App\Models\MailingList\MailingList;
 use App\Models\MailingList\MailingListEntry;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class MailingListService extends Service {
     /*
@@ -116,6 +119,14 @@ class MailingListService extends Service {
 
             $entry = MailingListEntry::create($data);
 
+            if (!$entry->is_draft) {
+                $entry->update(['sent_at' => Carbon::now()]);
+                foreach ($entry->mailingList->subscribers as $subscriber) {
+                    Mail::to($subscriber->email)
+                        ->queue(new MailListEntry($entry));
+                }
+            }
+
             return $this->commitReturn($entry);
         } catch (\Exception $e) {
             $this->setError('error', $e->getMessage());
@@ -147,6 +158,14 @@ class MailingListService extends Service {
 
             $entry->update($data);
 
+            if (!$entry->is_draft) {
+                $entry->update(['sent_at' => Carbon::now()]);
+                foreach ($entry->mailingList->subscribers as $subscriber) {
+                    Mail::to($subscriber->email)
+                        ->queue(new MailListEntry($entry));
+                }
+            }
+
             return $this->commitReturn($entry);
         } catch (\Exception $e) {
             $this->setError('error', $e->getMessage());
@@ -169,27 +188,6 @@ class MailingListService extends Service {
             $entry->delete();
 
             return $this->commitReturn(true);
-        } catch (\Exception $e) {
-            $this->setError('error', $e->getMessage());
-        }
-
-        return $this->rollbackReturn(false);
-    }
-
-    /**
-     * Handles entry sending.
-     *
-     * @param \App\Models\MailingList\MailingListEntry $entry
-     *
-     * @return \App\Models\MailingList\MailingListEntry|bool
-     */
-    private function sendEntry($entry) {
-        DB::beginTransaction();
-
-        try {
-            //
-
-            return $this->commitReturn($entry);
         } catch (\Exception $e) {
             $this->setError('error', $e->getMessage());
         }

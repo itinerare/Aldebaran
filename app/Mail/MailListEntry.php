@@ -2,28 +2,30 @@
 
 namespace App\Mail;
 
-use App\Models\MailingList\MailingListSubscriber;
+use App\Models\MailingList\MailingListEntry;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class VerifyMailingListSubscription extends Mailable {
+class MailListEntry extends Mailable implements ShouldQueue {
     use Queueable, SerializesModels;
 
     /**
-     * The subscriber instance.
+     * The entry instance.
      *
-     * @var \App\Models\MailingList\MailingListSubscriber
+     * @var \App\Models\MailingList\MailingListEntry
      */
-    public $subscriber;
+    public $entry;
 
     /**
      * Create a new message instance.
      */
-    public function __construct(MailingListSubscriber $subscriber) {
-        $this->subscriber = $subscriber;
+    public function __construct(MailingListEntry $entry) {
+        $this->afterCommit();
+        $this->entry = $entry->withoutRelations();
     }
 
     /**
@@ -33,7 +35,7 @@ class VerifyMailingListSubscription extends Mailable {
      */
     public function envelope() {
         return new Envelope(
-            subject: 'Verify Mailing List Subscription',
+            subject: $this->entry->subject,
         );
     }
 
@@ -44,7 +46,7 @@ class VerifyMailingListSubscription extends Mailable {
      */
     public function content() {
         return new Content(
-            markdown: 'mail.markdown.verify_subscription',
+            markdown: 'mail.markdown.mailing_list_entry',
         );
     }
 
