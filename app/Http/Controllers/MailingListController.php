@@ -27,30 +27,6 @@ class MailingListController extends Controller {
     }
 
     /**
-     * Process subscription verification.
-     *
-     * @param int $id
-     *
-     * @return \Illuminate\Contracts\Support\Renderable
-     */
-    public function getVerify(Request $request, MailingListManager $service, $id) {
-        $subscriber = MailingListSubscriber::where('id', $id)->where('token', $request->get('token'))->first();
-        if (!$subscriber) {
-            abort(404);
-        }
-
-        if ($service->verifySubscriber($subscriber, $request->get('token'))) {
-            flash('Success! Your subscription is now verified.')->success();
-        } else {
-            foreach ($service->errors()->getMessages()['error'] as $error) {
-                $service->addError($error);
-            }
-        }
-
-        return redirect()->to('mailing-lists/'.$subscriber->mailing_list_id);
-    }
-
-    /**
      * Processes an initial mailing list subscription.
      *
      * @param int|null $id
@@ -79,5 +55,53 @@ class MailingListController extends Controller {
         }
 
         return redirect()->back();
+    }
+
+    /**
+     * Process subscription verification.
+     *
+     * @param int $id
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getVerify(Request $request, MailingListManager $service, $id) {
+        $subscriber = MailingListSubscriber::where('id', $id)->where('token', $request->get('token'))->first();
+        if (!$subscriber) {
+            abort(404);
+        }
+
+        if ($service->verifySubscriber($subscriber, $request->get('token'))) {
+            flash('Success! Your subscription is now verified.')->success();
+        } else {
+            foreach ($service->errors()->getMessages()['error'] as $error) {
+                $service->addError($error);
+            }
+        }
+
+        return redirect()->to('mailing-lists/'.$subscriber->mailing_list_id);
+    }
+
+    /**
+     * Process unsubscription.
+     *
+     * @param int $id
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getUnsubscribe(Request $request, MailingListManager $service, $id) {
+        $subscriber = MailingListSubscriber::where('id', $id)->where('token', $request->get('token'))->first();
+        if (!$subscriber) {
+            abort(404);
+        }
+
+        if ($service->removeSubscriber($subscriber, $request->get('token'))) {
+            flash('You have successfully unsubscribed.')->success();
+        } else {
+            foreach ($service->errors()->getMessages()['error'] as $error) {
+                $service->addError($error);
+            }
+        }
+
+        return redirect()->to('mailing-lists/'.$subscriber->mailing_list_id);
     }
 }

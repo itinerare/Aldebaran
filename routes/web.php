@@ -37,6 +37,7 @@ Route::group(['prefix' => 'projects'], function () {
 Route::group(['prefix' => 'mailing-lists'], function () {
     Route::get('{id}', 'MailingListController@getMailingList');
     Route::get('verify/{id}', 'MailingListController@getVerify');
+    Route::get('unsubscribe/{id}', 'MailingListController@getUnsubscribe');
     Route::post('{id}/subscribe', 'MailingListController@postSubscribe');
 });
 

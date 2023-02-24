@@ -110,4 +110,13 @@ class MailingListSubscriber extends Model {
     public function getVerifyUrlAttribute() {
         return url('/mailing-lists/verify/'.$this->id.'?token='.$this->token);
     }
+
+    /**
+     * Get the unsubscription url.
+     *
+     * @return string
+     */
+    public function getUnsubscribeUrlAttribute() {
+        return url('/mailing-lists/unsubscribe/'.$this->id.'?token='.$this->token);
+    }
 }

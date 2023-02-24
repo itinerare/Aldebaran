@@ -123,7 +123,7 @@ class MailingListService extends Service {
                 $entry->update(['sent_at' => Carbon::now()]);
                 foreach ($entry->mailingList->subscribers as $subscriber) {
                     Mail::to($subscriber->email)
-                        ->queue(new MailListEntry($entry));
+                        ->queue(new MailListEntry($entry, $subscriber));
                     $subscriber->update(['last_entry_sent' => $entry->id]);
                 }
             }
@@ -163,7 +163,7 @@ class MailingListService extends Service {
                 $entry->update(['sent_at' => Carbon::now()]);
                 foreach ($entry->mailingList->subscribers as $subscriber) {
                     Mail::to($subscriber->email)
-                        ->queue(new MailListEntry($entry));
+                        ->queue(new MailListEntry($entry, $subscriber));
                     $subscriber->update(['last_entry_sent' => $entry->id]);
                 }
             }

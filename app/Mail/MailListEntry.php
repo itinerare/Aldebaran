@@ -3,6 +3,7 @@
 namespace App\Mail;
 
 use App\Models\MailingList\MailingListEntry;
+use App\Models\MailingList\MailingListSubscriber;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -21,11 +22,19 @@ class MailListEntry extends Mailable implements ShouldQueue {
     public $entry;
 
     /**
+     * The entry instance.
+     *
+     * @var \App\Models\MailingList\MailingListSubscriber
+     */
+    public $subscriber;
+
+    /**
      * Create a new message instance.
      */
-    public function __construct(MailingListEntry $entry) {
+    public function __construct(MailingListEntry $entry, MailingListSubscriber $subscriber) {
         $this->afterCommit();
         $this->entry = $entry->withoutRelations();
+        $this->subscriber = $subscriber->withoutRelations();
     }
 
     /**

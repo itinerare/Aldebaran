@@ -86,6 +86,33 @@ class MailingListManager extends Service {
     }
 
     /**
+     * Unsubscribes.
+     *
+     * @param \App\Models\MailingList\MailingListSubscriber $subscriber
+     * @param string                                        $token
+     *
+     * @return \App\Models\MailingList\MailingListSubscriber|bool
+     */
+    public function removeSubscriber($subscriber, $token) {
+        DB::beginTransaction();
+
+        try {
+            // Perform a secondary check of the token
+            if ($subscriber->token != $token) {
+                throw new \Exception('Invalid token.');
+            }
+
+            $subscriber->delete();
+
+            return $this->commitReturn($subscriber);
+        } catch (\Exception $e) {
+            $this->setError('error', $e->getMessage());
+        }
+
+        return $this->rollbackReturn(false);
+    }
+
+    /**
      * Kicks a subscriber.
      *
      * @param \App\Models\MailingList\MailingListSubscriber $subscriber
