@@ -61,7 +61,7 @@ class MailingList extends Model {
      * Get the entries associated with this mailing list.
      */
     public function entries() {
-        return $this->hasMany(MailingListEntry::class, 'mailing_list_id')->orderBy('created_at', 'DESC');
+        return $this->hasMany(MailingListEntry::class, 'mailing_list_id');
     }
 
     /**

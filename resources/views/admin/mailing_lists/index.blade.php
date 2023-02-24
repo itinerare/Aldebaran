@@ -34,7 +34,7 @@
                                 $list->subscribers()->verified(0)->count() .
                                 ' Unverified)</span>'
                             : '' !!}</div>
-                    <div class="col-6 col-md-3">{!! $list->entries->count() ? $list->entries->first()->subject . ' - ' . pretty_date($list->entries->first()->created_at) : 'None!' !!}</div>
+                    <div class="col-6 col-md-3">{!! $list->entries->count() ? $list->entries->sortBy('sent_at', 'DESC')->first()->subject . ' - ' . pretty_date($list->entries->sortBy('sent_at', 'DESC')->first()->sent_at) : 'None!' !!}</div>
                     <div class="col-3 col-md-1 text-right"><a href="{{ url('admin/mailing-lists/edit/' . $list->id) }}" class="btn btn-primary py-0 px-2">Edit</a></div>
                 </div>
             @endforeach

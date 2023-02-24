@@ -126,6 +126,13 @@ Route::group(['prefix' => 'mailing-lists'], function () {
     Route::post('edit/{id?}', 'MailingListController@postCreateEditMailingList');
     Route::post('delete/{id}', 'MailingListController@postDeleteMailingList');
 
+    Route::get('entries/create/{id}', 'MailingListController@getCreateEntry');
+    Route::post('entries/create', 'MailingListController@postCreateEditEntry');
+    Route::get('entries/edit/{id}', 'MailingListController@getEditEntry');
+    Route::post('entries/edit/{id}', 'MailingListController@postCreateEditEntry');
+    Route::get('entries/delete/{id}', 'MailingListController@getDeleteEntry');
+    Route::post('entries/delete/{id}', 'MailingListController@postDeleteEntry');
+
     Route::get('subscriber/{id}/kick', 'MailingListController@getKickSubscriber');
     Route::get('subscriber/{id}/ban', 'MailingListController@getBanSubscriber');
     Route::post('subscriber/{id}/kick', 'MailingListController@postKickSubscriber');

@@ -4,12 +4,12 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\MailingList\MailingList;
+use App\Models\MailingList\MailingListEntry;
 use App\Models\MailingList\MailingListSubscriber;
 use App\Services\CommissionManager;
 use App\Services\MailingListManager;
 use App\Services\MailingListService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class MailingListController extends Controller {
     /*
@@ -139,6 +139,124 @@ class MailingListController extends Controller {
     }
 
     /******************************************************************************
+        ENTRIES
+    *******************************************************************************/
+
+    /**
+     * Shows the create entry page.
+     *
+     * @param mixed $id
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getCreateEntry($id) {
+        if (!config('aldebaran.settings.email_features')) {
+            abort(404);
+        }
+
+        $mailingList = MailingList::with(['subscribers', 'entries'])->find($id);
+        if (!$mailingList) {
+            abort(404);
+        }
+
+        return view('admin.mailing_lists.create_edit_entry', [
+            'mailingList' => $mailingList,
+            'entry'       => new MailingListEntry,
+        ]);
+    }
+
+    /**
+     * Shows the edit entry page.
+     *
+     * @param int $id
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getEditEntry($id) {
+        if (!config('aldebaran.settings.email_features')) {
+            abort(404);
+        }
+
+        $entry = MailingListEntry::find($id);
+        if (!$entry) {
+            abort(404);
+        }
+
+        return view('admin.mailing_lists.create_edit_entry', [
+            'mailingList' => $entry->mailingList,
+            'entry'       => $entry,
+        ]);
+    }
+
+    /**
+     * Creates or edits an entry.
+     *
+     * @param int|null $id
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function postCreateEditEntry(Request $request, MailingListService $service, $id = null) {
+        $id ? $request->validate(MailingListEntry::$updateRules) : $request->validate(MailingListEntry::$createRules);
+        $data = $request->only([
+            'mailing_list_id', 'subject', 'text', 'is_draft',
+        ]);
+        if ($id && $service->updateEntry(MailingListEntry::find($id), $data, $request->user())) {
+            flash('Entry updated successfully.')->success();
+        } elseif (!$id && $mailingList = $service->createEntry($data, $request->user())) {
+            flash('Entry created successfully.')->success();
+
+            return redirect()->to('admin/mailing-lists/entries/edit/'.$mailingList->id);
+        } else {
+            foreach ($service->errors()->getMessages()['error'] as $error) {
+                $service->addError($error);
+            }
+        }
+
+        return redirect()->back();
+    }
+
+    /**
+     * Gets the entry deletion modal.
+     *
+     * @param int $id
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getDeleteEntry($id) {
+        if (!config('aldebaran.settings.email_features')) {
+            abort(404);
+        }
+
+        $entry = MailingListEntry::find($id);
+
+        return view('admin.mailing_lists._delete_entry', [
+            'entry' => $entry,
+        ]);
+    }
+
+    /**
+     * Deletes an entry.
+     *
+     * @param int $id
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function postDeleteEntry(MailingListService $service, $id) {
+        $entry = MailingListEntry::with('mailingList')->find($id);
+        $mailingList = $entry->mailingList;
+
+        if ($id && $service->deleteEntry($entry)) {
+            flash('Entry deleted successfully.')->success();
+        } else {
+            foreach ($service->errors()->getMessages()['error'] as $error) {
+                $service->addError($error);
+            }
+        }
+
+        return redirect()->to('admin/mailing-lists/edit/'.$mailingList->id);
+    }
+
+    /******************************************************************************
         SUBSCRIBERS
     *******************************************************************************/
 
@@ -209,8 +327,8 @@ class MailingListController extends Controller {
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function postBanSubscriber(CommissionManager $service, $id) {
-        if ($id && $service->banCommissioner(MailingListSubscriber::find($id)->email, [], Auth::user())) {
+    public function postBanSubscriber(Request $request, CommissionManager $service, $id) {
+        if ($id && $service->banCommissioner(MailingListSubscriber::find($id)->email, [], $request->user())) {
             flash('Subscriber banned successfully.')->success();
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {

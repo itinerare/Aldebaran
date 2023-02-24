@@ -13,7 +13,7 @@
 
     <h1>{{ $mailingList->id ? 'Edit' : 'Create' }} Mailing List
         @if ($mailingList->id)
-            <a href="#" class="btn btn-danger float-right delete-log-button">Delete Mailing List</a>
+            <a href="#" class="btn btn-danger float-right delete-mailing-list-button">Delete Mailing List</a>
         @endif
     </h1>
 
@@ -44,6 +44,41 @@
     {!! Form::close() !!}
 
     @if ($mailingList->id)
+        <h2 id="entries">
+            Entries{{ $mailingList->entries->count() >= 20 ? ' ('.$mailingList->entries->count().')' : '' }}
+            <a class="small collapse-toggle collapsed section-collapse" href="#collapse-entries"
+                data-toggle="collapse" data-text-swap="{{ $mailingList->entries->count() > 20 ? 'Show' : 'Hide' }}"
+                data-text-original="{{ $mailingList->entries->count() > 20 ? 'Hide' : 'Show' }}">{{ $mailingList->entries->count() <= 20 ? 'Hide' : 'Show' }}</a>
+        </h2>
+        <div class="collapse {{ $mailingList->entries->count() <= 20 ? 'show' : '' }}" id="collapse-entries">
+            <p>The following is a list of entries associated with this mailing list. Entries may be either in draft or sent state; drafts are listed first, for convenience, while sent entries are listed chronologically.</p>
+
+            <div class="text-right">
+                <a href="{{ url('admin/mailing-lists/entries/create/' . $mailingList->id) }}" class="btn btn-outline-primary mb-2">Create an Entry</a>
+            </div>
+
+            @if (!count($mailingList->entries))
+                <p>No entries found.</p>
+            @else
+                <div class="row ml-md-2">
+                    <div class="d-flex row flex-wrap col-12 pb-1 px-0 ubt-bottom">
+                        <div class="col-12 col-md-6 font-weight-bold">Subject</div>
+                        <div class="col-12 col-md-5 font-weight-bold">Status</div>
+                    </div>
+                    @foreach ($mailingList->entries()->sort()->get() as $entry)
+                        <div class="d-flex row flex-wrap col-12 mt-1 pt-2 px-0 ubt-top">
+                            <div class="col-12 col-md-6">{{ $entry->subject }}</div>
+                            <div class="col-12 col-md-5">{!! $entry->is_draft ? 'Draft' : '<i class="text-success fas fa-check"></i> Sent' !!}</div>
+                            <div class="col-3 col-md-1 text-right"><a href="{{ url('admin/mailing-lists/entries/edit/'.$entry->id) }}" class="btn btn-primary py-0 px-2">{{ $entry->is_draft ? 'Edit' : 'View' }}</a></div>
+                        </div>
+                    @endforeach
+                </div>
+
+                <div class="text-center mt-4 small text-muted">{{ $mailingList->entries->count() }} result{{ $mailingList->entries->count() == 1 ? '' : 's' }}
+                    found.</div>
+            @endif
+        </div>
+
         <h2 id="subscribers">
             Subscribers ({{ $mailingList->subscribers->count() }})
             <a class="small collapse-toggle collapsed section-collapse" href="#collapse-subscribers"
@@ -86,7 +121,7 @@
     @parent
     <script>
         $(document).ready(function() {
-            $('.delete-log-button').on('click', function(e) {
+            $('.delete-mailing-list-button').on('click', function(e) {
                 e.preventDefault();
                 loadModal("{{ url('admin/mailing-lists/delete') }}/{{ $mailingList->id }}", 'Delete Mailing List');
             });
