@@ -43,7 +43,7 @@
 
     {!! Form::close() !!}
 
-    @if($mailingList->id)
+    @if ($mailingList->id)
         <h2>Subscribers</h2>
         <p>The following is a list of current subscribers to this mailing list.</p>
 
@@ -86,12 +86,12 @@
 
             $('.unsubscribe-button').on('click', function(e) {
                 e.preventDefault();
-                loadModal("{{ url('admin/mailing-lists/subscriber/') }}/"+$(this).attr('data-id')+"/kick", 'Force Unsubscribe');
+                loadModal("{{ url('admin/mailing-lists/subscriber/') }}/" + $(this).attr('data-id') + "/kick", 'Force Unsubscribe');
             });
 
             $('.ban-button').on('click', function(e) {
                 e.preventDefault();
-                loadModal("{{ url('admin/mailing-lists/subscriber/') }}/"+$(this).attr('data-id')+"/ban", 'Ban Subscriber');
+                loadModal("{{ url('admin/mailing-lists/subscriber/') }}/" + $(this).attr('data-id') + "/ban", 'Ban Subscriber');
             });
         });
     </script>
