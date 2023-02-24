@@ -24,6 +24,13 @@
         {!! Form::text('name', $mailingList->name, ['class' => 'form-control']) !!}
     </div>
 
+    @if ($mailingList->id)
+        <div class="form-group">
+            {!! Form::label('url', 'URL') !!} {!! add_help('The link to the subscription page for this mailing list. This is provided for convenience, as you may link mailing lists directly where relevant regardless of whether or not you use the optional listing on the index page.') !!}
+            {!! Form::text('url', $mailingList->url, ['class' => 'form-control', 'disabled']) !!}
+        </div>
+    @endif
+
     <div class="form-group">
         {!! Form::label('description', 'Description (Optional)') !!}
         {!! Form::textarea('description', $mailingList->description, ['class' => 'form-control wysiwyg']) !!}
