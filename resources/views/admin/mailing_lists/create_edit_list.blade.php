@@ -44,34 +44,41 @@
     {!! Form::close() !!}
 
     @if ($mailingList->id)
-        <h2>Subscribers</h2>
-        <p>The following is a list of current subscribers to this mailing list.</p>
+        <h2 id="subscribers">
+            Subscribers ({{ $mailingList->subscribers->count() }})
+            <a class="small collapse-toggle collapsed section-collapse" href="#collapse-subscribers"
+                data-toggle="collapse" data-text-swap="Show"
+                data-text-original="Hide">Show</a>
+        </h2>
+        <div class="collapse" id="collapse-subscribers">
+            <p>The following is a list of current subscribers to this mailing list.</p>
 
-        @if (!count($mailingList->subscribers))
-            <p>No subscribers found.</p>
-        @else
-            <div class="row ml-md-2">
-                <div class="d-flex row flex-wrap col-12 pb-1 px-0 ubt-bottom">
-                    <div class="col-12 col-md-3 font-weight-bold">Email</div>
-                    <div class="col-12 col-md-2 font-weight-bold">Verified</div>
-                    <div class="col-6 col-md-4 font-weight-bold">Last Entry</div>
-                </div>
-                @foreach ($mailingList->subscribers as $subscriber)
-                    <div class="d-flex row flex-wrap col-12 mt-1 pt-2 px-0 ubt-top">
-                        <div class="col-12 col-md-3">{{ $subscriber->email }}</div>
-                        <div class="col-12 col-md-2">{!! $subscriber->is_verified ? '<i class="text-success fas fa-check"></i>' : '' !!}</div>
-                        <div class="col-6 col-md-4">{!! $subscriber->lastEntry ? $subscriber->lastEntry->subject . ' - ' . pretty_date($subscriber->lastEntry->created_at) : 'None!' !!}</div>
-                        <div class="col-3 col-md-3 text-right">
-                            <a href="#" class="btn btn-warning py-0 px-2 unsubscribe-button" data-id="{{ $subscriber->id }}">Unsubscribe</a>
-                            <a href="#" class="btn btn-danger py-0 px-2 ban-button" data-id="{{ $subscriber->id }}">Ban</a>
-                        </div>
+            @if (!count($mailingList->subscribers))
+                <p>No subscribers found.</p>
+            @else
+                <div class="row ml-md-2">
+                    <div class="d-flex row flex-wrap col-12 pb-1 px-0 ubt-bottom">
+                        <div class="col-12 col-md-3 font-weight-bold">Email</div>
+                        <div class="col-12 col-md-2 font-weight-bold">Verified</div>
+                        <div class="col-6 col-md-4 font-weight-bold">Last Entry</div>
                     </div>
-                @endforeach
-            </div>
+                    @foreach ($mailingList->subscribers as $subscriber)
+                        <div class="d-flex row flex-wrap col-12 mt-1 pt-2 px-0 ubt-top">
+                            <div class="col-12 col-md-3">{{ $subscriber->email }}</div>
+                            <div class="col-12 col-md-2">{!! $subscriber->is_verified ? '<i class="text-success fas fa-check"></i>' : '' !!}</div>
+                            <div class="col-6 col-md-4">{!! $subscriber->lastEntry ? $subscriber->lastEntry->subject . ' - ' . pretty_date($subscriber->lastEntry->created_at) : 'None!' !!}</div>
+                            <div class="col-3 col-md-3 text-right">
+                                <a href="#" class="btn btn-warning py-0 px-2 unsubscribe-button" data-id="{{ $subscriber->id }}">Unsubscribe</a>
+                                <a href="#" class="btn btn-danger py-0 px-2 ban-button" data-id="{{ $subscriber->id }}">Ban</a>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
 
-            <div class="text-center mt-4 small text-muted">{{ $mailingList->subscribers->count() }} result{{ $mailingList->subscribers->count() == 1 ? '' : 's' }}
-                found.</div>
-        @endif
+                <div class="text-center mt-4 small text-muted">{{ $mailingList->subscribers->count() }} result{{ $mailingList->subscribers->count() == 1 ? '' : 's' }}
+                    found.</div>
+            @endif
+        </div>
     @endif
 @endsection
 
@@ -82,6 +89,14 @@
             $('.delete-log-button').on('click', function(e) {
                 e.preventDefault();
                 loadModal("{{ url('admin/mailing-lists/delete') }}/{{ $mailingList->id }}", 'Delete Mailing List');
+            });
+
+            // Taken from https://css-tricks.com/swapping-out-text-five-different-ways/
+            $(".section-collapse").on("click", function() {
+                var el = $(this);
+                el.text() == el.data("text-swap") ?
+                    el.text(el.data("text-original")) :
+                    el.text(el.data("text-swap"));
             });
 
             $('.unsubscribe-button').on('click', function(e) {
