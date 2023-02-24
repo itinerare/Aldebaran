@@ -45,9 +45,8 @@
 
     @if ($mailingList->id)
         <h2 id="entries">
-            Entries{{ $mailingList->entries->count() >= 20 ? ' ('.$mailingList->entries->count().')' : '' }}
-            <a class="small collapse-toggle collapsed section-collapse" href="#collapse-entries"
-                data-toggle="collapse" data-text-swap="{{ $mailingList->entries->count() > 20 ? 'Show' : 'Hide' }}"
+            Entries{{ $mailingList->entries->count() >= 20 ? ' (' . $mailingList->entries->count() . ')' : '' }}
+            <a class="small collapse-toggle collapsed section-collapse" href="#collapse-entries" data-toggle="collapse" data-text-swap="{{ $mailingList->entries->count() > 20 ? 'Show' : 'Hide' }}"
                 data-text-original="{{ $mailingList->entries->count() > 20 ? 'Hide' : 'Show' }}">{{ $mailingList->entries->count() <= 20 ? 'Hide' : 'Show' }}</a>
         </h2>
         <div class="collapse {{ $mailingList->entries->count() <= 20 ? 'show' : '' }}" id="collapse-entries">
@@ -69,7 +68,7 @@
                         <div class="d-flex row flex-wrap col-12 mt-1 pt-2 px-0 ubt-top">
                             <div class="col-12 col-md-6">{{ $entry->subject }}</div>
                             <div class="col-12 col-md-5">{!! $entry->is_draft ? 'Draft' : '<i class="text-success fas fa-check"></i> Sent' !!}</div>
-                            <div class="col-3 col-md-1 text-right"><a href="{{ url('admin/mailing-lists/entries/edit/'.$entry->id) }}" class="btn btn-primary py-0 px-2">{{ $entry->is_draft ? 'Edit' : 'View' }}</a></div>
+                            <div class="col-3 col-md-1 text-right"><a href="{{ url('admin/mailing-lists/entries/edit/' . $entry->id) }}" class="btn btn-primary py-0 px-2">{{ $entry->is_draft ? 'Edit' : 'View' }}</a></div>
                         </div>
                     @endforeach
                 </div>
@@ -81,9 +80,7 @@
 
         <h2 id="subscribers">
             Subscribers ({{ $mailingList->subscribers->count() }})
-            <a class="small collapse-toggle collapsed section-collapse" href="#collapse-subscribers"
-                data-toggle="collapse" data-text-swap="Show"
-                data-text-original="Hide">Show</a>
+            <a class="small collapse-toggle collapsed section-collapse" href="#collapse-subscribers" data-toggle="collapse" data-text-swap="Show" data-text-original="Hide">Show</a>
         </h2>
         <div class="collapse" id="collapse-subscribers">
             <p>The following is a list of current subscribers to this mailing list.</p>

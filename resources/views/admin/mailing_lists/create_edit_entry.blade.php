@@ -18,7 +18,7 @@
         @endif
     </h1>
 
-    @if(isset($entry->sent_at))
+    @if (isset($entry->sent_at))
         <div class="alert alert-info">
             This entry has already been sent and is consequently read-only. The subject and text are as follows:
         </div>
@@ -33,7 +33,7 @@
         </div>
 
         <div class="text-right">
-            <a href="{{ url('admin/mailing-lists/edit/'.$mailingList->id) }}" class="btn btn-primary">Back</a>
+            <a href="{{ url('admin/mailing-lists/edit/' . $mailingList->id) }}" class="btn btn-primary">Back</a>
         </div>
     @else
         {!! Form::open(['url' => $entry->id ? 'admin/mailing-lists/entries/edit/' . $entry->id : 'admin/mailing-lists/entries/create']) !!}
