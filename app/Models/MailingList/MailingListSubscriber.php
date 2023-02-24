@@ -78,14 +78,15 @@ class MailingListSubscriber extends Model {
     **********************************************************************************************/
 
     /**
-     * Scope a query to return only verified subscribers.
+     * Scope a query to return only verified or non-verified subscribers.
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param bool $isVerified
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeVerified($query) {
-        return $query->where('is_verified', 1);
+    public function scopeVerified($query, $isVerified = 1) {
+        return $query->where('is_verified', $isVerified);
     }
 
     /**********************************************************************************************

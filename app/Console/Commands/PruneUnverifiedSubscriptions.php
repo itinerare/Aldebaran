@@ -26,7 +26,7 @@ class PruneUnverifiedSubscriptions extends Command {
      * @return int
      */
     public function handle() {
-        if (!MailingListSubscriber::where('is_verified', 0)->delete()) {
+        if (!MailingListSubscriber::verified(0)->delete()) {
             return Command::FAILURE;
         }
 
