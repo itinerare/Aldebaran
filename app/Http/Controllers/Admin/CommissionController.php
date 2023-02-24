@@ -84,7 +84,7 @@ class CommissionController extends Controller {
             abort(404);
         }
 
-        $commissioners = Commissioner::where('is_banned', 0)->get()->pluck('fullName', 'id')->sort()->toArray();
+        $commissioners = Commissioner::valid()->get()->pluck('fullName', 'id')->sort()->toArray();
 
         return view('admin.queues.new', [
             'type'          => $type,
