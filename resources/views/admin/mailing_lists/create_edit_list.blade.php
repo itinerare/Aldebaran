@@ -92,7 +92,7 @@
                     <div class="d-flex row flex-wrap col-12 pb-1 px-0 ubt-bottom">
                         <div class="col-12 col-md-3 font-weight-bold">Email</div>
                         <div class="col-12 col-md-2 font-weight-bold">Verified</div>
-                        <div class="col-6 col-md-4 font-weight-bold">Last Entry</div>
+                        <div class="col-6 col-md-4 font-weight-bold">Last Entry Sent</div>
                     </div>
                     @foreach ($mailingList->subscribers as $subscriber)
                         <div class="d-flex row flex-wrap col-12 mt-1 pt-2 px-0 ubt-top">
