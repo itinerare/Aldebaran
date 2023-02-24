@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Mail\VerifyMailingListSubscription;
+use App\Models\Commission\Commissioner;
 use App\Models\MailingList\MailingListSubscriber;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
@@ -31,6 +32,10 @@ class MailingListManager extends Service {
             // Only create a subscriber/send a verification email if one does not already exist
             // However, do not advertise this fact so as not to advertise who is/is not subscribed inadvertently
             if (!MailingListSubscriber::where('email', $data['email'])->exists()) {
+                if (Commissioner::where('email', $data['email'])->valid(1)->exists()) {
+                    throw new \Exception('Unable to subscribe. This address has been banned.');
+                }
+
                 $data['token'] = randomString(15);
                 $subscriber = MailingListSubscriber::create($data);
 
@@ -73,6 +78,27 @@ class MailingListManager extends Service {
             ]);
 
             return $this->commitReturn($subscriber);
+        } catch (\Exception $e) {
+            $this->setError('error', $e->getMessage());
+        }
+
+        return $this->rollbackReturn(false);
+    }
+
+    /**
+     * Kicks a subscriber.
+     *
+     * @param \App\Models\MailingList\MailingListSubscriber $subscriber
+     *
+     * @return bool
+     */
+    public function kickSubscriber($subscriber) {
+        DB::beginTransaction();
+
+        try {
+            $subscriber->delete();
+
+            return $this->commitReturn(true);
         } catch (\Exception $e) {
             $this->setError('error', $e->getMessage());
         }

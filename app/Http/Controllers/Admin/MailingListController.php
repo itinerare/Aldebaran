@@ -4,8 +4,12 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\MailingList\MailingList;
+use App\Models\MailingList\MailingListSubscriber;
+use App\Services\CommissionManager;
+use App\Services\MailingListManager;
 use App\Services\MailingListService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class MailingListController extends Controller {
     /*
@@ -28,7 +32,7 @@ class MailingListController extends Controller {
         }
 
         return view('admin.mailing_lists.index', [
-            'mailingLists' => MailingList::with(['entries', 'subscribers:id,mailing_list_id'])->orderBy('name')->paginate(20)->appends($request->query()),
+            'mailingLists' => MailingList::with(['subscribers', 'entries'])->orderBy('name')->paginate(20)->appends($request->query()),
         ]);
     }
 
@@ -59,7 +63,7 @@ class MailingListController extends Controller {
             abort(404);
         }
 
-        $mailingList = MailingList::find($id);
+        $mailingList = MailingList::with(['subscribers', 'entries'])->find($id);
         if (!$mailingList) {
             abort(404);
         }
@@ -122,9 +126,92 @@ class MailingListController extends Controller {
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function postDeleteMailingList(Request $request, MailingListService $service, $id) {
+    public function postDeleteMailingList(MailingListService $service, $id) {
         if ($id && $service->deleteMailingList(MailingList::find($id))) {
             flash('Mailing list deleted successfully.')->success();
+        } else {
+            foreach ($service->errors()->getMessages()['error'] as $error) {
+                $service->addError($error);
+            }
+        }
+
+        return redirect()->to('admin/mailing-lists');
+    }
+
+    /******************************************************************************
+        SUBSCRIBERS
+    *******************************************************************************/
+
+    /**
+     * Gets the kick subscriber modal.
+     *
+     * @param int $id
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getKickSubscriber($id) {
+        if (!config('aldebaran.settings.email_features')) {
+            abort(404);
+        }
+
+        $subscriber = MailingListSubscriber::find($id);
+
+        return view('admin.mailing_lists._kick_subscriber', [
+            'subscriber' => $subscriber,
+        ]);
+    }
+
+    /**
+     * Kicks a subscriber.
+     *
+     * @param int $id
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function postKickSubscriber(MailingListManager $service, $id) {
+        $subscriber = MailingListSubscriber::with('mailingList')->find($id);
+        $mailingList = $subscriber->mailingList;
+
+        if ($id && $service->kickSubscriber($subscriber)) {
+            flash('Subscriber force unsubscribed successfully.')->success();
+        } else {
+            foreach ($service->errors()->getMessages()['error'] as $error) {
+                $service->addError($error);
+            }
+        }
+
+        return redirect()->to('admin/mailing-lists/edit/'.$mailingList->id);
+    }
+
+    /**
+     * Gets the ban subscriber modal.
+     *
+     * @param int $id
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getBanSubscriber($id) {
+        if (!config('aldebaran.settings.email_features')) {
+            abort(404);
+        }
+
+        $subscriber = MailingListSubscriber::find($id);
+
+        return view('admin.mailing_lists._ban_subscriber', [
+            'subscriber' => $subscriber,
+        ]);
+    }
+
+    /**
+     * Bans a subscriber.
+     *
+     * @param int $id
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function postBanSubscriber(CommissionManager $service, $id) {
+        if ($id && $service->banCommissioner(MailingListSubscriber::find($id)->email, [], Auth::user())) {
+            flash('Subscriber banned successfully.')->success();
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
                 $service->addError($error);

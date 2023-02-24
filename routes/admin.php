@@ -125,6 +125,11 @@ Route::group(['prefix' => 'mailing-lists'], function () {
     Route::post('create', 'MailingListController@postCreateEditMailingList');
     Route::post('edit/{id?}', 'MailingListController@postCreateEditMailingList');
     Route::post('delete/{id}', 'MailingListController@postDeleteMailingList');
+
+    Route::get('subscriber/{id}/kick', 'MailingListController@getKickSubscriber');
+    Route::get('subscriber/{id}/ban', 'MailingListController@getBanSubscriber');
+    Route::post('subscriber/{id}/kick', 'MailingListController@postKickSubscriber');
+    Route::post('subscriber/{id}/ban', 'MailingListController@postBanSubscriber');
 });
 
 // TEXT PAGES

@@ -68,7 +68,7 @@ class MailingList extends Model {
      * Get the subscribers associated with this mailing list.
      */
     public function subscribers() {
-        return $this->hasMany(MailingListSubscriber::class, 'mailing_list_id');
+        return $this->hasMany(MailingListSubscriber::class, 'mailing_list_id')->orderBy('email');
     }
 
     /**********************************************************************************************

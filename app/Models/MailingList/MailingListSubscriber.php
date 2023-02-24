@@ -29,7 +29,7 @@ class MailingListSubscriber extends Model {
      *
      * @var array
      */
-    protected $with = ['mailingList'];
+    protected $with = ['lastEntry'];
 
     /**
      * Whether the model contains timestamps to be saved and updated.
@@ -71,6 +71,13 @@ class MailingListSubscriber extends Model {
         return $this->belongsTo(MailingList::class, 'mailing_list_id');
     }
 
+    /**
+     * Get the last entry associated with this subscriber.
+     */
+    public function lastEntry() {
+        return $this->hasOne(MailingListEntry::class, 'id', 'last_entry_sent');
+    }
+
     /**********************************************************************************************
 
         SCOPES
@@ -81,7 +88,7 @@ class MailingListSubscriber extends Model {
      * Scope a query to return only verified or non-verified subscribers.
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param bool $isVerified
+     * @param bool                                  $isVerified
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
