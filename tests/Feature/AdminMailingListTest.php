@@ -3,6 +3,8 @@
 namespace Tests\Feature;
 
 use App\Models\MailingList\MailingList;
+use App\Models\MailingList\MailingListEntry;
+use App\Models\MailingList\MailingListSubscriber;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -36,6 +38,14 @@ class AdminMailingListTest extends TestCase {
             $list = MailingList::factory()->create([
                 'is_open' => $data[2],
             ]);
+
+            if ($data[0]) {
+                MailingListSubscriber::factory()->mailingList($list->id)->create();
+            }
+
+            if ($data[1]) {
+                $entry = MailingListEntry::factory()->mailingList($list->id)->create();
+            }
         }
 
         $response = $this->actingAs($this->user)
@@ -46,6 +56,10 @@ class AdminMailingListTest extends TestCase {
             $response->assertViewHas('mailingLists', function ($mailingLists) use ($list) {
                 return $mailingLists->contains($list);
             });
+
+            if ($data[1]) {
+                $response->assertSee($entry->subject);
+            }
         } else {
             $response->assertViewHas('mailingLists', function ($mailingLists) {
                 return $mailingLists->count() == 0;
@@ -58,9 +72,9 @@ class AdminMailingListTest extends TestCase {
             'empty'                                    => [null],
             'with open list'                           => [[0, 0, 1]],
             'with closed list'                         => [[0, 0, 0]],
-            //'with open list with subscriber'           => [[1, 0, 1]],
-            //'with open list with entry'                => [[1, 1, 1]],
-            //'with open list with subscriber and entry' => [[1, 1, 1]],
+            'with open list with subscriber'           => [[1, 0, 1]],
+            'with open list with entry'                => [[0, 1, 1]],
+            'with open list with subscriber and entry' => [[1, 1, 1]],
         ];
     }
 
@@ -75,13 +89,47 @@ class AdminMailingListTest extends TestCase {
 
     /**
      * Test mailng list edit access.
+     *
+     * @dataProvider listGetEditProvider
+     *
+     * @param bool $withSubscriber
+     * @param bool $withEntry
+     * @param bool $isOpen
      */
-    public function testGetEditMailingList() {
-        $list = MailingList::factory()->create();
+    public function testGetEditMailingList($withSubscriber, $withEntry, $isOpen) {
+        $list = MailingList::factory()->create([
+            'is_open' => $isOpen,
+        ]);
+
+        if ($withSubscriber) {
+            $subscriber = MailingListSubscriber::factory()->mailingList($list->id)->create();
+        }
+
+        if ($withEntry) {
+            $entry = MailingListEntry::factory()->mailingList($list->id)->create();
+        }
 
         $response = $this->actingAs($this->user)
             ->get('/admin/mailing-lists/edit/'.$list->id)
             ->assertStatus(200);
+
+        if ($withSubscriber) {
+            $response->assertSee($subscriber->email);
+        }
+
+        if ($withEntry) {
+            $response->assertSee($entry->subject);
+        }
+    }
+
+    public function listGetEditProvider() {
+        return [
+            'with open list'                           => [0, 0, 1],
+            'with closed list'                         => [0, 0, 0],
+            'with open list with subscriber'           => [1, 0, 1],
+            'with open list with entry'                => [0, 1, 1],
+            'with open list with subscriber and entry' => [1, 1, 1],
+        ];
     }
 
     /**
@@ -171,9 +219,25 @@ class AdminMailingListTest extends TestCase {
     public function testPostDeleteMailingList($withEntry, $withSubscriber) {
         $list = MailingList::factory()->create();
 
+        if ($withSubscriber) {
+            $subscriber = MailingListSubscriber::factory()->mailingList($list->id)->create();
+        }
+
+        if ($withEntry) {
+            $entry = MailingListEntry::factory()->mailingList($list->id)->create();
+        }
+
         $this
             ->actingAs($this->user)
             ->post('/admin/mailing-lists/delete/'.$list->id);
+
+        if ($withSubscriber) {
+            $this->assertModelMissing($subscriber);
+        }
+
+        if ($withEntry) {
+            $this->assertModelMissing($entry);
+        }
 
         $this->assertModelMissing($list);
     }
