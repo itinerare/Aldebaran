@@ -74,7 +74,7 @@
                     @foreach ($mailingList->entries()->sort()->get() as $entry)
                         <div class="d-flex row flex-wrap col-12 mt-1 pt-2 px-0 ubt-top">
                             <div class="col-12 col-md-6"><span class="text-muted">(#{{ $entry->id }})</span> {{ $entry->subject }}</div>
-                            <div class="col-12 col-md-5">{!! $entry->is_draft ? 'Draft' : '<i class="text-success fas fa-check"></i> Sent' !!}</div>
+                            <div class="col-12 col-md-5">{!! $entry->is_draft ? 'Draft' : '<i class="text-success fas fa-check"></i> Sent ('.pretty_date($entry->sent_at).')' !!}</div>
                             <div class="col-3 col-md-1 text-right"><a href="{{ url('admin/mailing-lists/entries/edit/' . $entry->id) }}" class="btn btn-primary py-0 px-2">{{ $entry->is_draft ? 'Edit' : 'View' }}</a></div>
                         </div>
                     @endforeach
