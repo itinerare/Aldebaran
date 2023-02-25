@@ -87,6 +87,11 @@ class MailingListService extends Service {
         DB::beginTransaction();
 
         try {
+            // Delete all subscribers and entries
+            $mailingList->subscribers()->delete();
+            $mailingList->entries()->delete();
+
+            // Then delete the mailing list itself
             $mailingList->delete();
 
             return $this->commitReturn(true);

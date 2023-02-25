@@ -127,7 +127,7 @@ class MailingListController extends Controller {
      * @return \Illuminate\Http\RedirectResponse
      */
     public function postDeleteMailingList(MailingListService $service, $id) {
-        if ($id && $service->deleteMailingList(MailingList::find($id))) {
+        if ($id && $service->deleteMailingList(MailingList::with(['entries', 'subscribers'])->find($id))) {
             flash('Mailing list deleted successfully.')->success();
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
