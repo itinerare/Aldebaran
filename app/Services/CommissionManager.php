@@ -362,7 +362,7 @@ class CommissionManager extends Service {
             if (!$user) {
                 throw new \Exception('Invalid user.');
             }
-            if (is_int($subject)) {
+            if (is_numeric($subject)) {
                 // Fetch commission so as to fetch commissioner
                 $commission = Commission::where('id', $subject)->whereIn('status', ['Pending', 'Accepted'])->first();
                 if (!$commission) {
