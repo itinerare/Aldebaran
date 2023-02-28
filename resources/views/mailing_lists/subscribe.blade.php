@@ -10,7 +10,7 @@
         <p>{!! $mailingList->description !!}</p>
     </div>
 
-    <div class="card">
+    <div class="card mb-4">
         <div class="card-body">
             {!! Form::open(['url' => 'mailing-lists/' . $mailingList->id . '/subscribe']) !!}
             @honeypot
@@ -31,7 +31,8 @@
         </div>
     </div>
 
-    <p>
-        Upon submitting this form, an email will be sent to the provided address requesting that you verify your subscription. Once fully subscribed, you may unsubscribe at any time; a link to do so will be provided with each email sent to this mailing list.
+    <p class="text-center">
+        Upon submitting this form, an email will be sent to the provided address requesting that you verify your subscription. Once fully subscribed, you may unsubscribe at any time; a link to do so will be provided with each email sent to this mailing
+        list.
     </p>
 @endsection
