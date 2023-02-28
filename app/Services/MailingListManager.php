@@ -76,6 +76,11 @@ class MailingListManager extends Service {
         DB::beginTransaction();
 
         try {
+            // Check that the subscriber is not already verified
+            if ($subscriber->is_verified) {
+                throw new \Exception('Your subscription is already verified!');
+            }
+
             // Perform a secondary check of the token
             if ($subscriber->token != $token) {
                 throw new \Exception('Invalid token.');
