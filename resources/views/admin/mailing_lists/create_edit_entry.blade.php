@@ -38,7 +38,9 @@
     @else
         {!! Form::open(['url' => $entry->id ? 'admin/mailing-lists/entries/edit/' . $entry->id : 'admin/mailing-lists/entries/create']) !!}
 
-        {!! Form::hidden('mailing_list_id', $mailingList->id) !!}
+        @if (!$entry->id)
+            {!! Form::hidden('mailing_list_id', $mailingList->id) !!}
+        @endif
 
         <div class="form-group">
             {!! Form::label('subject', 'Subject') !!}
