@@ -33,7 +33,6 @@ class CommissionFormTest extends TestCase {
         // Set up testing type and default pages (necessary to view new commission page)
         $this->type = CommissionType::factory()->testData(['type' => 'flat', 'cost' => 10])->create();
         $this->artisan('add-text-pages');
-        $this->artisan('add-site-settings');
 
         // Set up gallery service for image processing
         $this->service = new GalleryService;
@@ -164,6 +163,8 @@ class CommissionFormTest extends TestCase {
         if ($withEmail) {
             // Enable email notifications
             config(['aldebaran.settings.email_features' => 1]);
+
+            $this->artisan('add-site-settings');
             DB::table('site_settings')->where('key', 'notif_emails')->update([
                 'value' => 1,
             ]);
