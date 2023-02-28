@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Mail\VerifyMailingListSubscription;
 use App\Models\Commission\Commissioner;
+use App\Models\MailingList\MailingList;
 use App\Models\MailingList\MailingListSubscriber;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
@@ -31,6 +32,11 @@ class MailingListManager extends Service {
         try {
             if (!config('aldebaran.settings.email_features')) {
                 throw new \Exception('Email features are currently disabled for this site.');
+            }
+
+            $mailingList = MailingList::open()->where('id', $data['mailing_list_id'])->first();
+            if (!$mailingList) {
+                throw new \Exception('Invalid mailing list selected.');
             }
 
             // Only create a subscriber/send a verification email if one does not already exist
