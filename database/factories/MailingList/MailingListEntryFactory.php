@@ -2,6 +2,7 @@
 
 namespace Database\Factories\MailingList;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -33,6 +34,20 @@ class MailingListEntryFactory extends Factory {
         return $this->state(function (array $attributes) use ($id) {
             return [
                 'mailing_list_id' => $id,
+            ];
+        });
+    }
+
+    /**
+     * Generate a mailng list that is sent.
+     *
+     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     */
+    public function sent() {
+        return $this->state(function (array $attributes) {
+            return [
+                'is_draft' => 0,
+                'sent_at'  => Carbon::now(),
             ];
         });
     }
