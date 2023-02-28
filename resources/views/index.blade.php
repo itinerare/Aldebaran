@@ -5,8 +5,7 @@
     @if ($page)
         {!! $page->text !!}
     @else
-        <p>
-            Please finish initial site setup!</p>
+        <p>Please finish initial site setup!</p>
     @endif
 
     @if (config('aldebaran.settings.commissions.enabled'))
@@ -33,6 +32,24 @@
                 </div>
             </div>
         @endforeach
+    @endif
+
+    @if (config('aldebaran.settings.email_features') && Settings::get('display_mailing_lists') && $mailingLists->count())
+        <div class="card mb-4">
+            <div class="card-header">
+                <h4>Mailing Lists</h4>
+            </div>
+            <div class="card-body">
+                @foreach ($mailingLists as $list)
+                    <div class="float-right">
+                        <a href="{{ $list->url }}" class="btn btn-primary">Subscribe</a>
+                    </div>
+                    <h5>{{ $list->name }}</h5>
+                    {!! $list->description !!}
+                    {!! !$loop->last ? '<hr/>' : '' !!}
+                @endforeach
+            </div>
+        </div>
     @endif
 
 @endsection

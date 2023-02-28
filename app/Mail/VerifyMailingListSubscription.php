@@ -1,0 +1,59 @@
+<?php
+
+namespace App\Mail;
+
+use App\Models\MailingList\MailingListSubscriber;
+use Illuminate\Bus\Queueable;
+use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Content;
+use Illuminate\Mail\Mailables\Envelope;
+use Illuminate\Queue\SerializesModels;
+
+class VerifyMailingListSubscription extends Mailable {
+    use Queueable, SerializesModels;
+
+    /**
+     * The subscriber instance.
+     *
+     * @var \App\Models\MailingList\MailingListSubscriber
+     */
+    public $subscriber;
+
+    /**
+     * Create a new message instance.
+     */
+    public function __construct(MailingListSubscriber $subscriber) {
+        $this->subscriber = $subscriber;
+    }
+
+    /**
+     * Get the message envelope.
+     *
+     * @return \Illuminate\Mail\Mailables\Envelope
+     */
+    public function envelope() {
+        return new Envelope(
+            subject: 'Verify Mailing List Subscription',
+        );
+    }
+
+    /**
+     * Get the message content definition.
+     *
+     * @return \Illuminate\Mail\Mailables\Content
+     */
+    public function content() {
+        return new Content(
+            markdown: 'mail.markdown.verify_subscription',
+        );
+    }
+
+    /**
+     * Get the attachments for the message.
+     *
+     * @return array
+     */
+    public function attachments() {
+        return [];
+    }
+}

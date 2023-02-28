@@ -27,6 +27,8 @@ class Kernel extends ConsoleKernel {
             $schedule->command('backup:monitor')
                 ->daily()->at('01:40');
         }
+        $schedule->command('prune-unverified-subscriptions')
+            ->weekly();
     }
 
     /**

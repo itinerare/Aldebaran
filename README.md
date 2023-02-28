@@ -41,6 +41,7 @@ Note that use of commission components in a use that generates or contributes to
 - Admin panel for editing site settings, including commission-related settings
 - Admin panel for uploading images used in the site's layout as well as custom CSS
 - Optional automatic backups for server-only content
+- Configurable email mailing lists that visitors can subscribe to, and the ability to create and send out entries to all subscribers to a mailing list
 
 ## Setup
 

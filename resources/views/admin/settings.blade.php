@@ -43,15 +43,13 @@
         </div>
         {!! Form::close() !!}
 
-        @if (config('aldebaran.settings.commissions.enabled'))
-            <!-- Commission Type Settings -->
-            <h2>Commission Settings</h2>
-
-            {!! Form::open(['url' => 'admin/site-settings/notif_emails']) !!}
+        @if (config('aldebaran.settings.email_features'))
+            <h3>Email Features</h3>
+            {!! Form::open(['url' => 'admin/site-settings/display_mailing_lists']) !!}
             <div class="form-group h-100">
-                <strong>{!! Form::label('notif_emails_value', 'Email Notifications') !!}:</strong>
-                {{ $settings->where('key', 'notif_emails')->first()->description }}<br />
-                {!! Form::checkbox('notif_emails_value', 1, $settings->where('key', 'notif_emails')->first()->value, [
+                <strong>{!! Form::label('display_mailing_lists_value', 'Display Mailing Lists') !!}:</strong>
+                {{ $settings->where('key', 'display_mailing_lists')->first()->description }}<br />
+                {!! Form::checkbox('display_mailing_lists_value', 1, $settings->where('key', 'display_mailing_lists')->first()->value, [
                     'class' => 'form-check-input mb-3',
                     'data-toggle' => 'toggle',
                 ]) !!}
@@ -60,6 +58,27 @@
                 </div>
             </div>
             {!! Form::close() !!}
+        @endif
+
+        @if (config('aldebaran.settings.commissions.enabled'))
+            <!-- Commission Type Settings -->
+            <h2>Commission Settings</h2>
+
+            @if (config('aldebaran.settings.email_features'))
+                {!! Form::open(['url' => 'admin/site-settings/notif_emails']) !!}
+                <div class="form-group h-100">
+                    <strong>{!! Form::label('notif_emails_value', 'Email Notifications') !!}:</strong>
+                    {{ $settings->where('key', 'notif_emails')->first()->description }}<br />
+                    {!! Form::checkbox('notif_emails_value', 1, $settings->where('key', 'notif_emails')->first()->value, [
+                        'class' => 'form-check-input mb-3',
+                        'data-toggle' => 'toggle',
+                    ]) !!}
+                    <div class="form-group text-right mb-3">
+                        {!! Form::submit('Edit', ['class' => 'btn btn-primary']) !!}
+                    </div>
+                </div>
+                {!! Form::close() !!}
+            @endif
 
             @foreach ($commissionClasses as $class)
                 @if ($loop->count > 1)
