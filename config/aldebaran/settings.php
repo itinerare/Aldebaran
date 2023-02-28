@@ -193,14 +193,14 @@ return [
     */
 
     // The email information for the site.
-    // Used to send commission notifications if enabeled.
-    'admin_email'         => [
+    // Used to send commission notifications and mailing list entries if enabled.
+    'admin_email' => [
         'address'  => env('MAIL_USERNAME', false),
         'password' => env('MAIL_PASSWORD', false),
     ],
 
     // thum.io info, used for generating meta tag preview images if enabled
-    'thum_io'             => [
+    'thum_io' => [
         'key' => env('THUM_IO_KEY', false),
         'id'  => env('THUM_IO_ID', false),
     ],
