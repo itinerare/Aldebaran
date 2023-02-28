@@ -31,7 +31,7 @@ class MailingListSubscriberTest extends TestCase {
             ->mailingList($this->mailingList->id)->verified()->create();
 
         // Generate a fake email address
-        $this->email = $this->faker()->email();
+        $this->email = $this->faker()->safeEmail();
     }
 
     /**

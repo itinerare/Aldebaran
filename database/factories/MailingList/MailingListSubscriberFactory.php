@@ -15,7 +15,7 @@ class MailingListSubscriberFactory extends Factory {
      */
     public function definition() {
         return [
-            'email' => $this->faker->email(),
+            'email' => $this->faker->safeEmail(),
             'token' => randomString(15),
         ];
     }
