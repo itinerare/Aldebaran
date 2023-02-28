@@ -76,7 +76,6 @@ class AdminChangelogTest extends TestCase {
 
         $response->assertSessionHasNoErrors();
         $this->assertDatabaseHas('changelog_entries', [
-            'name'       => null,
             'name'       => $title ? $this->title : null,
             'text'       => $this->text,
             'is_visible' => $isVisible,
