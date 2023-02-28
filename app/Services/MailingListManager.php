@@ -50,9 +50,8 @@ class MailingListManager extends Service {
                 $subscriber = MailingListSubscriber::create($data);
 
                 // Send the subscription verification email
-                if (!Mail::to($subscriber->email)->send(new VerifyMailingListSubscription($subscriber))) {
-                    throw new \Exception('Failed to send verification email.');
-                }
+                Mail::to($subscriber->email)
+                    ->send(new VerifyMailingListSubscription($subscriber));
 
                 return $this->commitReturn($subscriber);
             } else {
