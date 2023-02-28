@@ -82,7 +82,13 @@ class MailingListController extends Controller {
             }
         }
 
-        return redirect()->to('mailing-lists/'.$subscriber->mailing_list_id);
+        // Verification should be possible regardless of whether email features
+        // are presently enabled, the mailing list is open, etc
+        if (config('aldebaran.settings.email_features') && $subscriber->mailingList->is_open) {
+            return redirect()->to('mailing-lists/'.$subscriber->mailing_list_id);
+        } else {
+            return redirect()->to('/');
+        }
     }
 
     /**
@@ -106,6 +112,12 @@ class MailingListController extends Controller {
             }
         }
 
-        return redirect()->to('mailing-lists/'.$subscriber->mailing_list_id);
+        // Unsubscription should be possible regardless of whether email features
+        // are presently enabled, the mailing list is open, etc
+        if (config('aldebaran.settings.email_features') && $subscriber->mailingList->is_open) {
+            return redirect()->to('mailing-lists/'.$subscriber->mailing_list_id);
+        } else {
+            return redirect()->to('/');
+        }
     }
 }
