@@ -31,6 +31,10 @@ class MailingListService extends Service {
         DB::beginTransaction();
 
         try {
+            if(!config('aldebaran.settings.email_features')) {
+                throw new \Exception('Email features are currently disabled.');
+            }
+
             if (!isset($data['is_open'])) {
                 $data['is_open'] = 0;
             }
@@ -58,6 +62,10 @@ class MailingListService extends Service {
         DB::beginTransaction();
 
         try {
+            if(!config('aldebaran.settings.email_features')) {
+                throw new \Exception('Email features are currently disabled.');
+            }
+
             if (MailingList::where('name', $data['name'])->where('id', '!=', $mailingList->id)->exists()) {
                 throw new \Exception('A mailing list with this name already exists.');
             }
@@ -87,6 +95,10 @@ class MailingListService extends Service {
         DB::beginTransaction();
 
         try {
+            if(!config('aldebaran.settings.email_features')) {
+                throw new \Exception('Email features are currently disabled.');
+            }
+
             // Delete all subscribers and entries
             $mailingList->subscribers()->delete();
             $mailingList->entries()->delete();
@@ -118,6 +130,10 @@ class MailingListService extends Service {
         DB::beginTransaction();
 
         try {
+            if(!config('aldebaran.settings.email_features')) {
+                throw new \Exception('Email features are currently disabled.');
+            }
+
             if (!isset($data['is_draft'])) {
                 $data['is_draft'] = 0;
             }
@@ -154,6 +170,10 @@ class MailingListService extends Service {
         DB::beginTransaction();
 
         try {
+            if(!config('aldebaran.settings.email_features')) {
+                throw new \Exception('Email features are currently disabled.');
+            }
+
             if (!$entry->is_draft && isset($entry->sent_at)) {
                 throw new \Exception('Sent entries cannot be edited.');
             }
@@ -192,6 +212,10 @@ class MailingListService extends Service {
         DB::beginTransaction();
 
         try {
+            if(!config('aldebaran.settings.email_features')) {
+                throw new \Exception('Email features are currently disabled.');
+            }
+
             $entry->delete();
 
             return $this->commitReturn(true);

@@ -29,6 +29,10 @@ class MailingListManager extends Service {
         DB::beginTransaction();
 
         try {
+            if(!config('aldebaran.settings.email_features')) {
+                throw new \Exception('Email features are currently disabled for this site.');
+            }
+
             // Only create a subscriber/send a verification email if one does not already exist
             // However, do not advertise this fact so as not to advertise who is/is not subscribed inadvertently
             if (!MailingListSubscriber::where('email', $data['email'])->exists()) {
