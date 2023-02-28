@@ -30,4 +30,8 @@
             {!! Form::close() !!}
         </div>
     </div>
+
+    <p>
+        Upon submitting this form, an email will be sent to the provided address requesting that you verify your subscription. Once fully subscribed, you may unsubscribe at any time; a link to do so will be provided with each email sent to this mailing list.
+    </p>
 @endsection
