@@ -31,7 +31,7 @@ class MailingListService extends Service {
         DB::beginTransaction();
 
         try {
-            if(!config('aldebaran.settings.email_features')) {
+            if (!config('aldebaran.settings.email_features')) {
                 throw new \Exception('Email features are currently disabled.');
             }
 
@@ -62,7 +62,7 @@ class MailingListService extends Service {
         DB::beginTransaction();
 
         try {
-            if(!config('aldebaran.settings.email_features')) {
+            if (!config('aldebaran.settings.email_features')) {
                 throw new \Exception('Email features are currently disabled.');
             }
 
@@ -95,7 +95,7 @@ class MailingListService extends Service {
         DB::beginTransaction();
 
         try {
-            if(!config('aldebaran.settings.email_features')) {
+            if (!config('aldebaran.settings.email_features')) {
                 throw new \Exception('Email features are currently disabled.');
             }
 
@@ -130,7 +130,7 @@ class MailingListService extends Service {
         DB::beginTransaction();
 
         try {
-            if(!config('aldebaran.settings.email_features')) {
+            if (!config('aldebaran.settings.email_features')) {
                 throw new \Exception('Email features are currently disabled.');
             }
 
@@ -170,7 +170,7 @@ class MailingListService extends Service {
         DB::beginTransaction();
 
         try {
-            if(!config('aldebaran.settings.email_features')) {
+            if (!config('aldebaran.settings.email_features')) {
                 throw new \Exception('Email features are currently disabled.');
             }
 
@@ -212,7 +212,7 @@ class MailingListService extends Service {
         DB::beginTransaction();
 
         try {
-            if(!config('aldebaran.settings.email_features')) {
+            if (!config('aldebaran.settings.email_features')) {
                 throw new \Exception('Email features are currently disabled.');
             }
 
