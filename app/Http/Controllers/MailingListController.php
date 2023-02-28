@@ -16,6 +16,10 @@ class MailingListController extends Controller {
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function getMailingList($id) {
+        if (!config('aldebaran.settings.email_features')) {
+            abort(404);
+        }
+
         $mailingList = MailingList::open()->where('id', $id)->first();
         if (!$mailingList) {
             abort(404);
