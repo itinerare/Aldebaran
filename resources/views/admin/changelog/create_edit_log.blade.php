@@ -50,7 +50,7 @@
         $(document).ready(function() {
             $('.delete-log-button').on('click', function(e) {
                 e.preventDefault();
-                loadModal("{{ url('admin/changelog/delete') }}/{{ $log->id }}", 'Delete Page');
+                loadModal("{{ url('admin/changelog/delete') }}/{{ $log->id }}", 'Delete Entry');
             });
         });
     </script>
