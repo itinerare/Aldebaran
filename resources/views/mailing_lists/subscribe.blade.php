@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title')
-    Mailing Lists
+    Mailing Lists ・ {{ $mailingList->name }}
 @endsection
 
 @section('content')
