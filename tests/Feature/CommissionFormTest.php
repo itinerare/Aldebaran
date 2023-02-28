@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Mail\CommissionRequested;
 use App\Models\Commission\Commission;
 use App\Models\Commission\Commissioner;
 use App\Models\Commission\CommissionPiece;
@@ -13,6 +14,7 @@ use App\Services\GalleryService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Tests\TestCase;
 
@@ -26,9 +28,12 @@ class CommissionFormTest extends TestCase {
     protected function setUp(): void {
         parent::setUp();
 
+        Mail::fake();
+
         // Set up testing type and default pages (necessary to view new commission page)
         $this->type = CommissionType::factory()->testData(['type' => 'flat', 'cost' => 10])->create();
         $this->artisan('add-text-pages');
+        $this->artisan('add-site-settings');
 
         // Set up gallery service for image processing
         $this->service = new GalleryService;
@@ -156,6 +161,14 @@ class CommissionFormTest extends TestCase {
      * @param bool       $expected
      */
     public function testPostNewCommission($withName, $withEmail, $paymentAddr, $visibility, $data, $extras, $slotData, $agree, $isBanned, $expected) {
+        if ($withEmail) {
+            // Enable email notifications
+            config(['aldebaran.settings.email_features' => 1]);
+            DB::table('site_settings')->where('key', 'notif_emails')->update([
+                'value' => 1,
+            ]);
+        }
+
         // Adjust visibility settings
         config(['aldebaran.settings.commissions.enabled' => $visibility[0]]);
         $this->type->category->class->update(['is_active' => $visibility[1]]);
@@ -293,6 +306,12 @@ class CommissionFormTest extends TestCase {
             ]);
             $response->assertSessionHasNoErrors();
             $response->assertRedirectContains('commissions/view');
+
+            if ($withEmail) {
+                Mail::assertSent(CommissionRequested::class);
+            } else {
+                Mail::assertNotSent(CommissionRequested::class);
+            }
         } elseif ($expected == 0) {
             $response->assertSessionHasErrors();
         }
