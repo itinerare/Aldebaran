@@ -1,6 +1,7 @@
 <div class="row">
     <div class="col-md align-self-center mt-2">
         <div class="text-center">
+            <x-admin-edit-button name="Commission Type" :object="$type" />
             <h2>{{ $type->name }}</h2>
             <h3>{{ $type->pricing }}</h3>
         </div>

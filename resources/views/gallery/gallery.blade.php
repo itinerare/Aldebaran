@@ -8,6 +8,9 @@
     {!! breadcrumbs(['Gallery' => 'gallery']) !!}
 
     <div class="borderhr mb-4">
+        @if ($page)
+            <x-admin-edit-button name="Gallery Page Text" :object="$page" />
+        @endif
         <h1>Gallery</h1>
     </div>
 

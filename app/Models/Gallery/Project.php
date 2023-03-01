@@ -75,6 +75,15 @@ class Project extends Model {
     **********************************************************************************************/
 
     /**
+     * Get the project's edit url.
+     *
+     * @return string
+     */
+    public function getAdminUrlAttribute() {
+        return url('/admin/data/projects/edit/'.$this->id);
+    }
+
+    /**
      * Get the project's slug.
      *
      * @return string

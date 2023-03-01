@@ -90,4 +90,19 @@ class CommissionClass extends Model {
             return $query->where('is_active', 1);
         }
     }
+
+    /**********************************************************************************************
+
+       ACCESSORS
+
+    **********************************************************************************************/
+
+    /**
+     * Get the class' edit url.
+     *
+     * @return string
+     */
+    public function getAdminUrlAttribute() {
+        return url('/admin/data/commission-classes/edit/'.$this->id);
+    }
 }

@@ -102,4 +102,13 @@ class MailingList extends Model {
     public function getUrlAttribute() {
         return url('/mailing-lists/'.$this->id);
     }
+
+    /**
+     * Get the mailing list's edit url.
+     *
+     * @return string
+     */
+    public function getAdminUrlAttribute() {
+        return url('/admin/mailing-lists/edit/'.$this->id);
+    }
 }

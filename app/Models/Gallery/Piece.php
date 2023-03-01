@@ -204,6 +204,15 @@ class Piece extends Model implements Feedable {
     }
 
     /**
+     * Get the piece's edit url.
+     *
+     * @return string
+     */
+    public function getAdminUrlAttribute() {
+        return url('/admin/data/pieces/edit/'.$this->id);
+    }
+
+    /**
      * Get the piece's slug.
      *
      * @return string

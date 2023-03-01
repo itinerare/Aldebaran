@@ -44,6 +44,8 @@ class GalleryViewTest extends TestCase {
     public function testGetGallery($user, $enabled, $search, $pieceStatus, $status) {
         config(['aldebaran.settings.navigation.gallery' => $enabled]);
 
+        $this->artisan('add-text-pages');
+
         if ($pieceStatus[0]) {
             // Create a piece to view
             $piece = Piece::factory()->create();
