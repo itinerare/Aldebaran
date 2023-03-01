@@ -21,14 +21,23 @@ class AdminEditButton extends Component {
     public $name;
 
     /**
+     * Optional class override for styling purposes.
+     *
+     * @var string
+     */
+    public $class;
+
+    /**
      * Create a new component instance.
      *
      * @param string $name
      * @param mixed  $object
+     * @param string $class
      */
-    public function __construct($name, $object) {
+    public function __construct($name, $object, $class = null) {
         $this->name = $name;
         $this->object = $object;
+        $this->class = $class ?? 'btn btn-secondary';
     }
 
     /**
