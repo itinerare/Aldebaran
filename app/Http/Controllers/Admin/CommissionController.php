@@ -41,7 +41,7 @@ class CommissionController extends Controller {
             abort(404);
         }
 
-        $commissions = Commission::class($class->id)->where('status', $status ? ucfirst($status) : 'Pending');
+        $commissions = Commission::with('commissioner')->class($class->id)->where('status', $status ? ucfirst($status) : 'Pending');
         $data = $request->only(['commission_type', 'sort']);
         if (isset($data['commission_type']) && $data['commission_type'] != 'none') {
             $commissions->where('commission_type', $data['commission_type']);
