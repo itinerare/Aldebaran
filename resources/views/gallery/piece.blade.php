@@ -96,7 +96,7 @@
                 return $programs->program->name;
             }) as $program)
                             @if ($program->program->has_image)
-                                <img class="mw-100" style="height:16px;" src="{{ $program->program->imageUrl }}" alt="Icon for {{ $program->name }}" />
+                                <img class="mw-100" style="height:16px;" src="{{ $program->program->imageUrl }}" alt="Icon for {{ $program->program->name }}" />
                             @endif{!! $program->program->name !!}{{ !$loop->last ? ', ' : '' }}
                         @endforeach
                     </small>
