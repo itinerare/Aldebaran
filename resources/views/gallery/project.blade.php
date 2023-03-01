@@ -12,6 +12,7 @@
     {!! breadcrumbs(['Gallery' => 'gallery', 'Projects ・ ' . $project->name => 'projects/' . $project->id]) !!}
 
     <div class="borderhr mb-4">
+        <x-admin-edit-button name="Project" :object="$project"/>
         <h1>{{ $project->name }}</h1>
     </div>
 

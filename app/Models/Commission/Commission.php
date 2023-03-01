@@ -158,6 +158,15 @@ class Commission extends Model {
     }
 
     /**
+     * Get the commission's edit url.
+     *
+     * @return string
+     */
+    public function getAdminUrlAttribute() {
+        return url('/admin/commissions/edit/'.$this->id);
+    }
+
+    /**
      * Get formatted paid status.
      *
      * @return bool

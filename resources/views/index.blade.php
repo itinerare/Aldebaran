@@ -41,6 +41,7 @@
             </div>
             <div class="card-body">
                 @foreach ($mailingLists as $list)
+                    <x-admin-edit-button name="Mailing List" :object="$list"/>
                     <div class="float-right">
                         <a href="{{ $list->url }}" class="btn btn-primary">Subscribe</a>
                     </div>

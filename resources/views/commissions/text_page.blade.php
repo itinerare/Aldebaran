@@ -10,9 +10,8 @@
     <div class="borderhr mb-4">
         <h1>
             {{ $page->name }}
-            <div class="float-right ml-2">
-                <a class="btn btn-secondary" href="{{ url('commissions/' . $class->slug) }}">Back to Commission Info</a>
-            </div>
+            <a class="float-right btn btn-secondary ml-2" href="{{ url('commissions/' . $class->slug) }}">Back to Commission Info</a>
+            <x-admin-edit-button name="Page" :object="$page"/>
         </h1>
         <p>Last updated {{ $page->updated_at->toFormattedDateString() }}</p>
     </div>

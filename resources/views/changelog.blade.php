@@ -15,6 +15,7 @@
         @foreach ($changelogs as $changelog)
             <div class="card mb-4">
                 <div class="card-header">
+                    <x-admin-edit-button name="Changelog Entry" :object="$changelog"/>
                     <h2>{{ isset($changelog->name) ? $changelog->name : $changelog->created_at->toFormattedDateString() }}
                     </h2>
                     <small>
