@@ -26,7 +26,7 @@
                 <i class="fas fa-eye-slash"></i>
             @endif
             {{ $piece->name }}
-            <x-admin-edit-button name="Piece" :object="$piece"/>
+            <x-admin-edit-button name="Piece" :object="$piece" />
             @if (Request::get('source'))
                 <a class="float-right btn btn-secondary ml-2" href="{{ url(Request::get('source') . (Request::get('page') ? '?page=' . Request::get('page') : '')) }}">Go Back</a>
             @endif

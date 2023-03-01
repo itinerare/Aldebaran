@@ -13,7 +13,7 @@
     <div class="borderhr mb-4">
         <h1>
             #{{ $commission->id }} ・ {!! $commission->commissioner->displayName !!}
-            <x-admin-edit-button name="Commission" :object="$commission" class="badge badge-secondary"/>
+            <x-admin-edit-button name="Commission" :object="$commission" class="badge badge-secondary" />
             <div
                 class="float-right badge
         {{ $commission->status == 'Pending' ? 'badge-primary' : '' }}

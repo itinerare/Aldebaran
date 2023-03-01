@@ -11,7 +11,7 @@
     ]) !!}
 
     <div class="borderhr mb-4">
-        <x-admin-edit-button name="Commission Type" :object="$type"/>
+        <x-admin-edit-button name="Commission Type" :object="$type" />
         <h1>{{ $type->name }} Commmissions</h1>
         <p>Last updated {{ $type->updated_at->toFormattedDateString() }}</p>
     </div>

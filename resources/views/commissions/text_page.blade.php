@@ -11,7 +11,7 @@
         <h1>
             {{ $page->name }}
             <a class="float-right btn btn-secondary ml-2" href="{{ url('commissions/' . $class->slug) }}">Back to Commission Info</a>
-            <x-admin-edit-button name="Page" :object="$page"/>
+            <x-admin-edit-button name="Page" :object="$page" />
         </h1>
         <p>Last updated {{ $page->updated_at->toFormattedDateString() }}</p>
     </div>

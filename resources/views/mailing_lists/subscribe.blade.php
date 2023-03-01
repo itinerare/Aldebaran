@@ -6,7 +6,7 @@
 
 @section('content')
     <div class="text-center">
-        <x-admin-edit-button name="Mailing List" :object="$mailingList"/>
+        <x-admin-edit-button name="Mailing List" :object="$mailingList" />
         <h2>{{ $mailingList->name }}</h2>
         <p>{!! $mailingList->description !!}</p>
     </div>
