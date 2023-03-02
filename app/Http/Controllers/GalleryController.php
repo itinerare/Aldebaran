@@ -139,6 +139,7 @@ class GalleryController extends Controller {
             abort(404);
         }
 
+        // Determine the context in which the piece is being viewed as best able
         switch ($request->get('source')) {
             case 'gallery':
                 $origin = 'gallery';
@@ -149,13 +150,35 @@ class GalleryController extends Controller {
             default:
                 if ($piece->showInGallery) {
                     $origin = 'gallery';
+                } else {
+                    $origin = 'project';
                 }
                 break;
         }
 
+        if(config('aldebaran.settings.navigation.piece_previous_next_buttons')) {
+            // Determine the piece's nearest neighbors within that context
+            $pieces = Piece::visible(Auth::check() ? Auth::user() : null)->sort();
+            if ($origin == 'gallery') {
+                $pieces->gallery();
+            } else {
+                $pieces->where('project_id', $piece->project_id);
+            }
+            $pieces = $pieces->get();
+
+            // Filter
+            $neighbors['previous'] = $pieces->filter(function ($previous) use ($piece) {
+                return $previous->date < $piece->date;
+            })->first();
+            $neighbors['next'] = $pieces->filter(function ($next) use ($piece) {
+                return $next->date > $piece->date;
+            })->last();
+        }
+
         return view('gallery.piece', [
-            'piece'  => $piece,
-            'origin' => $origin ?? 'project',
+            'piece'     => $piece,
+            'origin'    => $origin,
+            'neighbors' => $neighbors ?? null,
         ]);
     }
 }
