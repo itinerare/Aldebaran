@@ -128,6 +128,20 @@ return [
             'percent'      => 3.49,
             'percent_intl' => 4.99,
         ],
+
+        // Progress states that can be selected when updating commissions
+        // Feel free to edit these; it will not impact preexisting commissions
+        'progress_states' => [
+            'Not Started',
+            'Working On',
+            'Sketch',
+            'Lines',
+            'Color',
+            'Shading',
+            'Pending Approval',
+            'Finalizing',
+            'Finished',
+        ],
     ],
 
     /*

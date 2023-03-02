@@ -257,22 +257,7 @@
 
             <div class="form-group">
                 {!! Form::label('progress', 'Progress') !!}
-                {!! Form::select(
-                    'progress',
-                    [
-                        'Not Started' => 'Not Started',
-                        'Working On' => 'Working On',
-                        'Sketch' => 'Sketch',
-                        'Lines' => 'Lines',
-                        'Color' => 'Color',
-                        'Shading' => 'Shading',
-                        'Finalizing' => 'Finalizing',
-                        'Pending Approval' => 'Pending Approval',
-                        'Finished' => 'Finished',
-                    ],
-                    $commission->progress,
-                    ['class' => 'form-control'],
-                ) !!}
+                {!! Form::select('progress', $commission->progressStates(), $commission->progress, ['class' => 'form-control']) !!}
             </div>
         @endif
 
