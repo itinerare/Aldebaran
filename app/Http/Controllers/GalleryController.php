@@ -156,7 +156,7 @@ class GalleryController extends Controller {
                 break;
         }
 
-        if(config('aldebaran.settings.navigation.piece_previous_next_buttons')) {
+        if (config('aldebaran.settings.navigation.piece_previous_next_buttons')) {
             // Determine the piece's nearest neighbors within that context
             $pieces = Piece::visible(Auth::check() ? Auth::user() : null)->sort();
             if ($origin == 'gallery') {
