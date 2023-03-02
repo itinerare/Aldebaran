@@ -74,7 +74,7 @@
         <div class="borderhr mb-2">
             <p>
                 <strong>
-                    {!! isset($piece->timestamp) ? $piece->timestamp->format('F Y') : $piece->created_at->format('F Y') !!}
+                    {!! $piece->date->format('F Y') !!}
                 </strong>
                 ・
                 Last updated {{ $piece->updated_at->toFormattedDateString() }}

@@ -33,7 +33,7 @@
                 <div class="content-details align-self-center fadeIn-bottom">
                     <h5 style="width:100%;">{{ $piece->name }}</h5>
                     <p style="font-size: 0.8em;">
-                        {{ isset($piece->timestamp) ? $piece->timestamp->format('M Y') : $piece->created_at->format('M Y') }}
+                        {{ $piece->date->format('M Y') }}
                         @if (!isset($project) || !$project)
                             ・ In <abbr>{{ $piece->project->name }}</abbr>
                         @endif

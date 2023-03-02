@@ -263,6 +263,15 @@ class Piece extends Model implements Feedable {
     }
 
     /**
+     * Get the relevant date for the piece's creation.
+     *
+     * @return \Carbon\Carbon
+     */
+    public function getDateAttribute() {
+        return $this->timestamp ?? $this->created_at;
+    }
+
+    /**
      * Check if the piece should be displayed in the gallery.
      *
      * @return bool
