@@ -21,19 +21,23 @@ return [
     |
     */
 
-    'navigation'          => [
+    'navigation' => [
         // This enables the main gallery page and shows the nav bar item
         // By default, this is enabled (1) but can be set to 0 to disable
-        'gallery'      => 1,
+        'gallery' => 1,
 
         // By default, projects are in a drop-down on the nav bar; this
         // makes each project its own item on the nav bar
         // Note that this requires being careful about how many projects/
         // overall navbar items you have!
         'projects_nav' => 0,
+
+        // Whether or not to display previous/next buttons when viewing a piece
+        // that link to its nearest neighbors (chronologically)
+        'piece_previous_next_buttons' => 1,
     ],
 
-    'layout'              => [
+    'layout' => [
         // Whether or not the site should be full-width
         // By default content is confined to the center portion
         // This is overridden for the admin panel/anywhere there is a navigation sidebar
@@ -57,9 +61,9 @@ return [
     // Image dimensions, in px. Which thumbnail dimension is used
     // depends on the "gallery_arrangement" setting above
     // Note that these settings are not retroactive!
-    'thumbnail_width'     => 250,
-    'thumbnail_height'    => 200,
-    'display_image_size'  => 2000,
+    'thumbnail_width'    => 250,
+    'thumbnail_height'   => 200,
+    'display_image_size' => 2000,
 
     // What format(s) images should be saved/displayed in
     // Supported formats are JPEG, PNG, GIF, BMP, or WebP
@@ -67,17 +71,17 @@ return [
     // WebP is recommended for display images at minimum due to both transparency support as well as better compression
     // Broadly these settings should be left at default as they have been balanced around compatibility/convenience, image fidelity (where relevant), and performance/space saving
     // Note that these settings are not retroactive!
-    'image_formats'       => [
+    'image_formats' => [
         // Includes full-sized images; setting this to WebP is recommended if storage space is a significant concern,
         // as these are likely to be the largest use of storage for the site, especially if there are many and/or large images
         // However at present this does not preserve DPI, so it is disabled by default as this may be relevant
         // Setting this value to null will maintain images' existing format(s)
-        'full'            => null,
+        'full' => null,
 
         // Includes watermarked/display image and thumbnails. Has no impact unless different from the setting above
         // Again this is highly recommended to be kept at default (WebP)
         // Setting to null will maintain either the existing format (if the above is not set) or defer to the setting above (if it is)
-        'display'         => 'webp',
+        'display' => 'webp',
 
         // What format to display full-size images to on-demand when accessed via the commission interface
         // Allows commissioners, etc. to retrieve images in a more broadly supported format as appropriate
@@ -87,11 +91,11 @@ return [
         // What format to display images in on-demand when accessed via the admin panel, i.e. when editing a piece image
         // Allows retrieving images in a more broadly supported format as appropriate
         // Only applies if "full" and/or "display" above are not null (only converts images for which the relevant value is set)
-        'admin_view'      => 'png',
+        'admin_view' => 'png',
 
         // What format site images uploaded through the admin panel should be stored in
         // Supports PNG or WebP, cannot be null
-        'site_images'     => 'webp',
+        'site_images' => 'webp',
     ],
 
     /*
@@ -118,7 +122,7 @@ return [
     |
     */
 
-    'commissions'         => [
+    'commissions' => [
         // Enables and displays the site's commission components
         'enabled' => 0,
 

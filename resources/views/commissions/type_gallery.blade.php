@@ -5,10 +5,18 @@
 @endsection
 
 @section('content')
-    {!! breadcrumbs([
-        $type->category->class->name . ' Commissions' => 'commissions/' . $type->category->class->slug,
-        'Example Gallery: ' . $type->name => 'types/' . $type->id . '/gallery',
-    ]) !!}
+    {!! breadcrumbs(
+        [
+            $type->category->class->name . ' Commissions' => 'commissions/' . $type->category->class->slug,
+        ] +
+            ($type->is_active && !$type->is_visible
+                ? [
+                    $type->name => 'commissions/types/' . ($type->is_visible ? $type->id : $type->key),
+                ]
+                : []) + [
+                'Example Gallery' . ($type->is_visible ? ': ' . $type->name : '') => 'commissions/types/' . $type->id . '/gallery',
+            ],
+    ) !!}
 
     <div class="borderhr mb-4">
         <h1>

@@ -263,11 +263,25 @@ class Piece extends Model implements Feedable {
     }
 
     /**
+     * Get the relevant date for the piece's creation.
+     *
+     * @return \Carbon\Carbon
+     */
+    public function getDateAttribute() {
+        return $this->timestamp ?? $this->created_at;
+    }
+
+    /**
      * Check if the piece should be displayed in the gallery.
      *
      * @return bool
      */
     public function getShowInGalleryAttribute() {
+        // Check if the gallery is enabled to be displayed in
+        if (!config('aldebaran.settings.navigation.gallery')) {
+            return 0;
+        }
+
         // Check if the piece should be included in the gallery or not
         if ($this->whereRelation('tags.tag', 'is_active', false)->count()) {
             return 0;
