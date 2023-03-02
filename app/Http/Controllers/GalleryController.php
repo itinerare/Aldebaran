@@ -133,14 +133,29 @@ class GalleryController extends Controller {
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function getPiece($id, $slug = null) {
+    public function getPiece(Request $request, $id, $slug = null) {
         $piece = Piece::find($id);
         if (!$piece || (!Auth::check() && !$piece->is_visible)) {
             abort(404);
         }
 
+        switch ($request->get('source')) {
+            case 'gallery':
+                $origin = 'gallery';
+                break;
+            case 'projects/'.$piece->project->slug:
+                $origin = 'project';
+                break;
+            default:
+                if ($piece->showInGallery) {
+                    $origin = 'gallery';
+                }
+                break;
+        }
+
         return view('gallery.piece', [
-            'piece' => $piece,
+            'piece'  => $piece,
+            'origin' => $origin ?? 'project',
         ]);
     }
 }
