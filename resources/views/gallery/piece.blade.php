@@ -38,14 +38,14 @@
             <div class="col-6 text-left float-left">
                 @if ($neighbors['previous'])
                     <a class="btn btn-outline-secondary" href="{{ $neighbors['previous']->url }}{{ Request::get('source') ? '?source=' . Request::get('source') : '' }}">
-                        <i class="fas fa-angle-double-left"></i> <span class="text-primary">{{ $neighbors['previous']->name }}</span>
+                        <i class="text-primary fas fa-angle-double-left"></i> {{ $neighbors['previous']->name }}
                     </a>
                 @endif
             </div>
             <div class="col-6 text-right float-right">
                 @if ($neighbors['next'])
                     <a class="btn btn-outline-secondary" href="{{ $neighbors['next']->url }}{{ Request::get('source') ? '?source=' . Request::get('source') : '' }}">
-                        <span class="text-primary">{{ $neighbors['next']->name }}</span> <i class="fas fa-angle-double-right"></i><br />
+                        {{ $neighbors['next']->name }} <i class="text-primary fas fa-angle-double-right"></i><br />
                     </a>
                 @endif
             </div>
