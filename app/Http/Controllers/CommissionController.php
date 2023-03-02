@@ -164,9 +164,8 @@ class CommissionController extends Controller {
         // via its key.
         if (is_numeric($key)) {
             $type = CommissionType::visible()->where('id', $key)->first();
-        }
-        if (!isset($type)) {
-            $type = CommissionType::active()->where('key', $key)->first();
+        } elseif (is_string($key)) {
+            $type = CommissionType::where('is_visible', 0)->active()->where('key', $key)->first();
             $source = 'key';
         }
         if (!$type || (!$request->user() && !$type->category->class->is_active) || !$type->show_examples) {
