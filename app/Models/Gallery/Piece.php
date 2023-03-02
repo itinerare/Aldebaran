@@ -268,6 +268,11 @@ class Piece extends Model implements Feedable {
      * @return bool
      */
     public function getShowInGalleryAttribute() {
+        // Check if the gallery is enabled to be displayed in
+        if (!config('aldebaran.settings.navigation.gallery')) {
+            return 0;
+        }
+
         // Check if the piece should be included in the gallery or not
         if ($this->whereRelation('tags.tag', 'is_active', false)->count()) {
             return 0;
