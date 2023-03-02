@@ -15,10 +15,7 @@
 @endsection
 
 @section('content')
-    {!! breadcrumbs([
-        $origin == 'gallery' ? 'Gallery' : $piece->project->name => $origin == 'gallery' ? 'gallery' : 'projects/' . $piece->project->slug,
-        $piece->name => 'pieces/' . $piece->id,
-    ]) !!}
+    {!! breadcrumbs($origin + [$piece->name => 'pieces/' . $piece->id]) !!}
 
     <div class="borderhr mb-4">
         <h1>
