@@ -283,7 +283,7 @@ class Piece extends Model implements Feedable {
         }
 
         // Check if the piece should be included in the gallery or not
-        if ($this->whereRelation('tags.tag', 'is_active', false)->count()) {
+        if ($this->where('id', $this->id)->whereRelation('tags.tag', 'is_active', false)->count()) {
             return 0;
         }
 
