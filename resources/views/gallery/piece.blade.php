@@ -37,14 +37,14 @@
         <div class="row mb-4">
             <div class="col-6 text-left float-left">
                 @if ($neighbors['previous'])
-                    <a class="btn btn-outline-secondary" href="{{ $neighbors['previous']->url }}{{ Request::get('source') ? '?source=' . Request::get('source') : '' }}">
+                    <a class="btn btn-outline-secondary" href="{{ $neighbors['previous']->url }}{{ Request::get('source') ? '?source=' . Request::get('source') : '' }}" aria-label="Go to Previous Piece">
                         <i class="text-primary fas fa-angle-double-left"></i> {{ $neighbors['previous']->name }}
                     </a>
                 @endif
             </div>
             <div class="col-6 text-right float-right">
                 @if ($neighbors['next'])
-                    <a class="btn btn-outline-secondary" href="{{ $neighbors['next']->url }}{{ Request::get('source') ? '?source=' . Request::get('source') : '' }}">
+                    <a class="btn btn-outline-secondary" href="{{ $neighbors['next']->url }}{{ Request::get('source') ? '?source=' . Request::get('source') : '' }}" aria-label="Go to Next Piece">
                         {{ $neighbors['next']->name }} <i class="text-primary fas fa-angle-double-right"></i><br />
                     </a>
                 @endif
