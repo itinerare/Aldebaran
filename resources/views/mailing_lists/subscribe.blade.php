@@ -33,7 +33,7 @@
     </div>
 
     <p class="text-center">
-        Upon submitting this form, an email will be sent to the provided address requesting that you verify your subscription. Please note that unverified subscriptions are periodically pruned, so please make sure to verify promptly. Once fully
+        Upon submitting this form, an email will be sent to the provided address requesting that you verify your subscription. Note that unverified subscriptions are periodically pruned, so please make sure to verify promptly. Once fully
         subscribed, you may unsubscribe at any time; a link to do so will be provided with each email sent to this mailing list.
     </p>
 @endsection
