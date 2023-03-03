@@ -158,7 +158,7 @@ class MailingListSubscriberTest extends TestCase {
         }
 
         $response = $this
-            ->get($url)->assertStatus($status);
+            ->get($url)->assertStatus(302);
 
         if ($status == 302) {
             if ($expected) {

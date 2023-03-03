@@ -71,7 +71,9 @@ class MailingListController extends Controller {
     public function getVerify(Request $request, MailingListManager $service, $id) {
         $subscriber = MailingListSubscriber::where('id', $id)->where('token', $request->get('token'))->first();
         if (!$subscriber) {
-            abort(404);
+            flash('No subscriber found with that information. Please verify that your verification link is correct and has not expired.')->error();
+
+            return redirect()->to('/');
         }
 
         if ($service->verifySubscriber($subscriber, $request->get('token'))) {
