@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Changelog;
 use App\Models\Commission\CommissionClass;
 use App\Models\Gallery\Project;
+use App\Models\MailingList\MailingList;
 use App\Models\TextPage;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
@@ -37,7 +38,8 @@ class Controller extends BaseController {
         $page = TextPage::where('key', 'index')->first();
 
         return view('index', [
-            'page' => $page,
+            'page'         => $page,
+            'mailingLists' => MailingList::open()->get(),
         ]);
     }
 

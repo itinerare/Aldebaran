@@ -63,6 +63,24 @@ class Commissioner extends Model {
 
     /**********************************************************************************************
 
+        SCOPES
+
+    **********************************************************************************************/
+
+    /**
+     * Scope a query to return only unbanned or banned commissioners.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param bool                                  $isBanned
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeValid($query, $isBanned = 0) {
+        return $query->where('is_banned', $isBanned);
+    }
+
+    /**********************************************************************************************
+
         ACCESSORS
 
     **********************************************************************************************/

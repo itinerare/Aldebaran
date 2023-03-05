@@ -132,6 +132,15 @@ class CommissionCategory extends Model {
     **********************************************************************************************/
 
     /**
+     * Get the category's edit url.
+     *
+     * @return string
+     */
+    public function getAdminUrlAttribute() {
+        return url('/admin/data/commission-categories/edit/'.$this->id);
+    }
+
+    /**
      * Get the commission category's full name.
      *
      * @return string

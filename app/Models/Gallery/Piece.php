@@ -204,6 +204,15 @@ class Piece extends Model implements Feedable {
     }
 
     /**
+     * Get the piece's edit url.
+     *
+     * @return string
+     */
+    public function getAdminUrlAttribute() {
+        return url('/admin/data/pieces/edit/'.$this->id);
+    }
+
+    /**
      * Get the piece's slug.
      *
      * @return string
@@ -254,13 +263,27 @@ class Piece extends Model implements Feedable {
     }
 
     /**
+     * Get the relevant date for the piece's creation.
+     *
+     * @return \Carbon\Carbon
+     */
+    public function getDateAttribute() {
+        return $this->timestamp ?? $this->created_at;
+    }
+
+    /**
      * Check if the piece should be displayed in the gallery.
      *
      * @return bool
      */
     public function getShowInGalleryAttribute() {
+        // Check if the gallery is enabled to be displayed in
+        if (!config('aldebaran.settings.navigation.gallery')) {
+            return 0;
+        }
+
         // Check if the piece should be included in the gallery or not
-        if ($this->whereRelation('tags.tag', 'is_active', false)->count()) {
+        if ($this->where('id', $this->id)->whereRelation('tags.tag', 'is_active', false)->count()) {
             return 0;
         }
 

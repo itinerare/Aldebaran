@@ -8,6 +8,7 @@
     {!! breadcrumbs([$class->name . ' Commissions' => 'commissions/' . $class->slug]) !!}
 
     <div class="borderhr mb-4">
+        <x-admin-edit-button name="Commission Class" :object="$class" />
         <h1>{{ $class->name }} Commissions</h1>
     </div>
 
@@ -45,6 +46,7 @@
         @foreach ($categories as $category)
             <div class="card card-body mb-4">
                 <div id="{{ $category->name }}" class="text-center">
+                    <x-admin-edit-button name="Commission Category" :object="$category" />
                     <h2>{{ $category->name }} Commissions</h2>
                 </div>
                 @foreach ($category->types->where('is_visible', 1) as $type)

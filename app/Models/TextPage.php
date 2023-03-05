@@ -48,4 +48,19 @@ class TextPage extends Model {
     public static $updateRules = [
         'text' => 'required',
     ];
+
+    /**********************************************************************************************
+
+       ACCESSORS
+
+    **********************************************************************************************/
+
+    /**
+     * Get the page's edit url.
+     *
+     * @return string
+     */
+    public function getAdminUrlAttribute() {
+        return url('/admin/pages/edit/'.$this->id);
+    }
 }

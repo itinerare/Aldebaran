@@ -140,6 +140,15 @@ class CommissionType extends Model {
     }
 
     /**
+     * Get the type's edit url.
+     *
+     * @return string
+     */
+    public function getAdminUrlAttribute() {
+        return url('/admin/data/commission-types/edit/'.$this->id);
+    }
+
+    /**
      * Fetch display name-- linked if the type is visible, unlinked if not.
      *
      * @return string

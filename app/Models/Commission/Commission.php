@@ -158,6 +158,15 @@ class Commission extends Model {
     }
 
     /**
+     * Get the commission's edit url.
+     *
+     * @return string
+     */
+    public function getAdminUrlAttribute() {
+        return url('/admin/commissions/edit/'.$this->id);
+    }
+
+    /**
      * Get formatted paid status.
      *
      * @return bool
@@ -278,7 +287,7 @@ class Commission extends Model {
      *
      * @return int
      */
-    public function paymentWithFees($payment) {
+    public static function paymentWithFees($payment) {
         $total = $payment->cost + (isset($payment->tip) && $payment->tip ? $payment->tip : 0);
 
         // Calculate fee and round
@@ -287,5 +296,18 @@ class Commission extends Model {
         $fee = round($fee, 2);
 
         return $total - $fee;
+    }
+
+    /**
+     * Format the currently configured progress states for selection.
+     *
+     * @return array
+     */
+    public static function progressStates() {
+        $states = collect(config('aldebaran.settings.commissions.progress_states'))->mapWithKeys(function ($state) {
+            return [$state => $state];
+        });
+
+        return $states->toArray();
     }
 }

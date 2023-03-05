@@ -15,10 +15,7 @@
 @endsection
 
 @section('content')
-    {!! breadcrumbs([
-        $piece->showInGallery ? 'Gallery' : $piece->project->name => $piece->showInGallery ? 'gallery' : 'projects/' . $piece->project->slug,
-        $piece->name => 'pieces/' . $piece->id,
-    ]) !!}
+    {!! breadcrumbs($origin + [$piece->name => 'pieces/' . $piece->id]) !!}
 
     <div class="borderhr mb-4">
         <h1>
@@ -26,14 +23,31 @@
                 <i class="fas fa-eye-slash"></i>
             @endif
             {{ $piece->name }}
+            <x-admin-edit-button name="Piece" :object="$piece" />
             @if (Request::get('source'))
-                <div class="float-right ml-2">
-                    <a class="btn btn-secondary" href="{{ url(Request::get('source') . (Request::get('page') ? '?page=' . Request::get('page') : '')) }}">Go
-                        Back</a>
-                </div>
+                <a class="float-right btn btn-secondary ml-2" href="{{ url(Request::get('source') . (Request::get('page') ? '?page=' . Request::get('page') : '')) }}">Go Back</a>
             @endif
         </h1>
     </div>
+
+    @if ($neighbors)
+        <div class="row mb-4">
+            <div class="col-6 text-left float-left">
+                @if ($neighbors['previous'])
+                    <a class="btn btn-outline-secondary" href="{{ $neighbors['previous']->url }}{{ Request::get('source') ? '?source=' . Request::get('source') : '' }}" aria-label="Go to Previous Piece">
+                        <i class="text-primary fas fa-angle-double-left"></i> {{ $neighbors['previous']->name }}
+                    </a>
+                @endif
+            </div>
+            <div class="col-6 text-right float-right">
+                @if ($neighbors['next'])
+                    <a class="btn btn-outline-secondary" href="{{ $neighbors['next']->url }}{{ Request::get('source') ? '?source=' . Request::get('source') : '' }}" aria-label="Go to Next Piece">
+                        {{ $neighbors['next']->name }} <i class="text-primary fas fa-angle-double-right"></i>
+                    </a>
+                @endif
+            </div>
+        </div>
+    @endif
 
     <!-- Images -->
     @if ($piece->images->count())
@@ -76,7 +90,7 @@
         <div class="borderhr mb-2">
             <p>
                 <strong>
-                    {!! isset($piece->timestamp) ? $piece->timestamp->format('F Y') : $piece->created_at->format('F Y') !!}
+                    {!! $piece->date->format('F Y') !!}
                 </strong>
                 ・
                 Last updated {{ $piece->updated_at->toFormattedDateString() }}
@@ -98,7 +112,7 @@
                 return $programs->program->name;
             }) as $program)
                             @if ($program->program->has_image)
-                                <img class="mw-100" style="height:16px;" src="{{ $program->program->imageUrl }}" alt="Icon for {{ $program->name }}" />
+                                <img class="mw-100" style="height:16px;" src="{{ $program->program->imageUrl }}" alt="Icon for {{ $program->program->name }}" />
                             @endif{!! $program->program->name !!}{{ !$loop->last ? ', ' : '' }}
                         @endforeach
                     </small>

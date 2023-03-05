@@ -11,6 +11,7 @@ use App\Models\Commission\CommissionPayment;
 use App\Models\Commission\CommissionPiece;
 use App\Models\Commission\CommissionType;
 use App\Models\Gallery\Piece;
+use App\Models\MailingList\MailingListSubscriber;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
@@ -118,7 +119,7 @@ class CommissionManager extends Service {
 
             // If desired, send an email notification to the admin account
             // that a commission request was submitted
-            if (Settings::get('notif_emails') && !$manual && (config('aldebaran.settings.admin_email.address') && config('aldebaran.settings.admin_email.password'))) {
+            if (config('aldebaran.settings.email_features') && Settings::get('notif_emails') && !$manual && (config('aldebaran.settings.admin_email.address') && config('aldebaran.settings.admin_email.password'))) {
                 Mail::to(User::find(1))->send(new CommissionRequested($commission));
             }
 
@@ -345,15 +346,15 @@ class CommissionManager extends Service {
     }
 
     /**
-     * Bans a commissioner, and declines all current commission requests from them.
+     * Handles bans from the commission or mailing list systems.
      *
-     * @param int                   $id
+     * @param int|string            $subject
      * @param array                 $data
      * @param \App\Models\User\User $user
      *
-     * @return mixed
+     * @return \App\Models\Commission\Commission|bool
      */
-    public function banCommissioner($id, $data, $user) {
+    public function banCommissioner($subject, $data, $user) {
         DB::beginTransaction();
 
         try {
@@ -361,14 +362,29 @@ class CommissionManager extends Service {
             if (!$user) {
                 throw new \Exception('Invalid user.');
             }
-            // Fetch commission so as to fetch commissioner
-            $commission = Commission::where('id', $id)->whereIn('status', ['Pending', 'Accepted'])->first();
-            if (!$commission) {
-                throw new \Exception('Invalid commission selected.');
-            }
-            $commissioner = Commissioner::where('id', $commission->commissioner_id)->first();
-            if (!$commissioner) {
-                throw new \Exception('Invalid commissioner selected.');
+            if (is_numeric($subject)) {
+                // Fetch commission so as to fetch commissioner
+                $commission = Commission::where('id', $subject)->whereIn('status', ['Pending', 'Accepted'])->first();
+                if (!$commission) {
+                    throw new \Exception('Invalid commission selected.');
+                }
+                $commissioner = Commissioner::where('id', $commission->commissioner_id)->first();
+                if (!$commissioner) {
+                    throw new \Exception('Invalid commissioner selected.');
+                }
+            } elseif (is_string($subject)) {
+                // Locate existing commissioner if extant
+                if (Commissioner::where('email', $subject)->exists()) {
+                    $commissioner = Commissioner::where('email', $subject);
+                } else {
+                    // Otherwise create a new commissioner to hold the ban
+                    $commissioner = Commissioner::create([
+                        'email'     => $subject,
+                        'paypal'    => $subject,
+                        'name'      => 'Banned Subscriber '.$subject,
+                        'is_banned' => 1,
+                    ]);
+                }
             }
 
             // Mark the commissioner as banned,
@@ -376,7 +392,10 @@ class CommissionManager extends Service {
             // and decline all current commission requests from them
             Commission::where('commissioner_id', $commissioner->id)->whereIn('status', ['Pending', 'Accepted'])->update(['status' => 'Declined', 'comments' => $data['comments'] ?? '<p>Automatically declined due to ban.</p>']);
 
-            return $this->commitReturn($commission);
+            // Also delete any present mailing list subscriptions, if relevant
+            MailingListSubscriber::where('email', $commissioner->email)->delete();
+
+            return $this->commitReturn($commission ?? true);
         } catch (\Exception $e) {
             $this->setError('error', $e->getMessage());
         }

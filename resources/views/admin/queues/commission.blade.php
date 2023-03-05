@@ -257,22 +257,7 @@
 
             <div class="form-group">
                 {!! Form::label('progress', 'Progress') !!}
-                {!! Form::select(
-                    'progress',
-                    [
-                        'Not Started' => 'Not Started',
-                        'Working On' => 'Working On',
-                        'Sketch' => 'Sketch',
-                        'Lines' => 'Lines',
-                        'Color' => 'Color',
-                        'Shading' => 'Shading',
-                        'Finalizing' => 'Finalizing',
-                        'Pending Approval' => 'Pending Approval',
-                        'Finished' => 'Finished',
-                    ],
-                    $commission->progress,
-                    ['class' => 'form-control'],
-                ) !!}
+                {!! Form::select('progress', $commission->progressStates(), $commission->progress, ['class' => 'form-control']) !!}
             </div>
         @endif
 
@@ -383,7 +368,7 @@
                     </div>
                     <div class="modal-body">
                         <p>This will ban the commissioner, preventing them from requesting any further commissions. It will
-                            also automatically decline any current commission requests they have submitted.</p>
+                            also automatically decline any current commission requests they have submitted as well as unsubscribe and prevent them from subscribing to any mailing lists now or in the future.</p>
                         <div class="text-right">
                             <a href="#" id="banSubmit" class="btn btn-danger">Ban</a>
                         </div>
