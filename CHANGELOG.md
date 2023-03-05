@@ -4,6 +4,118 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [3.6.0](https://github.com/itinerare/Aldebaran/compare/v3.5.0...v3.6.0) (2023-03-05)
+
+### Features
+
+* Add admin edit button component ([209ae7](https://github.com/itinerare/Aldebaran/commit/209ae73db71f7f51cb16ee4015d6a8bfc994ec2f))
+* Add admin edit buttons for a majority of editable objects to public-facing pages ([03f179](https://github.com/itinerare/Aldebaran/commit/03f179e57f4c610185a5a82d7fe9c29725b37fc2))
+* Add optional styling override to admin edit button component ([904be6](https://github.com/itinerare/Aldebaran/commit/904be679212b0366a83696200de4e364127ba3ef))
+
+##### Commissions
+
+* Add valid scope to commissioners ([a93935](https://github.com/itinerare/Aldebaran/commit/a93935d28c78f6cadfd381e7a9f65769e0d68e49))
+* Make breadcrumbs and prev/next buttons when viewing an example piece context-sensitive ([b818d8](https://github.com/itinerare/Aldebaran/commit/b818d8779640162abe6dabc9e5c9f04724b99e3a))
+* Make selectable progress states configurable ([5b9c11](https://github.com/itinerare/Aldebaran/commit/5b9c11ce89dce65e5ceef66d8b3de843db115b4c))
+* Tidy access checking for type galleries, improve breadcrumbs ([b73b25](https://github.com/itinerare/Aldebaran/commit/b73b252bd647fb79a7a15cf02ce49f289cdd3b58))
+* Update commission request notif email format to markdown template ([ab94f8](https://github.com/itinerare/Aldebaran/commit/ab94f87a465f027e220560c2d068a5ec3f16a7b5))
+
+##### Email
+
+* Add email_features config setting ([1c0274](https://github.com/itinerare/Aldebaran/commit/1c027423f9ca7becdc8a5e85a658e36bcc94b354))
+
+##### Gallery
+
+* Add aria labels to piece prev/next bttons ([d2e642](https://github.com/itinerare/Aldebaran/commit/d2e642f69dfc61211e6a4bdc33ba1df969cda101))
+* Add optional previous/next buttons to pieces ([a13d21](https://github.com/itinerare/Aldebaran/commit/a13d21f3ecaad6e09cee778c5e75ee4d3adc345a))
+* Improve origin detection when viewing a piece ([4b7bf2](https://github.com/itinerare/Aldebaran/commit/4b7bf211a50f7f5be76280192f8532582af416fc))
+
+##### Mailing Lists
+
+* Add subscriber count to mailing list index ([0b9c90](https://github.com/itinerare/Aldebaran/commit/0b9c90ed8b69cfa4d2f43521e879aa055a39f7ae))
+* Add subscriber list to admin edit page, kicking/banning subscribers ([c91268](https://github.com/itinerare/Aldebaran/commit/c912688fb19ae3002a12b8c0b7d0ce3516d74f7a))
+* Add subscription/unsubscription info to subscription page ([3cbcfc](https://github.com/itinerare/Aldebaran/commit/3cbcfcddabc3b37380808bae678e9a4040428f2e))
+* Add toggleable list of mailing lists on index page ([0c9d97](https://github.com/itinerare/Aldebaran/commit/0c9d97e365e332ffa014dd5ba31c8c2028e488a3))
+* Add unverified subscriber count to admin index ([212c1a](https://github.com/itinerare/Aldebaran/commit/212c1aeac3e46e62720fd2e5bc28f51aca386a88))
+* Allow verified scope to return either verified or non-verified subscribers ([df13f9](https://github.com/itinerare/Aldebaran/commit/df13f9c75b211fba397f54991c5b442f26675df9))
+* Basic entry creation/editing ([cb038b](https://github.com/itinerare/Aldebaran/commit/cb038b2a858a49351fb0e8b965918d79a577452d))
+* Basic mailing list create/update/delete ([3dcc46](https://github.com/itinerare/Aldebaran/commit/3dcc469e7b720d9ce3fede1be5c86a1d984548ef))
+* Basic subscription, verification ([26ad41](https://github.com/itinerare/Aldebaran/commit/26ad410eeec044f96d89b9b7c01573b879062f1e))
+* Display entry ID on admin mailing list edit page ([5795be](https://github.com/itinerare/Aldebaran/commit/5795bebfcd9981c79bc5f44bb25504753ef6ec63))
+* Display subscription page URL on mailing list edit page ([7dfc2b](https://github.com/itinerare/Aldebaran/commit/7dfc2b1c59e197502fc7935058f87f194308373b))
+* Display when entries were sent on admin mailing list edit page ([b87f13](https://github.com/itinerare/Aldebaran/commit/b87f13d29384f6123498cc5055a83b31619911f9))
+* Implement sending entries to subscribers via queue ([c01d9a](https://github.com/itinerare/Aldebaran/commit/c01d9ab85dac2037d2f103aca69c6329bae0eb40))
+* Implement unsubscription flow for subscribers ([ad8209](https://github.com/itinerare/Aldebaran/commit/ad82093fa3a58e1782679fb02052e65fe2e5dcee))
+* Include mailing list name in subscription page title ([790632](https://github.com/itinerare/Aldebaran/commit/790632f71215be14bcea1913bd6ff22d7f6cfa16))
+* Make admin panel subscriber list collapsible, auto-collapse ([d3b3ee](https://github.com/itinerare/Aldebaran/commit/d3b3ee692119b9627212e2a37edfe16b4486d374))
+
+##### Pieces
+
+* Perform timestamp check in an attribute ([105034](https://github.com/itinerare/Aldebaran/commit/1050343b32fc2a4ba1bddba6ce74ad554cca8130))
+
+##### Tests
+
+* Add email notification test to commission creation ([ca4a8e](https://github.com/itinerare/Aldebaran/commit/ca4a8e2bc6479f3d253d59acf1bc4c9dc7c78c83))
+* Add entry/subscriber checks to mailing list create/edit/delete tests ([67372b](https://github.com/itinerare/Aldebaran/commit/67372ba149733b2138f39473f71025c592babf63))
+* Admin mailing list subscriber kick/ban tests ([896cff](https://github.com/itinerare/Aldebaran/commit/896cff9c003f051d47b77db440cdf6e070d57e69))
+* Basic email contents tests ([5187c8](https://github.com/itinerare/Aldebaran/commit/5187c8af7f9061b2504e79b6614d27e8459ab363))
+* Basic mailing list create/edit/delete tests ([dd0356](https://github.com/itinerare/Aldebaran/commit/dd0356150dadc53ded186b034954e4ec0b8ae87b))
+* Mailing list entry tests ([24e491](https://github.com/itinerare/Aldebaran/commit/24e491d36f3e77cc936f932efb45fd88d4754005))
+* Mailing list subscriber tests ([890649](https://github.com/itinerare/Aldebaran/commit/890649087e70ffccc0b8c5b50ce89adbe4ef8574))
+
+### Bug Fixes
+
+
+##### Changelog
+
+* Correctly label deletion modal ([b7d318](https://github.com/itinerare/Aldebaran/commit/b7d318a70d5099b332fcd63f547d06132616cc98))
+
+##### Commissions
+
+* Change check for id when banning commissioner ([f5234e](https://github.com/itinerare/Aldebaran/commit/f5234ed3cc86e0f42973bf7ef1965fd3038db9ee))
+* Eager load commissioner info on queue pages ([9bd06b](https://github.com/itinerare/Aldebaran/commit/9bd06b5fe00c5f74dfa25b5aa88e7844cf42cdd6))
+
+##### Gallery
+
+* Adjust prev/next button styling for visibility ([0f9eb9](https://github.com/itinerare/Aldebaran/commit/0f9eb922fdda39a7fdafd567920f9d54cad411cb))
+* Correctly retrieve program name in alt text when viewing piece ([625123](https://github.com/itinerare/Aldebaran/commit/625123fc2a80c20b0c3f586350caefa7b7ebbd0c))
+* Only show edit button on gallery if page exists ([1ce37a](https://github.com/itinerare/Aldebaran/commit/1ce37ab4b056f01cdc8db4b8e4856aeccc4f5819))
+* Remove unnecessary break on piece page ([b545c7](https://github.com/itinerare/Aldebaran/commit/b545c745242f6e891bb85b3c9abf9739c33c5daf))
+
+##### Mailing Lists
+
+* Better UX around failed verification ([f21d2c](https://github.com/itinerare/Aldebaran/commit/f21d2c090feecd24dfd2553d824c993cc12c466c))
+* Check that mailing list is open when creating subscription ([84df29](https://github.com/itinerare/Aldebaran/commit/84df29052aeb841da924c8365389bba302d67cf5))
+* Check that subscription is not already verified when verifying ([673f6a](https://github.com/itinerare/Aldebaran/commit/673f6a4f18f11f62abc85a06c532b75296fa2fb4))
+* Correct admin mailing list create/edit breadcrumbs ([177040](https://github.com/itinerare/Aldebaran/commit/17704064033594ad31afc3aa243135fa7712ecb9))
+* Correctly set last entry set for subscribers ([6c5340](https://github.com/itinerare/Aldebaran/commit/6c534028801820e8cdd0622c27b96012a55f9487))
+* Delete subscribers and entries when deleting mailing list ([2d06d4](https://github.com/itinerare/Aldebaran/commit/2d06d48203d5b1eed3cc372f1651bca1334d2d98))
+* Display entry created at time on admin index if none have been sent ([a1b1ea](https://github.com/itinerare/Aldebaran/commit/a1b1ea6659ce78b5e4fb3a8eefc5a9424d0234f6))
+* Enforce unique mailing list names ([8db3c5](https://github.com/itinerare/Aldebaran/commit/8db3c55fc428820f29e4b746df60e1f0f5bf2ada))
+* Improve redirects on subscription verification/unsubscription ([937f83](https://github.com/itinerare/Aldebaran/commit/937f83a3b4c57b990d63be4b57f1d53d3134dce1))
+* More thorough checking for email features being enabled ([d42f86](https://github.com/itinerare/Aldebaran/commit/d42f86e183c38acbf575c4c38f2e52f69650dd47))
+* Move misplaced quotes in verification email template ([69c76b](https://github.com/itinerare/Aldebaran/commit/69c76b31083434443fd84dfd23b1bef5365d057f))
+* Only specify mailing list when creating entry ([d52fa1](https://github.com/itinerare/Aldebaran/commit/d52fa1524ee752b3891688b662607fb20d1b1250))
+* Properly display last entry on admin index ([399361](https://github.com/itinerare/Aldebaran/commit/399361c8090a159ad3d27dcec0f3a9dc38632ca6))
+* Remove dysfunctional email check ([db58b4](https://github.com/itinerare/Aldebaran/commit/db58b4ac11e4fdb0c6bd4d578c1a575fc9171490))
+* Slightly less redundant subscription page info ([447259](https://github.com/itinerare/Aldebaran/commit/447259076bf4736900ec462828360edbaf63d6a6))
+* Subscription page visible when mail features are disabled ([51ef44](https://github.com/itinerare/Aldebaran/commit/51ef4432d510c7c930d4dea2480a9e2f43d824f3))
+* Un-indent markdown mail ([d014bd](https://github.com/itinerare/Aldebaran/commit/d014bd34a598636f3a127f4348b0608c294fdead))
+
+##### Pieces
+
+* If main gallery is disabled, never consider pieces able to be shown in it ([7c475e](https://github.com/itinerare/Aldebaran/commit/7c475e17e6d68b181fa92dfc81c9499f0352aace))
+* Refine inactive tag check re gallery inclusion ([9f2753](https://github.com/itinerare/Aldebaran/commit/9f27530ef37c6306d9099afb60d03bf4500688bb))
+
+##### Tests
+
+* Add text pages when performing gallery view tests ([6b36b4](https://github.com/itinerare/Aldebaran/commit/6b36b4a063de9b86bad249a2e5471114476109a7))
+* Clean up changelog create test assertion ([45c763](https://github.com/itinerare/Aldebaran/commit/45c7635af37b7df679f0eb826dd69ccd4d9ddb28))
+* Disable commission request notif email check ([2bbe54](https://github.com/itinerare/Aldebaran/commit/2bbe54d718a4d40c72c85fa9464fd8907c8b6ab3))
+
+
+---
+
 ## [3.5.0](https://github.com/itinerare/Aldebaran/compare/v3.4.0...v3.5.0) (2023-02-18)
 
 ### Features
