@@ -206,7 +206,7 @@ class CommissionController extends Controller {
             return Carbon::parse($date->created_at)->format('Y');
         })->values();
 
-        $yearPayments = CommissionPayment::orderBy('created_at', 'DESC')->with('commission.commissioner')->get()->filter(function ($payment) {
+        $yearPayments = CommissionPayment::orderBy('paid_at', 'DESC')->orderBy('created_at', 'DESC')->with('commission.commissioner')->get()->filter(function ($payment) {
             if ($payment->is_paid) {
                 return 1;
             } elseif ($payment->commission->status == 'Accepted' || $payment->commission->status == 'Complete') {
