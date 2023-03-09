@@ -204,7 +204,7 @@ class CommissionController extends Controller {
 
         $yearCommissions = Commission::whereIn('status', ['Accepted', 'Complete'])->orderBy('created_at', 'DESC')->get()->groupBy(function ($date) {
             return Carbon::parse($date->created_at)->format('Y');
-        });
+        })->values();
 
         $yearPayments = CommissionPayment::orderBy('created_at', 'DESC')->with('commission.commissioner')->get()->filter(function ($payment) {
             if ($payment->is_paid) {
@@ -229,8 +229,15 @@ class CommissionController extends Controller {
                 }
 
                 return Carbon::now()->format('F Y');
+            })->sort(function ($paymentsA, $paymentsB) {
+                // Sort by month, numerically
+                // As the payments have already been grouped, it's safe to just take the value from the first
+                $monthA = $paymentsA->first()->paid_at ? $paymentsA->first()->paid_at->month : Carbon::now()->month;
+                $monthB = $paymentsB->first()->paid_at ? $paymentsB->first()->paid_at->month : Carbon::now()->month;
+
+                return strcmp((string) $monthB, (string) $monthA);
             });
-        })->sort();
+        })->sortDesc();
 
         return view('admin.queues.ledger', [
             'years'           => $groupedPayments->paginate(1)->appends($request->query()),
