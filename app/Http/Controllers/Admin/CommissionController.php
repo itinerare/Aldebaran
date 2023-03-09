@@ -235,11 +235,11 @@ class CommissionController extends Controller {
                 $monthA = $paymentsA->first()->paid_at ? $paymentsA->first()->paid_at->month : Carbon::now()->month;
                 $monthB = $paymentsB->first()->paid_at ? $paymentsB->first()->paid_at->month : Carbon::now()->month;
 
-                if ($monthB < $monthA) {
-                    return 0;
-                } else {
+                if ($monthB > $monthA) {
                     return 1;
                 }
+
+                return 0;
             });
         });
 
