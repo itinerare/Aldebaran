@@ -235,9 +235,13 @@ class CommissionController extends Controller {
                 $monthA = $paymentsA->first()->paid_at ? $paymentsA->first()->paid_at->month : Carbon::now()->month;
                 $monthB = $paymentsB->first()->paid_at ? $paymentsB->first()->paid_at->month : Carbon::now()->month;
 
-                return strcmp((string) $monthB, (string) $monthA);
+                if ($monthB < $monthA) {
+                    return 0;
+                } else {
+                    return 1;
+                }
             });
-        })->sortDesc();
+        });
 
         return view('admin.queues.ledger', [
             'years'           => $groupedPayments->paginate(1)->appends($request->query()),
