@@ -228,7 +228,7 @@ class CommissionController extends Controller {
                     return Carbon::parse($payment->paid_at)->format('F Y');
                 }
 
-                return Carbon::parse($payment->created_at)->format('F Y');
+                return Carbon::now()->format('F Y');
             });
         })->sort();
 
