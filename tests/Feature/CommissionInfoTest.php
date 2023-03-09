@@ -49,7 +49,7 @@ class CommissionInfoTest extends TestCase {
      */
     public function testGetCommissionInfo($visibility, $user, $data, $status) {
         // Enable/disable commission components
-        config(['aldebaran.settings.commissions.enabled' => $visibility[0]]);
+        config(['aldebaran.commissions.enabled' => $visibility[0]]);
 
         if (!$visibility[1]) {
             $this->class->update(['is_active' => 0]);
@@ -202,7 +202,7 @@ class CommissionInfoTest extends TestCase {
      */
     public function testGetCommissionTypeInfo($visibility, $user, $data, $status) {
         // Enable/disable commission components
-        config(['aldebaran.settings.commissions.enabled' => $visibility[0]]);
+        config(['aldebaran.commissions.enabled' => $visibility[0]]);
 
         // Update various settings
         $this->class->update(['is_active' => $visibility[1]]);
@@ -364,7 +364,7 @@ class CommissionInfoTest extends TestCase {
      */
     public function testGetCommissionTypeGallery($visibility, $user, $data, $status) {
         // Enable/disable commission components
-        config(['aldebaran.settings.commissions.enabled' => $visibility[0]]);
+        config(['aldebaran.commissions.enabled' => $visibility[0]]);
 
         if (!$visibility[1]) {
             $this->class->update(['is_active' => 0]);
@@ -498,7 +498,7 @@ class CommissionInfoTest extends TestCase {
      */
     public function testGetCommissionTerms($visibility, $user, $data, $status) {
         // Enable/disable commission components
-        config(['aldebaran.settings.commissions.enabled' => $visibility[0]]);
+        config(['aldebaran.commissions.enabled' => $visibility[0]]);
 
         if (!$visibility[1]) {
             $this->class->update(['is_active' => 0]);
@@ -527,7 +527,7 @@ class CommissionInfoTest extends TestCase {
      */
     public function testGetCommissionQueue($visibility, $user, $data, $status) {
         // Enable/disable commission components
-        config(['aldebaran.settings.commissions.enabled' => $visibility[0]]);
+        config(['aldebaran.commissions.enabled' => $visibility[0]]);
 
         if (!$visibility[1]) {
             $this->class->update(['is_active' => 0]);
@@ -562,7 +562,7 @@ class CommissionInfoTest extends TestCase {
      */
     public function testGetCommissionPage($visibility, $user, $data, $status) {
         // Enable/disable commission components
-        config(['aldebaran.settings.commissions.enabled' => $visibility[0]]);
+        config(['aldebaran.commissions.enabled' => $visibility[0]]);
 
         // Create a page to view, and update the class with it
         $page = TextPage::factory()->create();

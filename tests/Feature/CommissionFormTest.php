@@ -51,7 +51,7 @@ class CommissionFormTest extends TestCase {
      */
     public function testGetNewCommission($visibility, $user, $data, $status) {
         // Adjust various settings
-        config(['aldebaran.settings.commissions.enabled' => $visibility[0]]);
+        config(['aldebaran.commissions.enabled' => $visibility[0]]);
         $this->type->category->class->update(['is_active' => $visibility[1]]);
         $this->type->update([
             'is_active'  => $visibility[3],
@@ -171,7 +171,7 @@ class CommissionFormTest extends TestCase {
         }
 
         // Adjust visibility settings
-        config(['aldebaran.settings.commissions.enabled' => $visibility[0]]);
+        config(['aldebaran.commissions.enabled' => $visibility[0]]);
         $this->type->category->class->update(['is_active' => $visibility[1]]);
         $this->type->update([
             'is_active'  => $visibility[3],

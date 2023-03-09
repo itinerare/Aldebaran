@@ -40,7 +40,7 @@ class CommissionManager extends Service {
         DB::beginTransaction();
 
         try {
-            if (!config('aldebaran.settings.commissions.enabled')) {
+            if (!config('aldebaran.commissions.enabled')) {
                 throw new \Exception('Commissions are not enabled for this site.');
             }
 

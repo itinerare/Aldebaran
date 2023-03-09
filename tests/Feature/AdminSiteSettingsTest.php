@@ -34,7 +34,7 @@ class AdminSiteSettingsTest extends TestCase {
      */
     public function testGetSiteSettingsIndex($commsEnabled, $expected) {
         // Adjust commission enable/disable as appropriate
-        config(['aldebaran.settings.commissions.enabled' => $commsEnabled]);
+        config(['aldebaran.commissions.enabled' => $commsEnabled]);
 
         if ($commsEnabled) {
             // Create testing class

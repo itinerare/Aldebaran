@@ -60,7 +60,7 @@
             {!! Form::close() !!}
         @endif
 
-        @if (config('aldebaran.settings.commissions.enabled'))
+        @if (config('aldebaran.commissions.enabled'))
             <!-- Commission Type Settings -->
             <h2>Commission Settings</h2>
 

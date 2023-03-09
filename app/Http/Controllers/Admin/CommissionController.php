@@ -32,7 +32,7 @@ class CommissionController extends Controller {
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function getCommissionIndex(Request $request, $class, $status = null) {
-        if (!config('aldebaran.settings.commissions.enabled')) {
+        if (!config('aldebaran.commissions.enabled')) {
             abort(404);
         }
 
@@ -75,7 +75,7 @@ class CommissionController extends Controller {
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function getNewCommission($id) {
-        if (!config('aldebaran.settings.commissions.enabled')) {
+        if (!config('aldebaran.commissions.enabled')) {
             abort(404);
         }
 
@@ -100,7 +100,7 @@ class CommissionController extends Controller {
      * @return \Illuminate\Http\RedirectResponse
      */
     public function postNewCommission(Request $request, CommissionManager $service, $id = null) {
-        if (!config('aldebaran.settings.commissions.enabled')) {
+        if (!config('aldebaran.commissions.enabled')) {
             abort(404);
         }
 
@@ -198,7 +198,7 @@ class CommissionController extends Controller {
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function getLedger(Request $request) {
-        if (!config('aldebaran.settings.commissions.enabled')) {
+        if (!config('aldebaran.commissions.enabled')) {
             abort(404);
         }
 

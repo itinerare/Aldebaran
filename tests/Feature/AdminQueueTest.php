@@ -31,7 +31,7 @@ class AdminQueueTest extends TestCase {
      * @param bool $withCommission
      */
     public function testGetIndexWithQueues($withCommission) {
-        config(['aldebaran.settings.commissions.enabled' => 1]);
+        config(['aldebaran.commissions.enabled' => 1]);
 
         if ($withCommission) {
             // Create a commission
@@ -76,7 +76,7 @@ class AdminQueueTest extends TestCase {
      * @param string|null $queue
      */
     public function testGetQueue($commsEnabled, $commData, $search, $status, $queue = 'Pending') {
-        config(['aldebaran.settings.commissions.enabled' => $commsEnabled]);
+        config(['aldebaran.commissions.enabled' => $commsEnabled]);
 
         if ($commData[0]) {
             // Create a commission
@@ -152,7 +152,7 @@ class AdminQueueTest extends TestCase {
      * @param int  $status
      */
     public function testGetLedger($commsEnabled, $withCommission, $pendingCommission, $cancelledCommission, $status) {
-        config(['aldebaran.settings.commissions.enabled' => $commsEnabled]);
+        config(['aldebaran.commissions.enabled' => $commsEnabled]);
 
         if ($withCommission) {
             // Create a commission with some payments

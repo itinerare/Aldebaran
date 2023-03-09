@@ -292,7 +292,7 @@ class Commission extends Model {
 
         // Calculate fee and round
         $fee =
-            ($total * ((isset($payment->is_intl) && $payment->is_intl ? config('aldebaran.settings.commissions.fee.percent_intl') : config('aldebaran.settings.commissions.fee.percent')) / 100)) + config('aldebaran.settings.commissions.fee.base');
+            ($total * ((isset($payment->is_intl) && $payment->is_intl ? config('aldebaran.commissions.fee.percent_intl') : config('aldebaran.commissions.fee.percent')) / 100)) + config('aldebaran.commissions.fee.base');
         $fee = round($fee, 2);
 
         return $total - $fee;
@@ -304,7 +304,7 @@ class Commission extends Model {
      * @return array
      */
     public static function progressStates() {
-        $states = collect(config('aldebaran.settings.commissions.progress_states'))->mapWithKeys(function ($state) {
+        $states = collect(config('aldebaran.commissions.progress_states'))->mapWithKeys(function ($state) {
             return [$state => $state];
         });
 

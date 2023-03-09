@@ -75,7 +75,7 @@
         ]) !!}
     </div>
 
-    @if (config('aldebaran.settings.commissions.enabled'))
+    @if (config('aldebaran.commissions.enabled'))
         <div class="form-group">
             {!! Form::checkbox('good_example', 1, $piece->id ? $piece->good_example : 1, [
                 'class' => 'form-check-input',
