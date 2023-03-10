@@ -227,6 +227,7 @@
                                     'placeholder' => 'Tip',
                                 ]) !!}
                                 {!! Form::hidden('paid_at[' . $payment->id . ']', $payment->paid_at) !!}
+                                {!! Form::hidden('total_with_fees[' . $payment->id . ']', $payment->totalWithFees) !!}
                                 <div class="input-group-append">
                                     <div class="input-group-text">
                                         {!! Form::checkbox('is_paid[' . $payment->id . ']', 1, $payment->is_paid, [
@@ -243,7 +244,7 @@
                                         <span class="ml-1">Intl.</span>
                                     </div>
                                     <span class="input-group-text">After Fees:
-                                        ${{ $commission->paymentWithFees($payment) }}</span>
+                                        ${{ $payment->totalWithFees }}</span>
                                     <button class="remove-payment btn btn-outline-danger" type="button" id="button-addon2">X</button>
                                 </div>
                             </div>

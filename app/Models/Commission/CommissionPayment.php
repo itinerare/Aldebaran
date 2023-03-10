@@ -14,7 +14,8 @@ class CommissionPayment extends Model {
      * @var array
      */
     protected $fillable = [
-        'commission_id', 'cost', 'tip', 'is_paid', 'is_intl', 'paid_at',
+        'commission_id', 'cost', 'tip', 'total_with_fees',
+        'is_paid', 'is_intl', 'paid_at',
     ];
 
     /**
@@ -30,7 +31,10 @@ class CommissionPayment extends Model {
      * @var array
      */
     protected $casts = [
-        'paid_at' => 'datetime',
+        'cost'            => 'decimal:2',
+        'tip'             => 'decimal:2',
+        'total_with_fees' => 'decimal:2',
+        'paid_at'         => 'datetime',
     ];
 
     /**
@@ -60,14 +64,48 @@ class CommissionPayment extends Model {
     **********************************************************************************************/
 
     /**
-     * Get cost with fees.
+     * Get total with fees.
      *
-     * @return int
+     * @return float
      */
     public function getTotalWithFeesAttribute() {
-        $total = 0;
-        $total += $this->commission->paymentWithFees($this);
+        if (isset($this->attributes['total_with_fees'])) {
+            return $this->attributes['total_with_fees'];
+        } else {
+            // For unpaid payments, this is calculated on the fly
+            // and may change with fees as appropriate until the payment is complete
+            $total = 0;
+            $total += $this->calculateAdjustedTotal($this->cost, $this->tip, $this->is_intl);
 
-        return $total;
+            return $total;
+        }
+
+        return 0;
+    }
+
+    /**********************************************************************************************
+
+        OTHER FUNCTIONS
+
+    **********************************************************************************************/
+
+    /**
+     * Calculate the total for a payment after fees.
+     *
+     * @param float $cost
+     * @param float $tip
+     * @param bool  $isIntl
+     *
+     * @return float
+     */
+    public static function calculateAdjustedTotal($cost, $tip, $isIntl) {
+        $total = $cost + (isset($tip) && $tip ? $tip : 0);
+
+        // Calculate fee and round
+        $fee =
+            ($total * ($isIntl ? config('aldebaran.commissions.fee.percent_intl') : config('aldebaran.commissions.fee.percent')) / 100) + config('aldebaran.commissions.fee.base');
+        $fee = round($fee, 2);
+
+        return $total - $fee;
     }
 }

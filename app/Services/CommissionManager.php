@@ -222,39 +222,38 @@ class CommissionManager extends Service {
                 }
 
                 // Clear old pieces
-                CommissionPiece::where('commission_id', $commission->id)->delete();
+                $commission->pieces()->delete();
 
                 // Create commission piece record for each piece
                 foreach ($pieces as $piece) {
-                    CommissionPiece::create([
-                        'commission_id' => $commission->id,
-                        'piece_id'      => $piece->id,
+                    $commission->pieces()->create([
+                        'piece_id' => $piece->id,
                     ]);
                 }
             } elseif ($commission->pieces->count()) {
                 // Clear old pieces
-                CommissionPiece::where('commission_id', $commission->id)->delete();
+                $commission->pieces()->delete();
             }
 
             // Process payment data
             if (isset($data['cost'])) {
                 // Clear old payments
-                CommissionPayment::where('commission_id', $commission->id)->delete();
+                $commission->payments()->delete();
 
                 // Create payment record for each
-                foreach ($data['cost'] as $key=> $cost) {
-                    CommissionPayment::create([
-                        'commission_id' => $commission->id,
-                        'cost'          => $cost,
-                        'tip'           => $data['tip'][$key] ?? null,
-                        'is_paid'       => $data['is_paid'][$key] ?? 0,
-                        'is_intl'       => $data['is_intl'][$key] ?? 0,
-                        'paid_at'       => isset($data['is_paid'][$key]) && $data['is_paid'][$key] ? ($data['paid_at'][$key] ?? Carbon::now()) : null,
+                foreach ($data['cost'] as $key => $cost) {
+                    $payment = $commission->payments()->create([
+                        'cost'            => $cost,
+                        'tip'             => $data['tip'][$key] ?? null,
+                        'is_paid'         => $data['is_paid'][$key] ?? 0,
+                        'is_intl'         => $data['is_intl'][$key] ?? 0,
+                        'paid_at'         => isset($data['is_paid'][$key]) && $data['is_paid'][$key] ? ($data['paid_at'][$key] ?? Carbon::now()) : null,
+                        'total_with_fees' => isset($data['is_paid'][$key]) && $data['is_paid'][$key] ? ($data['total_with_fees'][$key] ?? CommissionPayment::calculateAdjustedTotal($cost, $data['tip'][$key], $data['is_intl'][$key] ?? 0)) : null,
                     ]);
                 }
             } elseif ($commission->payments->count()) {
                 // Clear old payment records
-                CommissionPayment::where('commission_id', $commission->id)->delete();
+                $commission->payments()->delete();
             }
 
             // Update the commission

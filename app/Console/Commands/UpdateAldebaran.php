@@ -48,6 +48,10 @@ class UpdateAldebaran extends Command {
             // Update images
             $this->line("\n".'Updating images...');
             $this->call('update-images');
+
+            // Update images
+            $this->line("\n".'Updating commission payments...');
+            $this->call('store-payment-fee-totals');
         } else {
             $this->line('Aborting! Please run composer install and then run this command again.');
         }
