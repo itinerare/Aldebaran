@@ -46,6 +46,8 @@ class AddSiteSettings extends Command {
 
         $this->addSiteSetting('display_mailing_lists', 0, 'Whether or not a list of open mailing lists should be displayed on the site\'s index page.');
 
+        $this->addSiteSetting('comm_contact_info', 0, 'What methods you accept for contact information, e.g. email. Displayed as part of the new commission request form. If cleared/set to 0, nothing will be displayed.');
+
         $this->line("\nSite settings up to date!");
     }
 
