@@ -37,10 +37,10 @@ class AddDummyCommissioner extends Command {
 
         if (!Commissioner::where('email', 'client@'.$url['host'])->first()) {
             Commissioner::create([
-                'name'    => 'A Client',
-                'email'   => 'client@'.$url['host'],
-                'contact' => 'Varies',
-                'paypal'  => 'client@'.$url['host'],
+                'name'          => 'A Client',
+                'email'         => 'client@'.$url['host'],
+                'contact'       => 'Varies',
+                'payment_email' => 'client@'.$url['host'],
             ]);
             $this->line('Dummy commissioner data created!');
         } else {

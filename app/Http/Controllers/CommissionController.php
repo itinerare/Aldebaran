@@ -243,8 +243,9 @@ class CommissionController extends Controller {
         }
 
         return view('commissions.new', [
-            'page' => TextPage::where('key', 'new_commission')->first(),
-            'type' => $type,
+            'page'       => TextPage::where('key', 'new_commission')->first(),
+            'type'       => $type,
+            'commission' => new Commission,
         ]);
     }
 
@@ -282,7 +283,8 @@ class CommissionController extends Controller {
         $request->validate($validationRules);
 
         $data = $request->only([
-            'name', 'email', 'contact', 'paypal', 'type', 'key', 'additional_information',
+            'name', 'email', 'contact', 'payment_email', 'payment_processor',
+            'type', 'key', 'additional_information',
         ] + $answerArray);
         $data['ip'] = $request->ip();
 

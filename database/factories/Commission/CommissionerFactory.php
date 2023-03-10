@@ -13,10 +13,10 @@ class CommissionerFactory extends Factory {
     public function definition() {
         return [
             //
-            'email'   => $this->faker->safeEmail(),
-            'contact' => $this->faker->domainWord(),
-            'paypal'  => $this->faker->safeEmail(),
-            'name'    => mt_rand(1, 2) == 2 ? $this->faker->domainWord() : null,
+            'email'         => $this->faker->safeEmail(),
+            'contact'       => $this->faker->domainWord(),
+            'payment_email' => $this->faker->safeEmail(),
+            'name'          => mt_rand(1, 2) == 2 ? $this->faker->domainWord() : null,
         ];
     }
 
