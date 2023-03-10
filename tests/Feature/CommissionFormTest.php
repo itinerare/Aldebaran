@@ -305,10 +305,11 @@ class CommissionFormTest extends TestCase {
             // Then check for the existence of the commission using this info
             // as the commissioner is one of a few ready ways to identify the object
             $this->assertDatabaseHas('commissions', [
-                'commissioner_id' => $commissioner->id,
-                'status'          => 'Pending',
-                'commission_type' => $this->type->id,
-                'data'            => $data && (isset($answer) || $data[5] || $data[6]) ? '{'.($data[6] ? '"'.$fieldKeys[2].'":"test",' : '').($data[5] ? '"'.$fieldKeys[1].'":"test",' : '').'"'.$fieldKeys[0].'":'.(isset($answer) ? ($data[0] != 'multiple' ? '"'.$answer.'"' : '["'.$answer[0].'"]') : 'null').'}' : null,
+                'commissioner_id'   => $commissioner->id,
+                'status'            => 'Pending',
+                'commission_type'   => $this->type->id,
+                'payment_processor' => $paymentProcessor,
+                'data'              => $data && (isset($answer) || $data[5] || $data[6]) ? '{'.($data[6] ? '"'.$fieldKeys[2].'":"test",' : '').($data[5] ? '"'.$fieldKeys[1].'":"test",' : '').'"'.$fieldKeys[0].'":'.(isset($answer) ? ($data[0] != 'multiple' ? '"'.$answer.'"' : '["'.$answer[0].'"]') : 'null').'}' : null,
             ]);
             $response->assertSessionHasNoErrors();
             $response->assertRedirectContains('commissions/view');
