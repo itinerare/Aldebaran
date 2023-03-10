@@ -8,7 +8,6 @@ use App\Models\Commission\Commission;
 use App\Models\Commission\Commissioner;
 use App\Models\Commission\CommissionerIp;
 use App\Models\Commission\CommissionPayment;
-use App\Models\Commission\CommissionPiece;
 use App\Models\Commission\CommissionType;
 use App\Models\Gallery\Piece;
 use App\Models\MailingList\MailingListSubscriber;
