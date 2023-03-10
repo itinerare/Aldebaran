@@ -43,7 +43,6 @@ Note that use of commission components in a use that generates or contributes to
 - Admin panel for uploading images used in the site's layout as well as custom CSS
 - Optional automatic backups for server-only content
 - Configurable email mailing lists that visitors can subscribe to, and the ability to create and send out entries to all subscribers to a mailing list
-
 - All of the aforementioned functionality is also supported by a robust test suite; this means that while bugs may occur, they are meaningfully less likely!
 
 ## Setup
