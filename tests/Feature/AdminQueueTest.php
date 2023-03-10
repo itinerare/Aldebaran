@@ -261,6 +261,8 @@ class AdminQueueTest extends TestCase {
             'paypal, intl'     => ['paypal', 1, 99.27],
             'stripe, domestic' => ['stripe', 0, 101.65],
             'stripe, intl'     => ['stripe', 1, 100.08],
+            'other, domestic'  => ['other', 0, 105.00],
+            'other, intl'      => ['other', 0, 105.00],
         ];
     }
 }
