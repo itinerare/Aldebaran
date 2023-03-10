@@ -15,7 +15,7 @@ class Commission extends Model {
      */
     protected $fillable = [
         'commission_key', 'commissioner_id', 'commission_type', 'progress',
-        'status', 'description', 'data', 'comments',
+        'status', 'description', 'data', 'comments', 'payment_processor',
     ];
 
     /**
@@ -59,10 +59,10 @@ class Commission extends Model {
      */
     public static $createRules = [
         // Contact information
-        'name'    => 'string|nullable|min:3|max:191',
-        'email'   => 'email|required|min:3|max:191',
-        'contact' => 'required|string|min:3|max:191',
-        'paypal'  => 'email|nullable|min:3|max:191',
+        'name'          => 'string|nullable|min:3|max:191',
+        'email'         => 'email|required|min:3|max:191',
+        'contact'       => 'required|string|min:3|max:191',
+        'payment_email' => 'email|nullable|min:3|max:191',
 
         // Other
         'terms'   => 'accepted',
@@ -75,10 +75,10 @@ class Commission extends Model {
      */
     public static $manualCreateRules = [
         // Contact information
-        'name'    => 'string|nullable|min:3|max:191',
-        'email'   => 'email|required_without:commissioner_id|min:3|max:191|nullable',
-        'contact' => 'required_without:commissioner_id|string|min:3|max:191|nullable',
-        'paypal'  => 'email|nullable|min:3|max:191',
+        'name'          => 'string|nullable|min:3|max:191',
+        'email'         => 'email|required_without:commissioner_id|min:3|max:191|nullable',
+        'contact'       => 'required_without:commissioner_id|string|min:3|max:191|nullable',
+        'payment_email' => 'email|nullable|min:3|max:191',
     ];
 
     /**
@@ -88,6 +88,7 @@ class Commission extends Model {
      */
     public static $updateRules = [
         'cost.*' => 'nullable|filled|required_with:tip.*',
+        'tip.*'  => 'nullable|filled|required_with:cost.*',
     ];
 
     /**********************************************************************************************
@@ -281,5 +282,19 @@ class Commission extends Model {
         });
 
         return $states->toArray();
+    }
+
+    /**
+     * Formats the currently enabled payment processors for selection.
+     *
+     * @return Illuminate\Support\Collection
+     */
+    public static function paymentProcessors() {
+        $paymentProcessors = collect(config('aldebaran.commissions.payment_processors'))
+            ->where('enabled', 1)->map(function ($processor) {
+                return $processor['label'];
+            });
+
+        return $paymentProcessors;
     }
 }

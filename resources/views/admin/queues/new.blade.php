@@ -72,11 +72,28 @@
             </div>
 
             <div class="form-group">
-                {!! Form::label('paypal', 'Paypal Address') !!} {!! add_help('If different from the email address provided above. If this field is left blank, the above email address will automatically be used instead.') !!}
-                {!! Form::text('paypal', null, ['class' => 'form-control']) !!}
+                {!! Form::label('payment_email', 'Payment Address') !!} {!! add_help('If different from the email address provided above. If this field is left blank, the above email address will automatically be used instead.') !!}
+                {!! Form::text('payment_email', null, ['class' => 'form-control']) !!}
             </div>
         </div>
     </div>
+
+    @if ($commission->paymentProcessors()->count() > 1)
+        <div class="form-group">
+            {!! Form::label('payment_processor', 'Payment Processor') !!}
+            @foreach ($commission->paymentProcessors() as $key => $label)
+                <div class="choice-wrapper">
+                    <input class="form-check-input ml-0 pr-4" name="payment_processor" id="{{ 'payment_processor_' . $key }}" type="radio" value="{{ old('payment_processor_' . $key) != null ? old('payment_processor_' . $key) : $key }}">
+                    <label for="{{ 'payment_processor_' . $key }}" class="label-class ml-3">{{ $label }}</label>
+                </div>
+            @endforeach
+        </div>
+    @elseif($commission->paymentProcessors()->first())
+        {!! Form::hidden(
+            'payment_processor',
+            $commission->paymentProcessors()->keys()->first(),
+        ) !!}
+    @endif
 
     <h3>Commission-Specific Information</h3>
 

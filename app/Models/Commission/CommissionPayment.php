@@ -26,6 +26,13 @@ class CommissionPayment extends Model {
     protected $table = 'commission_payments';
 
     /**
+     * The relationships that should always be loaded.
+     *
+     * @var array
+     */
+    protected $with = ['commission'];
+
+    /**
      * The attributes that should be cast.
      *
      * @var array
@@ -75,7 +82,7 @@ class CommissionPayment extends Model {
             // For unpaid payments, this is calculated on the fly
             // and may change with fees as appropriate until the payment is complete
             $total = 0;
-            $total += $this->calculateAdjustedTotal($this->cost, $this->tip, $this->is_intl);
+            $total += $this->calculateAdjustedTotal($this->cost, $this->tip, $this->is_intl, $this->commission->payment_processor);
 
             return $total;
         }
@@ -92,18 +99,19 @@ class CommissionPayment extends Model {
     /**
      * Calculate the total for a payment after fees.
      *
-     * @param float $cost
-     * @param float $tip
-     * @param bool  $isIntl
+     * @param float  $cost
+     * @param float  $tip
+     * @param bool   $isIntl
+     * @param string $paymentProcessor
      *
      * @return float
      */
-    public static function calculateAdjustedTotal($cost, $tip, $isIntl) {
+    public static function calculateAdjustedTotal($cost, $tip, $isIntl, $paymentProcessor) {
         $total = $cost + (isset($tip) && $tip ? $tip : 0);
 
         // Calculate fee and round
         $fee =
-            ($total * ($isIntl ? config('aldebaran.commissions.fee.percent_intl') : config('aldebaran.commissions.fee.percent')) / 100) + config('aldebaran.commissions.fee.base');
+            ($total * ($isIntl ? config('aldebaran.commissions.payment_processors.'.$paymentProcessor.'.fee.percent_intl') : config('aldebaran.commissions.payment_processors.'.$paymentProcessor.'.fee.percent')) / 100) + config('aldebaran.commissions.payment_processors.'.$paymentProcessor.'.fee.base');
         $fee = round($fee, 2);
 
         return $total - $fee;

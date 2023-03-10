@@ -275,7 +275,7 @@ class CommissionFormTest extends TestCase {
                 'email'                  => $withEmail ? ($isBanned ? $commissioner->email : $email) : null,
                 'contact'                => $isBanned ? $commissioner->contact : $this->faker->unique()->domainWord(),
                 'payment_address'        => $paymentAddr ?? 0,
-                'paypal'                 => $paymentAddr ? $paymentEmail : null,
+                'payment_email'          => $paymentAddr ? $paymentEmail : null,
                 'additional_information' => $extras ? $this->faker->domainWord() : null,
                 'terms'                  => $agree,
                 'type'                   => $this->type->id,
@@ -290,9 +290,9 @@ class CommissionFormTest extends TestCase {
             // Attempt to find the created commissioner and test that it exists
             $commissioner = Commissioner::where('email', $email)->where(function ($query) use ($email, $paymentAddr, $paymentEmail) {
                 if ($paymentAddr) {
-                    return $query->where('paypal', $paymentEmail);
+                    return $query->where('payment_email', $paymentEmail);
                 } else {
-                    return $query->where('paypal', $email);
+                    return $query->where('payment_email', $email);
                 }
             })->first();
             $this->assertModelExists($commissioner);

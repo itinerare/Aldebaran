@@ -89,6 +89,7 @@ class CommissionController extends Controller {
         return view('admin.queues.new', [
             'type'          => $type,
             'commissioners' => $commissioners,
+            'commission'    => new Commission,
         ]);
     }
 
@@ -124,7 +125,9 @@ class CommissionController extends Controller {
         $request->validate($validationRules);
 
         $data = $request->only([
-            'commissioner_id', 'name', 'email', 'contact', 'paypal', 'type', 'additional_information',
+            'commissioner_id', 'name', 'email', 'contact',
+            'payment_email', 'payment_processor',
+            'type', 'additional_information',
         ] + $answerArray);
         if (!$id && $commission = $service->createCommission($data, true)) {
             flash('Commission submitted successfully.')->success();

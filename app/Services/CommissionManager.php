@@ -105,10 +105,11 @@ class CommissionManager extends Service {
             }
 
             $commission = Commission::create([
-                'commissioner_id' => $commissioner->id,
-                'commission_type' => $type->id,
-                'status'          => 'Pending',
-                'data'            => $data['data'],
+                'commissioner_id'   => $commissioner->id,
+                'commission_type'   => $type->id,
+                'status'            => 'Pending',
+                'data'              => $data['data'],
+                'payment_processor' => $data['payment_processor'],
             ]);
 
             // Now that the commission has an ID, assign it a key incorporating it
@@ -247,7 +248,7 @@ class CommissionManager extends Service {
                         'is_paid'         => $data['is_paid'][$key] ?? 0,
                         'is_intl'         => $data['is_intl'][$key] ?? 0,
                         'paid_at'         => isset($data['is_paid'][$key]) && $data['is_paid'][$key] ? ($data['paid_at'][$key] ?? Carbon::now()) : null,
-                        'total_with_fees' => isset($data['is_paid'][$key]) && $data['is_paid'][$key] ? ($data['total_with_fees'][$key] ?? CommissionPayment::calculateAdjustedTotal($cost, $data['tip'][$key], $data['is_intl'][$key] ?? 0)) : null,
+                        'total_with_fees' => isset($data['is_paid'][$key]) && $data['is_paid'][$key] ? ($data['total_with_fees'][$key] ?? CommissionPayment::calculateAdjustedTotal($cost, $data['tip'][$key], $data['is_intl'][$key] ?? 0, $commission->payment_processor)) : null,
                     ]);
                 }
             } elseif ($commission->payments->count()) {
@@ -377,10 +378,10 @@ class CommissionManager extends Service {
                 } else {
                     // Otherwise create a new commissioner to hold the ban
                     $commissioner = Commissioner::create([
-                        'email'     => $subject,
-                        'paypal'    => $subject,
-                        'name'      => 'Banned Subscriber '.$subject,
-                        'is_banned' => 1,
+                        'email'         => $subject,
+                        'payment_email' => $subject,
+                        'name'          => 'Banned Subscriber '.$subject,
+                        'is_banned'     => 1,
                     ]);
                 }
             }
@@ -431,19 +432,19 @@ class CommissionManager extends Service {
             }
 
             $commissioner->update([
-                'email'   => (isset($data['email']) && $data['email'] != $commissioner->email ? $data['email'] : $commissioner->email),
-                'name'    => (isset($data['name']) && $data['name'] != $commissioner->getRawOriginal('name') ? $data['name'] : $commissioner->name),
-                'contact' => (isset($data['contact']) && $data['contact'] != $commissioner->contact ? strip_tags($data['contact']) : $commissioner->contact),
-                'paypal'  => (isset($data['paypal']) && $data['paypal'] != $commissioner->paypal ? $data['paypal'] : $commissioner->paypal),
+                'email'         => (isset($data['email']) && $data['email'] != $commissioner->email ? $data['email'] : $commissioner->email),
+                'name'          => (isset($data['name']) && $data['name'] != $commissioner->getRawOriginal('name') ? $data['name'] : $commissioner->name),
+                'contact'       => (isset($data['contact']) && $data['contact'] != $commissioner->contact ? strip_tags($data['contact']) : $commissioner->contact),
+                'payment_email' => (isset($data['payment_email']) && $data['payment_email'] != $commissioner->payment_email ? $data['payment_email'] : $commissioner->payment_email),
             ]);
         }
         // Create commissioner information
         else {
             $commissioner = Commissioner::create([
-                'name'    => $data['name'] ?? null,
-                'email'   => $data['email'],
-                'contact' => strip_tags($data['contact']),
-                'paypal'  => $data['paypal'] ?? $data['email'],
+                'name'          => $data['name'] ?? null,
+                'email'         => $data['email'],
+                'contact'       => strip_tags($data['contact']),
+                'payment_email' => $data['payment_email'] ?? $data['email'],
             ]);
         }
 
