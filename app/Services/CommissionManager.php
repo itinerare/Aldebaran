@@ -74,6 +74,10 @@ class CommissionManager extends Service {
                 if (is_int($type->getSlots($type->category->class)) && $type->getSlots($type->category->class) == 0) {
                     throw new \Exception('Overall commission slots are full.');
                 }
+                // Check that the selected payment processor is enabled
+                if (isset($data['payment_processor']) && !config('aldebaran.commissions.payment_processors.'.$data['payment_processor'].'.enabled')) {
+                    throw new \Exception('This payment processor is not currently accepted.');
+                }
             }
 
             if (isset($data['commissioner_id'])) {
