@@ -40,7 +40,7 @@ class AddSiteSettings extends Command {
         $this->line("Adding site settings...existing entries will be skipped.\n");
 
         $this->addSiteSetting('site_name', 'aldebaran', 'Display name used around the site.');
-        $this->addSiteSetting('site_desc', 'Personal art and commission site.', 'Description used for meta tag/link previews.');
+        $this->addSiteSetting('site_desc', 'Personal gallery site.', 'Description used for meta tag/link previews.');
 
         $this->addSiteSetting('notif_emails', 0, 'Whether or not you wish to receive a notification email when a commission request is submitted.');
 
