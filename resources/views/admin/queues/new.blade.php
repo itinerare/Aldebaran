@@ -67,7 +67,7 @@
             </div>
 
             <div class="form-group">
-                {!! Form::label('contact', 'Preferred Method of Contact') !!} {!! add_help('Please specify at least one of: email (address only necessary if different from the above), discord tag (including following numbers), or twitter @.') !!}
+                {!! Form::label('contact', 'Preferred Method of Contact') !!}
                 {!! Form::text('contact', null, ['class' => 'form-control']) !!}
             </div>
 
