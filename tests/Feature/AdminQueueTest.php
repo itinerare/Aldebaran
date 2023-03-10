@@ -251,12 +251,12 @@ class AdminQueueTest extends TestCase {
         }), 'payments')->create();
         $payment = $commission->payments->first();
 
-        $this->assertTrue($expected == $commission->paymentWithFees($payment));
+        $this->assertTrue($expected == $payment->totalWithFees);
     }
 
     public function feeCalcProvider() {
         return [
-            'non intl' => [0, 100.85],
+            'domestic' => [0, 100.85],
             'intl'     => [1, 99.27],
         ];
     }

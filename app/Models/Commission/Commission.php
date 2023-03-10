@@ -198,39 +198,33 @@ class Commission extends Model {
     /**
      * Get overall cost.
      *
-     * @return int
+     * @return float
      */
     public function getCostAttribute() {
-        $total = 0;
         if ($this->payments->count()) {
-            foreach ($this->payments as $payment) {
-                $total += $payment->cost;
-            }
+            return $this->payments->pluck('cost')->sum();
         }
 
-        return $total;
+        return 0;
     }
 
     /**
      * Get overall tip.
      *
-     * @return int
+     * @return float
      */
     public function getTipAttribute() {
-        $total = 0;
         if ($this->payments->count()) {
-            foreach ($this->payments as $payment) {
-                $total += $payment->tip;
-            }
+            return $this->payments->pluck('tip')->sum();
         }
 
-        return $total;
+        return 0;
     }
 
     /**
      * Get total cost, including tip.
      *
-     * @return string
+     * @return float
      */
     public function getCostWithTipAttribute() {
         return $this->cost + $this->tip;
@@ -242,15 +236,11 @@ class Commission extends Model {
      * @return int
      */
     public function getTotalWithFeesAttribute() {
-        $total = 0;
-        // Cycle through payments, getting their total with fees
         if ($this->payments->count()) {
-            foreach ($this->payments as $payment) {
-                $total += $this->paymentWithFees($payment);
-            }
+            return $this->payments->pluck('totalWithFees')->sum();
         }
 
-        return $total;
+        return 0;
     }
 
     /**
@@ -279,24 +269,6 @@ class Commission extends Model {
         OTHER FUNCTIONS
 
     **********************************************************************************************/
-
-    /**
-     * Calculate the total for a payment after fees.
-     *
-     * @param \App\Models\Commission\CommissionPayment $payment
-     *
-     * @return int
-     */
-    public static function paymentWithFees($payment) {
-        $total = $payment->cost + (isset($payment->tip) && $payment->tip ? $payment->tip : 0);
-
-        // Calculate fee and round
-        $fee =
-            ($total * ((isset($payment->is_intl) && $payment->is_intl ? config('aldebaran.commissions.fee.percent_intl') : config('aldebaran.commissions.fee.percent')) / 100)) + config('aldebaran.commissions.fee.base');
-        $fee = round($fee, 2);
-
-        return $total - $fee;
-    }
 
     /**
      * Format the currently configured progress states for selection.
