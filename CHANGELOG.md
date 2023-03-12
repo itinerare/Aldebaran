@@ -4,6 +4,41 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [3.7.0](https://github.com/itinerare/Aldebaran/compare/v3.6.0...v3.7.0) (2023-03-12)
+
+### Features
+
+
+##### Commissions
+
+* Add support for multiple/different payment processors ([411b80](https://github.com/itinerare/Aldebaran/commit/411b8018cb30243403a98541064bd4fe218c28d0))
+* Make contact info field tooltip configurable via site settings ([990ddb](https://github.com/itinerare/Aldebaran/commit/990ddbacaed09899934c3ebb28d5fa6fc76e12e1))
+* Sort unpaid payments in ledger under current month ([f32ae8](https://github.com/itinerare/Aldebaran/commit/f32ae8dc1b31acc357cfc2f47e7ab4c90d59c10f))
+* Store total with fees for paid payments ([19bce7](https://github.com/itinerare/Aldebaran/commit/19bce7725f50b2b3dd8f3498c06aa69e7d702322))
+
+##### Tests
+
+* Add payment processor to new commission tests ([36d307](https://github.com/itinerare/Aldebaran/commit/36d3073a13098d62c660193a509dcb973e76de52))
+
+### Bug Fixes
+
+
+##### Commissions
+
+* Also order payments initially by paid at in ledger ([a8fa40](https://github.com/itinerare/Aldebaran/commit/a8fa4095378d262cf34e4614f0d8f4d51efda605))
+* Better month sorting in ledger ([60cd28](https://github.com/itinerare/Aldebaran/commit/60cd28937b31e4a81eb62cd21b6324cd0cb70ea7))
+* Check if payment processor is enabled when creating commission ([43b145](https://github.com/itinerare/Aldebaran/commit/43b145c85212ed3c7ee6e1e1ab88e694de3b9345))
+* Improved ledger sorting ([ac83ed](https://github.com/itinerare/Aldebaran/commit/ac83ed051a55ee78b06bc38c26f6f76327a0f1f4))
+* Remove non-general instructions around contact info field ([397d04](https://github.com/itinerare/Aldebaran/commit/397d04e4bd6b942c5d1c7ef7c35cb518dc6e5fbd))
+* Remove unnecessary reindex in ledger ([5e8150](https://github.com/itinerare/Aldebaran/commit/5e815074ffdf2aea37487742b4bbfc6952e1d500))
+
+##### Tests
+
+* Check payment processor in new commission tests ([00d282](https://github.com/itinerare/Aldebaran/commit/00d2820566e36572afad8aa3ddd69fecd4d31c91))
+
+
+---
+
 ## [3.6.0](https://github.com/itinerare/Aldebaran/compare/v3.5.0...v3.6.0) (2023-03-05)
 
 ### Features
