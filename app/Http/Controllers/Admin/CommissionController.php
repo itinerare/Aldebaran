@@ -32,7 +32,7 @@ class CommissionController extends Controller {
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function getCommissionIndex(Request $request, $class, $status = null) {
-        if (!config('aldebaran.settings.commissions.enabled')) {
+        if (!config('aldebaran.commissions.enabled')) {
             abort(404);
         }
 
@@ -75,7 +75,7 @@ class CommissionController extends Controller {
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function getNewCommission($id) {
-        if (!config('aldebaran.settings.commissions.enabled')) {
+        if (!config('aldebaran.commissions.enabled')) {
             abort(404);
         }
 
@@ -89,6 +89,7 @@ class CommissionController extends Controller {
         return view('admin.queues.new', [
             'type'          => $type,
             'commissioners' => $commissioners,
+            'commission'    => new Commission,
         ]);
     }
 
@@ -100,7 +101,7 @@ class CommissionController extends Controller {
      * @return \Illuminate\Http\RedirectResponse
      */
     public function postNewCommission(Request $request, CommissionManager $service, $id = null) {
-        if (!config('aldebaran.settings.commissions.enabled')) {
+        if (!config('aldebaran.commissions.enabled')) {
             abort(404);
         }
 
@@ -124,7 +125,9 @@ class CommissionController extends Controller {
         $request->validate($validationRules);
 
         $data = $request->only([
-            'commissioner_id', 'name', 'email', 'contact', 'paypal', 'type', 'additional_information',
+            'commissioner_id', 'name', 'email', 'contact',
+            'payment_email', 'payment_processor',
+            'type', 'additional_information',
         ] + $answerArray);
         if (!$id && $commission = $service->createCommission($data, true)) {
             flash('Commission submitted successfully.')->success();
@@ -198,7 +201,7 @@ class CommissionController extends Controller {
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function getLedger(Request $request) {
-        if (!config('aldebaran.settings.commissions.enabled')) {
+        if (!config('aldebaran.commissions.enabled')) {
             abort(404);
         }
 
@@ -206,7 +209,7 @@ class CommissionController extends Controller {
             return Carbon::parse($date->created_at)->format('Y');
         });
 
-        $yearPayments = CommissionPayment::orderBy('created_at', 'DESC')->with('commission.commissioner')->get()->filter(function ($payment) {
+        $yearPayments = CommissionPayment::orderBy('paid_at', 'DESC')->orderBy('created_at', 'DESC')->with('commission.commissioner')->get()->filter(function ($payment) {
             if ($payment->is_paid) {
                 return 1;
             } elseif ($payment->commission->status == 'Accepted' || $payment->commission->status == 'Complete') {
@@ -228,9 +231,20 @@ class CommissionController extends Controller {
                     return Carbon::parse($payment->paid_at)->format('F Y');
                 }
 
-                return Carbon::parse($payment->created_at)->format('F Y');
+                return Carbon::now()->format('F Y');
+            })->sort(function ($paymentsA, $paymentsB) {
+                // Sort by month, numerically
+                // As the payments have already been grouped, it's safe to just take the value from the first
+                $monthA = $paymentsA->first()->paid_at ? $paymentsA->first()->paid_at->month : Carbon::now()->month;
+                $monthB = $paymentsB->first()->paid_at ? $paymentsB->first()->paid_at->month : Carbon::now()->month;
+
+                if ($monthB > $monthA) {
+                    return 1;
+                }
+
+                return 0;
             });
-        })->sort();
+        });
 
         return view('admin.queues.ledger', [
             'years'           => $groupedPayments->paginate(1)->appends($request->query()),

@@ -26,7 +26,7 @@
             <div class="card-body inventory-body collapse" id="mobileNav">
                 <h5>
                     <a href="{{ url('admin') }}">Admin Home</a><br />
-                    @if (config('aldebaran.settings.commissions.enabled'))
+                    @if (config('aldebaran.commissions.enabled'))
                         @if (isset($commissionClasses) && $commissionClasses->count())
                             Queues:
                             @foreach ($commissionClasses as $class)
@@ -40,7 +40,7 @@
                     <a href="{{ url('admin/data/pieces') }}">Pieces</a> ・
                     <a href="{{ url('admin/data/tags') }}">Tags</a> ・
                     <a href="{{ url('admin/data/programs') }}">Media/Programs</a><br />
-                    @if (config('aldebaran.settings.commissions.enabled'))
+                    @if (config('aldebaran.commissions.enabled'))
                         Commission Data:
                         <a href="{{ url('admin/data/commission-categories') }}">Commission Categories</a> ・
                         <a href="{{ url('admin/data/commission-types') }}">Commission Types</a><br />

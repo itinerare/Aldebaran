@@ -31,7 +31,7 @@ class AdminQueueTest extends TestCase {
      * @param bool $withCommission
      */
     public function testGetIndexWithQueues($withCommission) {
-        config(['aldebaran.settings.commissions.enabled' => 1]);
+        config(['aldebaran.commissions.enabled' => 1]);
 
         if ($withCommission) {
             // Create a commission
@@ -76,7 +76,7 @@ class AdminQueueTest extends TestCase {
      * @param string|null $queue
      */
     public function testGetQueue($commsEnabled, $commData, $search, $status, $queue = 'Pending') {
-        config(['aldebaran.settings.commissions.enabled' => $commsEnabled]);
+        config(['aldebaran.commissions.enabled' => $commsEnabled]);
 
         if ($commData[0]) {
             // Create a commission
@@ -152,7 +152,7 @@ class AdminQueueTest extends TestCase {
      * @param int  $status
      */
     public function testGetLedger($commsEnabled, $withCommission, $pendingCommission, $cancelledCommission, $status) {
-        config(['aldebaran.settings.commissions.enabled' => $commsEnabled]);
+        config(['aldebaran.commissions.enabled' => $commsEnabled]);
 
         if ($withCommission) {
             // Create a commission with some payments
@@ -232,14 +232,15 @@ class AdminQueueTest extends TestCase {
     }
 
     /**
-     * Test PayPal fee calculation.
+     * Test fee calculation.
      *
      * @dataProvider feeCalcProvider
      *
-     * @param bool  $isIntl
-     * @param mixed $expected
+     * @param string $paymentProcessor
+     * @param bool   $isIntl
+     * @param mixed  $expected
      */
-    public function testFeeCalculation($isIntl, $expected) {
+    public function testFeeCalculation($paymentProcessor, $isIntl, $expected) {
         // Create a commission with payment to calculate for, with a known cost
         // and tip
         $commission = Commission::factory()->has(CommissionPayment::factory()->count(1)->state(function (array $attributes) use ($isIntl) {
@@ -248,16 +249,20 @@ class AdminQueueTest extends TestCase {
                 'tip'     => 5.00,
                 'is_intl' => $isIntl,
             ];
-        }), 'payments')->create();
+        }), 'payments')->paymentProcessor($paymentProcessor)->create();
         $payment = $commission->payments->first();
 
-        $this->assertTrue($expected == $commission->paymentWithFees($payment));
+        $this->assertTrue($expected == $payment->totalWithFees);
     }
 
     public function feeCalcProvider() {
         return [
-            'non intl' => [0, 100.85],
-            'intl'     => [1, 99.27],
+            'paypal, domestic' => ['paypal', 0, 100.85],
+            'paypal, intl'     => ['paypal', 1, 99.27],
+            'stripe, domestic' => ['stripe', 0, 101.65],
+            'stripe, intl'     => ['stripe', 1, 100.08],
+            'other, domestic'  => ['other', 0, 105.00],
+            'other, intl'      => ['other', 0, 105.00],
         ];
     }
 }

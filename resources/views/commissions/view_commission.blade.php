@@ -53,10 +53,11 @@
                 </div>
                 <div class="row">
                     <div class="col-md-4">
-                        <h5>Paid Status</h5>
+                        <h5>Payment Status</h5>
                     </div>
                     <div class="col-md">
                         {!! $commission->isPaid !!}{{ isset($commission->costData) && $commission->costData ? ($commission->status == 'Accepted' ? (!$commission->paid_status ? ' - You will be notified and sent an invoice. Please pay promptly!' : '') : ($commission->status != 'Complete' ? ' - Payment is only collected for accepted commissions.' : '')) : '' }}
+                        ・ via {{ config('aldebaran.commissions.payment_processors.' . $commission->payment_processor . '.label') }}
                     </div>
                 </div>
                 <div class="row">

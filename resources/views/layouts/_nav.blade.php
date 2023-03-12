@@ -46,7 +46,7 @@
                     @endif
                 @endif
 
-                @if (config('aldebaran.settings.commissions.enabled') && isset($commissionClasses) && $commissionClasses->count())
+                @if (config('aldebaran.commissions.enabled') && isset($commissionClasses) && $commissionClasses->count())
                     <li class="nav-item dropdown">
                         <a id="commDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                             Commissions

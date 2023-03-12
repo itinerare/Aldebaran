@@ -51,7 +51,7 @@ class CommissionFormTest extends TestCase {
      */
     public function testGetNewCommission($visibility, $user, $data, $status) {
         // Adjust various settings
-        config(['aldebaran.settings.commissions.enabled' => $visibility[0]]);
+        config(['aldebaran.commissions.enabled' => $visibility[0]]);
         $this->type->category->class->update(['is_active' => $visibility[1]]);
         $this->type->update([
             'is_active'  => $visibility[3],
@@ -151,6 +151,7 @@ class CommissionFormTest extends TestCase {
      * @param bool       $withName
      * @param bool       $withEmail
      * @param bool       $paymentAddr
+     * @param string     $paymentProcessor
      * @param array      $visibility
      * @param array|null $data
      * @param bool       $extras
@@ -159,7 +160,7 @@ class CommissionFormTest extends TestCase {
      * @param bool       $isBanned
      * @param bool       $expected
      */
-    public function testPostNewCommission($withName, $withEmail, $paymentAddr, $visibility, $data, $extras, $slotData, $agree, $isBanned, $expected) {
+    public function testPostNewCommission($withName, $withEmail, $paymentAddr, $paymentProcessor, $visibility, $data, $extras, $slotData, $agree, $isBanned, $expected) {
         if ($withEmail) {
             // Enable email notifications
             config(['aldebaran.settings.email_features' => 1]);
@@ -171,7 +172,7 @@ class CommissionFormTest extends TestCase {
         }
 
         // Adjust visibility settings
-        config(['aldebaran.settings.commissions.enabled' => $visibility[0]]);
+        config(['aldebaran.commissions.enabled' => $visibility[0]]);
         $this->type->category->class->update(['is_active' => $visibility[1]]);
         $this->type->update([
             'is_active'  => $visibility[3],
@@ -181,6 +182,9 @@ class CommissionFormTest extends TestCase {
         DB::table('site_settings')->where('key', $this->type->category->class->slug.'_comms_open')->update([
             'value' => $visibility[2],
         ]);
+
+        // Adjust payment processor settings
+        config(['aldebaran.commissions.payment_processors.'.$paymentProcessor.'.enabled' => $expected]);
 
         // If relevant, set field data
         if ($data) {
@@ -275,7 +279,8 @@ class CommissionFormTest extends TestCase {
                 'email'                  => $withEmail ? ($isBanned ? $commissioner->email : $email) : null,
                 'contact'                => $isBanned ? $commissioner->contact : $this->faker->unique()->domainWord(),
                 'payment_address'        => $paymentAddr ?? 0,
-                'paypal'                 => $paymentAddr ? $paymentEmail : null,
+                'payment_email'          => $paymentAddr ? $paymentEmail : null,
+                'payment_processor'      => $paymentProcessor,
                 'additional_information' => $extras ? $this->faker->domainWord() : null,
                 'terms'                  => $agree,
                 'type'                   => $this->type->id,
@@ -290,9 +295,9 @@ class CommissionFormTest extends TestCase {
             // Attempt to find the created commissioner and test that it exists
             $commissioner = Commissioner::where('email', $email)->where(function ($query) use ($email, $paymentAddr, $paymentEmail) {
                 if ($paymentAddr) {
-                    return $query->where('paypal', $paymentEmail);
+                    return $query->where('payment_email', $paymentEmail);
                 } else {
-                    return $query->where('paypal', $email);
+                    return $query->where('payment_email', $email);
                 }
             })->first();
             $this->assertModelExists($commissioner);
@@ -300,10 +305,11 @@ class CommissionFormTest extends TestCase {
             // Then check for the existence of the commission using this info
             // as the commissioner is one of a few ready ways to identify the object
             $this->assertDatabaseHas('commissions', [
-                'commissioner_id' => $commissioner->id,
-                'status'          => 'Pending',
-                'commission_type' => $this->type->id,
-                'data'            => $data && (isset($answer) || $data[5] || $data[6]) ? '{'.($data[6] ? '"'.$fieldKeys[2].'":"test",' : '').($data[5] ? '"'.$fieldKeys[1].'":"test",' : '').'"'.$fieldKeys[0].'":'.(isset($answer) ? ($data[0] != 'multiple' ? '"'.$answer.'"' : '["'.$answer[0].'"]') : 'null').'}' : null,
+                'commissioner_id'   => $commissioner->id,
+                'status'            => 'Pending',
+                'commission_type'   => $this->type->id,
+                'payment_processor' => $paymentProcessor,
+                'data'              => $data && (isset($answer) || $data[5] || $data[6]) ? '{'.($data[6] ? '"'.$fieldKeys[2].'":"test",' : '').($data[5] ? '"'.$fieldKeys[1].'":"test",' : '').'"'.$fieldKeys[0].'":'.(isset($answer) ? ($data[0] != 'multiple' ? '"'.$answer.'"' : '["'.$answer[0].'"]') : 'null').'}' : null,
             ]);
             $response->assertSessionHasNoErrors();
             $response->assertRedirectContains('commissions/view');
@@ -323,48 +329,56 @@ class CommissionFormTest extends TestCase {
 
         return [
             // Access testing
-            'visitor, type active, visible'           => [0, 1, 0, [1, 1, 1, 1, 1, 0], null, 0, null, 1, 0, 1],
-            'visitor, type inactive, visible'         => [0, 1, 0, [1, 1, 1, 0, 1, 0], null, 0, null, 1, 0, 0],
-            'visitor, type active, hidden'            => [0, 1, 0, [1, 1, 1, 1, 0, 0], null, 0, null, 1, 0, 0],
-            'visitor, type inactive, hidden'          => [0, 1, 0, [1, 1, 1, 0, 0, 0], null, 0, null, 1, 0, 0],
-            'visitor, type active, hidden with key'   => [0, 1, 0, [1, 1, 1, 1, 0, 1], null, 0, null, 1, 0, 1],
-            'visitor, type inactive, hidden with key' => [0, 1, 0, [1, 1, 1, 0, 0, 1], null, 0, null, 1, 0, 0],
-            'visitor, comms closed'                   => [0, 1, 0, [1, 1, 0, 1, 1, 0], null, 0, null, 1, 0, 0],
-            'visitor, class inactive'                 => [0, 1, 0, [1, 0, 1, 1, 1, 0], null, 0, null, 1, 0, 0],
-            'visitor, comms disabled'                 => [0, 1, 0, [0, 1, 1, 1, 1, 0], null, 0, null, 1, 0, 0],
+            'visitor, type active, visible'           => [0, 1, 0, 'paypal', [1, 1, 1, 1, 1, 0], null, 0, null, 1, 0, 1],
+            'visitor, type inactive, visible'         => [0, 1, 0, 'paypal', [1, 1, 1, 0, 1, 0], null, 0, null, 1, 0, 0],
+            'visitor, type active, hidden'            => [0, 1, 0, 'paypal', [1, 1, 1, 1, 0, 0], null, 0, null, 1, 0, 0],
+            'visitor, type inactive, hidden'          => [0, 1, 0, 'paypal', [1, 1, 1, 0, 0, 0], null, 0, null, 1, 0, 0],
+            'visitor, type active, hidden with key'   => [0, 1, 0, 'paypal', [1, 1, 1, 1, 0, 1], null, 0, null, 1, 0, 1],
+            'visitor, type inactive, hidden with key' => [0, 1, 0, 'paypal', [1, 1, 1, 0, 0, 1], null, 0, null, 1, 0, 0],
+            'visitor, comms closed'                   => [0, 1, 0, 'paypal', [1, 1, 0, 1, 1, 0], null, 0, null, 1, 0, 0],
+            'visitor, class inactive'                 => [0, 1, 0, 'paypal', [1, 0, 1, 1, 1, 0], null, 0, null, 1, 0, 0],
+            'visitor, comms disabled'                 => [0, 1, 0, 'paypal', [0, 1, 1, 1, 1, 0], null, 0, null, 1, 0, 0],
 
             // Form testing
-            'basic'                                   => [0, 1, 0, [1, 1, 1, 1, 1, 0], null, 0, null, 1, 0, 1],
-            'without email'                           => [0, 0, 0, [1, 1, 1, 1, 1, 0], null, 0, null, 1, 0, 0],
-            'non-agreement'                           => [0, 1, 0, [1, 1, 1, 1, 1, 0], null, 0, null, 0, 0, 0],
-            'banned commissioner'                     => [0, 1, 0, [1, 1, 1, 1, 1, 0], null, 0, null, 1, 1, 0],
+            'basic'                                   => [0, 1, 0, 'paypal', [1, 1, 1, 1, 1, 0], null, 0, null, 1, 0, 1],
+            'without email'                           => [0, 0, 0, 'paypal', [1, 1, 1, 1, 1, 0], null, 0, null, 1, 0, 0],
+            'non-agreement'                           => [0, 1, 0, 'paypal', [1, 1, 1, 1, 1, 0], null, 0, null, 0, 0, 0],
+            'banned commissioner'                     => [0, 1, 0, 'paypal', [1, 1, 1, 1, 1, 0], null, 0, null, 1, 1, 0],
 
             // Slot testing
-            'with full type'                          => [0, 1, 0, [1, 1, 1, 1, 1, 0], null, 0, ['Accepted', 1, 1], 1, 0, 0],
-            'with full class'                         => [0, 1, 0, [1, 1, 1, 1, 1, 0], null, 0, ['Accepted', 0, 1], 1, 0, 0],
+            'with full type'                          => [0, 1, 0, 'paypal', [1, 1, 1, 1, 1, 0], null, 0, ['Accepted', 1, 1], 1, 0, 0],
+            'with full class'                         => [0, 1, 0, 'paypal', [1, 1, 1, 1, 1, 0], null, 0, ['Accepted', 0, 1], 1, 0, 0],
+
+            // Payment processor testing
+            'paypal, enabled'                         => [0, 1, 0, 'paypal', [1, 1, 1, 1, 1, 0], null, 0, null, 1, 0, 1],
+            'paypal, disabled'                        => [0, 1, 0, 'paypal', [1, 1, 1, 1, 1, 0], null, 0, null, 1, 0, 0],
+            'stripe, enabled'                         => [0, 1, 0, 'stripe', [1, 1, 1, 1, 1, 0], null, 0, null, 1, 0, 1],
+            'stripe, disabled'                        => [0, 1, 0, 'stripe', [1, 1, 1, 1, 1, 0], null, 0, null, 1, 0, 0],
+            'other, enabled'                          => [0, 1, 0, 'other', [1, 1, 1, 1, 1, 0], null, 0, null, 1, 0, 1],
+            'other, disabled'                         => [0, 1, 0, 'other', [1, 1, 1, 1, 1, 0], null, 0, null, 1, 0, 0],
 
             // Form field testing
             // (string) type, (bool) rules, (bool) choices, value, (string) help, (bool) include category, (bool) include class, (bool) is empty
-            'text field'                              => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['text', 0, 0, null, null, 0, 0, 1], 0, null, 1, 0, 1],
-            'text field, empty'                       => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['text', 0, 0, null, null, 0, 0, 0], 0, null, 1, 0, 1],
-            'text field with rule'                    => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['text', 1, 0, null, null, 0, 0, 1], 0, null, 1, 0, 1],
-            'text field with rule, empty'             => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['text', 1, 0, null, null, 0, 0, 0], 0, null, 1, 0, 0],
-            'text field with value'                   => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['text', 0, 0, 'test', null, 0, 0, 1], 0, null, 1, 0, 1],
-            'text field with help'                    => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['text', 0, 0, null, 'test', 0, 0, 1], 0, null, 1, 0, 1],
-            'textbox field'                           => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['textarea', 0, 0, null, null, 0, 0, 1], 0, null, 1, 0, 1],
-            'textbox field, empty'                    => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['textarea', 0, 0, null, null, 0, 0, 0], 0, null, 1, 0, 1],
-            'number field'                            => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['number', 0, 0, null, null, 0, 0, 1], 0, null, 1, 0, 1],
-            'number field,empty'                      => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['number', 0, 0, null, null, 0, 0, 0], 0, null, 1, 0, 1],
-            'checkbox field'                          => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['checkbox', 0, 0, null, null, 0, 0, 1], 0, null, 1, 0, 1],
-            'checkbox field, empty'                   => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['checkbox', 0, 0, null, null, 0, 0, 0], 0, null, 1, 0, 1],
-            'choose one field'                        => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['choice', 0, 0, null, null, 0, 0, 1], 0, null, 1, 0, 1],
-            'choose one field, empty'                 => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['choice', 0, 0, null, null, 0, 0, 0], 0, null, 1, 0, 1],
-            'choose multiple field'                   => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['multiple', 0, 0, null, null, 0, 0, 1], 0, null, 1, 0, 1],
-            'choose multiple field, empty'            => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['multiple', 0, 0, null, null, 0, 0, 0], 0, null, 1, 0, 1],
+            'text field'                              => [0, 1, 0, 'paypal', [1, 1, 1, 1, 1, 0], ['text', 0, 0, null, null, 0, 0, 1], 0, null, 1, 0, 1],
+            'text field, empty'                       => [0, 1, 0, 'paypal', [1, 1, 1, 1, 1, 0], ['text', 0, 0, null, null, 0, 0, 0], 0, null, 1, 0, 1],
+            'text field with rule'                    => [0, 1, 0, 'paypal', [1, 1, 1, 1, 1, 0], ['text', 1, 0, null, null, 0, 0, 1], 0, null, 1, 0, 1],
+            'text field with rule, empty'             => [0, 1, 0, 'paypal', [1, 1, 1, 1, 1, 0], ['text', 1, 0, null, null, 0, 0, 0], 0, null, 1, 0, 0],
+            'text field with value'                   => [0, 1, 0, 'paypal', [1, 1, 1, 1, 1, 0], ['text', 0, 0, 'test', null, 0, 0, 1], 0, null, 1, 0, 1],
+            'text field with help'                    => [0, 1, 0, 'paypal', [1, 1, 1, 1, 1, 0], ['text', 0, 0, null, 'test', 0, 0, 1], 0, null, 1, 0, 1],
+            'textbox field'                           => [0, 1, 0, 'paypal', [1, 1, 1, 1, 1, 0], ['textarea', 0, 0, null, null, 0, 0, 1], 0, null, 1, 0, 1],
+            'textbox field, empty'                    => [0, 1, 0, 'paypal', [1, 1, 1, 1, 1, 0], ['textarea', 0, 0, null, null, 0, 0, 0], 0, null, 1, 0, 1],
+            'number field'                            => [0, 1, 0, 'paypal', [1, 1, 1, 1, 1, 0], ['number', 0, 0, null, null, 0, 0, 1], 0, null, 1, 0, 1],
+            'number field,empty'                      => [0, 1, 0, 'paypal', [1, 1, 1, 1, 1, 0], ['number', 0, 0, null, null, 0, 0, 0], 0, null, 1, 0, 1],
+            'checkbox field'                          => [0, 1, 0, 'paypal', [1, 1, 1, 1, 1, 0], ['checkbox', 0, 0, null, null, 0, 0, 1], 0, null, 1, 0, 1],
+            'checkbox field, empty'                   => [0, 1, 0, 'paypal', [1, 1, 1, 1, 1, 0], ['checkbox', 0, 0, null, null, 0, 0, 0], 0, null, 1, 0, 1],
+            'choose one field'                        => [0, 1, 0, 'paypal', [1, 1, 1, 1, 1, 0], ['choice', 0, 0, null, null, 0, 0, 1], 0, null, 1, 0, 1],
+            'choose one field, empty'                 => [0, 1, 0, 'paypal', [1, 1, 1, 1, 1, 0], ['choice', 0, 0, null, null, 0, 0, 0], 0, null, 1, 0, 1],
+            'choose multiple field'                   => [0, 1, 0, 'paypal', [1, 1, 1, 1, 1, 0], ['multiple', 0, 0, null, null, 0, 0, 1], 0, null, 1, 0, 1],
+            'choose multiple field, empty'            => [0, 1, 0, 'paypal', [1, 1, 1, 1, 1, 0], ['multiple', 0, 0, null, null, 0, 0, 0], 0, null, 1, 0, 1],
 
-            'include from category'                   => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['text', 0, 0, null, null, 1, 0, 1], 0, null, 1, 0, 1],
-            'include from class'                      => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['text', 0, 0, null, null, 0, 1, 1], 0, null, 1, 0, 1],
-            'include from category and class'         => [0, 1, 0, [1, 1, 1, 1, 1, 0], ['text', 0, 0, null, null, 1, 1, 1], 0, null, 1, 0, 1],
+            'include from category'                   => [0, 1, 0, 'paypal', [1, 1, 1, 1, 1, 0], ['text', 0, 0, null, null, 1, 0, 1], 0, null, 1, 0, 1],
+            'include from class'                      => [0, 1, 0, 'paypal', [1, 1, 1, 1, 1, 0], ['text', 0, 0, null, null, 0, 1, 1], 0, null, 1, 0, 1],
+            'include from category and class'         => [0, 1, 0, 'paypal', [1, 1, 1, 1, 1, 0], ['text', 0, 0, null, null, 1, 1, 1], 0, null, 1, 0, 1],
         ];
     }
 

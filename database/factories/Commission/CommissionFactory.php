@@ -73,4 +73,19 @@ class CommissionFactory extends Factory {
             ];
         });
     }
+
+    /**
+     * Generate a commission with a given payment processor.
+     *
+     * @param string $paymentProcessor
+     *
+     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     */
+    public function paymentProcessor($paymentProcessor) {
+        return $this->state(function (array $attributes) use ($paymentProcessor) {
+            return [
+                'payment_processor' => $paymentProcessor,
+            ];
+        });
+    }
 }

@@ -32,7 +32,7 @@ class CommissionController extends Controller {
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function getCommissionClassIndex() {
-        if (!config('aldebaran.settings.commissions.enabled')) {
+        if (!config('aldebaran.commissions.enabled')) {
             abort(404);
         }
 
@@ -47,7 +47,7 @@ class CommissionController extends Controller {
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function getCreateCommissionClass() {
-        if (!config('aldebaran.settings.commissions.enabled')) {
+        if (!config('aldebaran.commissions.enabled')) {
             abort(404);
         }
 
@@ -65,7 +65,7 @@ class CommissionController extends Controller {
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function getEditCommissionClass($id) {
-        if (!config('aldebaran.settings.commissions.enabled')) {
+        if (!config('aldebaran.commissions.enabled')) {
             abort(404);
         }
         $class = CommissionClass::find($id);
@@ -143,7 +143,7 @@ class CommissionController extends Controller {
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function getDeleteCommissionClass($id) {
-        if (!config('aldebaran.settings.commissions.enabled')) {
+        if (!config('aldebaran.commissions.enabled')) {
             abort(404);
         }
         $class = CommissionClass::find($id);
@@ -199,7 +199,7 @@ class CommissionController extends Controller {
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function getIndex() {
-        if (!config('aldebaran.settings.commissions.enabled')) {
+        if (!config('aldebaran.commissions.enabled')) {
             abort(404);
         }
 
@@ -214,7 +214,7 @@ class CommissionController extends Controller {
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function getCreateCommissionCategory() {
-        if (!config('aldebaran.settings.commissions.enabled')) {
+        if (!config('aldebaran.commissions.enabled')) {
             abort(404);
         }
 
@@ -233,7 +233,7 @@ class CommissionController extends Controller {
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function getEditCommissionCategory($id) {
-        if (!config('aldebaran.settings.commissions.enabled')) {
+        if (!config('aldebaran.commissions.enabled')) {
             abort(404);
         }
         $category = CommissionCategory::find($id);
@@ -312,7 +312,7 @@ class CommissionController extends Controller {
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function getDeleteCommissionCategory($id) {
-        if (!config('aldebaran.settings.commissions.enabled')) {
+        if (!config('aldebaran.commissions.enabled')) {
             abort(404);
         }
         $category = CommissionCategory::find($id);
@@ -368,7 +368,7 @@ class CommissionController extends Controller {
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function getCommissionTypeIndex(Request $request) {
-        if (!config('aldebaran.settings.commissions.enabled')) {
+        if (!config('aldebaran.commissions.enabled')) {
             abort(404);
         }
         $query = CommissionType::query()->with(['category:id,name,class_id', 'commissions:id,commission_type,status']);
@@ -392,7 +392,7 @@ class CommissionController extends Controller {
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function getCreateCommissionType() {
-        if (!config('aldebaran.settings.commissions.enabled')) {
+        if (!config('aldebaran.commissions.enabled')) {
             abort(404);
         }
 
@@ -412,7 +412,7 @@ class CommissionController extends Controller {
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function getEditCommissionType($id) {
-        if (!config('aldebaran.settings.commissions.enabled')) {
+        if (!config('aldebaran.commissions.enabled')) {
             abort(404);
         }
         $commissionType = CommissionType::find($id);
@@ -494,7 +494,7 @@ class CommissionController extends Controller {
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function getDeleteCommissionType($id) {
-        if (!config('aldebaran.settings.commissions.enabled')) {
+        if (!config('aldebaran.commissions.enabled')) {
             abort(404);
         }
         $commissionType = CommissionType::find($id);

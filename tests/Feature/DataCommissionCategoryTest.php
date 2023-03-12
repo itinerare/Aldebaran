@@ -29,7 +29,7 @@ class DataCommissionCategoryTest extends TestCase {
         //$this->pageName = $this->faker->unique()->domainWord();
 
         // Enable commission components
-        config(['aldebaran.settings.commissions.enabled' => 1]);
+        config(['aldebaran.commissions.enabled' => 1]);
     }
 
     /**

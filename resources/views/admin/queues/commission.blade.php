@@ -43,9 +43,9 @@
                 </div>
                 <div class="row">
                     <div class="col-md">
-                        <h5>Paypal Address</h5>
+                        <h5>Payment Address</h5>
                     </div>
-                    <div class="col-md">{!! $commission->commissioner->paypal !!}</div>
+                    <div class="col-md">{!! $commission->commissioner->payment_email !!}</div>
                 </div>
                 <div class="row">
                     <div class="col-md">
@@ -77,10 +77,11 @@
                 </div>
                 <div class="row">
                     <div class="col-md">
-                        <h5>Paid Status</h5>
+                        <h5>Payment Status</h5>
                     </div>
                     <div class="col-md">{!! $commission->isPaid !!}
-                        ({{ isset($commission->cost) ? '$' . $commission->cost : '-' }}{{ $commission->tip ? ' + $' . $commission->tip . ' Tip' : '' }}/${{ $commission->totalWithFees }})
+                        ({{ isset($commission->cost) ? '$' . $commission->cost : '-' }}{{ $commission->tip ? ' + $' . $commission->tip . ' Tip' : '' }}/${{ $commission->totalWithFees }}) ・ via
+                        {{ config('aldebaran.commissions.payment_processors.' . $commission->payment_processor . '.label') }}
                     </div>
                 </div>
                 <div class="row">
@@ -227,6 +228,7 @@
                                     'placeholder' => 'Tip',
                                 ]) !!}
                                 {!! Form::hidden('paid_at[' . $payment->id . ']', $payment->paid_at) !!}
+                                {!! Form::hidden('total_with_fees[' . $payment->id . ']', $payment->totalWithFees) !!}
                                 <div class="input-group-append">
                                     <div class="input-group-text">
                                         {!! Form::checkbox('is_paid[' . $payment->id . ']', 1, $payment->is_paid, [
@@ -243,7 +245,7 @@
                                         <span class="ml-1">Intl.</span>
                                     </div>
                                     <span class="input-group-text">After Fees:
-                                        ${{ $commission->paymentWithFees($payment) }}</span>
+                                        ${{ $payment->totalWithFees }}</span>
                                     <button class="remove-payment btn btn-outline-danger" type="button" id="button-addon2">X</button>
                                 </div>
                             </div>

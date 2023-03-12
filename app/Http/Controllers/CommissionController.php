@@ -33,7 +33,7 @@ class CommissionController extends Controller {
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function getInfo($class, Request $request) {
-        if (!config('aldebaran.settings.commissions.enabled')) {
+        if (!config('aldebaran.commissions.enabled')) {
             abort(404);
         }
         $class = CommissionClass::active($request->user() ?? null)->where('slug', $class)->first();
@@ -57,7 +57,7 @@ class CommissionController extends Controller {
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function getTos($class, Request $request) {
-        if (!config('aldebaran.settings.commissions.enabled')) {
+        if (!config('aldebaran.commissions.enabled')) {
             abort(404);
         }
         $class = CommissionClass::active($request->user() ?? null)->where('slug', $class)->first();
@@ -80,7 +80,7 @@ class CommissionController extends Controller {
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function getClassPage($class, $key, Request $request) {
-        if (!config('aldebaran.settings.commissions.enabled')) {
+        if (!config('aldebaran.commissions.enabled')) {
             abort(404);
         }
         $class = CommissionClass::active($request->user() ?? null)->where('slug', $class)->first();
@@ -113,7 +113,7 @@ class CommissionController extends Controller {
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function getQueue($class, Request $request) {
-        if (!config('aldebaran.settings.commissions.enabled')) {
+        if (!config('aldebaran.commissions.enabled')) {
             abort(404);
         }
         $class = CommissionClass::active($request->user() ?? null)->where('slug', $class)->first();
@@ -135,7 +135,7 @@ class CommissionController extends Controller {
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function getType($key, Request $request) {
-        if (!config('aldebaran.settings.commissions.enabled')) {
+        if (!config('aldebaran.commissions.enabled')) {
             abort(404);
         }
         $type = CommissionType::active()->where('key', $key)->where('is_visible', 0)->first();
@@ -156,7 +156,7 @@ class CommissionController extends Controller {
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function getTypeGallery($key, Request $request) {
-        if (!config('aldebaran.settings.commissions.enabled')) {
+        if (!config('aldebaran.commissions.enabled')) {
             abort(404);
         }
 
@@ -219,7 +219,7 @@ class CommissionController extends Controller {
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function getNewCommission(Request $request) {
-        if (!config('aldebaran.settings.commissions.enabled')) {
+        if (!config('aldebaran.commissions.enabled')) {
             abort(404);
         }
 
@@ -243,8 +243,9 @@ class CommissionController extends Controller {
         }
 
         return view('commissions.new', [
-            'page' => TextPage::where('key', 'new_commission')->first(),
-            'type' => $type,
+            'page'       => TextPage::where('key', 'new_commission')->first(),
+            'type'       => $type,
+            'commission' => new Commission,
         ]);
     }
 
@@ -282,7 +283,8 @@ class CommissionController extends Controller {
         $request->validate($validationRules);
 
         $data = $request->only([
-            'name', 'email', 'contact', 'paypal', 'type', 'key', 'additional_information',
+            'name', 'email', 'contact', 'payment_email', 'payment_processor',
+            'type', 'key', 'additional_information',
         ] + $answerArray);
         $data['ip'] = $request->ip();
 

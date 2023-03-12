@@ -29,9 +29,10 @@ Note that use of commission components in a use that generates or contributes to
 - Commission info pages per class that display all visible categories and types with pricing, examples semi-randomly selected from the valid pool (preferring pieces that are set as good examples)
 - Support for "hidden" commission types, which are active but not visible on the main commission info page, via a randomly generated "key" URL
 - Commission queues per class that display all accepted commissions in the queue with general information, set status, and created/last updated timestamps
-- Admin commission queue with form responses, contact and payment information, etc. displayed, where commissions can be accepted/declined/updated/etc. including attaching pieces to a commission, which will allow the commissioner access to the full-sized images. Multiple payments may also be attached to a commission and/or marked as paid, international, etc. including tip if relevant; total after PayPal fees are calculated and shown for each. Commissioners may also be banned from this menu in case of abuse
+- Admin commission queue with form responses, contact and payment information, etc. displayed, where commissions can be accepted/declined/updated/etc. including attaching pieces to a commission, which will allow the commissioner access to the full-sized images. Multiple payments may also be attached to a commission and/or marked as paid, international, etc. including tip if relevant; total after fees are calculated and shown for each. Commissioners may also be banned from this menu in case of abuse
 - Commissioner-only view per commission (accessible via a URL with a randomly generated key) that lists form responses, any pieces attached to the commission, and any comments from the artist/site operator
 - Admin-only ledger view which lists payments recorded per year, for the year in which they were paid, with link to the relevant commission
+- Support for multiple/configurable payment processors, with fee information adjustable per processor. If multiple payment processors are enabled, visitors may select from the available options when creating a new commission request; fees will then be calculated accordingly, and different commissions may use different payment processors
 
 ### Other functions
 - Two-factor authentication for the sole/admin account
@@ -42,6 +43,7 @@ Note that use of commission components in a use that generates or contributes to
 - Admin panel for uploading images used in the site's layout as well as custom CSS
 - Optional automatic backups for server-only content
 - Configurable email mailing lists that visitors can subscribe to, and the ability to create and send out entries to all subscribers to a mailing list
+- All of the aforementioned functionality is also supported by a robust test suite; this means that while bugs may occur, they are meaningfully less likely!
 
 ## Setup
 

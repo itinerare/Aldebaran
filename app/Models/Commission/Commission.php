@@ -15,7 +15,7 @@ class Commission extends Model {
      */
     protected $fillable = [
         'commission_key', 'commissioner_id', 'commission_type', 'progress',
-        'status', 'description', 'data', 'comments',
+        'status', 'description', 'data', 'comments', 'payment_processor',
     ];
 
     /**
@@ -59,10 +59,10 @@ class Commission extends Model {
      */
     public static $createRules = [
         // Contact information
-        'name'    => 'string|nullable|min:3|max:191',
-        'email'   => 'email|required|min:3|max:191',
-        'contact' => 'required|string|min:3|max:191',
-        'paypal'  => 'email|nullable|min:3|max:191',
+        'name'          => 'string|nullable|min:3|max:191',
+        'email'         => 'email|required|min:3|max:191',
+        'contact'       => 'required|string|min:3|max:191',
+        'payment_email' => 'email|nullable|min:3|max:191',
 
         // Other
         'terms'   => 'accepted',
@@ -75,10 +75,10 @@ class Commission extends Model {
      */
     public static $manualCreateRules = [
         // Contact information
-        'name'    => 'string|nullable|min:3|max:191',
-        'email'   => 'email|required_without:commissioner_id|min:3|max:191|nullable',
-        'contact' => 'required_without:commissioner_id|string|min:3|max:191|nullable',
-        'paypal'  => 'email|nullable|min:3|max:191',
+        'name'          => 'string|nullable|min:3|max:191',
+        'email'         => 'email|required_without:commissioner_id|min:3|max:191|nullable',
+        'contact'       => 'required_without:commissioner_id|string|min:3|max:191|nullable',
+        'payment_email' => 'email|nullable|min:3|max:191',
     ];
 
     /**
@@ -88,6 +88,7 @@ class Commission extends Model {
      */
     public static $updateRules = [
         'cost.*' => 'nullable|filled|required_with:tip.*',
+        'tip.*'  => 'nullable|filled|required_with:cost.*',
     ];
 
     /**********************************************************************************************
@@ -198,39 +199,33 @@ class Commission extends Model {
     /**
      * Get overall cost.
      *
-     * @return int
+     * @return float
      */
     public function getCostAttribute() {
-        $total = 0;
         if ($this->payments->count()) {
-            foreach ($this->payments as $payment) {
-                $total += $payment->cost;
-            }
+            return $this->payments->pluck('cost')->sum();
         }
 
-        return $total;
+        return 0;
     }
 
     /**
      * Get overall tip.
      *
-     * @return int
+     * @return float
      */
     public function getTipAttribute() {
-        $total = 0;
         if ($this->payments->count()) {
-            foreach ($this->payments as $payment) {
-                $total += $payment->tip;
-            }
+            return $this->payments->pluck('tip')->sum();
         }
 
-        return $total;
+        return 0;
     }
 
     /**
      * Get total cost, including tip.
      *
-     * @return string
+     * @return float
      */
     public function getCostWithTipAttribute() {
         return $this->cost + $this->tip;
@@ -242,15 +237,11 @@ class Commission extends Model {
      * @return int
      */
     public function getTotalWithFeesAttribute() {
-        $total = 0;
-        // Cycle through payments, getting their total with fees
         if ($this->payments->count()) {
-            foreach ($this->payments as $payment) {
-                $total += $this->paymentWithFees($payment);
-            }
+            return $this->payments->pluck('totalWithFees')->sum();
         }
 
-        return $total;
+        return 0;
     }
 
     /**
@@ -281,33 +272,29 @@ class Commission extends Model {
     **********************************************************************************************/
 
     /**
-     * Calculate the total for a payment after fees.
-     *
-     * @param \App\Models\Commission\CommissionPayment $payment
-     *
-     * @return int
-     */
-    public static function paymentWithFees($payment) {
-        $total = $payment->cost + (isset($payment->tip) && $payment->tip ? $payment->tip : 0);
-
-        // Calculate fee and round
-        $fee =
-            ($total * ((isset($payment->is_intl) && $payment->is_intl ? config('aldebaran.settings.commissions.fee.percent_intl') : config('aldebaran.settings.commissions.fee.percent')) / 100)) + config('aldebaran.settings.commissions.fee.base');
-        $fee = round($fee, 2);
-
-        return $total - $fee;
-    }
-
-    /**
      * Format the currently configured progress states for selection.
      *
      * @return array
      */
     public static function progressStates() {
-        $states = collect(config('aldebaran.settings.commissions.progress_states'))->mapWithKeys(function ($state) {
+        $states = collect(config('aldebaran.commissions.progress_states'))->mapWithKeys(function ($state) {
             return [$state => $state];
         });
 
         return $states->toArray();
+    }
+
+    /**
+     * Formats the currently enabled payment processors for selection.
+     *
+     * @return Illuminate\Support\Collection
+     */
+    public static function paymentProcessors() {
+        $paymentProcessors = collect(config('aldebaran.commissions.payment_processors'))
+            ->where('enabled', 1)->map(function ($processor) {
+                return $processor['label'];
+            });
+
+        return $paymentProcessors;
     }
 }

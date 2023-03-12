@@ -40,11 +40,13 @@ class AddSiteSettings extends Command {
         $this->line("Adding site settings...existing entries will be skipped.\n");
 
         $this->addSiteSetting('site_name', 'aldebaran', 'Display name used around the site.');
-        $this->addSiteSetting('site_desc', 'Personal art and commission site.', 'Description used for meta tag/link previews.');
+        $this->addSiteSetting('site_desc', 'Personal gallery site.', 'Description used for meta tag/link previews.');
 
         $this->addSiteSetting('notif_emails', 0, 'Whether or not you wish to receive a notification email when a commission request is submitted.');
 
         $this->addSiteSetting('display_mailing_lists', 0, 'Whether or not a list of open mailing lists should be displayed on the site\'s index page.');
+
+        $this->addSiteSetting('comm_contact_info', 0, 'What methods you accept for contact information, e.g. email. Displayed as part of the new commission request form. If cleared/set to 0, nothing will be displayed.');
 
         $this->line("\nSite settings up to date!");
     }

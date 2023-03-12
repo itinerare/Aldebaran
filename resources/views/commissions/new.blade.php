@@ -51,9 +51,26 @@
     </div>
 
     <div class="form-group">
-        {!! Form::label('contact', 'Preferred Method of Contact') !!} {!! add_help('Please specify at least one of: email (address not necessary-- I will use the one entered above), discord tag (including following numbers), or twitter @ (you must be able to accept DMs from me).') !!}
+        {!! Form::label('contact', 'Preferred Method of Contact') !!} {!! Settings::get('contact_info') ? add_help(Settings::get('contact_info')) : '' !!}
         {!! Form::text('contact', old('contact'), ['class' => 'form-control', 'required']) !!}
     </div>
+
+    @if ($commission->paymentProcessors()->count() > 1)
+        <div class="form-group">
+            {!! Form::label('payment_processor', 'Payment Processor') !!}
+            @foreach ($commission->paymentProcessors() as $key => $label)
+                <div class="choice-wrapper">
+                    <input class="form-check-input ml-0 pr-4" name="payment_processor" id="{{ 'payment_processor_' . $key }}" type="radio" value="{{ old('payment_processor_' . $key) != null ? old('payment_processor_' . $key) : $key }}">
+                    <label for="{{ 'payment_processor_' . $key }}" class="label-class ml-3">{{ $label }}</label>
+                </div>
+            @endforeach
+        </div>
+    @elseif($commission->paymentProcessors()->first())
+        {!! Form::hidden(
+            'payment_processor',
+            $commission->paymentProcessors()->keys()->first(),
+        ) !!}
+    @endif
 
     <div class="form-group">
         {!! Form::checkbox('payment_address', 1, old('payment_address'), [
@@ -63,14 +80,14 @@
             'data-off' => 'No',
             'id' => 'paymentAddress',
         ]) !!}
-        {!! Form::label('payment_address', 'Is your Paypal address different from the email address above?', [
+        {!! Form::label('payment_address', 'Is your payment address different from the email address above?', [
             'class' => 'form-check-label ml-3',
         ]) !!}
     </div>
     <div class="mb-3" id="paymentOptions">
         <div class="form-group">
-            {!! Form::label('paypal', 'Paypal Address') !!}
-            {!! Form::text('paypal', old('paypal'), ['class' => 'form-control']) !!}
+            {!! Form::label('payment_email', 'Payment Address') !!}
+            {!! Form::text('payment_email', old('payment_email'), ['class' => 'form-control']) !!}
         </div>
     </div>
 

@@ -60,9 +60,21 @@
             {!! Form::close() !!}
         @endif
 
-        @if (config('aldebaran.settings.commissions.enabled'))
+        @if (config('aldebaran.commissions.enabled'))
             <!-- Commission Type Settings -->
             <h2>Commission Settings</h2>
+
+            {!! Form::open(['url' => 'admin/site-settings/comm_contact_info']) !!}
+            <div class="form-group">
+                <strong>{!! Form::label('comm_contact_info_value', 'Preferred Contact Method(s)') !!}:</strong> {{ $settings->where('key', 'comm_contact_info')->first()->description }}
+                {!! Form::text('comm_contact_info_value', $settings->where('key', 'comm_contact_info')->first()->value, [
+                    'class' => 'form-control',
+                ]) !!}
+            </div>
+            <div class="form-group text-right mb-3">
+                {!! Form::submit('Edit', ['class' => 'btn btn-primary']) !!}
+            </div>
+            {!! Form::close() !!}
 
             @if (config('aldebaran.settings.email_features'))
                 {!! Form::open(['url' => 'admin/site-settings/notif_emails']) !!}
