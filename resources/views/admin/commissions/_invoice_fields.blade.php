@@ -28,7 +28,7 @@
         <a href="https://stripe.com/docs/tax/tax-categories">Tax Category Reference</a>
     </small>
 </div>
-@if ($parent)
+@if ($object->id && isset($parent) && $parent)
     <div class="form-group">
         {!! Form::checkbox('unset_product_info', 1, 0, [
             'class' => 'form-check-input',
