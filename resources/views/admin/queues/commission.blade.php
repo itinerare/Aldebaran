@@ -255,7 +255,7 @@
                 </div>
             </div>
 
-            @if (config('aldebaran.commissions.payment_processors.stripe.integration.enabled'))
+            @if (config('aldebaran.commissions.payment_processors.stripe.integration.enabled') && $commission->payment_processor == 'stripe')
                 <h3>Invoice Information</h3>
                 <p>
                     This will be used to populate product information when creating invoices for this commission. If not set, this uses the next most specific information (this commission's type if set, the type's category's if not, and so on); that is, if those values are still
