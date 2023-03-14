@@ -70,6 +70,18 @@
         </div>
     @endif
 
+    @if (config('aldebaran.commissions.payment_processors.stripe.integration.enabled'))
+        <h2>Invoice Information</h2>
+        <p>
+            This will be used to populate product information when creating invoices for this commission category. If not set, this uses the next most specific information (this category's class'); that is, if those values are still applicable to this
+            category, you do not need to set them here. For convenience, the currently relevant values are displayed as placeholder information in the fields below if they are unset.
+        </p>
+        <p>
+            You can specify more specific information for any of these fields per commission type or per individual commission; however, if a field is unset for a type or commission, the information here will likewise be used instead.
+        </p>
+        @include('admin.commissions._invoice_fields', ['object' => $category, 'parent' => true])
+    @endif
+
     <div class="text-right">
         {!! Form::submit($category->id ? 'Edit' : 'Create', ['class' => 'btn btn-primary']) !!}
     </div>

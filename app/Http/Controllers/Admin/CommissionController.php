@@ -12,6 +12,7 @@ use App\Models\Gallery\Piece;
 use App\Services\CommissionManager;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Stripe\StripeClient;
 
 class CommissionController extends Controller {
     /*
@@ -155,10 +156,18 @@ class CommissionController extends Controller {
             abort(404);
         }
 
+        if (config('aldebaran.commissions.payment_processors.stripe.integration.enabled') && (isset($commission->invoice_data['product_tax_code']) || isset($commission->parentInvoiceData['product_tax_code']))) {
+            // Retrieve information for the current tax code, for convenience
+            $taxCode = (new StripeClient(config('aldebaran.commissions.payment_processors.stripe.integration.secret_key')))->taxCodes->retrieve(
+                $commission->invoice_data['product_tax_code'] ?? $commission->parentInvoiceData['product_tax_code']
+            );
+        }
+
         return view('admin.queues.commission', [
             'commission' => $commission,
         ] + ($commission->status == 'Pending' || $commission->status == 'Accepted' ? [
             'pieces' => Piece::sort()->pluck('name', 'id')->toArray(),
+            'taxCode' => $taxCode ?? null,
         ] : []));
     }
 
@@ -282,7 +291,10 @@ class CommissionController extends Controller {
      */
     private function postUpdateCommission($id, Request $request, CommissionManager $service) {
         $request->validate(Commission::$updateRules);
-        $data = $request->only(['pieces', 'paid_status', 'progress', 'comments', 'cost', 'tip', 'is_paid', 'is_intl', 'paid_at']);
+        $data = $request->only([
+            'pieces', 'paid_status', 'progress', 'comments', 'cost', 'tip', 'is_paid', 'is_intl', 'paid_at',
+            'product_id', 'product_name', 'product_description', 'product_tax_code', 'unset_product_info',
+        ]);
         if ($service->updateCommission($id, $data, $request->user())) {
             flash('Commission updated successfully.')->success();
         } else {

@@ -11,6 +11,7 @@ use App\Services\CommissionService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Spatie\ValidationRules\Rules\Delimited;
+use Stripe\StripeClient;
 
 class CommissionController extends Controller {
     /*
@@ -54,6 +55,7 @@ class CommissionController extends Controller {
         return view('admin.commissions.create_edit_commission_class', [
             'class'      => new CommissionClass,
             'fieldTypes' => ['text' => 'Text', 'textarea' => 'Textbox', 'number' => 'Number', 'checkbox' => 'Checkbox/Toggle', 'choice' => 'Choose One', 'multiple' => 'Choose Multiple'],
+            'taxCode'    => null,
         ]);
     }
 
@@ -73,9 +75,15 @@ class CommissionController extends Controller {
             abort(404);
         }
 
+        if (config('aldebaran.commissions.payment_processors.stripe.integration.enabled') && isset($class->invoice_data['product_tax_code'])) {
+            // Retrieve information for the current tax code, for convenience
+            $taxCode = (new StripeClient(config('aldebaran.commissions.payment_processors.stripe.integration.secret_key')))->taxCodes->retrieve($class->invoice_data['product_tax_code']);
+        }
+
         return view('admin.commissions.create_edit_commission_class', [
             'class'      => $class,
             'fieldTypes' => ['text' => 'Text', 'textarea' => 'Textbox', 'number' => 'Number', 'checkbox' => 'Checkbox/Toggle', 'choice' => 'Choose One', 'multiple' => 'Choose Multiple'],
+            'taxCode'    => $taxCode ?? null,
         ]);
     }
 
@@ -91,6 +99,7 @@ class CommissionController extends Controller {
         $data = $request->only([
             'name', 'is_active', 'page_id', 'page_title', 'page_key',
             'field_key', 'field_type', 'field_label', 'field_rules', 'field_choices', 'field_value', 'field_help',
+            'product_id', 'product_name', 'product_description', 'product_tax_code',
         ]);
         // Fancy validation for field choices and rules
         if ($id) {
@@ -222,6 +231,7 @@ class CommissionController extends Controller {
             'category'   => new CommissionCategory,
             'classes'    => CommissionClass::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
             'fieldTypes' => ['text' => 'Text', 'textarea' => 'Textbox', 'number' => 'Number', 'checkbox' => 'Checkbox/Toggle', 'choice' => 'Choose One', 'multiple' => 'Choose Multiple'],
+            'taxCode'    => null,
         ]);
     }
 
@@ -241,10 +251,18 @@ class CommissionController extends Controller {
             abort(404);
         }
 
+        if (config('aldebaran.commissions.payment_processors.stripe.integration.enabled') && (isset($category->invoice_data['product_tax_code']) || isset($category->parentInvoiceData['product_tax_code']))) {
+            // Retrieve information for the current tax code, for convenience
+            $taxCode = (new StripeClient(config('aldebaran.commissions.payment_processors.stripe.integration.secret_key')))->taxCodes->retrieve(
+                $category->invoice_data['product_tax_code'] ?? $category->parentInvoiceData['product_tax_code']
+            );
+        }
+
         return view('admin.commissions.create_edit_commission_category', [
             'category'   => $category,
             'classes'    => CommissionClass::orderBy('sort', 'DESC')->pluck('name', 'id')->toArray(),
             'fieldTypes' => ['text' => 'Text', 'textarea' => 'Textbox', 'number' => 'Number', 'checkbox' => 'Checkbox/Toggle', 'choice' => 'Choose One', 'multiple' => 'Choose Multiple'],
+            'taxCode'    => $taxCode ?? null,
         ]);
     }
 
@@ -260,6 +278,7 @@ class CommissionController extends Controller {
         $data = $request->only([
             'name', 'class_id', 'is_active',
             'field_key', 'field_type', 'field_label', 'field_rules', 'field_choices', 'field_value', 'field_help', 'include_class',
+            'product_id', 'product_name', 'product_description', 'product_tax_code', 'unset_product_info',
         ]);
         // Fancy validation for field choices and rules
         if ($id) {
@@ -401,6 +420,7 @@ class CommissionController extends Controller {
             'categories' => CommissionCategory::orderBy('sort', 'DESC')->get()->pluck('fullName', 'id')->toArray(),
             'tags'       => Tag::orderBy('name')->pluck('name', 'id')->toArray(),
             'fieldTypes' => ['text' => 'Text', 'textarea' => 'Textbox', 'number' => 'Number', 'checkbox' => 'Checkbox/Toggle', 'choice' => 'Choose One', 'multiple' => 'Choose Multiple'],
+            'taxCode'    => null,
         ]);
     }
 
@@ -420,11 +440,19 @@ class CommissionController extends Controller {
             abort(404);
         }
 
+        if (config('aldebaran.commissions.payment_processors.stripe.integration.enabled') && (isset($commissionType->invoice_data['product_tax_code']) || isset($commissionType->parentInvoiceData['product_tax_code']))) {
+            // Retrieve information for the current tax code, for convenience
+            $taxCode = (new StripeClient(config('aldebaran.commissions.payment_processors.stripe.integration.secret_key')))->taxCodes->retrieve(
+                $commissionType->invoice_data['product_tax_code'] ?? $commissionType->parentInvoiceData['product_tax_code']
+            );
+        }
+
         return view('admin.commissions.create_edit_commission_type', [
             'type'       => $commissionType,
             'categories' => CommissionCategory::orderBy('sort', 'DESC')->get()->pluck('fullName', 'id')->toArray(),
             'tags'       => Tag::orderBy('name')->pluck('name', 'id')->toArray(),
             'fieldTypes' => ['text' => 'Text', 'textarea' => 'Textbox', 'number' => 'Number', 'checkbox' => 'Checkbox/Toggle', 'choice' => 'Choose One', 'multiple' => 'Choose Multiple'],
+            'taxCode'    => $taxCode ?? null,
         ]);
     }
 
@@ -442,6 +470,7 @@ class CommissionController extends Controller {
             'price_type', 'flat_cost', 'cost_min', 'cost_max', 'minimum_cost', 'rate',
             'extras', 'tags', 'show_examples', 'regenerate_key',
             'field_key', 'field_type', 'field_label', 'field_rules', 'field_choices', 'field_value', 'field_help', 'include_class', 'include_category',
+            'product_id', 'product_name', 'product_description', 'product_tax_code', 'unset_product_info',
         ]);
         // Fancy validation for field choices and rules
         if ($id) {

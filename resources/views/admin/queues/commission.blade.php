@@ -205,9 +205,7 @@
                 </div>
             @endif
 
-            <h2>General Information</h2>
-
-            <p>Payment Status</p>
+            <h2>Payment Status</h2>
 
             <div class="form-group">
                 <div id="paymentList">
@@ -256,6 +254,17 @@
                     <a href="#" class="btn btn-primary" id="add-payment">Add Payment</a>
                 </div>
             </div>
+
+            @if (config('aldebaran.commissions.payment_processors.stripe.integration.enabled'))
+                <h3>Invoice Information</h3>
+                <p>
+                    This will be used to populate product information when creating invoices for this commission. If not set, this uses the next most specific information (this commission's type if set, the type's category's if not, and so on); that is, if those values are still
+                    applicable to this commission, you do not need to set them here. For convenience, the currently relevant values are displayed as placeholder information in the fields below if they are unset.
+                </p>
+                @include('admin.commissions._invoice_fields', ['object' => $commission, 'parent' => true])
+            @endif
+
+            <h2>General Information</h2>
 
             <div class="form-group">
                 {!! Form::label('progress', 'Progress') !!}

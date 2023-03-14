@@ -14,7 +14,7 @@ class CommissionClass extends Model {
      * @var array
      */
     protected $fillable = [
-        'name', 'slug', 'is_active', 'sort', 'data',
+        'name', 'slug', 'is_active', 'sort', 'data', 'invoice_data',
     ];
 
     /**
@@ -30,7 +30,8 @@ class CommissionClass extends Model {
      * @var array
      */
     protected $casts = [
-        'data' => 'json',
+        'data'         => 'array',
+        'invoice_data' => 'array',
     ];
 
     /**
@@ -47,7 +48,8 @@ class CommissionClass extends Model {
      */
     public static $createRules = [
         //
-        'name' => 'required|unique:commission_classes',
+        'name'         => 'required|unique:commission_classes',
+        'product_name' => 'filled',
     ];
 
     /**
@@ -67,6 +69,7 @@ class CommissionClass extends Model {
         'field_rules.*'   => 'nullable|string|max:255',
         'field_value.*'   => 'nullable|string|max:255',
         'field_help.*'    => 'nullable|string|max:255',
+        'product_name'    => 'filled',
     ];
 
     /**********************************************************************************************

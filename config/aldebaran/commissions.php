@@ -31,6 +31,9 @@ return [
         'Finished',
     ],
 
+    'currency' => 'USD',
+    'symbol'   => '$',
+
     /*
     |--------------------------------------------------------------------------
     | Payment Processors
@@ -76,6 +79,14 @@ return [
                 'base'         => .30,
                 'percent'      => 2.9,
                 'percent_intl' => 2.9 + 1.5,
+            ],
+            'integration' => [
+                // Whether or not Stripe integration features should be enabled
+                // Requires you to have your secret key set in the site's .env file!
+                'enabled'    => 0,
+                // !! Do not change this !!
+                // Edit the corresponding value in the .env file instead.
+                'secret_key' => env('STRIPE_SECRET_KEY'),
             ],
         ],
 

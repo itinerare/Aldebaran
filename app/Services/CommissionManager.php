@@ -260,9 +260,17 @@ class CommissionManager extends Service {
                 $commission->payments()->delete();
             }
 
+            if (isset($data['product_name']) && !isset($data['product_tax_code'])) {
+                // The tax category code is not automatically inherited,
+                // which could be counter-intuitive if creating products different
+                // from the Stripe account's default settings
+                $data['product_tax_code'] = $commission->parentInvoiceData['product_tax_code'] ?? null;
+            }
+            $data = (new CommissionService)->processInvoiceData($data);
+
             // Update the commission
             $commission->update(Arr::only($data, [
-                'progress', 'status', 'description', 'data', 'comments',
+                'progress', 'status', 'description', 'data', 'comments', 'invoice_data',
             ]));
 
             return $this->commitReturn($commission);

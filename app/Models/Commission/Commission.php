@@ -16,6 +16,7 @@ class Commission extends Model {
     protected $fillable = [
         'commission_key', 'commissioner_id', 'commission_type', 'progress',
         'status', 'description', 'data', 'comments', 'payment_processor',
+        'invoice_data',
     ];
 
     /**
@@ -31,9 +32,10 @@ class Commission extends Model {
      * @var array
      */
     protected $casts = [
-        'data'        => 'array',
-        'cost_data'   => 'array',
-        'description' => 'array',
+        'data'         => 'array',
+        'cost_data'    => 'array',
+        'description'  => 'array',
+        'invoice_data' => 'array',
     ];
 
     /**
@@ -263,6 +265,21 @@ class Commission extends Model {
 
         // Return key plus one, since array keys start at 0
         return $commissions->first() + 1;
+    }
+
+    /**
+     * Return the next most relevant invoice data.
+     *
+     * @return array|null
+     */
+    public function getParentInvoiceDataAttribute() {
+        if (isset($this->type->invoice_data)) {
+            return $this->type->invoice_data;
+        } elseif ($this->type->parentInvoiceData) {
+            return $this->type->parentInvoiceData;
+        }
+
+        return null;
     }
 
     /**********************************************************************************************
