@@ -80,7 +80,8 @@
                         <h5>Payment Status</h5>
                     </div>
                     <div class="col-md">{!! $commission->isPaid !!}
-                        ({{ isset($commission->cost) ? '$' . $commission->cost : '-' }}{{ $commission->tip ? ' + $' . $commission->tip . ' Tip' : '' }}/${{ $commission->totalWithFees }}) ・ via
+                        ({{ isset($commission->cost) ? '$' . $commission->cost : '-' }}{{ $commission->tip ? ' + ' . config('aldebaran.commissions.currency_symbol') . $commission->tip . ' Tip' : '' }}/{{ config('aldebaran.commissions.currency_symbol') }}{{ $commission->totalWithFees }})
+                        ・ via
                         {{ config('aldebaran.commissions.payment_processors.' . $commission->payment_processor . '.label') }}
                     </div>
                 </div>
@@ -213,7 +214,7 @@
                         @foreach ($commission->payments as $payment)
                             <div class="input-group mb-2">
                                 <div class="input-group-prepend">
-                                    <span class="input-group-text">Cost & Tip (USD)</span>
+                                    <span class="input-group-text">Cost & Tip ({{ config('aldebaran.commissions.currency') }})</span>
                                 </div>
                                 {!! Form::number('cost[' . $payment->id . ']', $payment->cost, [
                                     'class' => 'form-control',
@@ -243,7 +244,7 @@
                                         <span class="ml-1">Intl.</span>
                                     </div>
                                     <span class="input-group-text">After Fees:
-                                        ${{ $payment->totalWithFees }}</span>
+                                        {{ config('aldebaran.commissions.currency_symbol') }}{{ $payment->totalWithFees }}</span>
                                     <button class="remove-payment btn btn-outline-danger" type="button" id="button-addon2">X</button>
                                 </div>
                             </div>
@@ -258,7 +259,8 @@
             @if (config('aldebaran.commissions.payment_processors.stripe.integration.enabled') && $commission->payment_processor == 'stripe')
                 <h3>Invoice Information</h3>
                 <p>
-                    This will be used to populate product information when creating invoices for this commission. If not set, this uses the next most specific information (this commission's type if set, the type's category's if not, and so on); that is, if those values are still
+                    This will be used to populate product information when creating invoices for this commission. If not set, this uses the next most specific information (this commission's type if set, the type's category's if not, and so on); that is,
+                    if those values are still
                     applicable to this commission, you do not need to set them here. For convenience, the currently relevant values are displayed as placeholder information in the fields below if they are unset.
                 </p>
                 @include('admin.commissions._invoice_fields', ['object' => $commission, 'parent' => true])
@@ -297,7 +299,7 @@
         <div class="payment-row hide mb-2">
             <div class="input-group mb-2">
                 <div class="input-group-prepend">
-                    <span class="input-group-text">Cost & Tip (USD)</span>
+                    <span class="input-group-text">Cost & Tip ({{ config('aldebaran.commissions.currency') }})</span>
                 </div>
                 {!! Form::number('cost[]', null, ['class' => 'form-control', 'aria-label' => 'Cost', 'placeholder' => 'Cost']) !!}
                 {!! Form::number('tip[]', null, ['class' => 'form-control', 'aria-label' => 'Tip', 'placeholder' => 'Tip']) !!}

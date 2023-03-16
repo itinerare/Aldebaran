@@ -166,7 +166,7 @@ class CommissionController extends Controller {
         return view('admin.queues.commission', [
             'commission' => $commission,
         ] + ($commission->status == 'Pending' || $commission->status == 'Accepted' ? [
-            'pieces' => Piece::sort()->pluck('name', 'id')->toArray(),
+            'pieces'  => Piece::sort()->pluck('name', 'id')->toArray(),
             'taxCode' => $taxCode ?? null,
         ] : []));
     }
