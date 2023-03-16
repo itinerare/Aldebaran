@@ -336,7 +336,7 @@
                 </div>
                 {!! Form::number('cost[]', null, ['class' => 'form-control', 'aria-label' => 'Cost', 'placeholder' => 'Cost']) !!}
                 @if ($commission->payment_processor == 'stripe')
-                    {!! Form::hidden('tip[]', 0.00) !!}
+                    {!! Form::hidden('tip[]', 0.0) !!}
                 @else
                     {!! Form::number('tip[]', null, [
                         'class' => 'form-control',
