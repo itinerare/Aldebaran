@@ -88,7 +88,11 @@ return [
             'integration' => [
                 // Whether or not Stripe integration features should be enabled
                 // Requires you to have your secret key set in the site's .env file!
-                'enabled'    => 0,
+                'enabled'      => 0,
+                // How many days after sending before invoices are considered due
+                // This is 30 by default per Stripe
+                'invoices_due' => 30,
+
                 // !! Do not change this !!
                 // Edit the corresponding values in the .env file instead.
                 'secret_key'     => env('STRIPE_SECRET_KEY'),

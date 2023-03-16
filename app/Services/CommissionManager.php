@@ -368,7 +368,7 @@ class CommissionManager extends Service {
                     $invoice = $stripe->invoices->create([
                         'customer'          => $customer['id'],
                         'collection_method' => 'send_invoice',
-                        'days_until_due'    => 30,
+                        'days_until_due'    => config('aldebaran.commissions.payment_processors.stripe.integration.invoices_due'),
                         'auto_advance'      => false,
                     ]);
 
