@@ -31,6 +31,14 @@ return [
         'Finished',
     ],
 
+    // What currency and symbol the site uses.
+    // Unless using a payment processor integration, this is only used for display
+    // However, if so, you should ensure that the currency is set to a valid ISO code
+    // (see https://www.iso.org/iso-4217-currency-codes.html)
+    // See also https://stripe.com/docs/currencies for supported currencies for Stripe
+    'currency'        => 'USD',
+    'currency_symbol' => '$',
+
     /*
     |--------------------------------------------------------------------------
     | Payment Processors
@@ -76,6 +84,20 @@ return [
                 'base'         => .30,
                 'percent'      => 2.9,
                 'percent_intl' => 2.9 + 1.5,
+            ],
+            'integration' => [
+                // See https://github.com/itinerare/Aldebaran/wiki/Stripe-Setup
+                // Whether or not Stripe integration features should be enabled
+                // Requires you to have your secret key set in the site's .env file!
+                'enabled'      => 0,
+                // How many days after sending before invoices are considered due
+                // This is 30 by default per Stripe
+                'invoices_due' => 30,
+
+                // !! Do not change this !!
+                // Edit the corresponding values in the .env file instead.
+                'secret_key'     => env('STRIPE_SECRET_KEY'),
+                'webhook_secret' => env('STRIPE_WEBHOOK_SECRET'),
             ],
         ],
 

@@ -45,8 +45,10 @@ class CommissionService extends Service {
             $data['name'] = strip_tags($data['name']);
             $data['slug'] = strtolower(str_replace(' ', '_', $data['name']));
 
+            $data = $this->processInvoiceData($data);
+
             $class = CommissionClass::create(Arr::only($data, [
-                'name', 'slug', 'is_active',
+                'name', 'slug', 'is_active', 'invoice_data',
             ]));
 
             $this->processClassSettings($class, $data);
@@ -100,8 +102,10 @@ class CommissionService extends Service {
             }
             $data = $this->processClassSettings($class, $data);
 
+            $data = $this->processInvoiceData($data);
+
             $class->update(Arr::only($data, [
-                'name', 'slug', 'is_active', 'data',
+                'name', 'slug', 'is_active', 'data', 'invoice_data',
             ]));
 
             return $this->commitReturn($class);
@@ -210,8 +214,16 @@ class CommissionService extends Service {
                 $data['is_active'] = 0;
             }
 
+            if (isset($data['product_name']) && !isset($data['product_tax_code'])) {
+                // The tax category code is not automatically inherited,
+                // which could be counter-intuitive if creating products different
+                // from the Stripe account's default settings
+                $data['product_tax_code'] = $class->invoice_data['product_tax_code'] ?? null;
+            }
+            $data = $this->processInvoiceData($data);
+
             $category = CommissionCategory::create(Arr::only($data, [
-                'name', 'class_id', 'is_active', 'data',
+                'name', 'class_id', 'is_active', 'data', 'invoice_data',
             ]));
 
             return $this->commitReturn($category);
@@ -258,8 +270,16 @@ class CommissionService extends Service {
                 $data['data']['include']['class'] = $data['include_class'];
             }
 
+            if (isset($data['product_name']) && !isset($data['product_tax_code'])) {
+                // The tax category code is not automatically inherited,
+                // which could be counter-intuitive if creating products different
+                // from the Stripe account's default settings
+                $data['product_tax_code'] = $class->invoice_data['product_tax_code'] ?? null;
+            }
+            $data = $this->processInvoiceData($data);
+
             $category->update(Arr::only($data, [
-                'name', 'class_id', 'is_active', 'data',
+                'name', 'class_id', 'is_active', 'data', 'invoice_data',
             ]));
 
             return $this->commitReturn($category);
@@ -338,14 +358,25 @@ class CommissionService extends Service {
         DB::beginTransaction();
 
         try {
-            if (!CommissionCategory::where('id', $data['category_id'])->exists()) {
+            $category = CommissionCategory::where('id', $data['category_id'])->first();
+
+            if (!$category) {
                 throw new \Exception('The selected commission category is invalid.');
             }
 
             $data = $this->populateData($data);
+
+            if (isset($data['product_name']) && !isset($data['product_tax_code'])) {
+                // The tax category code is not automatically inherited,
+                // which could be counter-intuitive if creating products different
+                // from the Stripe account's default settings
+                $data['product_tax_code'] = $category->invoice_data['product_tax_code'] ?? ($category->parentInvoiceData['product_tax_code'] ?? null);
+            }
+            $data = $this->processInvoiceData($data);
+
             $type = CommissionType::create(Arr::only($data, [
                 'category_id', 'name', 'availability', 'description', 'data', 'key',
-                'is_active', 'is_visible', 'show_examples',
+                'is_active', 'is_visible', 'show_examples', 'invoice_data',
             ]));
 
             return $this->commitReturn($type);
@@ -381,9 +412,17 @@ class CommissionService extends Service {
             }
             $data = $this->populateData($data, $type);
 
+            if (isset($data['product_name']) && !isset($data['product_tax_code'])) {
+                // The tax category code is not automatically inherited,
+                // which could be counter-intuitive if creating products different
+                // from the Stripe account's default settings
+                $data['product_tax_code'] = $type->parentInvoiceData['product_tax_code'] ?? null;
+            }
+            $data = $this->processInvoiceData($data);
+
             $type->update(Arr::only($data, [
                 'category_id', 'name', 'availability', 'description', 'data', 'key',
-                'is_active', 'is_visible', 'show_examples',
+                'is_active', 'is_visible', 'show_examples', 'invoice_data',
             ]));
 
             return $this->commitReturn($type);
@@ -444,6 +483,27 @@ class CommissionService extends Service {
         }
 
         return $this->rollbackReturn(false);
+    }
+
+    /**
+     * Processes invoice information.
+     *
+     * @param array $data
+     *
+     * @return array
+     */
+    public function processInvoiceData($data) {
+        if (isset($data['unset_product_info']) && $data['unset_product_info']) {
+            $data['invoice_data'] = null;
+        } elseif (isset($data['product_name'])) {
+            $data['invoice_data'] = [
+                'product_name'        => $data['product_name'] ?? null,
+                'product_description' => $data['product_description'] ?? null,
+                'product_tax_code'    => $data['product_tax_code'] ?? null,
+            ];
+        }
+
+        return $data;
     }
 
     /**

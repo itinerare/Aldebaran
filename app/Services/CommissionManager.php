@@ -15,7 +15,11 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Stripe\PaymentIntent;
+use Stripe\Stripe;
+use Stripe\StripeClient;
 
 class CommissionManager extends Service {
     /*
@@ -253,6 +257,7 @@ class CommissionManager extends Service {
                         'is_intl'         => $data['is_intl'][$key] ?? 0,
                         'paid_at'         => isset($data['is_paid'][$key]) && $data['is_paid'][$key] ? ($data['paid_at'][$key] ?? Carbon::now()) : null,
                         'total_with_fees' => isset($data['is_paid'][$key]) && $data['is_paid'][$key] ? ($data['total_with_fees'][$key] ?? CommissionPayment::calculateAdjustedTotal($cost, $data['tip'][$key], $data['is_intl'][$key] ?? 0, $commission->payment_processor)) : null,
+                        'invoice_id'      => $data['invoice_id'][$key] ?? null,
                     ]);
                 }
             } elseif ($commission->payments->count()) {
@@ -260,12 +265,195 @@ class CommissionManager extends Service {
                 $commission->payments()->delete();
             }
 
+            if (isset($data['product_name']) && !isset($data['product_tax_code'])) {
+                // The tax category code is not automatically inherited,
+                // which could be counter-intuitive if creating products different
+                // from the Stripe account's default settings
+                $data['product_tax_code'] = $commission->parentInvoiceData['product_tax_code'] ?? null;
+            }
+            $data = (new CommissionService)->processInvoiceData($data);
+
             // Update the commission
             $commission->update(Arr::only($data, [
-                'progress', 'status', 'description', 'data', 'comments',
+                'progress', 'status', 'description', 'data', 'comments', 'invoice_data',
             ]));
 
             return $this->commitReturn($commission);
+        } catch (\Exception $e) {
+            $this->setError('error', $e->getMessage());
+        }
+
+        return $this->rollbackReturn(false);
+    }
+
+    /**
+     * Sends an invoice for a payment.
+     *
+     * @param \App\Models\Commission\CommissionPayment $payment
+     * @param \App\Models\User\User                    $user
+     *
+     * @return mixed
+     */
+    public function sendInvoice($payment, $user) {
+        DB::beginTransaction();
+
+        try {
+            // Check that there is a user
+            if (!$user) {
+                throw new \Exception('Invalid user.');
+            }
+
+            // Check that the payment exists and is valid
+            if (!$payment) {
+                throw new \Exception('Invalid payment selected.');
+            }
+            if ($payment->is_paid) {
+                throw new \Exception('This payment has already been paid.');
+            }
+            if (isset($payment->invoice_id)) {
+                throw new \Exception('An invoice has already been sent for this payment.');
+            }
+
+            // Depending on payment processor, perform further checks
+            // and if possible, send an invoice and update the payment appropriately
+            switch ($payment->commission->payment_processor) {
+                case 'stripe':
+                    if (!config('aldebaran.commissions.payment_processors.stripe.integration.enabled')) {
+                        throw new \Exception('Stripe integration features are not enabled for this site.');
+                    }
+
+                    // Determine the relevant product information
+                    $product = [];
+                    $product['name'] = $payment->commission->invoice_data['product_name'] ?? ($payment->commission->parentInvoiceData['product_name'] ?? null);
+                    $product['tax_code'] = $payment->commission->invoice_data['product_tax_code'] ?? ($payment->commission->parentInvoiceData['product_tax_code'] ?? null);
+
+                    // Check that the product name is retrieved,
+                    // as this is the only part which the site requires
+                    if (!isset($product['name'])) {
+                        throw new \Exception('Failed to locate product information.');
+                    }
+
+                    // Initialize a connection to the Stripe API
+                    $stripe = new StripeClient(config('aldebaran.commissions.payment_processors.stripe.integration.secret_key'));
+
+                    // Locate or create and store a new customer
+                    if (isset($payment->commission->commissioner->customer_id)) {
+                        $customer = $stripe->customers->retrieve($payment->commission->commissioner->customer_id);
+                    } else {
+                        $customer = $stripe->customers->create([
+                            'email' => $payment->commission->commissioner->payment_email,
+                        ]);
+
+                        $payment->commission->commissioner->update([
+                            'customer_id' => $customer['id'],
+                        ]);
+                    }
+
+                    if (!isset($customer) || !$customer) {
+                        throw new \Exception('Failed to create or retrieve customer information');
+                    }
+
+                    // Create an invoice item
+                    $invoiceItem = $stripe->invoiceItems->create([
+                        'customer'     => $customer['id'],
+                        'description'  => $product['name'],
+                        'currency'     => strtolower(config('aldebaran.commissions.currency')),
+                        'amount'       => (int) $payment->cost * 100,
+                        // Amount must be an int expressed in cents
+                    ] + (isset($product['tax_code']) ? [
+                        'tax_code' => $product['tax_code'],
+                    ] : []));
+
+                    // And an invoice
+                    $invoice = $stripe->invoices->create([
+                        'customer'          => $customer['id'],
+                        'collection_method' => 'send_invoice',
+                        'days_until_due'    => config('aldebaran.commissions.payment_processors.stripe.integration.invoices_due'),
+                        'auto_advance'      => false,
+                    ]);
+
+                    // Send the invoice
+                    $stripe->invoices->sendInvoice($invoice['id']);
+
+                    // Update the payment with the invoice ID
+                    $payment->update([
+                        'invoice_id' => $invoice['id'],
+                    ]);
+                    break;
+                case 'paypal':
+                    throw new \Exception('There is not currently support for automated invoicing via PayPal.');
+                    break;
+            }
+
+            return $this->commitReturn($payment);
+        } catch (\Exception $e) {
+            $this->setError('error', $e->getMessage());
+        }
+
+        return $this->rollbackReturn(false);
+    }
+
+    /**
+     * Processes notification of a paid invoice from a payment processor.
+     *
+     * @param mixed $invoice
+     *
+     * @return bool
+     */
+    public function processPaidInvoice($invoice) {
+        DB::beginTransaction();
+
+        try {
+            // Identify the relevant payment
+            $payment = CommissionPayment::where('invoice_id', $invoice['id'])->first();
+
+            if (!$payment) {
+                Log::notice('No payment found for webhook invoice.', [
+                    'invoice' => $invoice['id'],
+                ]);
+            }
+
+            // It's possible that this catches irrelevant events,
+            // so rather than throwing an error on failing to identify a payment,
+            // only proceed if a payment is found
+            if ($payment) {
+                // Otherwise, check that the payment is unpaid
+                if ($payment->is_paid) {
+                    Log::error('Payment matches incoming invoice, but is already marked paid.', [
+                        'payment' => $payment->id,
+                        'invoice' => $invoice['id'],
+                    ]);
+
+                    return false;
+                }
+
+                switch ($payment->commission->payment_processor) {
+                    case 'stripe':
+                        Stripe::setApiKey(config('aldebaran.commissions.payment_processors.stripe.integration.secret_key'));
+
+                        // Retrieve the processing fee via payment intent
+                        $fee = PaymentIntent::retrieve([
+                            'id'     => $invoice['payment_intent'],
+                            'expand' => ['latest_charge.balance_transaction'],
+                        ])->latest_charge->balance_transaction->fee_details[0]->amount;
+
+                        $payment->update([
+                            'is_paid'         => 1,
+                            'paid_at'         => Carbon::now(),
+                            'total_with_fees' => ($invoice['total'] - $fee) / 100,
+                        ]);
+                        break;
+                    default:
+                        Log::error('Attempted to process a paid invoice for a commission using a non-supported payment processor.', [
+                            'payment' => $payment->id,
+                            'invoice' => $invoice['id'],
+                        ]);
+                }
+
+                return $this->commitReturn($payment);
+            }
+
+            return true;
         } catch (\Exception $e) {
             $this->setError('error', $e->getMessage());
         }

@@ -14,7 +14,7 @@ class CommissionCategory extends Model {
      * @var array
      */
     protected $fillable = [
-        'name', 'is_active', 'sort', 'class_id', 'data',
+        'name', 'is_active', 'sort', 'class_id', 'data', 'invoice_data',
     ];
 
     /**
@@ -30,7 +30,8 @@ class CommissionCategory extends Model {
      * @var array
      */
     protected $casts = [
-        'data' => 'array',
+        'data'         => 'array',
+        'invoice_data' => 'array',
     ];
 
     /**
@@ -54,8 +55,9 @@ class CommissionCategory extends Model {
      */
     public static $createRules = [
         //
-        'name'     => 'required|unique:commission_categories',
-        'class_id' => 'required',
+        'name'         => 'required|unique:commission_categories',
+        'class_id'     => 'required',
+        'product_name' => 'filled',
     ];
 
     /**
@@ -147,5 +149,18 @@ class CommissionCategory extends Model {
      */
     public function getFullNameAttribute() {
         return ucfirst($this->class->name).' ・ '.$this->name;
+    }
+
+    /**
+     * Return the next most relevant invoice data.
+     *
+     * @return array|null
+     */
+    public function getParentInvoiceDataAttribute() {
+        if (isset($this->class->invoice_data)) {
+            return $this->class->invoice_data;
+        }
+
+        return null;
     }
 }
