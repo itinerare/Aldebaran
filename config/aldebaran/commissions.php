@@ -31,6 +31,11 @@ return [
         'Finished',
     ],
 
+    // What currency and symbol the site uses.
+    // Unless using a payment processor integration, this is only used for display
+    // However, if so, you should ensure that the currency is set to a valid ISO code
+    // (see https://www.iso.org/iso-4217-currency-codes.html)
+    // See also https://stripe.com/docs/currencies for supported currencies for Stripe
     'currency'        => 'USD',
     'currency_symbol' => '$',
 
