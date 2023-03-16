@@ -1,4 +1,3 @@
-{!! Form::hidden('product_id', $object->invoice_data ? $object->invoice_data['product_id'] : null) !!}
 <div class="form-group">
     {!! Form::label('product_name', 'Product Name' . (!isset($requireName) || !$requireName ? ' (Optional)' : '')) !!} {!! add_help('A succinct name for the good and/or service you are providing, e.g. \'Commissioned Art\'.') !!}
     {!! Form::text('product_name', $object->invoice_data ? $object->invoice_data['product_name'] : null, ['class' => 'form-control', 'placeholder' => isset($parent) && $parent ? $object->parentInvoiceData['product_name'] ?? null : '']) !!}

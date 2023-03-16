@@ -293,7 +293,7 @@ class CommissionController extends Controller {
         $request->validate(Commission::$updateRules);
         $data = $request->only([
             'pieces', 'paid_status', 'progress', 'comments', 'cost', 'tip', 'is_paid', 'is_intl', 'paid_at', 'total_with_fees',
-            'product_id', 'product_name', 'product_description', 'product_tax_code', 'unset_product_info',
+            'product_name', 'product_description', 'product_tax_code', 'unset_product_info',
         ]);
         if ($service->updateCommission($id, $data, $request->user())) {
             flash('Commission updated successfully.')->success();

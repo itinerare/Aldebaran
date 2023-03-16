@@ -10,7 +10,6 @@ use App\Models\TextPage;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
-use Stripe\StripeClient;
 
 class CommissionService extends Service {
     /*
@@ -151,24 +150,6 @@ class CommissionService extends Service {
             foreach (['comms_open', 'overall_slots', 'full', 'status'] as $setting) {
                 if (DB::table('site_settings')->where('key', $class->slug.'_'.$setting)->exists()) {
                     DB::table('site_settings')->where('key', $class->slug.'_'.$setting)->delete();
-                }
-            }
-
-            // Delete product information on Stripe's end if relevant
-            if (config('aldebaran.commissions.payment_processors.stripe.integration.enabled') && isset($class->invoice_data['product_id'])) {
-                // Initialize a connection to the Stripe API
-                $stripe = new StripeClient(config('aldebaran.commissions.payment_processors.stripe.integration.secret_key'));
-
-                // Retrieve the product to ensure that it exists
-                $product = $stripe->products->retrieve($class->invoice_data['product_id']);
-
-                if (!$product) {
-                    throw new \Exception('An error occurred retrieving product information.');
-                }
-
-                // Delete the product on Stripe's end if there are no associated prices
-                if (!$stripe->prices->all(['product' => $product['id']])->count()) {
-                    $stripe->products->delete($product['id']);
                 }
             }
 
@@ -325,24 +306,6 @@ class CommissionService extends Service {
                 throw new \Exception('A commission type with this category exists. Please change its category first.');
             }
 
-            // Delete product information on Stripe's end if relevant
-            if (config('aldebaran.commissions.payment_processors.stripe.integration.enabled') && isset($category->invoice_data['product_id'])) {
-                // Initialize a connection to the Stripe API
-                $stripe = new StripeClient(config('aldebaran.commissions.payment_processors.stripe.integration.secret_key'));
-
-                // Retrieve the product to ensure that it exists
-                $product = $stripe->products->retrieve($category->invoice_data['product_id']);
-
-                if (!$product) {
-                    throw new \Exception('An error occurred retrieving product information.');
-                }
-
-                // Delete the product on Stripe's end if there are no associated prices
-                if (!$stripe->prices->all(['product' => $product['id']])->count()) {
-                    $stripe->products->delete($product['id']);
-                }
-            }
-
             $category->delete();
 
             return $this->commitReturn(true);
@@ -486,24 +449,6 @@ class CommissionService extends Service {
                 throw new \Exception('A commission of this type exists. Consider making the type unavailable instead.');
             }
 
-            // Delete product information on Stripe's end if relevant
-            if (config('aldebaran.commissions.payment_processors.stripe.integration.enabled') && isset($type->invoice_data['product_id'])) {
-                // Initialize a connection to the Stripe API
-                $stripe = new StripeClient(config('aldebaran.commissions.payment_processors.stripe.integration.secret_key'));
-
-                // Retrieve the product to ensure that it exists
-                $product = $stripe->products->retrieve($type->invoice_data['product_id']);
-
-                if (!$product) {
-                    throw new \Exception('An error occurred retrieving product information.');
-                }
-
-                // Delete the product on Stripe's end if there are no associated prices
-                if (!$stripe->prices->all(['product' => $product['id']])->count()) {
-                    $stripe->products->delete($product['id']);
-                }
-            }
-
             $type->delete();
 
             return $this->commitReturn(true);
@@ -541,7 +486,7 @@ class CommissionService extends Service {
     }
 
     /**
-     * Processes invoice information, including interacting with APIs as appropriate.
+     * Processes invoice information.
      *
      * @param array $data
      *
@@ -549,64 +494,9 @@ class CommissionService extends Service {
      */
     public function processInvoiceData($data) {
         if (isset($data['unset_product_info']) && $data['unset_product_info']) {
-            if (config('aldebaran.commissions.payment_processors.stripe.integration.enabled')) {
-                // Initialize a connection to the Stripe API
-                $stripe = new StripeClient(config('aldebaran.commissions.payment_processors.stripe.integration.secret_key'));
-
-                // Retrieve the product to ensure that it exists
-                $product = $stripe->products->retrieve($data['product_id']);
-
-                if (!$product) {
-                    throw new \Exception('An error occurred retrieving product information.');
-                }
-
-                // Delete the product on Stripe's end if there are no associated prices
-                if (!$stripe->prices->all(['product' => $product['id']])->count()) {
-                    $stripe->products->delete($product['id']);
-                }
-
-                // Regardless, clear the product information on the site's end
-                $data['invoice_data'] = null;
-            }
+            $data['invoice_data'] = null;
         } elseif (isset($data['product_name'])) {
-            if (config('aldebaran.commissions.payment_processors.stripe.integration.enabled')) {
-                // Initialize a connection to the Stripe API
-                $stripe = new StripeClient(config('aldebaran.commissions.payment_processors.stripe.integration.secret_key'));
-
-                // Pre-assemble the array used to create/update a product for convenience
-                $productInformation = [
-                    'name' => $data['product_name'],
-                ] + (isset($data['product_description']) ? [
-                    'description' => $data['product_description'],
-                ] : []) + (isset($data['product_tax_code']) ? [
-                    'tax_code' => $data['product_tax_code'],
-                ] : []);
-
-                if (isset($data['product_id'])) {
-                    // If there is already an extant product ID, attempt to locate it
-                    $product = $stripe->products->retrieve($data['product_id']);
-
-                    if (!$product) {
-                        throw new \Exception('An error occurred retrieving product information.');
-                    }
-
-                    // Update the retrieved product
-                    $stripe->products->update($data['product_id'], $productInformation);
-                } else {
-                    // If a corresponding product does not already exist, create it
-                    $product = $stripe->products->create($productInformation);
-
-                    if (!$product) {
-                        throw new \Exception('An error occurred creating a product.');
-                    }
-                }
-
-                $data['product_id'] = $product['id'];
-                $data['product_tax_code'] ?? $data['product_tax_code'] = $product['tax_code'];
-            }
-
             $data['invoice_data'] = [
-                'product_id'          => $data['product_id'] ?? null,
                 'product_name'        => $data['product_name'] ?? null,
                 'product_description' => $data['product_description'] ?? null,
                 'product_tax_code'    => $data['product_tax_code'] ?? null,
