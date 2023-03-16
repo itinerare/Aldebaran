@@ -33,6 +33,7 @@ Note that use of commission components in a use that generates or contributes to
 - Commissioner-only view per commission (accessible via a URL with a randomly generated key) that lists form responses, any pieces attached to the commission, and any comments from the artist/site operator
 - Admin-only ledger view which lists payments recorded per year, for the year in which they were paid, with link to the relevant commission
 - Support for multiple/configurable payment processors, with fee information adjustable per processor. If multiple payment processors are enabled, visitors may select from the available options when creating a new commission request; fees will then be calculated accordingly, and different commissions may use different payment processors
+    - Optional Stripe integration, allowing for semi-automated invoice handling; can send an invoice for a relevant payment (associated with a commission with Stripe set as its payment processor) via a button, and when paid, it is automatically marked as such within the site and the final total-minus-fees retrieved directly from Stripe for maximum accuracy
 
 ### Other functions
 - Two-factor authentication for the sole/admin account
