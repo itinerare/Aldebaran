@@ -434,8 +434,8 @@ class CommissionManager extends Service {
                         // Retrieve the processing fee via payment intent
                         $fee = PaymentIntent::retrieve([
                             'id'     => $invoice['payment_intent'],
-                            'expand' => ['charges.data.balance_transaction'],
-                        ])->charges->data[0]->balance_transaction->fee_details[0]->amount;
+                            'expand' => ['latest_charge.balance_transaction'],
+                        ])->latest_charge->balance_transaction->fee_details[0]->amount;
 
                         $payment->update([
                             'is_paid'         => 1,
