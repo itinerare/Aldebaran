@@ -327,7 +327,12 @@
         <div class="payment-row hide mb-2">
             <div class="input-group mb-2">
                 <div class="input-group-prepend">
-                    <span class="input-group-text">Cost & Tip ({{ config('aldebaran.commissions.currency') }})</span>
+                    <span class="input-group-text">
+                        @if ($commission->payment_processor != 'stripe')
+                            & Tip
+                        @endif
+                        ({{ config('aldebaran.commissions.currency') }})
+                    </span>
                 </div>
                 {!! Form::number('cost[]', null, ['class' => 'form-control', 'aria-label' => 'Cost', 'placeholder' => 'Cost']) !!}
                 @if ($commission->payment_processor == 'stripe')
