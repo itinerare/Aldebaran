@@ -334,7 +334,10 @@ class CommissionManager extends Service {
                     }
 
                     // Initialize a connection to the Stripe API
-                    $stripe = new StripeClient(config('aldebaran.commissions.payment_processors.stripe.integration.secret_key'));
+                    $stripe = new StripeClient([
+                        'api_key'        => config('aldebaran.commissions.payment_processors.stripe.integration.secret_key'),
+                        'stripe_version' => '2022-11-15',
+                    ]);
 
                     // Locate or create and store a new customer
                     if (isset($payment->commission->commissioner->customer_id)) {
@@ -432,6 +435,7 @@ class CommissionManager extends Service {
                 switch ($payment->commission->payment_processor) {
                     case 'stripe':
                         Stripe::setApiKey(config('aldebaran.commissions.payment_processors.stripe.integration.secret_key'));
+                        Stripe::setApiVersion('2022-11-15');
 
                         // Retrieve the processing fee via payment intent
                         $fee = PaymentIntent::retrieve([

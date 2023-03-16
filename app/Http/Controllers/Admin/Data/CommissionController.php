@@ -77,7 +77,10 @@ class CommissionController extends Controller {
 
         if (config('aldebaran.commissions.payment_processors.stripe.integration.enabled') && isset($class->invoice_data['product_tax_code'])) {
             // Retrieve information for the current tax code, for convenience
-            $taxCode = (new StripeClient(config('aldebaran.commissions.payment_processors.stripe.integration.secret_key')))->taxCodes->retrieve($class->invoice_data['product_tax_code']);
+            $taxCode = (new StripeClient([
+                'api_key'        => config('aldebaran.commissions.payment_processors.stripe.integration.secret_key'),
+                'stripe_version' => '2022-11-15',
+            ]))->taxCodes->retrieve($class->invoice_data['product_tax_code']);
         }
 
         return view('admin.commissions.create_edit_commission_class', [
@@ -253,7 +256,10 @@ class CommissionController extends Controller {
 
         if (config('aldebaran.commissions.payment_processors.stripe.integration.enabled') && (isset($category->invoice_data['product_tax_code']) || isset($category->parentInvoiceData['product_tax_code']))) {
             // Retrieve information for the current tax code, for convenience
-            $taxCode = (new StripeClient(config('aldebaran.commissions.payment_processors.stripe.integration.secret_key')))->taxCodes->retrieve(
+            $taxCode = (new StripeClient([
+                'api_key'        => config('aldebaran.commissions.payment_processors.stripe.integration.secret_key'),
+                'stripe_version' => '2022-11-15',
+            ]))->taxCodes->retrieve(
                 $category->invoice_data['product_tax_code'] ?? $category->parentInvoiceData['product_tax_code']
             );
         }
@@ -442,7 +448,10 @@ class CommissionController extends Controller {
 
         if (config('aldebaran.commissions.payment_processors.stripe.integration.enabled') && (isset($commissionType->invoice_data['product_tax_code']) || isset($commissionType->parentInvoiceData['product_tax_code']))) {
             // Retrieve information for the current tax code, for convenience
-            $taxCode = (new StripeClient(config('aldebaran.commissions.payment_processors.stripe.integration.secret_key')))->taxCodes->retrieve(
+            $taxCode = (new StripeClient([
+                'api_key'        => config('aldebaran.commissions.payment_processors.stripe.integration.secret_key'),
+                'stripe_version' => '2022-11-15',
+            ]))->taxCodes->retrieve(
                 $commissionType->invoice_data['product_tax_code'] ?? $commissionType->parentInvoiceData['product_tax_code']
             );
         }

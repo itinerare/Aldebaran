@@ -164,7 +164,10 @@ class CommissionController extends Controller {
 
         if (config('aldebaran.commissions.payment_processors.stripe.integration.enabled') && (isset($commission->invoice_data['product_tax_code']) || isset($commission->parentInvoiceData['product_tax_code']))) {
             // Retrieve information for the current tax code, for convenience
-            $taxCode = (new StripeClient(config('aldebaran.commissions.payment_processors.stripe.integration.secret_key')))->taxCodes->retrieve(
+            $taxCode = (new StripeClient([
+                'api_key'        => config('aldebaran.commissions.payment_processors.stripe.integration.secret_key'),
+                'stripe_version' => '2022-11-15',
+            ]))->taxCodes->retrieve(
                 $commission->invoice_data['product_tax_code'] ?? $commission->parentInvoiceData['product_tax_code']
             );
         }
@@ -250,6 +253,7 @@ class CommissionController extends Controller {
      */
     public function postStripeWebhook(Request $request, CommissionManager $service) {
         Stripe::setApiKey(config('aldebaran.commissions.payment_processors.stripe.integration.secret_key'));
+        Stripe::setApiVersion('2022-11-15');
 
         $payload = @file_get_contents('php://input');
         $event = null;
