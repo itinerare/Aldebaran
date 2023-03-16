@@ -21,6 +21,9 @@ Route::group(['prefix' => 'commissions'], function () {
     Route::post('edit/{id}', 'CommissionController@postCommission');
     Route::post('edit/{id}/{action}', 'CommissionController@postCommission')->where('action', 'accept|update|complete|decline|ban');
 
+    Route::get('invoice/{id}', 'CommissionController@getSendInvoice');
+    Route::post('invoice/{id}', 'CommissionController@postSendInvoice');
+
     Route::get('new/{id}', 'CommissionController@getNewCommission');
     Route::post('new', 'CommissionController@postNewCommission');
 });

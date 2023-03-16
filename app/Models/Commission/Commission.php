@@ -268,6 +268,19 @@ class Commission extends Model {
     }
 
     /**
+     * Checks if a commission should use payment processor integration features.
+     *
+     * @return bool
+     */
+    public function getUseIntegrationsAttribute() {
+        if (config('aldebaran.commissions.payment_processors.stripe.integration.enabled') && $this->payment_processor == 'stripe') {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Return the next most relevant invoice data.
      *
      * @return array|null

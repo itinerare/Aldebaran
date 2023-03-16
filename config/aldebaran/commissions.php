@@ -90,8 +90,9 @@ return [
                 // Requires you to have your secret key set in the site's .env file!
                 'enabled'    => 0,
                 // !! Do not change this !!
-                // Edit the corresponding value in the .env file instead.
-                'secret_key' => env('STRIPE_SECRET_KEY'),
+                // Edit the corresponding values in the .env file instead.
+                'secret_key'     => env('STRIPE_SECRET_KEY'),
+                'webhook_secret' => env('STRIPE_WEBHOOK_SECRET'),
             ],
         ],
 
