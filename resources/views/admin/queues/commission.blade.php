@@ -238,6 +238,7 @@
                                 @endif
                                 {!! Form::hidden('total_with_fees[' . $payment->id . ']', $payment->totalWithFees) !!}
                                 {!! Form::hidden('paid_at[' . $payment->id . ']', $payment->paid_at) !!}
+                                {!! Form::hidden('invoice_id[' . $payment->id . ']', $payment->invoice_id) !!}
                                 <div class="input-group-append">
                                     @if ($commission->useIntegrations)
                                         @if ($payment->is_paid)
@@ -254,7 +255,6 @@
                                         @endif
                                         {!! Form::hidden('is_paid[' . $payment->id . ']', $payment->is_paid) !!}
                                         {!! Form::hidden('is_intl[' . $payment->id . ']', $payment->is_intl) !!}
-                                        {!! Form::hidden('invoice_id[' . $payment->id . ']', $payment->invoice_id) !!}
                                     @else
                                         <div class="input-group-text">
                                             {!! Form::checkbox('is_paid[' . $payment->id . ']', 1, $payment->is_paid, [
