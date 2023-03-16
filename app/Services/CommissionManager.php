@@ -353,24 +353,26 @@ class CommissionManager extends Service {
                         throw new \Exception('Failed to create or retrieve customer information');
                     }
 
-                    // Create an invoice item
-                    $invoiceItem = $stripe->invoiceItems->create([
-                        'customer'     => $customer['id'],
-                        'description'  => $product['name'],
-                        'currency'     => strtolower(config('aldebaran.commissions.currency')),
-                        'amount'       => (int) $payment->cost * 100,
-                        // Amount must be an int expressed in cents
-                    ] + (isset($product['tax_code']) ? [
-                        'tax_code' => $product['tax_code'],
-                    ] : []));
-
                     // And an invoice
                     $invoice = $stripe->invoices->create([
                         'customer'          => $customer['id'],
                         'collection_method' => 'send_invoice',
                         'days_until_due'    => config('aldebaran.commissions.payment_processors.stripe.integration.invoices_due'),
                         'auto_advance'      => false,
+                        'currency'          => strtolower(config('aldebaran.commissions.currency')),
                     ]);
+
+                    // Create an invoice item
+                    $invoiceItem = $stripe->invoiceItems->create([
+                        'invoice'      => $invoice['id'],
+                        'customer'     => $customer['id'],
+                        'description'  => $product['name'],
+                        'quantity'     => 1,
+                        'unit_amount'  => (int) ($payment->cost * 100),
+                        // Amount must be an int expressed in cents
+                    ] + (isset($product['tax_code']) ? [
+                        'tax_code' => $product['tax_code'],
+                    ] : []));
 
                     // Send the invoice
                     $stripe->invoices->sendInvoice($invoice['id']);
