@@ -80,7 +80,7 @@
                         <h5>Payment Status</h5>
                     </div>
                     <div class="col-md">{!! $commission->isPaid !!}
-                        ({{ isset($commission->cost) ? '$' . $commission->cost : '-' }}{{ $commission->tip ? ' + ' . config('aldebaran.commissions.currency_symbol') . $commission->tip . ' Tip' : '' }}/{{ config('aldebaran.commissions.currency_symbol') }}{{ $commission->totalWithFees }})
+                        ({{ isset($commission->cost) ? config('aldebaran.commissions.currency_symbol') . $commission->cost : '-' }}{{ $commission->tip ? ' + ' . config('aldebaran.commissions.currency_symbol') . $commission->tip . ' Tip' : '' }}/{{ config('aldebaran.commissions.currency_symbol') }}{{ $commission->totalWithFees }})
                         ・ via
                         {{ config('aldebaran.commissions.payment_processors.' . $commission->payment_processor . '.label') }}
                     </div>

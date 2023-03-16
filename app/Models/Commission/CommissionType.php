@@ -193,16 +193,16 @@ class CommissionType extends Model {
 
         switch ($pricingData['type']) {
             case 'flat':
-                return '$'.$pricingData['cost'];
+                return config('aldebaran.commissions.currency_symbol').$pricingData['cost'];
                 break;
             case 'range':
-                return '$'.$pricingData['range']['min'].'-'.$pricingData['range']['max'];
+                return config('aldebaran.commissions.currency_symbol').$pricingData['range']['min'].'-'.$pricingData['range']['max'];
                 break;
             case 'min':
-                return '$'.$pricingData['cost'].'+';
+                return config('aldebaran.commissions.currency_symbol').$pricingData['cost'].'+';
                 break;
             case 'rate':
-                return '$'.$pricingData['cost'].'/hour';
+                return config('aldebaran.commissions.currency_symbol').$pricingData['cost'].'/hour';
                 break;
         }
     }
