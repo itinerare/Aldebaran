@@ -86,6 +86,7 @@ return [
                 'percent_intl' => 2.9 + 1.5,
             ],
             'integration' => [
+                // See https://github.com/itinerare/Aldebaran/wiki/Stripe-Setup
                 // Whether or not Stripe integration features should be enabled
                 // Requires you to have your secret key set in the site's .env file!
                 'enabled'      => 0,
