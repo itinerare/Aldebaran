@@ -17,11 +17,11 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Intervention\Image\Facades\Image;
 use Srmklive\PayPal\Services\PayPal as PayPalClient;
 use Stripe\PaymentIntent;
 use Stripe\Stripe;
 use Stripe\StripeClient;
-use Intervention\Image\Facades\Image;
 
 class CommissionManager extends Service {
     /*
