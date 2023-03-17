@@ -338,7 +338,7 @@
                 @if ($commission->payment_processor == 'stripe')
                     {!! Form::hidden('tip[]', 0.0) !!}
                 @else
-                    {!! Form::number('tip[]', null, [
+                    {!! Form::number('tip[]', 0.0, [
                         'class' => 'form-control',
                         'aria-label' => 'Tip',
                         'placeholder' => 'Tip',
