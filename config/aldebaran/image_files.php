@@ -29,4 +29,10 @@ return [
         'description' => 'Background used for the sidebar. Optional.',
         'filename'    => 'sidebar_bg',
     ],
+
+    'logo'      => [
+        'name'        => 'Logo',
+        'description' => 'Logo. Used primarily for PayPal invoicing, if enabled.',
+        'filename'    => 'logo',
+    ],
 ];

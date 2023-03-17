@@ -17,9 +17,11 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Srmklive\PayPal\Services\PayPal as PayPalClient;
 use Stripe\PaymentIntent;
 use Stripe\Stripe;
 use Stripe\StripeClient;
+use Intervention\Image\Facades\Image;
 
 class CommissionManager extends Service {
     /*
@@ -314,23 +316,24 @@ class CommissionManager extends Service {
                 throw new \Exception('An invoice has already been sent for this payment.');
             }
 
+            // Determine the relevant product information
+            $product = [];
+            $product['name'] = $payment->commission->invoice_data['product_name'] ?? ($payment->commission->parentInvoiceData['product_name'] ?? null);
+            $product['description'] = $payment->commission->invoice_data['description'] ?? ($payment->commission->parentInvoiceData['description'] ?? null);
+            $product['tax_code'] = $payment->commission->invoice_data['product_tax_code'] ?? ($payment->commission->parentInvoiceData['product_tax_code'] ?? null);
+
+            // Check that the product name is retrieved,
+            // as this is the only part which the site requires
+            if (!isset($product['name'])) {
+                throw new \Exception('Failed to locate product information.');
+            }
+
             // Depending on payment processor, perform further checks
             // and if possible, send an invoice and update the payment appropriately
             switch ($payment->commission->payment_processor) {
                 case 'stripe':
                     if (!config('aldebaran.commissions.payment_processors.stripe.integration.enabled')) {
                         throw new \Exception('Stripe integration features are not enabled for this site.');
-                    }
-
-                    // Determine the relevant product information
-                    $product = [];
-                    $product['name'] = $payment->commission->invoice_data['product_name'] ?? ($payment->commission->parentInvoiceData['product_name'] ?? null);
-                    $product['tax_code'] = $payment->commission->invoice_data['product_tax_code'] ?? ($payment->commission->parentInvoiceData['product_tax_code'] ?? null);
-
-                    // Check that the product name is retrieved,
-                    // as this is the only part which the site requires
-                    if (!isset($product['name'])) {
-                        throw new \Exception('Failed to locate product information.');
                     }
 
                     // Initialize a connection to the Stripe API
@@ -386,7 +389,74 @@ class CommissionManager extends Service {
                     ]);
                     break;
                 case 'paypal':
-                    throw new \Exception('There is not currently support for automated invoicing via PayPal.');
+                    if (!config('aldebaran.commissions.payment_processors.paypal.integration.enabled')) {
+                        throw new \Exception('PayPal integration features are not enabled for this site.');
+                    }
+
+                    // Initialize a connection to the PayPal API and set some values
+                    $paypal = new PayPalClient;
+                    $paypal->setCurrency(config('aldebaran.commissions.currency'));
+
+                    // This requests PayPal return the full contents of e.g. the created invoice
+                    $paypal->setRequestHeader('Prefer', 'return=representation');
+
+                    // Get an access token; this is required to interact with the API
+                    $paypal->getAccessToken();
+
+                    // If the logo image is stored by default as a WebP,
+                    // and there is not already a PNG copy stored, create one
+                    // as PayPal will not accept WebP images
+                    if (config('aldebaran.settings.image_formats.site_images') == 'webp' && !file_exists(public_path().'/images/assets/logo.png')) {
+                        Image::make(public_path().'/images/assets/logo.webp')->save(public_path().'/images/assets/logo.png', null, 'png');
+                    }
+
+                    // Set up invoice data
+                    $invoiceData = [
+                        'detail' => [
+                            'currency_code'        => config('aldebaran.commissions.currency'),
+                            'terms_and_conditions' => url('commissions/'.$payment->commission->type->category->class->slug.'/tos'),
+                        ],
+                        'invoicer' => [
+                            'website'       => config('app.url'),
+                            'logo_url'      => config('app.env') == 'production' ? url('images/assets/logo.'.(config('aldebaran.settings.image_formats.site_images') == 'webp' ? 'png' : config('aldebaran.settings.image_formats.site_images'))) : null,
+                        ],
+                        'primary_recipients' => [
+                            [
+                                'billing_info' => [
+                                    'email_address' => $payment->commission->commissioner->payment_email,
+                                ],
+                            ],
+                        ],
+                        'items' => [
+                            [
+                                'name'        => $product['name'],
+                                'quantity'    => 1,
+                                'unit_amount' => [
+                                    'currency_code' => config('aldebaran.commissions.currency'),
+                                    'value'         => $payment->cost,
+                                ],
+                                'description' => $product['description'] ?? null,
+                            ],
+                        ],
+                        'configuration' => [
+                            'allow_tip' => true,
+                        ],
+                        'status' => 'DRAFT',
+                    ];
+
+                    // Create the draft invoice
+                    $invoice = $paypal->createInvoice($invoiceData);
+
+                    // Attempt to send the invoice
+                    $status = json_decode($paypal->sendInvoice($invoice['id']), true);
+                    if (isset($status['debug_id'])) {
+                        throw new \Exception('An error occurred sending invoice.');
+                    }
+
+                    // Update the payment with the invoice ID
+                    $payment->update([
+                        'invoice_id' => $invoice['id'],
+                    ]);
                     break;
             }
 

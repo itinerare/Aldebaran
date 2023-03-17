@@ -100,6 +100,9 @@ class CommissionPayment extends Model {
             case 'stripe':
                 return 'https://dashboard.stripe.com/'.(config('app.env') == 'production' ? '' : 'test/').'invoices/'.$this->invoice_id;
                 break;
+            case 'paypal':
+                return 'https://www.'.(config('app.env') == 'production' ? '' : 'sandbox.').'paypal.com/invoice/s/details/'.$this->invoice_id;
+                break;
         }
 
         return null;
