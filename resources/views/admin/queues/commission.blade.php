@@ -328,6 +328,7 @@
             <div class="input-group mb-2">
                 <div class="input-group-prepend">
                     <span class="input-group-text">
+                        Cost
                         @if ($commission->payment_processor != 'stripe')
                             & Tip
                         @endif
