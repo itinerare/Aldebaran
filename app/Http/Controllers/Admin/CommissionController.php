@@ -13,6 +13,7 @@ use App\Services\CommissionManager;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Srmklive\PayPal\Services\PayPal as PayPalClient;
 use Stripe\Event;
 use Stripe\Exception\SignatureVerificationException;
 use Stripe\Stripe;
@@ -251,7 +252,7 @@ class CommissionController extends Controller {
      * Handles incoming events from a Stripe webhook.
      * Largely echoes https://stripe.com/docs/webhooks/quickstart.
      */
-    public function postStripeWebhook(Request $request, CommissionManager $service) {
+    public function postStripeWebhook(CommissionManager $service) {
         Stripe::setApiKey(config('aldebaran.commissions.payment_processors.stripe.integration.secret_key'));
         Stripe::setApiVersion('2022-11-15');
 
@@ -262,7 +263,7 @@ class CommissionController extends Controller {
             $event = Event::constructFrom(json_decode($payload, true));
         } catch (UnexpectedValueException $e) {
             // Invalid payload
-            Log::error('Stripe eebhook error while parsing basic request.');
+            Log::error('Stripe webhook error while parsing basic request.');
             http_response_code(400);
             exit();
         }
@@ -304,6 +305,52 @@ class CommissionController extends Controller {
                     Log::error($error);
                 }
             }
+        }
+    }
+
+    /**
+     * Handles incoming events from a PayPal webhook.
+     */
+    public function postPaypalWebhook(CommissionManager $service) {
+        $payload = @file_get_contents('php://input');
+        $event = json_decode($payload, true);
+
+        // Initialize PayPal client
+        $paypal = new PayPalClient;
+        $paypal->getAccessToken();
+
+        // Verify the header signature
+        $headers = getallheaders();
+        $headers = array_change_key_case($headers, CASE_UPPER);
+        $verification = $paypal->verifyWebHook([
+            'auth_algo'         => $headers['PAYPAL-AUTH-ALGO'],
+            'cert_url'          => $headers['PAYPAL-CERT-URL'],
+            'transmission_id'   => $headers['PAYPAL-TRANSMISSION-ID'],
+            'transmission_sig'  => $headers['PAYPAL-TRANSMISSION-SIG'],
+            'transmission_time' => $headers['PAYPAL-TRANSMISSION-TIME'],
+            'webhook_id'        => config('aldebaran.commissions.payment_processors.paypal.integration.webhook_id'),
+            'webhook_event'     => $event,
+        ]);
+        if (!isset($verification['verification_status']) || $verification['verification_status'] != 'SUCCESS') {
+            Log::error('Error verifying PayPal webhook event signature.');
+            exit();
+        }
+
+        // Handle the event
+        switch ($event['event_type']) {
+            case 'INVOICING.INVOICE.PAID':
+                $invoice = $event['resource']['invoice'];
+            default:
+                // Unexpected event type
+                // Log::info('PayPal webhook received unknown event type.');
+        }
+
+        // Return a successful response to PayPal
+        http_response_code(200);
+
+        // Update the relevant payment
+        if (isset($invoice) && $invoice) {
+            $service->processPaidInvoice($invoice);
         }
     }
 

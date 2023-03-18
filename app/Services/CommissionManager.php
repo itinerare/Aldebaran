@@ -519,6 +519,39 @@ class CommissionManager extends Service {
                             'total_with_fees' => ($invoice['total'] - $fee) / 100,
                         ]);
                         break;
+                    case 'paypal':
+                        // Retrieve the processing fee via transaction
+                        $transactionId = $invoice['payments']['transactions'][0]['payment_id'] ?? null;
+
+                        // Initialize PayPal client
+                        $paypal = new PayPalClient;
+                        $paypal->getAccessToken();
+
+                        // Attempt to locate payment info
+                        $capturedPayment = $paypal->showCapturedPaymentDetails($transactionId);
+                        $authorizedPayment = $paypal->showAuthorizedPaymentDetails($transactionId);
+                        if (isset($capturedPayment['debug_id']) && isset($authorizedPayment['debug_id'])) {
+                            Log::error('Failed to locate payment information.');
+
+                            return false;
+                        }
+
+                        // Retrieve total after fees for payment
+                        $net = $capturedPayment['seller_receivable_breakdown']['net_amount']['value'] ?? ($authorizedPayment['seller_receivable_breakdown']['net_amount']['value'] ?? null);
+
+                        if (!$net) {
+                            Log::error('Failed to locate net total.');
+
+                            return false;
+                        }
+
+                        $payment->update([
+                            'is_paid'         => 1,
+                            'paid_at'         => Carbon::now(),
+                            'tip'             => $invoice['gratuity']['value'] ?? 0.00,
+                            'total_with_fees' => $net,
+                        ]);
+                        break;
                     default:
                         Log::error('Attempted to process a paid invoice for a commission using a non-supported payment processor.', [
                             'payment' => $payment->id,

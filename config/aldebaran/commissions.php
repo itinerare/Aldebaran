@@ -78,6 +78,10 @@ return [
                 // Whether or not Paypal integration features should be enabled
                 // Requires you to have your secret key set in the site's .env file!
                 'enabled' => 0,
+
+                // !! Do not change this !!
+                // Edit the corresponding value in the .env file instead.
+                'webhook_id' => env('PAYPAL_WEBHOOK_ID'),
             ],
         ],
 
