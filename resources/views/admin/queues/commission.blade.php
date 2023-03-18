@@ -442,31 +442,47 @@
     @else
         @if ($commission->status == 'Complete')
             @if ($commission->pieces->count())
-                <p>The following are all pieces associated with this commission. Click a piece's thumbnail image to go to
-                    the edit piece page.</p>
+                <p>The following are all pieces associated with this commission. Click a piece's thumbnail image or title to go to the edit piece page.</p>
                 <div class="mb-4">
                     @foreach ($commission->pieces as $piece)
-                        <div class="text-center mb-2">
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <a href="{{ url('admin/data/pieces/edit/' . $piece->piece_id) }}">
-                                        <img class="image img-thumbnail" style="max-width:100%;" src="{{ $piece->piece->primaryImages->count() ? $piece->piece->primaryImages->random()->thumbnailUrl : $piece->piece->images->first()->thumbnailUrl }}"
-                                            alt="Thumbnail for piece {{ $piece->name }}" />
-                                    </a>
-                                </div>
-                                <div class="col-md align-self-center">
-                                    <h4>{{ $piece->piece->name }}</h4>
-                                    <p>
-                                        {{ $piece->piece->primaryImages->count() }} Primary
-                                        Image{{ $piece->piece->primaryImages->count() == 1 ? '' : 's' }} ・
-                                        {{ $piece->piece->otherImages->count() }} Secondary
-                                        Image{{ $piece->piece->otherImages->count() == 1 ? '' : 's' }}<br />
-                                        {{ $piece->piece->images->count() }}
-                                        Image{{ $piece->piece->images->count() == 1 ? '' : 's' }} Total
-                                    </p>
+                        @if($piece->piece->images->count())
+                            <div class="text-center mb-2">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <a href="{{ $piece->piece->adminUrl }}">
+                                            <img class="image img-thumbnail" style="max-width:100%;" src="{{ $piece->piece->primaryImages->count() ? $piece->piece->primaryImages->random()->thumbnailUrl : $piece->piece->images->first()->thumbnailUrl }}"
+                                                alt="Thumbnail for piece {{ $piece->piece->name }}" />
+                                        </a>
+                                    </div>
+                                    <div class="col-md align-self-center">
+                                        <a href="{{ $piece->piece->adminUrl }}"><h4>{{ $piece->piece->name }}</h4></a>
+                                        <p>
+                                            {{ $piece->piece->primaryImages->count() }} Primary
+                                            Image{{ $piece->piece->primaryImages->count() == 1 ? '' : 's' }} ・
+                                            {{ $piece->piece->otherImages->count() }} Secondary
+                                            Image{{ $piece->piece->otherImages->count() == 1 ? '' : 's' }}<br />
+                                            {{ $piece->piece->images->count() }}
+                                            Image{{ $piece->piece->images->count() == 1 ? '' : 's' }} Total
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        @endif
+                        @if ($piece->piece->literatures->count())
+                                <div class="col-md-12">
+                                    @foreach ($piece->piece->literatures as $literature)
+                                        <div class="card mb-2">
+                                            <h5 class="card-header">
+                                                Literature #{{ $literature->id }}
+                                                <a class="small inventory-collapse-toggle collapse-toggle collapsed" href="#literature-{{ $literature->id }}" data-toggle="collapse">Show</a></h3>
+                                            </h5>
+                                            <div class="card-body collapse" id="literature-{{ $literature->id }}">
+                                                {!! $literature->text !!}
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            @endif
                     @endforeach
                 </div>
             @endif
