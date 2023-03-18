@@ -428,6 +428,7 @@ class CommissionManager extends Service {
                             'category_code'        => $product['category'],
                         ],
                         'invoicer' => [
+                            'business_name' => config('aldebaran.commissions.payment_processors.paypal.integration.business_name'),
                             'website'       => config('app.url'),
                             'logo_url'      => config('app.env') == 'production' ? url('images/assets/logo.'.(config('aldebaran.settings.image_formats.site_images') == 'webp' ? 'png' : config('aldebaran.settings.image_formats.site_images'))) : null,
                         ],

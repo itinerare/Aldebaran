@@ -78,7 +78,9 @@ return [
                 // See https://github.com/itinerare/Aldebaran/wiki/PayPal-Setup
                 // Whether or not Paypal integration features should be enabled
                 // Requires you to have your client ID and secret set in the site's .env file!
-                'enabled' => 0,
+                'enabled'       => 0,
+                // The business name displayed on invoices; set to null to omit it
+                'business_name' => null,
 
                 // !! Do not change this !!
                 // Edit the corresponding value in the .env file instead.
