@@ -14,19 +14,21 @@
         ]) !!}
     </div>
 @endif
-<div class="form-group">
-    {!! Form::label('product_tax_code', 'Tax Category Code (Optional)') !!} {!! add_help('The tax code for the relevant category. If unset, this defaults to your Stripe account\'s default tax category.') !!}
-    {!! Form::text('product_tax_code', $object->invoice_data ? $object->invoice_data['product_tax_code'] : null, [
-        'class' => 'form-control',
-        'placeholder' => isset($parent) && $parent ? $object->parentInvoiceData['product_tax_code'] ?? null : '',
-    ]) !!}
-    <small>
-        @if ($taxCode)
-            {{ $taxCode['name'] }} ・
-        @endif
-        <a href="https://stripe.com/docs/tax/tax-categories">Tax Category Reference</a>
-    </small>
-</div>
+@if (config('aldebaran.commissions.payment_processors.stripe.integration.enabled'))
+    <div class="form-group">
+        {!! Form::label('product_tax_code', 'Tax Category Code (Optional)') !!} {!! add_help('The tax code for the relevant category. If unset, this defaults to your Stripe account\'s default tax category.') !!}
+        {!! Form::text('product_tax_code', $object->invoice_data ? $object->invoice_data['product_tax_code'] : null, [
+            'class' => 'form-control',
+            'placeholder' => isset($parent) && $parent ? $object->parentInvoiceData['product_tax_code'] ?? null : '',
+        ]) !!}
+        <small>
+            @if ($taxCode)
+                {{ $taxCode['name'] }} ・
+            @endif
+            <a href="https://stripe.com/docs/tax/tax-categories">Tax Category Reference</a>
+        </small>
+    </div>
+@endif
 @if ($object->id && isset($parent) && $parent)
     <div class="form-group">
         {!! Form::checkbox('unset_product_info', 1, 0, [
@@ -34,6 +36,6 @@
             'data-toggle' => 'toggle',
             'data-onstyle' => 'danger',
         ]) !!}
-        {!! Form::label('unset_product_info', 'Unset Product Information', ['class' => 'form-check-label ml-3']) !!} {!! add_help('Removes the product information set here and, if there are no associated prices for it, deletes the product from Stripe\'s dashboard.') !!}
+        {!! Form::label('unset_product_info', 'Unset Product Information', ['class' => 'form-check-label ml-3']) !!} {!! add_help('Removes the product information set here.') !!}
     </div>
 @endif
