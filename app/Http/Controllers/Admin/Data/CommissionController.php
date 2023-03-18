@@ -102,7 +102,7 @@ class CommissionController extends Controller {
         $data = $request->only([
             'name', 'is_active', 'page_id', 'page_title', 'page_key',
             'field_key', 'field_type', 'field_label', 'field_rules', 'field_choices', 'field_value', 'field_help',
-            'product_name', 'product_description', 'product_tax_code',
+            'product_name', 'product_description', 'product_tax_code', 'product_category',
         ]);
         // Fancy validation for field choices and rules
         if ($id) {
@@ -284,7 +284,7 @@ class CommissionController extends Controller {
         $data = $request->only([
             'name', 'class_id', 'is_active',
             'field_key', 'field_type', 'field_label', 'field_rules', 'field_choices', 'field_value', 'field_help', 'include_class',
-            'product_name', 'product_description', 'product_tax_code', 'unset_product_info',
+            'product_name', 'product_description', 'product_tax_code',  'product_category', 'unset_product_info',
         ]);
         // Fancy validation for field choices and rules
         if ($id) {
@@ -479,7 +479,7 @@ class CommissionController extends Controller {
             'price_type', 'flat_cost', 'cost_min', 'cost_max', 'minimum_cost', 'rate',
             'extras', 'tags', 'show_examples', 'regenerate_key',
             'field_key', 'field_type', 'field_label', 'field_rules', 'field_choices', 'field_value', 'field_help', 'include_class', 'include_category',
-            'product_name', 'product_description', 'product_tax_code', 'unset_product_info',
+            'product_name', 'product_description', 'product_tax_code',  'product_category', 'unset_product_info',
         ]);
         // Fancy validation for field choices and rules
         if ($id) {

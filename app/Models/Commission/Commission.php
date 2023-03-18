@@ -273,8 +273,17 @@ class Commission extends Model {
      * @return bool
      */
     public function getUseIntegrationsAttribute() {
-        if (config('aldebaran.commissions.payment_processors.stripe.integration.enabled') && $this->payment_processor == 'stripe') {
-            return true;
+        switch ($this->payment_processor) {
+            case 'stripe':
+                if (config('aldebaran.commissions.payment_processors.stripe.integration.enabled')) {
+                    return true;
+                }
+                break;
+            case 'paypal':
+                if (config('aldebaran.commissions.payment_processors.paypal.integration.enabled')) {
+                    return true;
+                }
+                break;
         }
 
         return false;

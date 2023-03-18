@@ -107,13 +107,13 @@
         </div>
     @endif
 
-    @if (config('aldebaran.commissions.payment_processors.stripe.integration.enabled'))
+    @if (config('aldebaran.commissions.payment_processors.stripe.integration.enabled') || config('aldebaran.commissions.payment_processors.paypal.integration.enabled'))
         <h2>Invoice Information</h2>
         <p>
             This will be used to populate product information when creating invoices for this commission class. You can specify more specific information per commission category and type as well as per individual commission;
             however, if a field is unset for any of those, the information set here will be used instead. Consequently, it's required that this information be set.
         </p>
-        @include('admin.commissions._invoice_fields', ['object' => $class, 'requireName' => true])
+        @include('admin.commissions._invoice_fields', ['object' => $class, 'require' => true])
     @endif
 
     <div class="text-right">

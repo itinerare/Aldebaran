@@ -80,7 +80,7 @@
                         <h5>Payment Status</h5>
                     </div>
                     <div class="col-md">{!! $commission->isPaid !!}
-                        ({{ isset($commission->cost) ? config('aldebaran.commissions.currency_symbol') . $commission->cost : '-' }}{{ $commission->tip ? ' + ' . config('aldebaran.commissions.currency_symbol') . $commission->tip . ' Tip' : '' }}/{{ config('aldebaran.commissions.currency_symbol') }}{{ $commission->totalWithFees }})
+                        ({{ isset($commission->cost) ? config('aldebaran.commissions.currency_symbol') . $commission->cost : '-' }}{{ $commission->tip ? ' + ' . config('aldebaran.commissions.currency_symbol') . $commission->tip . ' Tip' : '' }}/{{ config('aldebaran.commissions.currency_symbol') . $commission->totalWithFees }})
                         ・ via
                         {{ config('aldebaran.commissions.payment_processors.' . $commission->payment_processor . '.label') }}
                     </div>
@@ -206,7 +206,7 @@
                 </div>
             @endif
 
-            <h2>Payment Status</h2>
+            <h2>Payments</h2>
 
             <div class="form-group">
                 <div id="paymentList">
@@ -215,34 +215,48 @@
                             <div class="input-group mb-2">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text">Cost
-                                        @if ($commission->payment_processor != 'stripe')
+                                        @if (!$commission->useIntegrations && $commission->payment_processor != 'stripe')
                                             & Tip
                                         @endif
                                         ({{ config('aldebaran.commissions.currency') }})
                                     </span>
                                 </div>
-                                {!! Form::number('cost[' . $payment->id . ']', $payment->cost, [
-                                    'class' => 'form-control',
-                                    'aria-label' => 'Cost',
-                                    'placeholder' => 'Cost',
-                                ]) !!}
-                                @if ($commission->payment_processor == 'stripe')
-                                    {!! Form::hidden('tip[' . $payment->id . ']', $payment->tip) !!}
+                                @if ($commission->useIntegrations && isset($payment->invoice_id))
+                                    {!! Form::number('cost_display[' . $payment->id . ']', $payment->cost, [
+                                        'class' => 'form-control',
+                                        'aria-label' => 'Cost',
+                                        'placeholder' => 'Cost',
+                                        'disabled',
+                                    ]) !!}
+                                    {!! Form::hidden('cost[' . $payment->id . ']', $payment->cost) !!}
                                 @else
-                                    {!! Form::number('tip[' . $payment->id . ']', $payment->tip, [
+                                    {!! Form::number('cost[' . $payment->id . ']', $payment->cost, [
+                                        'class' => 'form-control',
+                                        'aria-label' => 'Cost',
+                                        'placeholder' => 'Cost',
+                                    ]) !!}
+                                @endif
+                                @if ($commission->payment_processor == 'stripe' || $commission->useIntegrations)
+                                    {!! Form::hidden('tip[' . $payment->id . ']', $payment->tip ?? 0.0) !!}
+                                @else
+                                    {!! Form::number('tip[' . $payment->id . ']', $payment->tip ?? 0.0, [
                                         'class' => 'form-control',
                                         'aria-label' => 'Tip',
                                         'placeholder' => 'Tip',
-                                        $commission->useIntegrations ? 'disabled' : '',
                                     ]) !!}
                                 @endif
                                 {!! Form::hidden('total_with_fees[' . $payment->id . ']', $payment->totalWithFees) !!}
                                 {!! Form::hidden('paid_at[' . $payment->id . ']', $payment->paid_at) !!}
                                 {!! Form::hidden('invoice_id[' . $payment->id . ']', $payment->invoice_id) !!}
                                 <div class="input-group-append">
+                                    @if ($commission->useIntegrations && $payment->tip > 0)
+                                        <span class="input-group-text">
+                                            Tip: {{ config('aldebaran.commissions.currency_symbol') . $payment->tip }}
+                                        </span>
+                                    @endif
                                     @if ($commission->useIntegrations)
                                         @if ($payment->is_paid)
-                                            <a href="{{ $payment->invoiceUrl }}" class="btn btn-success" type="button" aria-label="Link to Invoice">
+                                            <a @if (isset($payment->invoice_id)) href="{{ $payment->invoiceUrl }}" @endif class="btn btn-success" type="button" aria-label="Link to Invoice">
                                                 Paid {!! $payment->is_paid ? pretty_date($payment->paid_at) : '' !!}
                                             </a>
                                         @elseif (isset($payment->invoice_id))
@@ -272,7 +286,7 @@
                                         </div>
                                     @endif
                                     <span class="input-group-text">After Fees:
-                                        {{ config('aldebaran.commissions.currency_symbol') }}{{ $payment->totalWithFees }}</span>
+                                        {{ config('aldebaran.commissions.currency_symbol') . $payment->totalWithFees }}</span>
                                     <button class="remove-payment btn btn-outline-danger" type="button" id="button-addon2">X</button>
                                 </div>
                             </div>
@@ -328,6 +342,7 @@
             <div class="input-group mb-2">
                 <div class="input-group-prepend">
                     <span class="input-group-text">
+                        Cost
                         @if ($commission->payment_processor != 'stripe')
                             & Tip
                         @endif
@@ -335,14 +350,13 @@
                     </span>
                 </div>
                 {!! Form::number('cost[]', null, ['class' => 'form-control', 'aria-label' => 'Cost', 'placeholder' => 'Cost']) !!}
-                @if ($commission->payment_processor == 'stripe')
+                @if ($commission->payment_processor == 'stripe' || $commission->useIntegrations)
                     {!! Form::hidden('tip[]', 0.0) !!}
                 @else
-                    {!! Form::number('tip[]', null, [
+                    {!! Form::number('tip[]', 0.0, [
                         'class' => 'form-control',
                         'aria-label' => 'Tip',
                         'placeholder' => 'Tip',
-                        $commission->useIntegrations ? 'disabled' : '',
                     ]) !!}
                 @endif
                 <div class="input-group-append">

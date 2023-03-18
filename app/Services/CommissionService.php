@@ -500,6 +500,7 @@ class CommissionService extends Service {
                 'product_name'        => $data['product_name'] ?? null,
                 'product_description' => $data['product_description'] ?? null,
                 'product_tax_code'    => $data['product_tax_code'] ?? null,
+                'product_category'    => $data['product_category'] ?? null,
             ];
         }
 
