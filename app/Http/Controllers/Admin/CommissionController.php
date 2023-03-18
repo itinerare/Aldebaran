@@ -292,7 +292,7 @@ class CommissionController extends Controller {
                 $invoice = $event->data->object;
             default:
                 // Unexpected event type
-                // Log::info('Stripe webhook received unknown event type.');
+                Log::notice('Stripe webhook received unknown event type.');
         }
 
         // Return a successful response to Stripe
@@ -300,11 +300,7 @@ class CommissionController extends Controller {
 
         // Update the relevant payment
         if (isset($invoice) && $invoice) {
-            if (!$service->processPaidInvoice($invoice)) {
-                foreach ($service->errors()->getMessages()['error'] as $error) {
-                    Log::error($error);
-                }
-            }
+            $service->processPaidInvoice($invoice);
         }
     }
 
@@ -342,7 +338,7 @@ class CommissionController extends Controller {
                 $invoice = $event['resource']['invoice'];
             default:
                 // Unexpected event type
-                // Log::info('PayPal webhook received unknown event type.');
+                Log::notice('PayPal webhook received unknown event type.');
         }
 
         // Return a successful response to PayPal
