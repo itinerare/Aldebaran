@@ -343,7 +343,7 @@
                 <div class="input-group-prepend">
                     <span class="input-group-text">
                         Cost
-                        @if ($commission->payment_processor != 'stripe')
+                        @if (!$commission->useIntegrations && $commission->payment_processor != 'stripe')
                             & Tip
                         @endif
                         ({{ config('aldebaran.commissions.currency') }})
