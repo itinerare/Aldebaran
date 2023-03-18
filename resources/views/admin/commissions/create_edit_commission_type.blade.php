@@ -187,7 +187,7 @@
         </div>
     @endif
 
-    @if (config('aldebaran.commissions.payment_processors.stripe.integration.enabled'))
+    @if (config('aldebaran.commissions.payment_processors.stripe.integration.enabled') || config('aldebaran.commissions.payment_processors.paypal.integration.enabled'))
         <h2>Invoice Information</h2>
         <p>
             This will be used to populate product information when creating invoices for this commission type. If not set, this uses the next most specific information (this type's category's if set, its class' if not); that is, if those values are still

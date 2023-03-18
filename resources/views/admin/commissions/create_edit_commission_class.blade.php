@@ -107,7 +107,7 @@
         </div>
     @endif
 
-    @if (config('aldebaran.commissions.payment_processors.stripe.integration.enabled'))
+    @if (config('aldebaran.commissions.payment_processors.stripe.integration.enabled') || config('aldebaran.commissions.payment_processors.paypal.integration.enabled'))
         <h2>Invoice Information</h2>
         <p>
             This will be used to populate product information when creating invoices for this commission class. You can specify more specific information per commission category and type as well as per individual commission;
