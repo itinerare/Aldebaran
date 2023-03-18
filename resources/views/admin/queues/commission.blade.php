@@ -246,7 +246,7 @@
                                     @endif
                                     @if ($commission->useIntegrations)
                                         @if ($payment->is_paid)
-                                            <a href="{{ $payment->invoiceUrl }}" class="btn btn-success" type="button" aria-label="Link to Invoice">
+                                            <a @if (isset($payment->invoice_id)) href="{{ $payment->invoiceUrl }}" @endif class="btn btn-success" type="button" aria-label="Link to Invoice">
                                                 Paid {!! $payment->is_paid ? pretty_date($payment->paid_at) : '' !!}
                                             </a>
                                         @elseif (isset($payment->invoice_id))
