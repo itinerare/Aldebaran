@@ -415,6 +415,7 @@ class CommissionManager extends Service {
                         'detail' => [
                             'currency_code'        => config('aldebaran.commissions.currency'),
                             'terms_and_conditions' => url('commissions/'.$payment->commission->type->category->class->slug.'/tos'),
+                            'category_code'        => 'SERVICES',
                         ],
                         'invoicer' => [
                             'website'       => config('app.url'),
