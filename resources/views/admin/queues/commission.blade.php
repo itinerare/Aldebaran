@@ -206,7 +206,7 @@
                 </div>
             @endif
 
-            <h2>Payment Status</h2>
+            <h2>Payments</h2>
 
             <div class="form-group">
                 <div id="paymentList">
@@ -221,11 +221,21 @@
                                         ({{ config('aldebaran.commissions.currency') }})
                                     </span>
                                 </div>
-                                {!! Form::number('cost[' . $payment->id . ']', $payment->cost, [
-                                    'class' => 'form-control',
-                                    'aria-label' => 'Cost',
-                                    'placeholder' => 'Cost',
-                                ]) !!}
+                                @if ($commission->useIntegrations && isset($payment->invoice_id))
+                                    {!! Form::number('cost_display[' . $payment->id . ']', $payment->cost, [
+                                        'class' => 'form-control',
+                                        'aria-label' => 'Cost',
+                                        'placeholder' => 'Cost',
+                                        'disabled',
+                                    ]) !!}
+                                    {!! Form::hidden('cost[' . $payment->id . ']', $payment->cost) !!}
+                                @else
+                                    {!! Form::number('cost[' . $payment->id . ']', $payment->cost, [
+                                        'class' => 'form-control',
+                                        'aria-label' => 'Cost',
+                                        'placeholder' => 'Cost',
+                                    ]) !!}
+                                @endif
                                 @if ($commission->payment_processor == 'stripe' || $commission->useIntegrations)
                                     {!! Form::hidden('tip[' . $payment->id . ']', $payment->tip ?? 0.0) !!}
                                 @else
