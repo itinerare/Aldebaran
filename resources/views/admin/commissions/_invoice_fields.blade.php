@@ -1,5 +1,5 @@
 <div class="form-group">
-    {!! Form::label('product_name', 'Product Name' . (!isset($require) || !$require ? ' (Semi-optional)' : '')) !!} {!! add_help('A succinct name for the good and/or service you are providing, e.g. \'Commissioned Art\'.'.(!isset($require) || !$require ? ' Required to customize product information.' : '')) !!}
+    {!! Form::label('product_name', 'Product Name' . (!isset($require) || !$require ? ' (Semi-optional)' : '')) !!} {!! add_help('A succinct name for the good and/or service you are providing, e.g. \'Commissioned Art\'.' . (!isset($require) || !$require ? ' Required to customize product information.' : '')) !!}
     {!! Form::text('product_name', $object->invoice_data ? $object->invoice_data['product_name'] : null, ['class' => 'form-control', 'placeholder' => isset($parent) && $parent ? $object->parentInvoiceData['product_name'] ?? null : '']) !!}
 </div>
 @if ($object->id && isset($parent) && $parent)
