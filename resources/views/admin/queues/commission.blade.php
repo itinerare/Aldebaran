@@ -489,7 +489,9 @@
                     @endforeach
                 </div>
             @endif
+        @endif
 
+        @if ($commission->status == 'Complete' || $commission->status == 'Declined')
             <h2>Payments</h2>
 
             <div class="form-group">
