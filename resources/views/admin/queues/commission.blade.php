@@ -445,17 +445,20 @@
                 <p>The following are all pieces associated with this commission. Click a piece's thumbnail image or title to go to the edit piece page.</p>
                 <div class="mb-4">
                     @foreach ($commission->pieces as $piece)
-                        @if($piece->piece->images->count())
+                        @if ($piece->piece->images->count())
                             <div class="text-center mb-2">
                                 <div class="row">
                                     <div class="col-md-4">
                                         <a href="{{ $piece->piece->adminUrl }}">
-                                            <img class="image img-thumbnail" style="max-width:100%;" src="{{ $piece->piece->primaryImages->count() ? $piece->piece->primaryImages->random()->thumbnailUrl : $piece->piece->images->first()->thumbnailUrl }}"
+                                            <img class="image img-thumbnail" style="max-width:100%;"
+                                                src="{{ $piece->piece->primaryImages->count() ? $piece->piece->primaryImages->random()->thumbnailUrl : $piece->piece->images->first()->thumbnailUrl }}"
                                                 alt="Thumbnail for piece {{ $piece->piece->name }}" />
                                         </a>
                                     </div>
                                     <div class="col-md align-self-center">
-                                        <a href="{{ $piece->piece->adminUrl }}"><h4>{{ $piece->piece->name }}</h4></a>
+                                        <a href="{{ $piece->piece->adminUrl }}">
+                                            <h4>{{ $piece->piece->name }}</h4>
+                                        </a>
                                         <p>
                                             {{ $piece->piece->primaryImages->count() }} Primary
                                             Image{{ $piece->piece->primaryImages->count() == 1 ? '' : 's' }} ・
@@ -469,23 +472,83 @@
                             </div>
                         @endif
                         @if ($piece->piece->literatures->count())
-                                <div class="col-md-12">
-                                    @foreach ($piece->piece->literatures as $literature)
-                                        <div class="card mb-2">
-                                            <h5 class="card-header">
-                                                Literature #{{ $literature->id }}
-                                                <a class="small inventory-collapse-toggle collapse-toggle collapsed" href="#literature-{{ $literature->id }}" data-toggle="collapse">Show</a></h3>
-                                            </h5>
-                                            <div class="card-body collapse" id="literature-{{ $literature->id }}">
-                                                {!! $literature->text !!}
-                                            </div>
+                            <div class="col-md-12">
+                                @foreach ($piece->piece->literatures as $literature)
+                                    <div class="card mb-2">
+                                        <h5 class="card-header">
+                                            Literature #{{ $literature->id }}
+                                            <a class="small inventory-collapse-toggle collapse-toggle collapsed" href="#literature-{{ $literature->id }}" data-toggle="collapse">Show</a></h3>
+                                        </h5>
+                                        <div class="card-body collapse" id="literature-{{ $literature->id }}">
+                                            {!! $literature->text !!}
                                         </div>
-                                    @endforeach
-                                </div>
-                            @endif
+                                    </div>
+                                @endforeach
+                            </div>
+                        @endif
                     @endforeach
                 </div>
             @endif
+
+            <h2>Payments</h2>
+
+            <div class="form-group">
+                <div id="paymentList">
+                    @if ($commission->payments->count())
+                        @foreach ($commission->payments as $payment)
+                            <div class="input-group mb-2">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Cost
+                                        @if (!$commission->useIntegrations && $commission->payment_processor != 'stripe')
+                                            & Tip
+                                        @endif
+                                        ({{ config('aldebaran.commissions.currency') }})
+                                    </span>
+                                </div>
+                                {!! Form::number('cost_display[' . $payment->id . ']', $payment->cost, [
+                                    'class' => 'form-control',
+                                    'aria-label' => 'Cost',
+                                    'placeholder' => 'Cost',
+                                    'disabled',
+                                ]) !!}
+                                <div class="input-group-append">
+                                    @if ($payment->tip > 0)
+                                        <span class="input-group-text">
+                                            Tip: {{ config('aldebaran.commissions.currency_symbol') . $payment->tip }}
+                                        </span>
+                                    @endif
+                                    @if ($commission->useIntegrations)
+                                        @if ($payment->is_paid)
+                                            <a @if (isset($payment->invoice_id)) href="{{ $payment->invoiceUrl }}" @endif class="btn btn-success" type="button" aria-label="Link to Invoice">
+                                                Paid {!! $payment->is_paid ? pretty_date($payment->paid_at) : '' !!}
+                                            </a>
+                                        @endif
+                                    @else
+                                        <div class="input-group-text">
+                                            {!! Form::checkbox('is_paid[' . $payment->id . ']', 1, $payment->is_paid, [
+                                                'aria-label' => 'Whether or not this invoice has been paid',
+                                                'disabled',
+                                            ]) !!}
+                                            <span class="ml-1">
+                                                Paid{!! $payment->is_paid ? ' ' . pretty_date($payment->paid_at) : '' !!}
+                                            </span>
+                                        </div>
+                                        <div class="input-group-text">
+                                            {!! Form::checkbox('is_intl[' . $payment->id . ']', 1, $payment->is_intl, [
+                                                'aria-label' => 'Whether or not this commissioner is international',
+                                                'disabled',
+                                            ]) !!}
+                                            <span class="ml-1">Intl.</span>
+                                        </div>
+                                    @endif
+                                    <span class="input-group-text">After Fees:
+                                        {{ config('aldebaran.commissions.currency_symbol') . $payment->totalWithFees }}</span>
+                                </div>
+                            </div>
+                        @endforeach
+                    @endif
+                </div>
+            </div>
         @endif
 
         <div class="card card-body mb-4">
