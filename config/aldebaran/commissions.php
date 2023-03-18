@@ -77,7 +77,7 @@ return [
             'integration' => [
                 // See https://github.com/itinerare/Aldebaran/wiki/PayPal-Setup
                 // Whether or not Paypal integration features should be enabled
-                // Requires you to have your secret key set in the site's .env file!
+                // Requires you to have your client ID and secret set in the site's .env file!
                 'enabled' => 0,
 
                 // !! Do not change this !!
