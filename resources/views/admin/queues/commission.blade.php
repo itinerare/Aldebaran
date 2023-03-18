@@ -80,7 +80,7 @@
                         <h5>Payment Status</h5>
                     </div>
                     <div class="col-md">{!! $commission->isPaid !!}
-                        ({{ isset($commission->cost) ? config('aldebaran.commissions.currency_symbol') . $commission->cost : '-' }}{{ $commission->tip ? ' + ' . config('aldebaran.commissions.currency_symbol') . $commission->tip . ' Tip' : '' }}/{{ config('aldebaran.commissions.currency_symbol') }}{{ $commission->totalWithFees }})
+                        ({{ isset($commission->cost) ? config('aldebaran.commissions.currency_symbol') . $commission->cost : '-' }}{{ $commission->tip ? ' + ' . config('aldebaran.commissions.currency_symbol') . $commission->tip . ' Tip' : '' }}/{{ config('aldebaran.commissions.currency_symbol') . $commission->totalWithFees }})
                         ・ via
                         {{ config('aldebaran.commissions.payment_processors.' . $commission->payment_processor . '.label') }}
                     </div>
@@ -215,7 +215,7 @@
                             <div class="input-group mb-2">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text">Cost
-                                        @if ($commission->payment_processor != 'stripe')
+                                        @if (!$commission->useIntegrations && $commission->payment_processor != 'stripe')
                                             & Tip
                                         @endif
                                         ({{ config('aldebaran.commissions.currency') }})
@@ -251,7 +251,7 @@
                                 <div class="input-group-append">
                                     @if ($commission->useIntegrations && $payment->tip > 0)
                                         <span class="input-group-text">
-                                            Tip: {{ config('aldebaran.commissions.currency_symbol') }}{{ $payment->tip }}
+                                            Tip: {{ config('aldebaran.commissions.currency_symbol') . $payment->tip }}
                                         </span>
                                     @endif
                                     @if ($commission->useIntegrations)
@@ -286,7 +286,7 @@
                                         </div>
                                     @endif
                                     <span class="input-group-text">After Fees:
-                                        {{ config('aldebaran.commissions.currency_symbol') }}{{ $payment->totalWithFees }}</span>
+                                        {{ config('aldebaran.commissions.currency_symbol') . $payment->totalWithFees }}</span>
                                     <button class="remove-payment btn btn-outline-danger" type="button" id="button-addon2">X</button>
                                 </div>
                             </div>
