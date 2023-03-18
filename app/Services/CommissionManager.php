@@ -316,16 +316,14 @@ class CommissionManager extends Service {
                 throw new \Exception('An invoice has already been sent for this payment.');
             }
 
-            // Determine the relevant product information
+            // Start determining the relevant product information
             $product = [];
             $product['name'] = $payment->commission->invoice_data['product_name'] ?? ($payment->commission->parentInvoiceData['product_name'] ?? null);
-            $product['description'] = $payment->commission->invoice_data['description'] ?? ($payment->commission->parentInvoiceData['description'] ?? null);
-            $product['tax_code'] = $payment->commission->invoice_data['product_tax_code'] ?? ($payment->commission->parentInvoiceData['product_tax_code'] ?? null);
 
             // Check that the product name is retrieved,
-            // as this is the only part which the site requires
+            // as this is the only part which the site requires for all integrations
             if (!isset($product['name'])) {
-                throw new \Exception('Failed to locate product information.');
+                throw new \Exception('Failed to locate product name.');
             }
 
             // Depending on payment processor, perform further checks
@@ -335,6 +333,9 @@ class CommissionManager extends Service {
                     if (!config('aldebaran.commissions.payment_processors.stripe.integration.enabled')) {
                         throw new \Exception('Stripe integration features are not enabled for this site.');
                     }
+
+                    // Locate the stored tax code
+                    $product['tax_code'] = $payment->commission->invoice_data['product_tax_code'] ?? ($payment->commission->parentInvoiceData['product_tax_code'] ?? null);
 
                     // Initialize a connection to the Stripe API
                     $stripe = new StripeClient([
@@ -393,6 +394,15 @@ class CommissionManager extends Service {
                         throw new \Exception('PayPal integration features are not enabled for this site.');
                     }
 
+                    // Locate the stored category and, optionally, description
+                    $product['category'] = $payment->commission->invoice_data['product_category'] ?? ($payment->commission->parentInvoiceData['product_category'] ?? null);
+                    $product['description'] = $payment->commission->invoice_data['description'] ?? ($payment->commission->parentInvoiceData['description'] ?? null);
+
+                    // Check that there is a set category code
+                    if (!isset($product['category'])) {
+                        throw new \Exception('Failed to locate product category.');
+                    }
+
                     // Initialize a connection to the PayPal API and set some values
                     $paypal = new PayPalClient;
                     $paypal->setCurrency(config('aldebaran.commissions.currency'));
@@ -415,7 +425,7 @@ class CommissionManager extends Service {
                         'detail' => [
                             'currency_code'        => config('aldebaran.commissions.currency'),
                             'terms_and_conditions' => url('commissions/'.$payment->commission->type->category->class->slug.'/tos'),
-                            'category_code'        => 'SERVICES',
+                            'category_code'        => $product['category'],
                         ],
                         'invoicer' => [
                             'website'       => config('app.url'),

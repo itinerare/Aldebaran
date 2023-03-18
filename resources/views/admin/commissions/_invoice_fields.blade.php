@@ -1,5 +1,5 @@
 <div class="form-group">
-    {!! Form::label('product_name', 'Product Name' . (!isset($requireName) || !$requireName ? ' (Optional)' : '')) !!} {!! add_help('A succinct name for the good and/or service you are providing, e.g. \'Commissioned Art\'.') !!}
+    {!! Form::label('product_name', 'Product Name' . (!isset($require) || !$require ? ' (Semi-optional)' : '')) !!} {!! add_help('A succinct name for the good and/or service you are providing, e.g. \'Commissioned Art\'.'.(!isset($require) || !$require ? ' Required to customize product information.' : '')) !!}
     {!! Form::text('product_name', $object->invoice_data ? $object->invoice_data['product_name'] : null, ['class' => 'form-control', 'placeholder' => isset($parent) && $parent ? $object->parentInvoiceData['product_name'] ?? null : '']) !!}
 </div>
 @if ($object->id && isset($parent) && $parent)
@@ -20,6 +20,21 @@
             'class' => 'form-control',
             'placeholder' => isset($parent) && $parent ? $object->parentInvoiceData['product_description'] ?? null : '',
         ]) !!}
+    </div>
+    <div class="form-group">
+        {!! Form::label('product_category', 'Product Category' . (!isset($require) || !$require ? ' (Optional)' : '')) !!} {!! add_help('This impacts how invoices sent behave, i.e. whether they attempt to collect a shipping address or not.') !!}
+        {!! Form::select(
+            'product_category',
+            [
+                'SERVICES' => 'Services',
+                'SHIPPABLE' => 'Shippable Goods',
+            ],
+            $object->invoice_data ? $object->invoice_data['product_category'] ?? null : null,
+            [
+                'class' => 'form-control',
+                'placeholder' => isset($parent) && $parent ? (isset($object->parentInvoiceData['product_category']) ? ucfirst(strtolower($object->parentInvoiceData['product_category'])) : null) : '',
+            ],
+        ) !!}
     </div>
 @endif
 @if (config('aldebaran.commissions.payment_processors.stripe.integration.enabled') && (isset($object->payment_processor) ? $object->payment_processor == 'stripe' : true))
