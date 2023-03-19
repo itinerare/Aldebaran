@@ -18,7 +18,7 @@ class CommissionType extends Model {
      */
     protected $fillable = [
         'category_id', 'name', 'availability', 'description', 'data', 'key',
-        'is_active', 'is_visible', 'sort', 'show_examples',
+        'is_active', 'is_visible', 'sort', 'show_examples', 'invoice_data',
     ];
 
     /**
@@ -34,7 +34,8 @@ class CommissionType extends Model {
      * @var array
      */
     protected $casts = [
-        'data' => 'array',
+        'data'         => 'array',
+        'invoice_data' => 'array',
     ];
 
     /**
@@ -192,16 +193,16 @@ class CommissionType extends Model {
 
         switch ($pricingData['type']) {
             case 'flat':
-                return '$'.$pricingData['cost'];
+                return config('aldebaran.commissions.currency_symbol').$pricingData['cost'];
                 break;
             case 'range':
-                return '$'.$pricingData['range']['min'].'-'.$pricingData['range']['max'];
+                return config('aldebaran.commissions.currency_symbol').$pricingData['range']['min'].'-'.$pricingData['range']['max'];
                 break;
             case 'min':
-                return '$'.$pricingData['cost'].'+';
+                return config('aldebaran.commissions.currency_symbol').$pricingData['cost'].'+';
                 break;
             case 'rate':
-                return '$'.$pricingData['cost'].'/hour';
+                return config('aldebaran.commissions.currency_symbol').$pricingData['cost'].'/hour';
                 break;
         }
     }
@@ -326,6 +327,21 @@ class CommissionType extends Model {
         }
 
         return $fields;
+    }
+
+    /**
+     * Return the next most relevant invoice data.
+     *
+     * @return array|null
+     */
+    public function getParentInvoiceDataAttribute() {
+        if (isset($this->category->invoice_data)) {
+            return $this->category->invoice_data;
+        } elseif ($this->category->parentInvoiceData) {
+            return $this->category->parentInvoiceData;
+        }
+
+        return null;
     }
 
     /**********************************************************************************************

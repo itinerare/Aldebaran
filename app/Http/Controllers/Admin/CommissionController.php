@@ -12,6 +12,14 @@ use App\Models\Gallery\Piece;
 use App\Services\CommissionManager;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Srmklive\PayPal\Services\PayPal as PayPalClient;
+use Stripe\Event;
+use Stripe\Exception\SignatureVerificationException;
+use Stripe\Stripe;
+use Stripe\StripeClient;
+use Stripe\Webhook;
+use UnexpectedValueException;
 
 class CommissionController extends Controller {
     /*
@@ -155,10 +163,21 @@ class CommissionController extends Controller {
             abort(404);
         }
 
+        if (config('aldebaran.commissions.payment_processors.stripe.integration.enabled') && (isset($commission->invoice_data['product_tax_code']) || isset($commission->parentInvoiceData['product_tax_code']))) {
+            // Retrieve information for the current tax code, for convenience
+            $taxCode = (new StripeClient([
+                'api_key'        => config('aldebaran.commissions.payment_processors.stripe.integration.secret_key'),
+                'stripe_version' => '2022-11-15',
+            ]))->taxCodes->retrieve(
+                $commission->invoice_data['product_tax_code'] ?? $commission->parentInvoiceData['product_tax_code']
+            );
+        }
+
         return view('admin.queues.commission', [
             'commission' => $commission,
         ] + ($commission->status == 'Pending' || $commission->status == 'Accepted' ? [
-            'pieces' => Piece::sort()->pluck('name', 'id')->toArray(),
+            'pieces'  => Piece::sort()->pluck('name', 'id')->toArray(),
+            'taxCode' => $taxCode ?? null,
         ] : []));
     }
 
@@ -193,6 +212,142 @@ class CommissionController extends Controller {
         }
 
         return redirect()->back();
+    }
+
+    /**
+     * Gets the send invoice modal.
+     *
+     * @param int $id
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getSendInvoice($id) {
+        $payment = CommissionPayment::find($id);
+
+        return view('admin.queues._send_invoice', [
+            'payment' => $payment,
+        ]);
+    }
+
+    /**
+     * Sends an invoice.
+     *
+     * @param int $id
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function postSendInvoice(Request $request, CommissionManager $service, $id) {
+        if ($id && $service->sendInvoice(CommissionPayment::where('id', $id)->first(), $request->user())) {
+            flash('Invoice sent successfully.')->success();
+        } else {
+            foreach ($service->errors()->getMessages()['error'] as $error) {
+                $service->addError($error);
+            }
+        }
+
+        return redirect()->back();
+    }
+
+    /**
+     * Handles incoming events from a Stripe webhook.
+     * Largely echoes https://stripe.com/docs/webhooks/quickstart.
+     */
+    public function postStripeWebhook(CommissionManager $service) {
+        Stripe::setApiKey(config('aldebaran.commissions.payment_processors.stripe.integration.secret_key'));
+        Stripe::setApiVersion('2022-11-15');
+
+        $payload = @file_get_contents('php://input');
+        $event = null;
+
+        try {
+            $event = Event::constructFrom(json_decode($payload, true));
+        } catch (UnexpectedValueException $e) {
+            // Invalid payload
+            Log::error('Stripe webhook error while parsing basic request.');
+            http_response_code(400);
+            exit();
+        }
+
+        if (config('aldebaran.commissions.payment_processors.stripe.integration.webhook_secret')) {
+            // Only verify the event if there is an endpoint secret defined
+            // Otherwise use the basic decoded event
+            $sigHeader = $_SERVER['HTTP_STRIPE_SIGNATURE'];
+            try {
+                $event = Webhook::constructEvent(
+                    $payload,
+                    $sigHeader,
+                    config('aldebaran.commissions.payment_processors.stripe.integration.webhook_secret')
+                );
+            } catch (SignatureVerificationException $e) {
+                // Invalid signature
+                Log::error('Stripe webhook error while validating signature.');
+                http_response_code(400);
+                exit();
+            }
+        }
+
+        // Handle the event
+        switch ($event->type) {
+            case 'invoice.payment_succeeded':
+                $invoice = $event->data->object;
+            default:
+                // Unexpected event type
+                Log::notice('Stripe webhook received unknown event type.');
+        }
+
+        // Return a successful response to Stripe
+        http_response_code(200);
+
+        // Update the relevant payment
+        if (isset($invoice) && $invoice) {
+            $service->processPaidInvoice($invoice);
+        }
+    }
+
+    /**
+     * Handles incoming events from a PayPal webhook.
+     */
+    public function postPaypalWebhook(CommissionManager $service) {
+        $payload = @file_get_contents('php://input');
+        $event = json_decode($payload, true);
+
+        // Initialize PayPal client
+        $paypal = new PayPalClient;
+        $paypal->getAccessToken();
+
+        // Verify the header signature
+        $headers = getallheaders();
+        $headers = array_change_key_case($headers, CASE_UPPER);
+        $verification = $paypal->verifyWebHook([
+            'auth_algo'         => $headers['PAYPAL-AUTH-ALGO'],
+            'cert_url'          => $headers['PAYPAL-CERT-URL'],
+            'transmission_id'   => $headers['PAYPAL-TRANSMISSION-ID'],
+            'transmission_sig'  => $headers['PAYPAL-TRANSMISSION-SIG'],
+            'transmission_time' => $headers['PAYPAL-TRANSMISSION-TIME'],
+            'webhook_id'        => config('aldebaran.commissions.payment_processors.paypal.integration.webhook_id'),
+            'webhook_event'     => $event,
+        ]);
+        if (!isset($verification['verification_status']) || $verification['verification_status'] != 'SUCCESS') {
+            Log::error('Error verifying PayPal webhook event signature.');
+            exit();
+        }
+
+        // Handle the event
+        switch ($event['event_type']) {
+            case 'INVOICING.INVOICE.PAID':
+                $invoice = $event['resource']['invoice'];
+            default:
+                // Unexpected event type
+                Log::notice('PayPal webhook received unknown event type.');
+        }
+
+        // Return a successful response to PayPal
+        http_response_code(200);
+
+        // Update the relevant payment
+        if (isset($invoice) && $invoice) {
+            $service->processPaidInvoice($invoice);
+        }
     }
 
     /**
@@ -282,7 +437,10 @@ class CommissionController extends Controller {
      */
     private function postUpdateCommission($id, Request $request, CommissionManager $service) {
         $request->validate(Commission::$updateRules);
-        $data = $request->only(['pieces', 'paid_status', 'progress', 'comments', 'cost', 'tip', 'is_paid', 'is_intl', 'paid_at']);
+        $data = $request->only([
+            'pieces', 'paid_status', 'progress', 'comments', 'cost', 'tip', 'is_paid', 'is_intl', 'paid_at', 'total_with_fees', 'invoice_id',
+            'product_name', 'product_description', 'product_tax_code', 'product_category', 'unset_product_info',
+        ]);
         if ($service->updateCommission($id, $data, $request->user())) {
             flash('Commission updated successfully.')->success();
         } else {

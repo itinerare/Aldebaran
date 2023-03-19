@@ -4,6 +4,56 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [3.8.0](https://github.com/itinerare/Aldebaran/compare/v3.7.0...v3.8.0) (2023-03-19)
+
+### Features
+
+
+##### Commissions
+
+* Add business name setting for PayPal integration ([21c114](https://github.com/itinerare/Aldebaran/commit/21c114625381c1646172d7e629c051ad628cfa5d))
+* Add integration to send invoices via PayPal ([310da6](https://github.com/itinerare/Aldebaran/commit/310da639a32a64315429374fe1264077ac3dab4e))
+* Add optional integration/setting Stripe product info per class/category/type/commission ([64b9b6](https://github.com/itinerare/Aldebaran/commit/64b9b6e2b38fd4a509c920bee716e5614d1eaa23))
+* Add PayPal webhook endpoint and invoice data processing ([2d00b8](https://github.com/itinerare/Aldebaran/commit/2d00b817250b04d21ab28c9587af93c190c502c3))
+* Add product category to invoice fields ([6e5480](https://github.com/itinerare/Aldebaran/commit/6e548062d5fa09653d1ec05312f9ae847e01b1d1))
+* Better text on send invoice modal ([64dd0d](https://github.com/itinerare/Aldebaran/commit/64dd0d0fbc15d67f82ca8d95ec09f45421fb331f))
+* Display payments on admin completed commission view ([4b87c3](https://github.com/itinerare/Aldebaran/commit/4b87c340e9bed69f7494bc9020e382ae6edff841))
+* Implement semi-automated invoice handling via Stripe ([1d2572](https://github.com/itinerare/Aldebaran/commit/1d2572da9fb46c5180e6fbac45dce523701c46ff))
+* Make invoice fields on individual commissions context-sensitive ([b4302b](https://github.com/itinerare/Aldebaran/commit/b4302b14e1eb4ca2c67acbfa7ef6540638a7950f))
+* Make Stripe invoice due date configurable ([3e9bf8](https://github.com/itinerare/Aldebaran/commit/3e9bf85c115de63e327de69d35e51edb40ec1f0a))
+* Reflect currency/symbol config values in views ([e8911f](https://github.com/itinerare/Aldebaran/commit/e8911f3f8d6a51370c0044e50428792046ad67da))
+* Update fee retrieval for latest Stripe API ([9adf61](https://github.com/itinerare/Aldebaran/commit/9adf6111faa8aa45ed6daa5b2ec13bef1c11a01b))
+
+### Bug Fixes
+
+
+##### Commissions
+
+* Also display payments on admin view when declined ([a47255](https://github.com/itinerare/Aldebaran/commit/a472559bbda194d4c815a3eb655641615e8a0ea9))
+* Also hide tip label on new payment row if using integrations ([2be4c5](https://github.com/itinerare/Aldebaran/commit/2be4c53948909ec18b4b23d970e6b51c9bba6fd9))
+* Carry over changes to new payment row ([d7260c](https://github.com/itinerare/Aldebaran/commit/d7260cbfc5d719f66c283cf571b425da6c7f32c5))
+* Check if $parent is set for invoice info fields ([fe03db](https://github.com/itinerare/Aldebaran/commit/fe03db1a30758b54f682d766565bf0a78a91a80c))
+* Display piece literatures on admin completed commission view ([41f768](https://github.com/itinerare/Aldebaran/commit/41f768801d65d4247fce769b33ff6c8f7959227b))
+* Hide Stripe specific contents in invoice fields ([e24b58](https://github.com/itinerare/Aldebaran/commit/e24b58c55ad3f4217b98fcddcff56147914de8a2))
+* Improve tip display/handling when using integrations ([b0d6da](https://github.com/itinerare/Aldebaran/commit/b0d6da272baabefabd56ba622575fe395ce2a358))
+* Maintain invoice IDs even if integration is disabled ([d8ceb3](https://github.com/itinerare/Aldebaran/commit/d8ceb375b8666b784af4ba18efdd89344aaf8e98))
+* Make payment cost non-editable once an invoice is sent ([8c1da7](https://github.com/itinerare/Aldebaran/commit/8c1da78834e4ad8987df81dc8d6953f5a21a4221))
+* Only link to invoice if an ID is set ([93d300](https://github.com/itinerare/Aldebaran/commit/93d300eb8d4ac1c47414132eb1033d346f61dc55))
+* Only show invoice information on Stripe commissions ([f3333a](https://github.com/itinerare/Aldebaran/commit/f3333aff1fd63c862a3acd8c0afde2a8a6299473))
+* Pass on total with fees when updating commissions ([8e2e01](https://github.com/itinerare/Aldebaran/commit/8e2e010475ea6b263b33bb517f39cb99681f4fd5))
+* Put back payment row label ([302d1f](https://github.com/itinerare/Aldebaran/commit/302d1fec503af5d8a3fadb7dd6826ef447ed1f31))
+* Set default for payment tip field ([d40d6f](https://github.com/itinerare/Aldebaran/commit/d40d6fe0bc69c2b6a6c4944644ed35bd983c9f00))
+* Set PayPal invoice category to services ([8db780](https://github.com/itinerare/Aldebaran/commit/8db780e8f1e84ad5b414740a946014996122736b))
+* Set tip field properly when hidden ([168869](https://github.com/itinerare/Aldebaran/commit/168869fdf6271a284cba90e984747ad7da33746e))
+* Show invoice fields when PayPal integrations are enabled ([c3a777](https://github.com/itinerare/Aldebaran/commit/c3a77734a3f3fcd3dda4e3c51e41bb4b34177411))
+* Specify Stripe API version used ([56bba8](https://github.com/itinerare/Aldebaran/commit/56bba88343eb0855426928dcb4726e7d9f893296))
+* Uncomment webhook unknown event logging ([81760c](https://github.com/itinerare/Aldebaran/commit/81760cbf747d6461b133f1e23ca3007c73a3155f))
+* Update some missed currency symbols ([746c32](https://github.com/itinerare/Aldebaran/commit/746c32469f14cd6fc8ca1a7f0c68b05a2b7e2689))
+* Update Stripe invoice creation method to account for new API version ([d2a486](https://github.com/itinerare/Aldebaran/commit/d2a48659c8c2b636af17237f6736ddb0865db3fd))
+
+
+---
+
 ## [3.7.0](https://github.com/itinerare/Aldebaran/compare/v3.6.0...v3.7.0) (2023-03-12)
 
 ### Features

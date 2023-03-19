@@ -61,6 +61,15 @@ Route::group(['prefix' => 'commissions'], function () {
 Route::get('/feeds', 'Controller@getFeeds');
 Route::feeds('feeds');
 
+Route::group(['prefix' => 'admin/webhooks', 'namespace' => 'Admin'], function () {
+    if (config('aldebaran.commissions.payment_processors.stripe.integration.enabled')) {
+        Route::post('stripe', 'CommissionController@postStripeWebhook');
+    }
+    if (config('aldebaran.commissions.payment_processors.paypal.integration.enabled')) {
+        Route::post('paypal', 'CommissionController@postPaypalWebhook');
+    }
+});
+
 /***************************************************
     Routes that require login
 ****************************************************/

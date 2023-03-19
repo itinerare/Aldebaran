@@ -15,7 +15,7 @@ class CommissionPayment extends Model {
      */
     protected $fillable = [
         'commission_id', 'cost', 'tip', 'total_with_fees',
-        'is_paid', 'is_intl', 'paid_at',
+        'is_paid', 'is_intl', 'paid_at', 'invoice_id',
     ];
 
     /**
@@ -88,6 +88,24 @@ class CommissionPayment extends Model {
         }
 
         return 0;
+    }
+
+    /**
+     * Get the URL of the payment's invoice, if relevant, on the payment processor.
+     *
+     * @return string
+     */
+    public function getInvoiceUrlAttribute() {
+        switch ($this->commission->payment_processor) {
+            case 'stripe':
+                return 'https://dashboard.stripe.com/'.(config('app.env') == 'production' ? '' : 'test/').'invoices/'.$this->invoice_id;
+                break;
+            case 'paypal':
+                return 'https://www.'.(config('app.env') == 'production' ? '' : 'sandbox.').'paypal.com/invoice/s/details/'.$this->invoice_id;
+                break;
+        }
+
+        return null;
     }
 
     /**********************************************************************************************

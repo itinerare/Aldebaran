@@ -80,7 +80,8 @@
                         <h5>Payment Status</h5>
                     </div>
                     <div class="col-md">{!! $commission->isPaid !!}
-                        ({{ isset($commission->cost) ? '$' . $commission->cost : '-' }}{{ $commission->tip ? ' + $' . $commission->tip . ' Tip' : '' }}/${{ $commission->totalWithFees }}) ・ via
+                        ({{ isset($commission->cost) ? config('aldebaran.commissions.currency_symbol') . $commission->cost : '-' }}{{ $commission->tip ? ' + ' . config('aldebaran.commissions.currency_symbol') . $commission->tip . ' Tip' : '' }}/{{ config('aldebaran.commissions.currency_symbol') . $commission->totalWithFees }})
+                        ・ via
                         {{ config('aldebaran.commissions.payment_processors.' . $commission->payment_processor . '.label') }}
                     </div>
                 </div>
@@ -205,9 +206,7 @@
                 </div>
             @endif
 
-            <h2>General Information</h2>
-
-            <p>Payment Status</p>
+            <h2>Payments</h2>
 
             <div class="form-group">
                 <div id="paymentList">
@@ -215,37 +214,79 @@
                         @foreach ($commission->payments as $payment)
                             <div class="input-group mb-2">
                                 <div class="input-group-prepend">
-                                    <span class="input-group-text">Cost & Tip (USD)</span>
+                                    <span class="input-group-text">Cost
+                                        @if (!$commission->useIntegrations && $commission->payment_processor != 'stripe')
+                                            & Tip
+                                        @endif
+                                        ({{ config('aldebaran.commissions.currency') }})
+                                    </span>
                                 </div>
-                                {!! Form::number('cost[' . $payment->id . ']', $payment->cost, [
-                                    'class' => 'form-control',
-                                    'aria-label' => 'Cost',
-                                    'placeholder' => 'Cost',
-                                ]) !!}
-                                {!! Form::number('tip[' . $payment->id . ']', $payment->tip, [
-                                    'class' => 'form-control',
-                                    'aria-label' => 'Tip',
-                                    'placeholder' => 'Tip',
-                                ]) !!}
-                                {!! Form::hidden('paid_at[' . $payment->id . ']', $payment->paid_at) !!}
+                                @if ($commission->useIntegrations && isset($payment->invoice_id))
+                                    {!! Form::number('cost_display[' . $payment->id . ']', $payment->cost, [
+                                        'class' => 'form-control',
+                                        'aria-label' => 'Cost',
+                                        'placeholder' => 'Cost',
+                                        'disabled',
+                                    ]) !!}
+                                    {!! Form::hidden('cost[' . $payment->id . ']', $payment->cost) !!}
+                                @else
+                                    {!! Form::number('cost[' . $payment->id . ']', $payment->cost, [
+                                        'class' => 'form-control',
+                                        'aria-label' => 'Cost',
+                                        'placeholder' => 'Cost',
+                                    ]) !!}
+                                @endif
+                                @if ($commission->payment_processor == 'stripe' || $commission->useIntegrations)
+                                    {!! Form::hidden('tip[' . $payment->id . ']', $payment->tip ?? 0.0) !!}
+                                @else
+                                    {!! Form::number('tip[' . $payment->id . ']', $payment->tip ?? 0.0, [
+                                        'class' => 'form-control',
+                                        'aria-label' => 'Tip',
+                                        'placeholder' => 'Tip',
+                                    ]) !!}
+                                @endif
                                 {!! Form::hidden('total_with_fees[' . $payment->id . ']', $payment->totalWithFees) !!}
+                                {!! Form::hidden('paid_at[' . $payment->id . ']', $payment->paid_at) !!}
+                                {!! Form::hidden('invoice_id[' . $payment->id . ']', $payment->invoice_id) !!}
                                 <div class="input-group-append">
-                                    <div class="input-group-text">
-                                        {!! Form::checkbox('is_paid[' . $payment->id . ']', 1, $payment->is_paid, [
-                                            'aria-label' => 'Whether or not this invoice has been paid',
-                                        ]) !!}
-                                        <span class="ml-1">
-                                            Paid{!! $payment->is_paid ? ' ' . pretty_date($payment->paid_at) : '' !!}
+                                    @if ($commission->useIntegrations && $payment->tip > 0)
+                                        <span class="input-group-text">
+                                            Tip: {{ config('aldebaran.commissions.currency_symbol') . $payment->tip }}
                                         </span>
-                                    </div>
-                                    <div class="input-group-text">
-                                        {!! Form::checkbox('is_intl[' . $payment->id . ']', 1, $payment->is_intl, [
-                                            'aria-label' => 'Whether or not this commissioner is international',
-                                        ]) !!}
-                                        <span class="ml-1">Intl.</span>
-                                    </div>
+                                    @endif
+                                    @if ($commission->useIntegrations)
+                                        @if ($payment->is_paid)
+                                            <a @if (isset($payment->invoice_id)) href="{{ $payment->invoiceUrl }}" @endif class="btn btn-success" type="button" aria-label="Link to Invoice">
+                                                Paid {!! $payment->is_paid ? pretty_date($payment->paid_at) : '' !!}
+                                            </a>
+                                        @elseif (isset($payment->invoice_id))
+                                            <a href="{{ $payment->invoiceUrl }}" class="btn btn-outline-secondary" type="button" data-toggle="tooltip"
+                                                title="An invoice has been sent for this payment. The site will update this payment once the invoice has been paid. Additionally, you may click this button to be taken to the invoice's page."
+                                                aria-label="Link to Invoice">Invoice
+                                                Sent</a>
+                                        @else
+                                            <a href="#" class="btn btn-primary send-invoice-button" type="button" data-id="{{ $payment->id }}">Send Invoice</a>
+                                        @endif
+                                        {!! Form::hidden('is_paid[' . $payment->id . ']', $payment->is_paid) !!}
+                                        {!! Form::hidden('is_intl[' . $payment->id . ']', $payment->is_intl) !!}
+                                    @else
+                                        <div class="input-group-text">
+                                            {!! Form::checkbox('is_paid[' . $payment->id . ']', 1, $payment->is_paid, [
+                                                'aria-label' => 'Whether or not this invoice has been paid',
+                                            ]) !!}
+                                            <span class="ml-1">
+                                                Paid{!! $payment->is_paid ? ' ' . pretty_date($payment->paid_at) : '' !!}
+                                            </span>
+                                        </div>
+                                        <div class="input-group-text">
+                                            {!! Form::checkbox('is_intl[' . $payment->id . ']', 1, $payment->is_intl, [
+                                                'aria-label' => 'Whether or not this commissioner is international',
+                                            ]) !!}
+                                            <span class="ml-1">Intl.</span>
+                                        </div>
+                                    @endif
                                     <span class="input-group-text">After Fees:
-                                        ${{ $payment->totalWithFees }}</span>
+                                        {{ config('aldebaran.commissions.currency_symbol') . $payment->totalWithFees }}</span>
                                     <button class="remove-payment btn btn-outline-danger" type="button" id="button-addon2">X</button>
                                 </div>
                             </div>
@@ -256,6 +297,18 @@
                     <a href="#" class="btn btn-primary" id="add-payment">Add Payment</a>
                 </div>
             </div>
+
+            @if ($commission->useIntegrations)
+                <h3>Invoice Information</h3>
+                <p>
+                    This will be used to populate product information when creating invoices for this commission. If not set, this uses the next most specific information (this commission's type if set, the type's category's if not, and so on); that is,
+                    if those values are still
+                    applicable to this commission, you do not need to set them here. For convenience, the currently relevant values are displayed as placeholder information in the fields below if they are unset.
+                </p>
+                @include('admin.commissions._invoice_fields', ['object' => $commission, 'parent' => true])
+            @endif
+
+            <h2>General Information</h2>
 
             <div class="form-group">
                 {!! Form::label('progress', 'Progress') !!}
@@ -288,19 +341,27 @@
         <div class="payment-row hide mb-2">
             <div class="input-group mb-2">
                 <div class="input-group-prepend">
-                    <span class="input-group-text">Cost & Tip (USD)</span>
+                    <span class="input-group-text">
+                        Cost
+                        @if (!$commission->useIntegrations && $commission->payment_processor != 'stripe')
+                            & Tip
+                        @endif
+                        ({{ config('aldebaran.commissions.currency') }})
+                    </span>
                 </div>
                 {!! Form::number('cost[]', null, ['class' => 'form-control', 'aria-label' => 'Cost', 'placeholder' => 'Cost']) !!}
-                {!! Form::number('tip[]', null, ['class' => 'form-control', 'aria-label' => 'Tip', 'placeholder' => 'Tip']) !!}
+                @if ($commission->payment_processor == 'stripe' || $commission->useIntegrations)
+                    {!! Form::hidden('tip[]', 0.0) !!}
+                @else
+                    {!! Form::number('tip[]', 0.0, [
+                        'class' => 'form-control',
+                        'aria-label' => 'Tip',
+                        'placeholder' => 'Tip',
+                    ]) !!}
+                @endif
                 <div class="input-group-append">
-                    <div class="input-group-text">
-                        {!! Form::checkbox('is_paid[]', 1, 0, ['aria-label' => 'Whether or not this invoice has been paid', 'disabled']) !!}
-                        <span class="ml-1">Is Paid</span>
-                    </div>
-                    <div class="input-group-text">
-                        {!! Form::checkbox('is_intl[]', 1, 0, ['aria-label' => 'Whether or not this invoice has been paid', 'disabled']) !!}
-                        <span class="ml-1">Intl.</span>
-                    </div>
+                    {!! Form::hidden('is_paid[]', 0) !!}
+                    {!! Form::hidden('is_intl[]', 0) !!}
                     <button class="remove-payment btn btn-outline-danger" type="button" id="button-addon2">X</button>
                 </div>
             </div>
@@ -381,34 +442,115 @@
     @else
         @if ($commission->status == 'Complete')
             @if ($commission->pieces->count())
-                <p>The following are all pieces associated with this commission. Click a piece's thumbnail image to go to
-                    the edit piece page.</p>
+                <p>The following are all pieces associated with this commission. Click a piece's thumbnail image or title to go to the edit piece page.</p>
                 <div class="mb-4">
                     @foreach ($commission->pieces as $piece)
-                        <div class="text-center mb-2">
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <a href="{{ url('admin/data/pieces/edit/' . $piece->piece_id) }}">
-                                        <img class="image img-thumbnail" style="max-width:100%;" src="{{ $piece->piece->primaryImages->count() ? $piece->piece->primaryImages->random()->thumbnailUrl : $piece->piece->images->first()->thumbnailUrl }}"
-                                            alt="Thumbnail for piece {{ $piece->name }}" />
-                                    </a>
-                                </div>
-                                <div class="col-md align-self-center">
-                                    <h4>{{ $piece->piece->name }}</h4>
-                                    <p>
-                                        {{ $piece->piece->primaryImages->count() }} Primary
-                                        Image{{ $piece->piece->primaryImages->count() == 1 ? '' : 's' }} ・
-                                        {{ $piece->piece->otherImages->count() }} Secondary
-                                        Image{{ $piece->piece->otherImages->count() == 1 ? '' : 's' }}<br />
-                                        {{ $piece->piece->images->count() }}
-                                        Image{{ $piece->piece->images->count() == 1 ? '' : 's' }} Total
-                                    </p>
+                        @if ($piece->piece->images->count())
+                            <div class="text-center mb-2">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <a href="{{ $piece->piece->adminUrl }}">
+                                            <img class="image img-thumbnail" style="max-width:100%;"
+                                                src="{{ $piece->piece->primaryImages->count() ? $piece->piece->primaryImages->random()->thumbnailUrl : $piece->piece->images->first()->thumbnailUrl }}"
+                                                alt="Thumbnail for piece {{ $piece->piece->name }}" />
+                                        </a>
+                                    </div>
+                                    <div class="col-md align-self-center">
+                                        <a href="{{ $piece->piece->adminUrl }}">
+                                            <h4>{{ $piece->piece->name }}</h4>
+                                        </a>
+                                        <p>
+                                            {{ $piece->piece->primaryImages->count() }} Primary
+                                            Image{{ $piece->piece->primaryImages->count() == 1 ? '' : 's' }} ・
+                                            {{ $piece->piece->otherImages->count() }} Secondary
+                                            Image{{ $piece->piece->otherImages->count() == 1 ? '' : 's' }}<br />
+                                            {{ $piece->piece->images->count() }}
+                                            Image{{ $piece->piece->images->count() == 1 ? '' : 's' }} Total
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        @endif
+                        @if ($piece->piece->literatures->count())
+                            <div class="col-md-12">
+                                @foreach ($piece->piece->literatures as $literature)
+                                    <div class="card mb-2">
+                                        <h5 class="card-header">
+                                            Literature #{{ $literature->id }}
+                                            <a class="small inventory-collapse-toggle collapse-toggle collapsed" href="#literature-{{ $literature->id }}" data-toggle="collapse">Show</a></h3>
+                                        </h5>
+                                        <div class="card-body collapse" id="literature-{{ $literature->id }}">
+                                            {!! $literature->text !!}
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        @endif
                     @endforeach
                 </div>
             @endif
+        @endif
+
+        @if ($commission->status == 'Complete' || $commission->status == 'Declined')
+            <h2>Payments</h2>
+
+            <div class="form-group">
+                <div id="paymentList">
+                    @if ($commission->payments->count())
+                        @foreach ($commission->payments as $payment)
+                            <div class="input-group mb-2">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Cost
+                                        @if (!$commission->useIntegrations && $commission->payment_processor != 'stripe')
+                                            & Tip
+                                        @endif
+                                        ({{ config('aldebaran.commissions.currency') }})
+                                    </span>
+                                </div>
+                                {!! Form::number('cost_display[' . $payment->id . ']', $payment->cost, [
+                                    'class' => 'form-control',
+                                    'aria-label' => 'Cost',
+                                    'placeholder' => 'Cost',
+                                    'disabled',
+                                ]) !!}
+                                <div class="input-group-append">
+                                    @if ($payment->tip > 0)
+                                        <span class="input-group-text">
+                                            Tip: {{ config('aldebaran.commissions.currency_symbol') . $payment->tip }}
+                                        </span>
+                                    @endif
+                                    @if ($commission->useIntegrations)
+                                        @if ($payment->is_paid)
+                                            <a @if (isset($payment->invoice_id)) href="{{ $payment->invoiceUrl }}" @endif class="btn btn-success" type="button" aria-label="Link to Invoice">
+                                                Paid {!! $payment->is_paid ? pretty_date($payment->paid_at) : '' !!}
+                                            </a>
+                                        @endif
+                                    @else
+                                        <div class="input-group-text">
+                                            {!! Form::checkbox('is_paid[' . $payment->id . ']', 1, $payment->is_paid, [
+                                                'aria-label' => 'Whether or not this invoice has been paid',
+                                                'disabled',
+                                            ]) !!}
+                                            <span class="ml-1">
+                                                Paid{!! $payment->is_paid ? ' ' . pretty_date($payment->paid_at) : '' !!}
+                                            </span>
+                                        </div>
+                                        <div class="input-group-text">
+                                            {!! Form::checkbox('is_intl[' . $payment->id . ']', 1, $payment->is_intl, [
+                                                'aria-label' => 'Whether or not this commissioner is international',
+                                                'disabled',
+                                            ]) !!}
+                                            <span class="ml-1">Intl.</span>
+                                        </div>
+                                    @endif
+                                    <span class="input-group-text">After Fees:
+                                        {{ config('aldebaran.commissions.currency_symbol') . $payment->totalWithFees }}</span>
+                                </div>
+                            </div>
+                        @endforeach
+                    @endif
+                </div>
+            </div>
         @endif
 
         <div class="card card-body mb-4">
@@ -452,6 +594,11 @@
                 function removePaymentRow($trigger) {
                     $trigger.parent().parent().remove();
                 }
+
+                $('.send-invoice-button').on('click', function(e) {
+                    e.preventDefault();
+                    loadModal("{{ url('admin/commissions/invoice') }}/" + $(this).attr('data-id'), 'Send Invoice');
+                });
 
                 var $confirmationModal = $('#confirmationModal');
                 var $submissionForm = $('#commissionForm');

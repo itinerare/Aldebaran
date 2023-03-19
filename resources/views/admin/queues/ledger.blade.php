@@ -25,8 +25,8 @@
                         @endif
                     </div>
                 @endif
-                Total: ${{ $yearPayments[$year]->pluck('cost')->sum() + $yearPayments[$year]->pluck('tip')->sum() }}<br />
-                After Fees: ${{ $yearPayments[$year]->pluck('totalWithFees')->sum() }}
+                Total: {{ config('aldebaran.commissions.currency_symbol') }}{{ $yearPayments[$year]->pluck('cost')->sum() + $yearPayments[$year]->pluck('tip')->sum() }}<br />
+                After Fees: {{ config('aldebaran.commissions.currency_symbol') }}{{ $yearPayments[$year]->pluck('totalWithFees')->sum() }}
             </h5>
         </div>
         @foreach ($years[$year] as $month => $payments)
@@ -39,10 +39,10 @@
                             <a href="{{ url('admin/commissions/edit/' . $payment->commission->id) }}">View</a>
                             <span class="float-right">
                                 <abbr data-toggle="tooltip" title="(Before Fees)">
-                                    ${{ $payment->cost }}{{ $payment->tip > 0 ? ' + $' . $payment->tip . ' Tip' : '' }}
+                                    {{ config('aldebaran.commissions.currency_symbol') }}{{ $payment->cost }}{{ $payment->tip > 0 ? ' + $' . $payment->tip . ' Tip' : '' }}
                                 </abbr>
                                 / <abbr data-toggle="tooltip" title="(After Fees)">
-                                    ${{ $payment->totalWithFees }}
+                                    {{ config('aldebaran.commissions.currency_symbol') }}{{ $payment->totalWithFees }}
                                 </abbr>
                                 {{ !$payment->is_paid ? '(Unpaid)' : ($payment->commission->status != 'Complete' ? ($payment->commission->status == 'Declined' ? '(Cancelled)' : '(Uncompleted)') : '') }}
                             </span>
@@ -51,8 +51,8 @@
                 @endforeach
                 <div class="text-right">
                     <h5>
-                        Total: ${{ $payments->pluck('cost')->sum() + $payments->pluck('tip')->sum() }}<br />
-                        After Fees: ${{ $payments->pluck('totalWithFees')->sum() }}
+                        Total: {{ config('aldebaran.commissions.currency_symbol') }}{{ $payments->pluck('cost')->sum() + $payments->pluck('tip')->sum() }}<br />
+                        After Fees: {{ config('aldebaran.commissions.currency_symbol') }}{{ $payments->pluck('totalWithFees')->sum() }}
                     </h5>
                 </div>
             </div>

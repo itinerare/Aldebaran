@@ -14,7 +14,7 @@ class CommissionClass extends Model {
      * @var array
      */
     protected $fillable = [
-        'name', 'slug', 'is_active', 'sort', 'data',
+        'name', 'slug', 'is_active', 'sort', 'data', 'invoice_data',
     ];
 
     /**
@@ -30,7 +30,8 @@ class CommissionClass extends Model {
      * @var array
      */
     protected $casts = [
-        'data' => 'json',
+        'data'         => 'array',
+        'invoice_data' => 'array',
     ];
 
     /**
@@ -47,7 +48,8 @@ class CommissionClass extends Model {
      */
     public static $createRules = [
         //
-        'name' => 'required|unique:commission_classes',
+        'name'         => 'required|unique:commission_classes',
+        'product_name' => 'filled',
     ];
 
     /**
@@ -57,16 +59,18 @@ class CommissionClass extends Model {
      */
     public static $updateRules = [
         //
-        'name'            => 'required',
-        'page_key.*'      => 'nullable|required_with:page_title.*|between:3,25|alpha_dash',
-        'page_title.*'    => 'nullable|required_with:page_key.*|between:3,100',
-        'field_key.*'     => 'nullable|between:3,25|alpha_dash',
-        'field_type.*'    => 'nullable|required_with:field_key.*',
-        'field_label.*'   => 'nullable|string|required_with:field_key.*',
-        'field_choices.*' => 'nullable|string|required_if:field_type.*,choice,multiple',
-        'field_rules.*'   => 'nullable|string|max:255',
-        'field_value.*'   => 'nullable|string|max:255',
-        'field_help.*'    => 'nullable|string|max:255',
+        'name'             => 'required',
+        'page_key.*'       => 'nullable|required_with:page_title.*|between:3,25|alpha_dash',
+        'page_title.*'     => 'nullable|required_with:page_key.*|between:3,100',
+        'field_key.*'      => 'nullable|between:3,25|alpha_dash',
+        'field_type.*'     => 'nullable|required_with:field_key.*',
+        'field_label.*'    => 'nullable|string|required_with:field_key.*',
+        'field_choices.*'  => 'nullable|string|required_if:field_type.*,choice,multiple',
+        'field_rules.*'    => 'nullable|string|max:255',
+        'field_value.*'    => 'nullable|string|max:255',
+        'field_help.*'     => 'nullable|string|max:255',
+        'product_name'     => 'filled',
+        'product_category' => 'filled',
     ];
 
     /**********************************************************************************************
