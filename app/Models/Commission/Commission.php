@@ -15,8 +15,7 @@ class Commission extends Model {
      */
     protected $fillable = [
         'commission_key', 'commissioner_id', 'commission_type', 'progress',
-        'status', 'description', 'data', 'comments', 'payment_processor',
-        'invoice_data',
+        'status', 'data', 'comments', 'payment_processor', 'invoice_data',
     ];
 
     /**

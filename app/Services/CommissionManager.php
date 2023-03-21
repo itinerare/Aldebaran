@@ -4,10 +4,12 @@ namespace App\Services;
 
 use App\Facades\Settings;
 use App\Mail\CommissionRequested;
+use App\Mail\QuoteRequested;
 use App\Models\Commission\Commission;
 use App\Models\Commission\Commissioner;
 use App\Models\Commission\CommissionerIp;
 use App\Models\Commission\CommissionPayment;
+use App\Models\Commission\CommissionQuote;
 use App\Models\Commission\CommissionType;
 use App\Models\Gallery\Piece;
 use App\Models\MailingList\MailingListSubscriber;
@@ -277,7 +279,7 @@ class CommissionManager extends Service {
 
             // Update the commission
             $commission->update(Arr::only($data, [
-                'progress', 'status', 'description', 'data', 'comments', 'invoice_data',
+                'progress', 'data', 'comments', 'invoice_data',
             ]));
 
             return $this->commitReturn($commission);
@@ -658,6 +660,213 @@ class CommissionManager extends Service {
     }
 
     /**
+     * Creates a new quote request.
+     *
+     * @param array $data
+     * @param bool  $manual
+     *
+     * @return \App\Models\Commission\Commission|bool
+     */
+    public function createQuote($data, $manual = false) {
+        DB::beginTransaction();
+
+        try {
+            if (!config('aldebaran.commissions.enabled')) {
+                throw new \Exception('Commissions are not enabled for this site.');
+            }
+
+            // Verify the type and, if necessary, key
+            $type = CommissionType::where('id', $data['commission_type_id'])->first();
+            if (!$type) {
+                throw new \Exception('The selected commission type is invalid.');
+            }
+            if (!$manual) {
+                if (!$type->quotes_open) {
+                    throw new \Exception('Quotes are not open for this type.');
+                }
+            }
+
+            if (isset($data['commissioner_id'])) {
+                $commissioner = Commissioner::where('id', $data['commissioner_id'])->first();
+                if (!$commissioner) {
+                    throw new \Exception('Invalid commissioner selected.');
+                }
+            } else {
+                $commissioner = $this->processCommissioner($data, $manual ? false : true);
+            }
+
+            $data['status'] = 'Pending';
+
+            $quote = CommissionQuote::create(Arr::only($data, [
+                'commissioner_id', 'commission_type_id', 'status', 'subject', 'description', 'amount',
+            ]));
+
+            // Now that the commission has an ID, assign it a key incorporating it
+            // This ensures that even in the very odd case of a duplicate key,
+            // conflicts should not arise
+            $quote->update(['quote_key' => $quote->id.'_'.randomString(15)]);
+
+            // If desired, send an email notification to the admin account
+            // that a commission request was submitted
+            if (config('aldebaran.settings.email_features') && Settings::get('notif_emails') && !$manual && (config('aldebaran.settings.admin_email.address') && config('aldebaran.settings.admin_email.password'))) {
+                Mail::to(User::find(1))->send(new QuoteRequested($quote));
+            }
+
+            return $this->commitReturn($quote);
+        } catch (\Exception $e) {
+            $this->setError('error', $e->getMessage());
+        }
+
+        return $this->rollbackReturn(false);
+    }
+
+    /**
+     * Accepts a quote.
+     *
+     * @param int                   $id
+     * @param array                 $data
+     * @param \App\Models\User\User $user
+     *
+     * @return mixed
+     */
+    public function acceptQuote($id, $data, $user) {
+        DB::beginTransaction();
+
+        try {
+            // Check that there is a user
+            if (!$user) {
+                throw new \Exception('Invalid user.');
+            }
+            // Check that the quote exists and is pending
+            $quote = CommissionQuote::where('id', $id)->where('status', 'Pending')->first();
+            if (!$quote) {
+                throw new \Exception('Invalid quote selected.');
+            }
+
+            // Update the quote status and comments
+            $quote->update([
+                'status'   => 'Accepted',
+                'comments' => $data['comments'] ?? null,
+            ]);
+
+            return $this->commitReturn($quote);
+        } catch (\Exception $e) {
+            $this->setError('error', $e->getMessage());
+        }
+
+        return $this->rollbackReturn(false);
+    }
+
+    /**
+     * Updates a quote.
+     *
+     * @param int                   $id
+     * @param array                 $data
+     * @param \App\Models\User\User $user
+     *
+     * @return mixed
+     */
+    public function updateQuote($id, $data, $user) {
+        DB::beginTransaction();
+
+        try {
+            // Check that there is a user
+            if (!$user) {
+                throw new \Exception('Invalid user.');
+            }
+            // Check that the commission exists and is accepted
+            $quote = CommissionQuote::where('id', $id)->where('status', 'Accepted')->first();
+            if (!$quote) {
+                throw new \Exception('Invalid quote selected.');
+            }
+
+            // Update the commission
+            $quote->update(Arr::only($data, ['amount', 'comments']));
+
+            return $this->commitReturn($quote);
+        } catch (\Exception $e) {
+            $this->setError('error', $e->getMessage());
+        }
+
+        return $this->rollbackReturn(false);
+    }
+
+    /**
+     * Marks a quote complete.
+     *
+     * @param int                   $id
+     * @param array                 $data
+     * @param \App\Models\User\User $user
+     *
+     * @return mixed
+     */
+    public function completeQuote($id, $data, $user) {
+        DB::beginTransaction();
+
+        try {
+            // Check that there is a user
+            if (!$user) {
+                throw new \Exception('Invalid user.');
+            }
+            // Check that the quote exists and is accepted
+            $quote = CommissionQuote::where('id', $id)->where('status', 'Accepted')->first();
+            if (!$quote) {
+                throw new \Exception('Invalid quote selected.');
+            }
+
+            // Update the quote status and comments
+            $quote->update([
+                'status'   => 'Complete',
+                'amount'   => $data['amount'] ?? 0.00,
+                'comments' => $data['comments'] ?? null,
+            ]);
+
+            return $this->commitReturn($quote);
+        } catch (\Exception $e) {
+            $this->setError('error', $e->getMessage());
+        }
+
+        return $this->rollbackReturn(false);
+    }
+
+    /**
+     * Declines a quote.
+     *
+     * @param int                   $id
+     * @param array                 $data
+     * @param \App\Models\User\User $user
+     *
+     * @return mixed
+     */
+    public function declineQuote($id, $data, $user) {
+        DB::beginTransaction();
+
+        try {
+            // Check that there is a user
+            if (!$user) {
+                throw new \Exception('Invalid user.');
+            }
+            // Check that the commission exists and is pending
+            $quote = CommissionQuote::where('id', $id)->whereIn('status', ['Pending', 'Accepted'])->first();
+            if (!$quote) {
+                throw new \Exception('Invalid commission selected.');
+            }
+
+            // Update the commission status and comments
+            $quote->update([
+                'status'   => 'Declined',
+                'comments' => $data['comments'] ?? null,
+            ]);
+
+            return $this->commitReturn($quote);
+        } catch (\Exception $e) {
+            $this->setError('error', $e->getMessage());
+        }
+
+        return $this->rollbackReturn(false);
+    }
+
+    /**
      * Handles bans from the commission or mailing list systems.
      *
      * @param int|string            $subject
@@ -675,12 +884,27 @@ class CommissionManager extends Service {
                 throw new \Exception('Invalid user.');
             }
             if (is_numeric($subject)) {
-                // Fetch commission so as to fetch commissioner
-                $commission = Commission::where('id', $subject)->whereIn('status', ['Pending', 'Accepted'])->first();
-                if (!$commission) {
-                    throw new \Exception('Invalid commission selected.');
+                // Fetch subject so as to fetch commissioner
+                if (isset($data['context'])) {
+                    switch ($data['context']) {
+                        case 'commission':
+                            $subject = Commission::where('id', $subject)->whereIn('status', ['Pending', 'Accepted'])->first();
+                            break;
+                        case 'quote':
+                            $subject = CommissionQuote::where('id', $subject)->whereIn('status', ['Pending', 'Accepted'])->first();
+                            break;
+                        default:
+                            $subject = null;
+                            throw new \Exception('Invalid context selected.');
+                    }
+                } else {
+                    throw new \Exception('Context not specified.');
                 }
-                $commissioner = Commissioner::where('id', $commission->commissioner_id)->first();
+                if (!$subject) {
+                    throw new \Exception('Invalid subject selected.');
+                }
+
+                $commissioner = Commissioner::where('id', $subject->commissioner_id)->first();
                 if (!$commissioner) {
                     throw new \Exception('Invalid commissioner selected.');
                 }

@@ -19,6 +19,7 @@ class CommissionType extends Model {
     protected $fillable = [
         'category_id', 'name', 'availability', 'description', 'data', 'key',
         'is_active', 'is_visible', 'sort', 'show_examples', 'invoice_data',
+        'quotes_open', 'quotes_required',
     ];
 
     /**
@@ -102,6 +103,18 @@ class CommissionType extends Model {
         SCOPES
 
     **********************************************************************************************/
+
+    /**
+     * Scope a query to only include commission types of a given class.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param int                                   $class
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeClass($query, $class) {
+        return $query->whereRelation('category', 'class_id', $class);
+    }
 
     /**
      * Scope a query to only include active commission types.

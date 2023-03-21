@@ -7,6 +7,7 @@ use App\Models\Commission\Commission;
 use App\Models\Commission\CommissionClass;
 use App\Models\Commission\Commissioner;
 use App\Models\Commission\CommissionPayment;
+use App\Models\Commission\CommissionQuote;
 use App\Models\Commission\CommissionType;
 use App\Models\Gallery\Piece;
 use App\Services\CommissionManager;
@@ -207,7 +208,7 @@ class CommissionController extends Controller {
                 return $this->postDeclineCommission($id, $request, $service);
                 break;
             case 'ban':
-                return $this->postBanCommissioner($id, $request, $service);
+                return $this->postBanCommissioner($id, $request->only(['comments']) + ['context' => 'commission'], $request, $service);
                 break;
         }
 
@@ -351,6 +352,162 @@ class CommissionController extends Controller {
     }
 
     /**
+     * Shows the quote index page.
+     *
+     * @param string $status
+     * @param mixed  $class
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getQuoteIndex(Request $request, $class, $status = null) {
+        if (!config('aldebaran.commissions.enabled')) {
+            abort(404);
+        }
+
+        $class = CommissionClass::where('slug', $class)->first();
+        if (!$class) {
+            abort(404);
+        }
+
+        $quotes = CommissionQuote::with('commissioner')->class($class->id)->where('status', $status ? ucfirst($status) : 'Pending');
+        $data = $request->only(['commission_type', 'sort']);
+        if (isset($data['commission_type']) && $data['commission_type'] != 'none') {
+            $quotes->where('commission_type', $data['commission_type']);
+        }
+        if (isset($data['sort'])) {
+            switch ($data['sort']) {
+                case 'newest':
+                    $quotes->orderBy('created_at', 'DESC');
+                    break;
+                case 'oldest':
+                    $quotes->orderBy('created_at', 'ASC');
+                    break;
+            }
+        } else {
+            $quotes->orderBy('created_at');
+        }
+
+        return view('admin.queues.quote_index', [
+            'quotes'      => $quotes->paginate(30)->appends($request->query()),
+            'types'       => ['none' => 'Any Type'] + CommissionType::orderBy('name', 'DESC')->pluck('name', 'id')->toArray(),
+            'class'       => $class,
+            'count'       => new CommissionType,
+        ]);
+    }
+
+    /**
+     * Show the new quote request form.
+     *
+     * @param string $slug
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getNewQuote($slug) {
+        if (!config('aldebaran.commissions.enabled')) {
+            abort(404);
+        }
+
+        $class = CommissionClass::where('slug', $slug)->first();
+        if (!$class) {
+            abort(404);
+        }
+
+        $commissioners = Commissioner::valid()->get()->pluck('fullName', 'id')->sort()->toArray();
+
+        return view('admin.queues.new_quote', [
+            'class'         => $class,
+            'commissioners' => $commissioners,
+            'types'         => CommissionType::class($class->id)->pluck('name', 'id')->toArray(),
+            'quote'         => new CommissionQuote,
+        ]);
+    }
+
+    /**
+     * Submits a new quote request.
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function postNewQuote(Request $request, CommissionManager $service) {
+        if (!config('aldebaran.commissions.enabled')) {
+            abort(404);
+        }
+
+        $type = CommissionType::where('id', $request->get('commission_type_id'))->first();
+        if (!$type) {
+            abort(404);
+        }
+
+        $request->validate(CommissionQuote::$manualCreateRules);
+
+        $data = $request->only([
+            'commissioner_id', 'name', 'email', 'contact',
+            'commission_type_id', 'subject', 'description', 'amount',
+        ]);
+        if ($quote = $service->createQuote($data, true)) {
+            flash('Quote submitted successfully.')->success();
+
+            return redirect()->to('admin/commissions/quotes/edit/'.$quote->id);
+        } else {
+            foreach ($service->errors()->getMessages()['error'] as $error) {
+                $service->addError($error);
+            }
+        }
+
+        return redirect()->back();
+    }
+
+    /**
+     * Shows the quote detail page.
+     *
+     * @param int $id
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getQuote($id) {
+        $quote = CommissionQuote::findOrFail($id);
+        if (!$quote) {
+            abort(404);
+        }
+
+        return view('admin.queues.quote', [
+            'quote' => $quote,
+        ]);
+    }
+
+    /**
+     * Acts on a quote.
+     *
+     * @param int    $id
+     * @param string $action
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function postQuote($id, $action, Request $request, CommissionManager $service) {
+        switch ($action) {
+            default:
+                flash('Invalid action selected.')->error();
+                break;
+            case 'accept':
+                return $this->postAcceptQuote($id, $request, $service);
+                break;
+            case 'update':
+                return $this->postUpdateQuote($id, $request, $service);
+                break;
+            case 'complete':
+                return $this->postCompleteQuote($id, $request, $service);
+                break;
+            case 'decline':
+                return $this->postDeclineQuote($id, $request, $service);
+                break;
+            case 'ban':
+                return $this->postBanCommissioner($id, $request->only(['comments']) + ['context' => 'quote'], $request, $service);
+                break;
+        }
+
+        return redirect()->back();
+    }
+
+    /**
      * Show the ledger.
      *
      * @return \Illuminate\Contracts\Support\Renderable
@@ -491,14 +648,95 @@ class CommissionController extends Controller {
     }
 
     /**
-     * Accepts a commission.
+     * Accepts a quote.
      *
      * @param int $id
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    private function postBanCommissioner($id, Request $request, CommissionManager $service) {
-        if ($service->banCommissioner($id, $request->only(['comments']), $request->user())) {
+    private function postAcceptQuote($id, Request $request, CommissionManager $service) {
+        if ($service->acceptQuote($id, $request->only(['comments']), $request->user())) {
+            flash('Quote accepted successfully.')->success();
+        } else {
+            foreach ($service->errors()->getMessages()['error'] as $error) {
+                $service->addError($error);
+            }
+        }
+
+        return redirect()->back();
+    }
+
+    /**
+     * Updates a quote.
+     *
+     * @param int $id
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    private function postUpdateQuote($id, Request $request, CommissionManager $service) {
+        $request->validate(Commission::$updateRules);
+        $data = $request->only([
+            'amount', 'comments',
+        ]);
+        if ($service->updateQuote($id, $data, $request->user())) {
+            flash('Quote updated successfully.')->success();
+        } else {
+            foreach ($service->errors()->getMessages()['error'] as $error) {
+                $service->addError($error);
+            }
+        }
+
+        return redirect()->back();
+    }
+
+    /**
+     * Marks a quote complete.
+     *
+     * @param int $id
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    private function postCompleteQuote($id, Request $request, CommissionManager $service) {
+        if ($service->completeQuote($id, $request->only(['comments']), $request->user())) {
+            flash('Quote marked complete successfully.')->success();
+        } else {
+            foreach ($service->errors()->getMessages()['error'] as $error) {
+                $service->addError($error);
+            }
+        }
+
+        return redirect()->back();
+    }
+
+    /**
+     * Declines a quote.
+     *
+     * @param int $id
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    private function postDeclineQuote($id, Request $request, CommissionManager $service) {
+        if ($service->declineQuote($id, $request->only(['comments']), $request->user())) {
+            flash('Quote declined successfully.')->success();
+        } else {
+            foreach ($service->errors()->getMessages()['error'] as $error) {
+                $service->addError($error);
+            }
+        }
+
+        return redirect()->back();
+    }
+
+    /**
+     * Accepts a commission.
+     *
+     * @param int   $id
+     * @param array $data
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    private function postBanCommissioner($id, $data, Request $request, CommissionManager $service) {
+        if ($service->banCommissioner($id, $data, $request->user())) {
             flash('Commissioner banned successfully.')->success();
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {
