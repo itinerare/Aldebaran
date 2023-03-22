@@ -78,7 +78,7 @@
 
     <div class="form-group">
         {!! Form::label('amount', 'Amount (Optional)') !!}
-        {!! Form::number('amount', old('amount') ?? 0.00, ['class' => 'form-control']) !!}
+        {!! Form::number('amount', old('amount') ?? 0.0, ['class' => 'form-control']) !!}
     </div>
 
     <div class="text-right">
