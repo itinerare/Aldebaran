@@ -19,7 +19,7 @@ class CommissionType extends Model {
     protected $fillable = [
         'category_id', 'name', 'availability', 'description', 'data', 'key',
         'is_active', 'is_visible', 'sort', 'show_examples', 'invoice_data',
-        'quotes_open', 'quotes_required',
+        'quotes_open', 'quote_required',
     ];
 
     /**
@@ -151,6 +151,15 @@ class CommissionType extends Model {
      */
     public function getUrlAttribute() {
         return url('/commissions/types/'.$this->key);
+    }
+
+    /**
+     * Get the commission type's quote form url.
+     *
+     * @return string
+     */
+    public function getQuoteUrlAttribute() {
+        return url('/commissions/'.$this->category->class->slug.'/quotes/new?type='.$this->id);
     }
 
     /**

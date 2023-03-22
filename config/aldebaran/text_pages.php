@@ -36,6 +36,11 @@ return [
         'text' => '<p>The text here will be displayed on the commission request form.</p>',
     ],
 
+    'new_quote' => [
+        'name' => 'New Quote Page Text',
+        'text' => '<p>The text here will be displayed on the commission quote request form.</p>',
+    ],
+
     'privacy'        => [
         'name' => 'Privacy Policy',
         'text' => 'text',

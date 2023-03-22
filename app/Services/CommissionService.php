@@ -376,7 +376,7 @@ class CommissionService extends Service {
 
             $type = CommissionType::create(Arr::only($data, [
                 'category_id', 'name', 'availability', 'description', 'data', 'key',
-                'is_active', 'is_visible', 'show_examples', 'invoice_data',
+                'is_active', 'is_visible', 'show_examples', 'quotes_open', 'quote_required', 'invoice_data',
             ]));
 
             return $this->commitReturn($type);
@@ -422,7 +422,7 @@ class CommissionService extends Service {
 
             $type->update(Arr::only($data, [
                 'category_id', 'name', 'availability', 'description', 'data', 'key',
-                'is_active', 'is_visible', 'show_examples', 'invoice_data',
+                'is_active', 'is_visible', 'show_examples', 'quotes_open', 'quote_required', 'invoice_data',
             ]));
 
             return $this->commitReturn($type);
@@ -724,6 +724,12 @@ class CommissionService extends Service {
         }
         if (!isset($data['regenerate_key'])) {
             $data['regenerate_key'] = 0;
+        }
+        if (!isset($data['quotes_open'])) {
+            $data['quotes_open'] = 0;
+        }
+        if (!isset($data['quote_required'])) {
+            $data['quote_required'] = 0;
         }
 
         // Check form include toggles

@@ -6,6 +6,7 @@ use App\Facades\Settings;
 use App\Models\Commission\Commission;
 use App\Models\Commission\CommissionCategory;
 use App\Models\Commission\CommissionClass;
+use App\Models\Commission\CommissionQuote;
 use App\Models\Commission\CommissionType;
 use App\Models\Gallery\Piece;
 use App\Models\Gallery\PieceImage;
@@ -229,7 +230,7 @@ class CommissionController extends Controller {
         if (!isset($data['type'])) {
             abort(404);
         }
-        $type = CommissionType::active()->find($data['type']);
+        $type = CommissionType::active()->where('id', $data['type'])->first();
         if (!$type) {
             abort(404);
         }
@@ -345,5 +346,87 @@ class CommissionController extends Controller {
         }
 
         return redirect()->to($image->fullsizeUrl);
+    }
+
+    /**
+     * Show the new quote request form.
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getNewQuote(Request $request) {
+        if (!config('aldebaran.commissions.enabled')) {
+            abort(404);
+        }
+
+        // Retrive type ID and if relevant key from request
+        $data = $request->only(['type']);
+        // and then check for and retreive type,
+        if (!isset($data['type'])) {
+            abort(404);
+        }
+        // Unlike for full commissions, for quotes it only matters that they're open
+        $type = CommissionType::where('id', $data['type'])->where('quotes_open', 1)->first();
+        if (!$type) {
+            abort(404);
+        }
+
+        return view('commissions.new_quote', [
+            'page'       => TextPage::where('key', 'new_quote')->first(),
+            'type'       => $type,
+            'commission' => new CommissionQuote,
+        ]);
+    }
+
+    /**
+     * Submits a new quote request.
+     *
+     * @param int|null $id
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function postNewQuote(Request $request, CommissionManager $service, $id = null) {
+        $type = CommissionType::find($request->get('type'));
+
+        $request->validate(Commission::$createRules + (config('app.env') == 'production' && config('aldebaran.settings.captcha') ? [
+            // If the app is running in a prod environment,
+            // validate recaptcha response as well
+            'g-recaptcha-response' => 'required|recaptchav3:submit,0.5',
+        ] : []));
+
+        $data = $request->only([
+            'name', 'email', 'contact', 'commission_type_id',
+            'subject', 'description', 'amount',
+        ]);
+        $data['ip'] = $request->ip();
+
+        if (!$id && $quote = $service->createQuote($data)) {
+            flash('Quote request submitted successfully.')->success();
+
+            return redirect()->to('commissions/quotes/view/'.$quote->quote_key);
+        } else {
+            foreach ($service->errors()->getMessages()['error'] as $error) {
+                $service->addError($error);
+            }
+        }
+
+        return redirect()->back();
+    }
+
+    /**
+     * Show the quote status page.
+     *
+     * @param string $key
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getViewQuote($key) {
+        $quote = CommissionQuote::where('quote_key', $key)->first();
+        if (!$quote) {
+            abort(404);
+        }
+
+        return view('commissions.view_quote', [
+            'quote' => $quote,
+        ]);
     }
 }

@@ -55,6 +55,10 @@ Route::group(['prefix' => 'commissions'], function () {
     Route::get('view/{key}', 'CommissionController@getViewCommission');
     Route::get('view/{key}/{id}', 'CommissionController@getViewCommissionImage');
 
+    Route::get('{class}/quotes/new', 'CommissionController@getNewQuote');
+    Route::post('quotes/new', 'CommissionController@postNewQuote');
+    Route::get('quotes/view/{key}', 'CommissionController@getViewQuote');
+
     Route::get('{class}/{key}', 'CommissionController@getClassPage');
 });
 

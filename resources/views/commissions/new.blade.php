@@ -113,8 +113,7 @@
             'data-on' => 'Yes',
             'data-off' => 'No',
         ]) !!}
-        I have read and agree to the <a href="{{ url('/commissions/' . $type->category->class->slug . '/tos') }}">Terms of
-            Service</a> and <a href="{{ url('privacy') }}">Privacy Policy</a>.
+        I have read and agree to the <a href="{{ url('/commissions/' . $type->category->class->slug . '/tos') }}">Terms of Service</a> and <a href="{{ url('privacy') }}">Privacy Policy</a>.
     </label>
 
     @if (config('aldebaran.settings.captcha'))

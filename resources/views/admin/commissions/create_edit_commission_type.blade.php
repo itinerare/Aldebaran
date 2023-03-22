@@ -144,6 +144,17 @@
                 {!! Form::label('regenerate_key', 'Regenerate Key', ['class' => 'form-check-label ml-3']) !!} {!! add_help('If checked, this will regenerate the key used for direct links to this type. Will, for good or ill, break previous links.') !!}
             </div>
         @endif
+        <div class="w-100"></div>
+        <div class="col-md form-group">
+            {!! Form::checkbox('quotes_open', 1, $type->quotes_open, ['class' => 'form-check-input', 'data-toggle' => 'toggle']) !!}
+            {!! Form::label('quotes_open', 'Quotes Open', ['class' => 'form-check-label ml-3']) !!} {!! add_help(
+                'If checked, this will allow visitors to request quotes for this type. Note that this ignores whether commissions are open, the type is active, etc. Note that the type\'s info must still be visible or the quote request form linked directly.',
+            ) !!}
+        </div>
+        <div class="col-md form-group">
+            {!! Form::checkbox('quote_required', 1, $type->quote_required, ['class' => 'form-check-input', 'data-toggle' => 'toggle']) !!}
+            {!! Form::label('quote_required', 'Require a Quote', ['class' => 'form-check-label ml-3']) !!} {!! add_help('If checked, this will require potential commissioners to provide the key of a quote when requesting a commission of this type.') !!}
+        </div>
     </div>
 
     @if ($type->id)
@@ -151,6 +162,13 @@
             {!! Form::label('link', 'Link') !!} {!! add_help('URL to link directly to the commission type\'s information. Can be used to link when the type is active but not visible.') !!}
             {!! Form::text('link', $type->url, ['class' => 'form-control', 'disabled']) !!}
         </div>
+
+        @if ($type->quotes_open)
+            <div class="form-group">
+                {!! Form::label('quote_link', 'Quote Request Form') !!} {!! add_help('URL to link directly to the commission type\'s quote request form.') !!}
+                {!! Form::text('quote_link', $type->quoteUrl, ['class' => 'form-control', 'disabled']) !!}
+            </div>
+        @endif
 
         <h2>Form Fields</h2>
 

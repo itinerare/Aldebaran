@@ -15,12 +15,14 @@
                 @if ($type->availability > 0)
                     <h5>Available Slots: {{ $type->displaySlots }}</h5>
                 @endif
-                <a class="btn btn-success" href="{{ url('/commissions/' . $type->category->class->slug . '/new?type=' . $type->id . (isset($source) && $source == $type->key ? '&key=' . $type->key : '')) }}">Request
-                    a Commission</a>
+                <a class="btn btn-success mb-2" href="{{ url('/commissions/' . $type->category->class->slug . '/new?type=' . $type->id . (isset($source) && $source == $type->key ? '&key=' . $type->key : '')) }}">Request a Commission</a>
             @else
                 <p>
                     {{ Settings::get($category->class->slug . '_comms_open') ? 'This commission type is currently unavailable!' : 'Commissions are currently closed!' }}
                 </p>
+            @endif
+            @if ($type->quotes_open)
+                <a class="btn btn-primary mb-2" href="{{ url('/commissions/' . $type->category->class->slug . '/quotes/new?type=' . $type->id) }}">Request a Quote</a>
             @endif
         </div>
     </div>
