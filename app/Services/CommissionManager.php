@@ -693,6 +693,7 @@ class CommissionManager extends Service {
                 }
             } else {
                 $commissioner = $this->processCommissioner($data, $manual ? false : true);
+                $data['commissioner_id'] = $commissioner->id;
             }
 
             $data['status'] = 'Pending';
@@ -925,8 +926,9 @@ class CommissionManager extends Service {
 
             // Mark the commissioner as banned,
             $commissioner->update(['is_banned' => 1]);
-            // and decline all current commission requests from them
+            // and decline all current quote and commission requests from them
             Commission::where('commissioner_id', $commissioner->id)->whereIn('status', ['Pending', 'Accepted'])->update(['status' => 'Declined', 'comments' => $data['comments'] ?? '<p>Automatically declined due to ban.</p>']);
+            CommissionQuote::where('commissioner_id', $commissioner->id)->whereIn('status', ['Pending', 'Accepted'])->update(['status' => 'Declined', 'comments' => $data['comments'] ?? '<p>Automatically declined due to ban.</p>']);
 
             // Also delete any present mailing list subscriptions, if relevant
             MailingListSubscriber::where('email', $commissioner->email)->delete();
@@ -945,7 +947,7 @@ class CommissionManager extends Service {
      * @param array $data
      * @param bool  $processIp
      *
-     * @return array
+     * @return \App\Models\Commission\Commissioner
      */
     private function processCommissioner($data, $processIp = true) {
         // Attempt to fetch commissioner, first by email, then by IP as a fallback
