@@ -388,10 +388,10 @@ class CommissionFormTest extends TestCase {
      * @dataProvider commissionViewProvider
      *
      * @param bool       $isValid
+     * @param string      $status
      * @param array|null $data
      * @param int        $expected
      * @param array|null $pieceData
-     * @param mixed      $status
      */
     public function testGetViewCommission($isValid, $status, $data, $pieceData, $expected) {
         if ($data) {
