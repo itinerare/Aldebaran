@@ -6,6 +6,7 @@ use App\Mail\CommissionRequested;
 use App\Models\Commission\Commission;
 use App\Models\Commission\Commissioner;
 use App\Models\Commission\CommissionPiece;
+use App\Models\Commission\CommissionQuote;
 use App\Models\Commission\CommissionType;
 use App\Models\Gallery\Piece;
 use App\Models\Gallery\PieceImage;
@@ -391,9 +392,10 @@ class CommissionFormTest extends TestCase {
      * @param string     $status
      * @param array|null $data
      * @param int        $expected
+     * @param bool       $withQuote
      * @param array|null $pieceData
      */
-    public function testGetViewCommission($isValid, $status, $data, $pieceData, $expected) {
+    public function testGetViewCommission($isValid, $status, $data, $pieceData, $withQuote, $expected) {
         if ($data) {
             // Generate some keys so they can be referred back to later
             $fieldKeys = [
@@ -451,6 +453,13 @@ class CommissionFormTest extends TestCase {
                 'data' => $data && (isset($answer) || $data[5] || $data[6]) ? '{'.($data[6] ? '"'.$fieldKeys[2].'":"test",' : '').($data[5] ? '"'.$fieldKeys[1].'":"test",' : '').'"'.$fieldKeys[0].'":'.(isset($answer) ? ($data[0] != 'multiple' ? '"'.$answer.'"' : '["'.$answer[0].'"]') : 'null').'}' : null,
             ]);
 
+        if ($withQuote) {
+            $quote = CommissionQuote::factory()->status($status)->create([
+                'commission_type_id' => $commission->type->id,
+                'commission_id'      => $commission->id,
+            ]);
+        }
+
         if ($pieceData) {
             // Create a piece and link to the commission
             $piece = Piece::factory()->create([
@@ -498,43 +507,51 @@ class CommissionFormTest extends TestCase {
                 $this->service->testImages($image, false);
             }
         }
+
+        if ($withQuote) {
+            if ($expected) {
+                $response->assertSee($quote->url);
+            }
+        }
     }
 
     public function commissionViewProvider() {
         return [
-            'basic'                           => [1, 'Pending', null, null, 200],
-            'accepted commission'             => [1, 'Accepted', null, null, 200],
-            'complete commission'             => [1, 'Complete', null, null, 200],
-            'declined commission'             => [1, 'Declined', null, null, 200],
-            'invalid commission'              => [0, 'Pending', null, null, 404],
+            'basic'                           => [1, 'Pending', null, null, 0, 200],
+            'accepted commission'             => [1, 'Accepted', null, null, 0, 200],
+            'complete commission'             => [1, 'Complete', null, null, 0, 200],
+            'declined commission'             => [1, 'Declined', null, null, 0, 200],
+            'invalid commission'              => [0, 'Pending', null, null, 0, 404],
 
             // $pieceData = [(bool) withImage, (bool) isVisible, (bool) withLiterature]
-            'with piece'                      => [1, 'Accepted', null, [0, 1, 0], 200],
-            'with hidden piece'               => [1, 'Accepted', null, [0, 0, 0], 200],
-            'with piece with image'           => [1, 'Accepted', null, [1, 1, 0], 200],
-            'with piece with literature'      => [1, 'Accepted', null, [1, 1, 1], 200],
+            'with piece'                      => [1, 'Accepted', null, [0, 1, 0], 0, 200],
+            'with hidden piece'               => [1, 'Accepted', null, [0, 0, 0], 0, 200],
+            'with piece with image'           => [1, 'Accepted', null, [1, 1, 0], 0, 200],
+            'with piece with literature'      => [1, 'Accepted', null, [1, 1, 1], 0, 200],
+
+            'with quote'                      => [1, 'Accepted', null, null, 1, 200],
 
             // Field testing
             // (string) type, (bool) rules, (bool) choices, value, (string) help, (bool) include category, (bool) include class, (bool) is empty
-            'text field'                      => [1, 'Pending', ['text', 0, 0, null, null, 0, 0, 1], null, 200],
-            'text field, empty'               => [1, 'Pending', ['text', 0, 0, null, null, 0, 0, 0], null, 200],
-            'text field with rule'            => [1, 'Pending', ['text', 1, 0, null, null, 0, 0, 1], null, 200],
-            'text field with value'           => [1, 'Pending', ['text', 0, 0, 'test', null, 0, 0, 1], null, 200],
-            'text field with help'            => [1, 'Pending', ['text', 0, 0, null, 'test', 0, 0, 1], null, 200],
-            'textbox field'                   => [1, 'Pending', ['textarea', 0, 0, null, null, 0, 0, 1], null, 200],
-            'textbox field, empty'            => [1, 'Pending', ['textarea', 0, 0, null, null, 0, 0, 0], null, 200],
-            'number field'                    => [1, 'Pending', ['number', 0, 0, null, null, 0, 0, 1], null, 200],
-            'number field, empty'             => [1, 'Pending', ['number', 0, 0, null, null, 0, 0, 0], null, 200],
-            'checkbox field'                  => [1, 'Pending', ['checkbox', 0, 0, null, null, 0, 0, 1], null, 200],
-            'checkbox field, empty'           => [1, 'Pending', ['checkbox', 0, 0, null, null, 0, 0, 0], null, 200],
-            'choose one field'                => [1, 'Pending', ['choice', 0, 0, null, null, 0, 0, 1], null, 200],
-            'choose one field, empty'         => [1, 'Pending', ['choice', 0, 0, null, null, 0, 0, 0], null, 200],
-            'choose multiple field'           => [1, 'Pending', ['multiple', 0, 0, null, null, 0, 0, 1], null, 200],
-            'choose multiple field, empty'    => [1, 'Pending', ['multiple', 0, 0, null, null, 0, 0, 0], null, 200],
+            'text field'                      => [1, 'Pending', ['text', 0, 0, null, null, 0, 0, 1], null, 0, 200],
+            'text field, empty'               => [1, 'Pending', ['text', 0, 0, null, null, 0, 0, 0], null, 0, 200],
+            'text field with rule'            => [1, 'Pending', ['text', 1, 0, null, null, 0, 0, 1], null, 0, 200],
+            'text field with value'           => [1, 'Pending', ['text', 0, 0, 'test', null, 0, 0, 1], null, 0, 200],
+            'text field with help'            => [1, 'Pending', ['text', 0, 0, null, 'test', 0, 0, 1], null, 0, 200],
+            'textbox field'                   => [1, 'Pending', ['textarea', 0, 0, null, null, 0, 0, 1], null, 0, 200],
+            'textbox field, empty'            => [1, 'Pending', ['textarea', 0, 0, null, null, 0, 0, 0], null, 0, 200],
+            'number field'                    => [1, 'Pending', ['number', 0, 0, null, null, 0, 0, 1], null, 0, 200],
+            'number field, empty'             => [1, 'Pending', ['number', 0, 0, null, null, 0, 0, 0], null, 0, 200],
+            'checkbox field'                  => [1, 'Pending', ['checkbox', 0, 0, null, null, 0, 0, 1], null, 0, 200],
+            'checkbox field, empty'           => [1, 'Pending', ['checkbox', 0, 0, null, null, 0, 0, 0], null, 0, 200],
+            'choose one field'                => [1, 'Pending', ['choice', 0, 0, null, null, 0, 0, 1], null, 0, 200],
+            'choose one field, empty'         => [1, 'Pending', ['choice', 0, 0, null, null, 0, 0, 0], null, 0, 200],
+            'choose multiple field'           => [1, 'Pending', ['multiple', 0, 0, null, null, 0, 0, 1], null, 0, 200],
+            'choose multiple field, empty'    => [1, 'Pending', ['multiple', 0, 0, null, null, 0, 0, 0], null, 0, 200],
 
-            'include from category'           => [1, 'Pending', ['text', 0, 0, null, null, 1, 0, 1], null, 200],
-            'include from class'              => [1, 'Pending', ['text', 0, 0, null, null, 0, 1, 1], null, 200],
-            'include from category and class' => [1, 'Pending', ['text', 0, 0, null, null, 1, 1, 1], null, 200],
+            'include from category'           => [1, 'Pending', ['text', 0, 0, null, null, 1, 0, 1], null, 0, 200],
+            'include from class'              => [1, 'Pending', ['text', 0, 0, null, null, 0, 1, 1], null, 0, 200],
+            'include from category and class' => [1, 'Pending', ['text', 0, 0, null, null, 1, 1, 1], null, 0, 200],
         ];
     }
 
