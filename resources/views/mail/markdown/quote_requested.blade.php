@@ -9,6 +9,6 @@ This commissioner has commissioned {!! $quote->commissioner->commissions->whereI
 
 <hr /><br />
 
-If you're having trouble clicking the "View Quote Request" button, copy and paste the following URL into your web browser: <a href="{{ url('admin/commissions/quotes/edit/' . $commission->id) }}">{{ url('admin/commissions/quotes/edit/' . $quote->id) }}</a>
+If you're having trouble clicking the "View Quote Request" button, copy and paste the following URL into your web browser: <a href="{{ url('admin/commissions/quotes/edit/' . $quote->id) }}">{{ url('admin/commissions/quotes/edit/' . $quote->id) }}</a>
 
 </x-mail::message>

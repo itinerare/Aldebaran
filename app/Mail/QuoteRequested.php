@@ -45,7 +45,7 @@ class QuoteRequested extends Mailable {
      */
     public function content() {
         return new Content(
-            markdown: 'mail.markdown.commission_requested',
+            markdown: 'mail.markdown.quote_requested',
         );
     }
 
