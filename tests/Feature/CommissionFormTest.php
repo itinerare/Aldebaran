@@ -388,7 +388,7 @@ class CommissionFormTest extends TestCase {
      * @dataProvider commissionViewProvider
      *
      * @param bool       $isValid
-     * @param string      $status
+     * @param string     $status
      * @param array|null $data
      * @param int        $expected
      * @param array|null $pieceData
