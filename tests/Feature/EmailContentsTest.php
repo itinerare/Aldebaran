@@ -4,9 +4,10 @@ namespace Tests\Feature;
 
 use App\Mail\CommissionRequested;
 use App\Mail\MailListEntry;
+use App\Mail\QuoteRequested;
 use App\Mail\VerifyMailingListSubscription;
 use App\Models\Commission\Commission;
-use App\Models\Commission\CommissionType;
+use App\Models\Commission\CommissionQuote;
 use App\Models\MailingList\MailingList;
 use App\Models\MailingList\MailingListEntry;
 use App\Models\MailingList\MailingListSubscriber;
@@ -23,23 +24,28 @@ class EmailContentsTest extends TestCase {
 
     protected function setUp(): void {
         parent::setUp();
-
-        // Generate a fake email address
-        $this->email = $this->faker()->safeEmail();
     }
 
     /**
      * Test new commission notification email contents.
      */
     public function testNewCommissionRequestNotification() {
-        $type = CommissionType::factory()->testData(['type' => 'flat', 'cost' => 10])->create();
-        $commission = Commission::factory()
-            ->type($type->id)->create();
-
+        $commission = Commission::factory()->create();
         $mailable = new CommissionRequested($commission);
 
         $mailable->assertHasSubject('New Commission Request');
         $mailable->assertSeeInHtml(url('admin/commissions/edit/'.$commission->id));
+    }
+
+    /**
+     * Test new quote notification email contents.
+     */
+    public function testNewQuoteRequestNotification() {
+        $quote = CommissionQuote::factory()->create();
+        $mailable = new QuoteRequested($quote);
+
+        $mailable->assertHasSubject('New Quote Request');
+        $mailable->assertSeeInHtml(url('admin/commissions/quotes/edit/'.$quote->id));
     }
 
     /**
