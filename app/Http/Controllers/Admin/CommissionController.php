@@ -372,7 +372,7 @@ class CommissionController extends Controller {
         $quotes = CommissionQuote::with('commissioner')->class($class->id)->where('status', $status ? ucfirst($status) : 'Pending');
         $data = $request->only(['commission_type', 'sort']);
         if (isset($data['commission_type']) && $data['commission_type'] != 'none') {
-            $quotes->where('commission_type', $data['commission_type']);
+            $quotes->where('commission_type_id', $data['commission_type']);
         }
         if (isset($data['sort'])) {
             switch ($data['sort']) {
