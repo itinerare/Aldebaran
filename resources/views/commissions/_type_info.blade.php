@@ -11,6 +11,9 @@
             <p>{!! $type->extras !!}</p>
         @endif
         <div class="text-right mb-4">
+            @if ($type->quote_required)
+                <p class="text-muted"><i>This commission type requires having a pre-existing quote.</i></p>
+            @endif
             @if ($type->canCommission)
                 @if ($type->availability > 0)
                     <h5>Available Slots: {{ $type->displaySlots }}</h5>

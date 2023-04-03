@@ -104,6 +104,22 @@
                 </div>
             </div>
 
+            @if ($commission->quote)
+                <div class="row mb-2">
+                    <div class="col-md-4">
+                        <h5>Quote</h5>
+                    </div>
+                    <div class="col-md">
+                        <a href="{{ $commission->quote->url }}">
+                            #{{ $commission->quote->id }}
+                            @if ($commission->quote->subject)
+                                - {{ $commission->quote->subject }}
+                            @endif
+                        </a>
+                    </div>
+                </div>
+            @endif
+
             <div class="form-group">
                 {!! Form::label('link', 'Link') !!} {!! add_help('The URL of this page, as mentioned above!') !!}
                 {!! Form::text('link', $commission->url, ['class' => 'form-control', 'disabled']) !!}

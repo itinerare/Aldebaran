@@ -75,9 +75,27 @@
 
             {!! nl2br(htmlentities($quote->description)) !!}
 
+            @if ($quote->commission)
+                <div class="row my-2">
+                    <div class="col-md-4">
+                        <h5>Commission</h5>
+                    </div>
+                    <div class="col-md">
+                        <a href="{{ $quote->commission->url }}">
+                            #{{ $quote->commission->id }}
+                        </a>
+                    </div>
+                </div>
+            @endif
+
             <div class="form-group mt-2">
                 {!! Form::label('link', 'Link') !!} {!! add_help('The URL of this page, as mentioned above!') !!}
                 {!! Form::text('link', $quote->url, ['class' => 'form-control', 'disabled']) !!}
+            </div>
+
+            <div class="form-group mt-2">
+                {!! Form::label('key', 'Key') !!} {!! add_help('The key for this quote. Enter this when requesting a commission corresponding to this quote!') !!}
+                {!! Form::text('key', $quote->quote_key, ['class' => 'form-control', 'disabled']) !!}
             </div>
         </div>
     </div>

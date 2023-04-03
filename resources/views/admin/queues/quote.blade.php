@@ -87,9 +87,27 @@
 
             {!! nl2br(htmlentities($quote->description)) !!}
 
+            @if ($quote->commission)
+                <div class="row my-2">
+                    <div class="col-md-4">
+                        <h5>Commission</h5>
+                    </div>
+                    <div class="col-md">
+                        <a href="{{ $quote->commission->adminUrl }}">
+                            #{{ $quote->commission->id }}
+                        </a>
+                    </div>
+                </div>
+            @endif
+
             <div class="form-group mt-2">
                 {!! Form::label('link', 'Link') !!} {!! add_help('The URL of the quote\'s public page.') !!}
                 {!! Form::text('link', $quote->url, ['class' => 'form-control', 'disabled']) !!}
+            </div>
+
+            <div class="form-group mt-2">
+                {!! Form::label('key', 'Key') !!} {!! add_help('The key for this quote. Used when requesting a commission associated with this quote.') !!}
+                {!! Form::text('key', $quote->quote_key, ['class' => 'form-control', 'disabled']) !!}
             </div>
         </div>
     </div>
@@ -161,8 +179,7 @@
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
                     </div>
                     <div class="modal-body">
-                        <p>This will mark the quote as complete and render it read-only-- make any alterations to it
-                            before this.</p>
+                        <p>This will mark the quote as complete and render it read-only-- make any alterations to it before this. Also note that if associated with a commission, the quote will automatically be marked complete when the commission is.</p>
                         <div class="text-right">
                             <a href="#" id="completeSubmit" class="btn btn-success">Complete</a>
                         </div>

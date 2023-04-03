@@ -86,6 +86,27 @@ class CommissionManager extends Service {
                 if (isset($data['payment_processor']) && !config('aldebaran.commissions.payment_processors.'.$data['payment_processor'].'.enabled')) {
                     throw new \Exception('This payment processor is not currently accepted.');
                 }
+                // Check that a quote key has been provided if necessary
+                if ($type->quote_required && !isset($data['quote_key'])) {
+                    throw new \Exception('This commission type requires a preexisting quote.');
+                }
+            }
+
+            // If a quote key has been provided, attempt to locate and validate it
+            if (isset($data['quote_key'])) {
+                $quote = CommissionQuote::where('quote_key', $data['quote_key'])->first();
+                if (!$quote) {
+                    throw new \Exception('Invalid quote key provided.');
+                }
+                if ($quote->commission_type_id != $type->id) {
+                    throw new \Exception('The provided quote is not for this commission type.');
+                }
+                if ($quote->status == 'Pending' || $quote->status == 'Declined') {
+                    throw new \Exception('Please provide a key for an accepted or completed quote.');
+                }
+                if (isset($quote->commission_id)) {
+                    throw new \Exception('This quote is already associated with a commission.');
+                }
             }
 
             if (isset($data['commissioner_id'])) {
@@ -123,6 +144,13 @@ class CommissionManager extends Service {
                 'data'              => $data['data'],
                 'payment_processor' => $data['payment_processor'],
             ]);
+
+            if (isset($quote) && $quote) {
+                // Store the newly created commission's ID on the quote, if provided
+                $quote->update([
+                    'commission_id' => $commission->id,
+                ]);
+            }
 
             // Now that the commission has an ID, assign it a key incorporating it
             // This ensures that even in the very odd case of a duplicate key,
@@ -613,6 +641,12 @@ class CommissionManager extends Service {
                 'progress' => 'Finished',
                 'comments' => $data['comments'] ?? null,
             ]);
+
+            if ($commission->quote && $commission->quote->status != 'Complete') {
+                $commission->quote->update([
+                    'status' => 'Complete',
+                ]);
+            }
 
             return $this->commitReturn($commission);
         } catch (\Exception $e) {

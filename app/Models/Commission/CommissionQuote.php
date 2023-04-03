@@ -14,8 +14,8 @@ class CommissionQuote extends Model {
      * @var array
      */
     protected $fillable = [
-        'quote_key', 'commissioner_id', 'commission_type_id', 'status',
-        'subject', 'description', 'comments', 'amount',
+        'quote_key', 'commissioner_id', 'commission_type_id', 'commission_id',
+        'status', 'subject', 'description', 'comments', 'amount',
     ];
 
     /**
@@ -84,17 +84,24 @@ class CommissionQuote extends Model {
     **********************************************************************************************/
 
     /**
-     * Get the type associated with this commission.
+     * Get the type associated with this quote.
      */
     public function type() {
         return $this->belongsTo(CommissionType::class, 'commission_type_id');
     }
 
     /**
-     * Get the type associated with this commission.
+     * Get the commissioner associated with this quote.
      */
     public function commissioner() {
         return $this->belongsTo(Commissioner::class, 'commissioner_id');
+    }
+
+    /**
+     * Get the commission associated with this quote.
+     */
+    public function commission() {
+        return $this->belongsTo(Commission::class, 'commission_id');
     }
 
     /**********************************************************************************************

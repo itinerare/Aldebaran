@@ -275,6 +275,11 @@ class CommissionController extends Controller {
             }
         }
 
+        // If the type requires a quote, include this in validation
+        if ($type->quote_required) {
+            $validationRules['quote_key'] = 'required';
+        }
+
         // If the app is running in a prod environment,
         // validate recaptcha response as well
         if (config('app.env') == 'production' && config('aldebaran.settings.captcha')) {
@@ -285,7 +290,7 @@ class CommissionController extends Controller {
 
         $data = $request->only([
             'name', 'email', 'contact', 'payment_email', 'payment_processor',
-            'type', 'key', 'additional_information',
+            'type', 'key', 'additional_information', 'quote_key',
         ] + $answerArray);
         $data['ip'] = $request->ip();
 
