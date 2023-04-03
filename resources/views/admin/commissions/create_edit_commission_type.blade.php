@@ -148,7 +148,7 @@
         <div class="col-md form-group">
             {!! Form::checkbox('quotes_open', 1, $type->quotes_open, ['class' => 'form-check-input', 'data-toggle' => 'toggle']) !!}
             {!! Form::label('quotes_open', 'Quotes Open', ['class' => 'form-check-label ml-3']) !!} {!! add_help(
-                'If checked, this will allow visitors to request quotes for this type. Note that this ignores whether commissions are open, the type is active, etc. Note that the type\'s info must still be visible or the quote request form linked directly.',
+                'If checked, this will allow visitors to request quotes for this type. Note that this ignores whether commissions are open, the type is active, etc., though it is disabled if the class is inactive. Note that the type\'s info must still be visible or the quote request form linked directly.',
             ) !!}
         </div>
         <div class="col-md form-group">

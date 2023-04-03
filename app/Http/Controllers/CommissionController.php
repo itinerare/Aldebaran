@@ -234,7 +234,7 @@ class CommissionController extends Controller {
         if (!$type) {
             abort(404);
         }
-        // check that the type is active and commissions of the global type are open,
+        // check that the class is active and commissions of the global type are open,
         if (!Settings::get($type->category->class->slug.'_comms_open') || !$type->category->class->is_active) {
             abort(404);
         }
@@ -372,6 +372,10 @@ class CommissionController extends Controller {
         // Unlike for full commissions, for quotes it only matters that they're open
         $type = CommissionType::where('id', $data['type'])->where('quotes_open', 1)->first();
         if (!$type) {
+            abort(404);
+        }
+        // Check the class is active
+        if (!$type->category->class->is_active) {
             abort(404);
         }
 
