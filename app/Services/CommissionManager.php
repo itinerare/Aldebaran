@@ -715,6 +715,9 @@ class CommissionManager extends Service {
                 throw new \Exception('The selected commission type is invalid.');
             }
             if (!$manual) {
+                if (!$type->category->class->is_active) {
+                    throw new \Exception('This class is inactive.');
+                }
                 if (!$type->quotes_open) {
                     throw new \Exception('Quotes are not open for this type.');
                 }
