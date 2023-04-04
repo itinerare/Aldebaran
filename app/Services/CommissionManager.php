@@ -104,7 +104,7 @@ class CommissionManager extends Service {
                 if ($quote->status == 'Pending' || $quote->status == 'Declined') {
                     throw new \Exception('Please provide a key for an accepted or completed quote.');
                 }
-                if (isset($quote->commission_id)) {
+                if ($quote->commission && $quote->commission->status != 'Declined') {
                     throw new \Exception('This quote is already associated with a commission.');
                 }
             }
@@ -214,11 +214,17 @@ class CommissionManager extends Service {
             if (Settings::get($commission->type->category->class->slug.'_overall_slots') > 0 || $commission->type->slots != null) {
                 // Overall slots filled
                 if (is_int($commission->type->getSlots($commission->type->category->class)) && $commission->type->getSlots($commission->type->category->class) == 0) {
-                    Commission::class($commission->type->category->class->id)->where('status', 'Pending')->update(['status' => 'Declined', 'comments' => '<p>Sorry, all slots have been filled! '.Settings::get($commission->type->category->class->slug.'_full').'</p>']);
+                    Commission::class($commission->type->category->class->id)->where('status', 'Pending')->update([
+                        'status'   => 'Declined',
+                        'comments' => '<p>Sorry, all slots have been filled! '.Settings::get($commission->type->category->class->slug.'_full').'</p>',
+                    ]);
                 }
                 // Type slots filled
                 elseif ($commission->type->availability > 0 && ($commission->type->currentSlots - 1) <= 0) {
-                    Commission::where('commission_type', $commission->type->id)->where('status', 'Pending')->update(['status' => 'Declined', 'comments' => '<p>Sorry, all slots for this commission type have been filled! '.Settings::get($commission->type->category->class->slug.'_full').'</p>']);
+                    Commission::where('commission_type', $commission->type->id)->where('status', 'Pending')->update([
+                        'status'   => 'Declined',
+                        'comments' => '<p>Sorry, all slots for this commission type have been filled! '.Settings::get($commission->type->category->class->slug.'_full').'</p>',
+                    ]);
                 }
             }
 
