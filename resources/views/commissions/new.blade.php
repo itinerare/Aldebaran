@@ -102,6 +102,11 @@
     @include('commissions._form_builder', ['type' => $type, 'form' => true])
 
     <div class="form-group">
+        {!! Form::label('quote_key', 'Quote Key' . ($type->quote_required ? '' : ' (Optional)')) !!}
+        {!! Form::text('quote_key', old('commission_quote_key'), ['class' => 'form-control']) !!}
+    </div>
+
+    <div class="form-group">
         {!! Form::label('additional_information', 'Anything Else? (Optional)') !!}
         {!! Form::textarea('additional_information', old('additional_information'), ['class' => 'form-control']) !!}
     </div>
@@ -113,8 +118,7 @@
             'data-on' => 'Yes',
             'data-off' => 'No',
         ]) !!}
-        I have read and agree to the <a href="{{ url('/commissions/' . $type->category->class->slug . '/tos') }}">Terms of
-            Service</a> and <a href="{{ url('privacy') }}">Privacy Policy</a>.
+        I have read and agree to the <a href="{{ url('/commissions/' . $type->category->class->slug . '/tos') }}">Terms of Service</a> and <a href="{{ url('privacy') }}">Privacy Policy</a>.
     </label>
 
     @if (config('aldebaran.settings.captcha'))

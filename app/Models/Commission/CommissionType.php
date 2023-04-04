@@ -19,6 +19,7 @@ class CommissionType extends Model {
     protected $fillable = [
         'category_id', 'name', 'availability', 'description', 'data', 'key',
         'is_active', 'is_visible', 'sort', 'show_examples', 'invoice_data',
+        'quotes_open', 'quote_required',
     ];
 
     /**
@@ -104,6 +105,18 @@ class CommissionType extends Model {
     **********************************************************************************************/
 
     /**
+     * Scope a query to only include commission types of a given class.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param int                                   $class
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeClass($query, $class) {
+        return $query->whereRelation('category', 'class_id', $class);
+    }
+
+    /**
      * Scope a query to only include active commission types.
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
@@ -138,6 +151,15 @@ class CommissionType extends Model {
      */
     public function getUrlAttribute() {
         return url('/commissions/types/'.$this->key);
+    }
+
+    /**
+     * Get the commission type's quote form url.
+     *
+     * @return string
+     */
+    public function getQuoteUrlAttribute() {
+        return url('/commissions/'.$this->category->class->slug.'/quotes/new?type='.$this->id);
     }
 
     /**

@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\Commission\Commission;
 use App\Models\Commission\CommissionClass;
 use App\Models\Commission\CommissionPayment;
+use App\Models\Commission\CommissionQuote;
 use App\Models\Commission\CommissionType;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -29,8 +30,9 @@ class AdminQueueTest extends TestCase {
      * @dataProvider adminIndexProvider
      *
      * @param bool $withCommission
+     * @param bool $withQuote
      */
-    public function testGetIndexWithQueues($withCommission) {
+    public function testGetIndexWithQueues($withCommission, $withQuote) {
         config(['aldebaran.commissions.enabled' => 1]);
 
         if ($withCommission) {
@@ -38,29 +40,53 @@ class AdminQueueTest extends TestCase {
             // This will automatically create the underlying objects
             $commission = Commission::factory()->create();
         } else {
+            $commission = null;
+        }
+        if ($withQuote) {
+            $quote = CommissionQuote::factory()->create();
+        } else {
+            $quote = null;
+        }
+        if (!$withCommission && !$withQuote) {
             // Create a commission class without additional objects
-            $commission = CommissionClass::factory()->create();
+            $class = CommissionClass::factory()->create();
+        } else {
+            $class = null;
         }
 
         $response = $this->actingAs($this->user)
             ->get('admin')
             ->assertStatus(200);
 
-        $response->assertViewHas('commissionClasses', function ($commissionClasses) use ($withCommission, $commission) {
-            return $commissionClasses->contains($withCommission ? $commission->type->category->class : $commission);
+        $response->assertViewHas('commissionClasses', function ($commissionClasses) use ($withCommission, $withQuote, $commission, $quote, $class) {
+            if ($withCommission) {
+                return $commissionClasses->contains($commission->type->category->class);
+            }
+            if ($withQuote) {
+                return $commissionClasses->contains($quote->type->category->class);
+            }
+
+            return $commissionClasses->contains($class);
         });
 
         if ($withCommission) {
             $response->assertViewHas('pendingCount', function ($pendingCount) use ($commission) {
-                return $pendingCount[$commission->type->category->class->id] == 1;
+                return $pendingCount['commissions'][$commission->type->category->class->id] == 1;
+            });
+        }
+        if ($withQuote) {
+            $response->assertViewHas('pendingCount', function ($pendingCount) use ($quote) {
+                return $pendingCount['quotes'][$quote->type->category->class->id] == 1;
             });
         }
     }
 
     public function adminIndexProvider() {
         return [
-            'basic'           => [0],
-            'with commission' => [1],
+            'basic'           => [0, 0],
+            'with commission' => [1, 0],
+            'with quote'      => [0, 1],
+            'with both'       => [1, 1],
         ];
     }
 
@@ -137,6 +163,83 @@ class AdminQueueTest extends TestCase {
             'declined with pending comm'  => [1, [1, 'Pending'], null, 200, 'Declined'],
             'declined with accepted comm' => [1, [1, 'Accepted'], null, 200, 'Declined'],
             'declined with complete comm' => [1, [1, 'Complete'], null, 200, 'Declined'],
+        ];
+    }
+
+    /**
+     * Test commission queue access.
+     *
+     * @dataProvider quoteQueueProvider
+     *
+     * @param bool        $commsEnabled
+     * @param array       $quoteData
+     * @param array|null  $search
+     * @param int         $status
+     * @param string|null $queue
+     */
+    public function testGetQuoteQueue($commsEnabled, $quoteData, $search, $status, $queue = 'Pending') {
+        config(['aldebaran.commissions.enabled' => $commsEnabled]);
+
+        if ($quoteData[0]) {
+            // Create a commission
+            // This will automatically create the underlying objects
+            $quote = CommissionQuote::factory()->status($quoteData[1] ? $quoteData[1] : 'Pending')->create();
+            $class = $quote->type->category->class;
+        } else {
+            // Create a commission class without additional objects
+            $class = CommissionClass::factory()->create();
+        }
+
+        if ($search && $search[0] && $quoteData[0]) {
+            if ($search[1]) {
+                $type = $quote->type;
+            } else {
+                $type = CommissionType::factory()->create();
+            }
+        }
+
+        $url = 'admin/commissions/quotes/'.($quoteData[0] ? $quote->type->category->class->slug : $class->slug).($queue != 'Pending' ? '/'.Str::lower($queue) : '').(isset($type) ? '?commission_type='.$type->id : '');
+
+        $response = $this->actingAs($this->user)
+            ->get($url)
+            ->assertStatus($status);
+
+        if ($quoteData[0] && $status == 200) {
+            // If there is a quote and the queue should be visible,
+            // test that the quote is/isn't present dependent on queue
+            // being viewed and quote status
+            $response->assertViewHas('quotes', function ($quotes) use ($quoteData, $search, $queue, $quote) {
+                if (((!$quoteData[1] && $queue == 'Pending') || $quoteData[1] == $queue) && (!$search || ($search[1]))) {
+                    return $quotes->contains($quote);
+                } else {
+                    return !$quotes->contains($quote);
+                }
+            });
+        }
+    }
+
+    public function quoteQueueProvider() {
+        return [
+            'basic'                        => [1, [0, null], null, 200],
+            'search (successful)'          => [1, [0, null], [1, 1], 200],
+            'search (unsuccessful)'        => [1, [0, null], [1, 0], 200],
+            'commissions disabled'         => [0, [0, null], null, 404],
+            'pending with pending quote'   => [1, [1, null], null, 200],
+            'pending with accepted quote'  => [1, [1, 'Accepted'], null, 200],
+            'pending with complete quote'  => [1, [1, 'Complete'], null, 200],
+            'pending with declined quote'  => [1, [1, 'Declined'], null, 200],
+            'accepted with accepted quote' => [1, [1, 'Accepted'], null, 200, 'Accepted'],
+            'accepted with pending quote'  => [1, [1, 'Pending'], null, 200, 'Accepted'],
+            'accepted with complete quote' => [1, [1, 'Complete'], null, 200, 'Accepted'],
+            'accepted with declined quote' => [1, [1, 'Declined'], null, 200, 'Accepted'],
+            'complete with complete quote' => [1, [1, 'Complete'], null, 200, 'Complete'],
+            'complete with pending quote'  => [1, [1, 'Pending'], null, 200, 'Complete'],
+            'complete with accepted quote' => [1, [1, 'Accepted'], null, 200, 'Complete'],
+            'complete with declined quote' => [1, [1, 'Declined'], null, 200, 'Complete'],
+            'declined with declined quote' => [1, [1, 'Declined'], null, 200, 'Declined'],
+            'declined with pending quote'  => [1, [1, 'Pending'], null, 200, 'Declined'],
+            'declined with accepted quote' => [1, [1, 'Accepted'], null, 200, 'Declined'],
+            'declined with complete quote' => [1, [1, 'Complete'], null, 200, 'Declined'],
         ];
     }
 

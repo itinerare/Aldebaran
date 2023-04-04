@@ -15,8 +15,7 @@ class Commission extends Model {
      */
     protected $fillable = [
         'commission_key', 'commissioner_id', 'commission_type', 'progress',
-        'status', 'description', 'data', 'comments', 'payment_processor',
-        'invoice_data',
+        'status', 'data', 'comments', 'payment_processor', 'invoice_data',
     ];
 
     /**
@@ -107,10 +106,17 @@ class Commission extends Model {
     }
 
     /**
-     * Get the type associated with this commission.
+     * Get the commissioner associated with this commission.
      */
     public function commissioner() {
         return $this->belongsTo(Commissioner::class, 'commissioner_id');
+    }
+
+    /**
+     * Get the quote associated with this commission.
+     */
+    public function quote() {
+        return $this->hasOne(CommissionQuote::class, 'commission_id');
     }
 
     /**

@@ -15,8 +15,8 @@ Route::get('/', 'AdminController@getIndex');
 
 // QUEUES
 Route::group(['prefix' => 'commissions'], function () {
-    Route::get('/{class}', 'CommissionController@getCommissionIndex');
-    Route::get('/{class}/{status}', 'CommissionController@getCommissionIndex')->where('status', 'pending|accepted|complete|declined');
+    Route::get('{class}', 'CommissionController@getCommissionIndex');
+    Route::get('{class}/{status}', 'CommissionController@getCommissionIndex')->where('status', 'pending|accepted|complete|declined');
     Route::get('edit/{id}', 'CommissionController@getCommission');
     Route::post('edit/{id}', 'CommissionController@postCommission');
     Route::post('edit/{id}/{action}', 'CommissionController@postCommission')->where('action', 'accept|update|complete|decline|ban');
@@ -26,6 +26,14 @@ Route::group(['prefix' => 'commissions'], function () {
 
     Route::get('new/{id}', 'CommissionController@getNewCommission');
     Route::post('new', 'CommissionController@postNewCommission');
+
+    Route::get('quotes/{class}', 'CommissionController@getQuoteIndex');
+    Route::get('quotes/{class}/{status}', 'CommissionController@getQuoteIndex')->where('status', 'pending|accepted|complete|declined');
+    Route::get('quotes/{class}/new', 'CommissionController@getNewQuote');
+    Route::get('quotes/edit/{id}', 'CommissionController@getQuote');
+    Route::post('quotes/new', 'CommissionController@postNewQuote');
+    Route::post('quotes/edit/{id}', 'CommissionController@postQuote');
+    Route::post('quotes/edit/{id}/{action}', 'CommissionController@postQuote')->where('action', 'accept|update|complete|decline|ban');
 });
 
 Route::get('ledger', 'CommissionController@getLedger');
