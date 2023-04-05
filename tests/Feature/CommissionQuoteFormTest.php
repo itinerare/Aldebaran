@@ -158,6 +158,8 @@ class CommissionQuoteFormTest extends TestCase {
             $response->assertRedirectContains('commissions/quotes/view');
 
             if ($withEmail) {
+                // This works locally but not via GitHub action;
+                // feel free to uncomment when running your own tests.
                 //Mail::assertSent(QuoteRequested::class);
             } else {
                 Mail::assertNotSent(QuoteRequested::class);

@@ -318,6 +318,8 @@ class CommissionFormTest extends TestCase {
             $response->assertRedirectContains('commissions/view');
 
             if ($withEmail) {
+                // This works locally but not via GitHub action;
+                // feel free to uncomment when running your own tests.
                 //Mail::assertSent(CommissionRequested::class);
             } else {
                 Mail::assertNotSent(CommissionRequested::class);
