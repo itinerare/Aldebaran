@@ -155,13 +155,13 @@ class CommissionFormTest extends TestCase {
      * @param string     $paymentProcessor
      * @param array      $visibility
      * @param array|null $data
-     * @param bool       $extras
+     * @param bool       $sendNotifs
      * @param array|null $slotData
      * @param bool       $agree
      * @param bool       $isBanned
      * @param bool       $expected
      */
-    public function testPostNewCommission($withName, $withEmail, $paymentAddr, $paymentProcessor, $visibility, $data, $extras, $slotData, $agree, $isBanned, $expected) {
+    public function testPostNewCommission($withName, $withEmail, $paymentAddr, $paymentProcessor, $visibility, $data, $sendNotifs, $slotData, $agree, $isBanned, $expected) {
         if ($withEmail) {
             // Enable email notifications
             config(['aldebaran.settings.email_features' => 1]);
@@ -282,11 +282,12 @@ class CommissionFormTest extends TestCase {
                 'payment_address'        => $paymentAddr ?? 0,
                 'payment_email'          => $paymentAddr ? $paymentEmail : null,
                 'payment_processor'      => $paymentProcessor,
-                'additional_information' => $extras ? $this->faker->domainWord() : null,
+                'additional_information' => null,
                 'terms'                  => $agree,
                 'type'                   => $this->type->id,
                 'key'                    => $visibility[5] ? $this->type->key : null,
                 'quote_key'              => null,
+                'receive_notifications'  => $sendNotifs,
             ] + ($data ? [
                 $fieldKeys[0] => $answer,
                 $fieldKeys[1] => $data[5] ? 'test' : null,
@@ -301,7 +302,7 @@ class CommissionFormTest extends TestCase {
                 } else {
                     return $query->where('payment_email', $email);
                 }
-            })->first();
+            })->where('receive_notifications', $sendNotifs)->first();
             $this->assertModelExists($commissioner);
 
             // Then check for the existence of the commission using this info
@@ -343,6 +344,7 @@ class CommissionFormTest extends TestCase {
 
             // Form testing
             'basic'                                   => [0, 1, 0, 'paypal', [1, 1, 1, 1, 1, 0], null, 0, null, 1, 0, 1],
+            'with notification opt-in'                => [0, 1, 0, 'paypal', [1, 1, 1, 1, 1, 0], null, 1, null, 1, 0, 1],
             'without email'                           => [0, 0, 0, 'paypal', [1, 1, 1, 1, 1, 0], null, 0, null, 1, 0, 0],
             'non-agreement'                           => [0, 1, 0, 'paypal', [1, 1, 1, 1, 1, 0], null, 0, null, 0, 0, 0],
             'banned commissioner'                     => [0, 1, 0, 'paypal', [1, 1, 1, 1, 1, 0], null, 0, null, 1, 1, 0],

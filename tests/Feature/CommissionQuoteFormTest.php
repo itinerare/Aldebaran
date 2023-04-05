@@ -96,13 +96,14 @@ class CommissionQuoteFormTest extends TestCase {
      *
      * @param bool  $withName
      * @param bool  $withEmail
+     * @param bool  $sendNotifs
      * @param array $visibility
      * @param bool  $withSubject
      * @param bool  $agree
      * @param bool  $isBanned
      * @param bool  $expected
      */
-    public function testPostNewQuote($withName, $withEmail, $visibility, $withSubject, $agree, $isBanned, $expected) {
+    public function testPostNewQuote($withName, $withEmail, $sendNotifs, $visibility, $withSubject, $agree, $isBanned, $expected) {
         if ($withEmail) {
             // Enable email notifications
             config(['aldebaran.settings.email_features' => 1]);
@@ -131,18 +132,19 @@ class CommissionQuoteFormTest extends TestCase {
 
         $response = $this
             ->post('/commissions/quotes/new', [
-                'name'               => $withName ? ($isBanned ? $commissioner->name : $this->faker->unique())->domainWord() : null,
-                'email'              => $withEmail ? ($isBanned ? $commissioner->email : $email) : null,
-                'contact'            => $isBanned ? $commissioner->contact : $this->faker->unique()->domainWord(),
-                'subject'            => $withSubject ? $this->faker->domainWord() : null,
-                'description'        => $this->faker->realText(),
-                'terms'              => $agree,
-                'commission_type_id' => $this->type->id,
+                'name'                  => $withName ? ($isBanned ? $commissioner->name : $this->faker->unique())->domainWord() : null,
+                'email'                 => $withEmail ? ($isBanned ? $commissioner->email : $email) : null,
+                'contact'               => $isBanned ? $commissioner->contact : $this->faker->unique()->domainWord(),
+                'subject'               => $withSubject ? $this->faker->domainWord() : null,
+                'description'           => $this->faker->realText(),
+                'terms'                 => $agree,
+                'commission_type_id'    => $this->type->id,
+                'receive_notifications' => $sendNotifs,
             ]);
 
         if ($expected == 1) {
             // Attempt to find the created commissioner and test that it exists
-            $commissioner = Commissioner::where('email', $email)->first();
+            $commissioner = Commissioner::where('email', $email)->where('receive_notifications', $sendNotifs)->first();
             $this->assertModelExists($commissioner);
 
             // Then check for the existence of the commission using this info
@@ -170,20 +172,21 @@ class CommissionQuoteFormTest extends TestCase {
 
         return [
             // Access testing
-            'visitor, quotes open, type active, visible'   => [0, 1, [1, 1, 1, 1, 1], 0, 1, 0, 1],
-            'visitor, quotes open, type inactive, visible' => [0, 1, [1, 1, 1, 0, 1], 0, 1, 0, 1],
-            'visitor, quotes open, type active, hidden'    => [0, 1, [1, 1, 1, 1, 0], 0, 1, 0, 1],
-            'visitor, quotes open, type inactive, hidden'  => [0, 1, [1, 1, 1, 0, 0], 0, 1, 0, 1],
-            'visitor, quotes closed'                       => [0, 1, [1, 1, 0, 1, 1], 0, 1, 0, 0],
-            'visitor, class inactive'                      => [0, 1, [1, 0, 1, 1, 1], 0, 1, 0, 0],
-            'visitor, comms disabled'                      => [0, 1, [0, 1, 1, 1, 1], 0, 1, 0, 0],
+            'visitor, quotes open, type active, visible'   => [0, 1, 0, [1, 1, 1, 1, 1], 0, 1, 0, 1],
+            'visitor, quotes open, type inactive, visible' => [0, 1, 0, [1, 1, 1, 0, 1], 0, 1, 0, 1],
+            'visitor, quotes open, type active, hidden'    => [0, 1, 0, [1, 1, 1, 1, 0], 0, 1, 0, 1],
+            'visitor, quotes open, type inactive, hidden'  => [0, 1, 0, [1, 1, 1, 0, 0], 0, 1, 0, 1],
+            'visitor, quotes closed'                       => [0, 1, 0, [1, 1, 0, 1, 1], 0, 1, 0, 0],
+            'visitor, class inactive'                      => [0, 1, 0, [1, 0, 1, 1, 1], 0, 1, 0, 0],
+            'visitor, comms disabled'                      => [0, 1, 0, [0, 1, 1, 1, 1], 0, 1, 0, 0],
 
             // Form testing
-            'basic'               => [0, 1, [1, 1, 1, 1, 1], 0, 1, 0, 1],
-            'with subject'        => [0, 1, [1, 1, 1, 1, 1], 1, 1, 0, 1],
-            'without email'       => [0, 0, [1, 1, 1, 1, 1], 0, 1, 0, 0],
-            'non-agreement'       => [0, 1, [1, 1, 1, 1, 1], 0, 0, 0, 0],
-            'banned commissioner' => [0, 1, [1, 1, 1, 1, 1], 0, 1, 1, 0],
+            'basic'                    => [0, 1, 0, [1, 1, 1, 1, 1], 0, 1, 0, 1],
+            'with notification opt-in' => [0, 1, 1, [1, 1, 1, 1, 1], 0, 1, 0, 1],
+            'with subject'             => [0, 1, 0, [1, 1, 1, 1, 1], 1, 1, 0, 1],
+            'without email'            => [0, 0, 0, [1, 1, 1, 1, 1], 0, 1, 0, 0],
+            'non-agreement'            => [0, 1, 0, [1, 1, 1, 1, 1], 0, 0, 0, 0],
+            'banned commissioner'      => [0, 1, 0, [1, 1, 1, 1, 1], 0, 1, 1, 0],
         ];
     }
 
