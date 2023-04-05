@@ -36,23 +36,7 @@
 
     @honeypot
 
-    <h3>Basic Information</h3>
-    <p>This section concerns your contact information so that I can contact you about your quote if necessary.</p>
-
-    <div class="form-group">
-        {!! Form::label('name', 'Name (Optional)') !!} {!! add_help('You don\'t strictly need to provide this, but it helps identify you! Of course, it can be whatever name you prefer to be called. If left unfilled, your email address (minus the domain) will be used instead.') !!}
-        {!! Form::text('name', old('name'), ['class' => 'form-control']) !!}
-    </div>
-
-    <div class="form-group">
-        {!! Form::label('email', 'Email Address') !!}
-        {!! Form::text('email', old('email'), ['class' => 'form-control', 'required']) !!}
-    </div>
-
-    <div class="form-group">
-        {!! Form::label('contact', 'Preferred Method of Contact') !!} {!! Settings::get('contact_info') ? add_help(Settings::get('contact_info')) : '' !!}
-        {!! Form::text('contact', old('contact'), ['class' => 'form-control', 'required']) !!}
-    </div>
+    @include('commissions._basic_info_form', ['type' => 'quote'])
 
     <h3>Quote-Specific Information</h3>
     <p>This section regards your quote itself.</p>

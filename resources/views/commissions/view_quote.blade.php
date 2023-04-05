@@ -35,29 +35,7 @@
         This page displays the status of your quote. It can only be accessed via this URL (displayed below for convenience as well), so make sure to save it!
     </p>
 
-    <div class="card card-body mb-4">
-        <div class="borderhr">
-            <h2>Basic Info</h2>
-            <div class="row">
-                <div class="col-md-4">
-                    <h5>Commission Type</h5>
-                </div>
-                <div class="col-md">{!! $quote->type->displayName !!}</div>
-            </div>
-            <div class="row">
-                <div class="col-md-4">
-                    <h5>Submitted</h5>
-                </div>
-                <div class="col-md">{!! pretty_date($quote->created_at) !!}</div>
-            </div>
-            <div class="row">
-                <div class="col-md-4">
-                    <h5>Last Updated</h5>
-                </div>
-                <div class="col-md">{!! pretty_date($quote->updated_at) !!}</div>
-            </div>
-        </div>
-    </div>
+    @include('commissions._basic_info', ['type' => 'quote', 'subject' => $quote])
 
     <div class="card card-body mb-4">
         <div class="borderhr">

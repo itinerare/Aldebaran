@@ -1014,19 +1014,21 @@ class CommissionManager extends Service {
             }
 
             $commissioner->update([
-                'email'         => (isset($data['email']) && $data['email'] != $commissioner->email ? $data['email'] : $commissioner->email),
-                'name'          => (isset($data['name']) && $data['name'] != $commissioner->getRawOriginal('name') ? $data['name'] : $commissioner->name),
-                'contact'       => (isset($data['contact']) && $data['contact'] != $commissioner->contact ? strip_tags($data['contact']) : $commissioner->contact),
-                'payment_email' => (isset($data['payment_email']) && $data['payment_email'] != $commissioner->payment_email ? $data['payment_email'] : $commissioner->payment_email),
+                'email'                 => (isset($data['email']) && $data['email'] != $commissioner->email ? $data['email'] : $commissioner->email),
+                'name'                  => (isset($data['name']) && $data['name'] != $commissioner->getRawOriginal('name') ? $data['name'] : $commissioner->name),
+                'contact'               => (isset($data['contact']) && $data['contact'] != $commissioner->contact ? strip_tags($data['contact']) : $commissioner->contact),
+                'payment_email'         => (isset($data['payment_email']) && $data['payment_email'] != $commissioner->payment_email ? $data['payment_email'] : $commissioner->payment_email),
+                'receive_notifications' => $data['receive_notifications'] ?? 0,
             ]);
         }
         // Create commissioner information
         else {
             $commissioner = Commissioner::create([
-                'name'          => $data['name'] ?? null,
-                'email'         => $data['email'],
-                'contact'       => strip_tags($data['contact']),
-                'payment_email' => $data['payment_email'] ?? $data['email'],
+                'name'                  => $data['name'] ?? null,
+                'email'                 => $data['email'],
+                'contact'               => strip_tags($data['contact']),
+                'payment_email'         => $data['payment_email'] ?? $data['email'],
+                'receive_notifications' => $data['receive_notifications'] ?? 0,
             ]);
         }
 
