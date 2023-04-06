@@ -44,7 +44,7 @@ class VerifyMailingListSubscription extends Mailable {
      */
     public function content() {
         return new Content(
-            markdown: 'mail.markdown.verify_subscription',
+            markdown: 'mail.mailing_lists.verify_subscription',
         );
     }
 

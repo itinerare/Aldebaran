@@ -2,39 +2,29 @@
 
 namespace App\Mail;
 
-use App\Models\MailingList\MailingListEntry;
-use App\Models\MailingList\MailingListSubscriber;
+use App\Models\Commission\Commission;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class MailListEntry extends Mailable implements ShouldQueue {
+class CommissionRequestConfirmation extends Mailable {
     use Queueable, SerializesModels;
 
     /**
-     * The entry instance.
+     * The commission instance.
      *
-     * @var \App\Models\MailingList\MailingListEntry
+     * @var \App\Models\Commissions\Commission
      */
-    public $entry;
-
-    /**
-     * The entry instance.
-     *
-     * @var \App\Models\MailingList\MailingListSubscriber
-     */
-    public $subscriber;
+    public $commission;
 
     /**
      * Create a new message instance.
      */
-    public function __construct(MailingListEntry $entry, MailingListSubscriber $subscriber) {
+    public function __construct(Commission $commission) {
         $this->afterCommit();
-        $this->entry = $entry->withoutRelations();
-        $this->subscriber = $subscriber->withoutRelations();
+        $this->commission = $commission;
     }
 
     /**
@@ -44,7 +34,7 @@ class MailListEntry extends Mailable implements ShouldQueue {
      */
     public function envelope() {
         return new Envelope(
-            subject: $this->entry->subject,
+            subject: 'Commission Request Confirmation (#'.$this->commission->id.')',
         );
     }
 
@@ -55,7 +45,7 @@ class MailListEntry extends Mailable implements ShouldQueue {
      */
     public function content() {
         return new Content(
-            markdown: 'mail.mailing_lists.mailing_list_entry',
+            markdown: 'mail.commissions.commission-request-confirmation',
         );
     }
 

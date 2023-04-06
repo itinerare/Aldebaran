@@ -45,7 +45,7 @@ class CommissionRequested extends Mailable {
      */
     public function content() {
         return new Content(
-            markdown: 'mail.markdown.commission_requested',
+            markdown: 'mail.commissions.commission_requested',
         );
     }
 

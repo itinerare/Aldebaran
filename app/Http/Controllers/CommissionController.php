@@ -289,7 +289,8 @@ class CommissionController extends Controller {
         $request->validate($validationRules);
 
         $data = $request->only([
-            'name', 'email', 'contact', 'payment_email', 'payment_processor',
+            'name', 'email', 'receive_notifications', 'contact',
+            'payment_email', 'payment_processor',
             'type', 'key', 'additional_information', 'quote_key',
         ] + $answerArray);
         $data['ip'] = $request->ip();
@@ -403,8 +404,8 @@ class CommissionController extends Controller {
         ] : []));
 
         $data = $request->only([
-            'name', 'email', 'contact', 'commission_type_id',
-            'subject', 'description', 'amount',
+            'name', 'email', 'receive_notifications', 'contact',
+            'commission_type_id', 'subject', 'description', 'amount',
         ]);
         $data['ip'] = $request->ip();
 

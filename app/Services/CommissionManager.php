@@ -3,8 +3,16 @@
 namespace App\Services;
 
 use App\Facades\Settings;
+use App\Mail\CommissionRequestAccepted;
+use App\Mail\CommissionRequestConfirmation;
+use App\Mail\CommissionRequestDeclined;
 use App\Mail\CommissionRequested;
+use App\Mail\CommissionRequestUpdate;
+use App\Mail\QuoteRequestAccepted;
+use App\Mail\QuoteRequestConfirmation;
+use App\Mail\QuoteRequestDeclined;
 use App\Mail\QuoteRequested;
+use App\Mail\QuoteRequestUpdate;
 use App\Models\Commission\Commission;
 use App\Models\Commission\Commissioner;
 use App\Models\Commission\CommissionerIp;
@@ -159,8 +167,15 @@ class CommissionManager extends Service {
 
             // If desired, send an email notification to the admin account
             // that a commission request was submitted
-            if (config('aldebaran.settings.email_features') && Settings::get('notif_emails') && !$manual && (config('aldebaran.settings.admin_email.address') && config('aldebaran.settings.admin_email.password'))) {
+            if (config('aldebaran.settings.email_features') && Settings::get('notif_emails') && !$manual) {
                 Mail::to(User::find(1))->send(new CommissionRequested($commission));
+            }
+
+            // And if email features are enabled, send a confirmation email
+            // to the commissioner. This is done regardless of preference
+            // to help make sure they don't lose the page.
+            if (config('aldebaran.settings.email_features')) {
+                Mail::to($commission->commissioner->email)->send(new CommissionRequestConfirmation($commission));
             }
 
             return $this->commitReturn($commission);
@@ -209,22 +224,46 @@ class CommissionManager extends Service {
                 'comments' => $data['comments'] ?? null,
             ]);
 
+            if (config('aldebaran.settings.email_features') && $commission->commissioner->receive_notifications) {
+                // If email features are enabled and the commissioner
+                // has opted in to notifications, send a notification
+                Mail::to($commission->commissioner->email)->send(new CommissionRequestAccepted($commission));
+            }
+
             // If this is the last available commission slot overall or for this type,
             // automatically decline any remaining pending requests
             if (Settings::get($commission->type->category->class->slug.'_overall_slots') > 0 || $commission->type->slots != null) {
                 // Overall slots filled
                 if (is_int($commission->type->getSlots($commission->type->category->class)) && $commission->type->getSlots($commission->type->category->class) == 0) {
-                    Commission::class($commission->type->category->class->id)->where('status', 'Pending')->update([
-                        'status'   => 'Declined',
-                        'comments' => '<p>Sorry, all slots have been filled! '.Settings::get($commission->type->category->class->slug.'_full').'</p>',
-                    ]);
+                    $commissions = Commission::class($commission->type->category->class->id)->where('status', 'Pending')->get();
+
+                    foreach ($commissions as $declinedCommission) {
+                        // Update the status of the commission
+                        $declinedCommission->update([
+                            'status'   => 'Declined',
+                            'comments' => '<p>Sorry, all slots have been filled! '.Settings::get($commission->type->category->class->slug.'_full').'</p>',
+                        ]);
+
+                        if (config('aldebaran.settings.email_features') && $declinedCommission->commissioner->receive_notifications) {
+                            Mail::to($declinedCommission->commissioner->email)->send(new CommissionRequestDeclined($declinedCommission));
+                        }
+                    }
                 }
                 // Type slots filled
                 elseif ($commission->type->availability > 0 && ($commission->type->currentSlots - 1) <= 0) {
-                    Commission::where('commission_type', $commission->type->id)->where('status', 'Pending')->update([
-                        'status'   => 'Declined',
-                        'comments' => '<p>Sorry, all slots for this commission type have been filled! '.Settings::get($commission->type->category->class->slug.'_full').'</p>',
-                    ]);
+                    $commissions = Commission::where('commission_type', $commission->type->id)->where('status', 'Pending')->get();
+
+                    foreach ($commissions as $declinedCommission) {
+                        // Update the status of the commission
+                        $declinedCommission->update([
+                            'status'   => 'Declined',
+                            'comments' => '<p>Sorry, all slots for this commission type have been filled! '.Settings::get($commission->type->category->class->slug.'_full').'</p>',
+                        ]);
+
+                        if (config('aldebaran.settings.email_features') && $declinedCommission->commissioner->receive_notifications) {
+                            Mail::to($declinedCommission->commissioner->email)->send(new CommissionRequestDeclined($declinedCommission));
+                        }
+                    }
                 }
             }
 
@@ -315,6 +354,12 @@ class CommissionManager extends Service {
             $commission->update(Arr::only($data, [
                 'progress', 'data', 'comments', 'invoice_data',
             ]));
+
+            if (config('aldebaran.settings.email_features') && $commission->commissioner->receive_notifications && ($data['send_notification'] ?? 0)) {
+                // If email features are enabled and the commissioner
+                // has opted in to notifications, send a notification
+                Mail::to($commission->commissioner->email)->send(new CommissionRequestUpdate($commission));
+            }
 
             return $this->commitReturn($commission);
         } catch (\Exception $e) {
@@ -691,6 +736,10 @@ class CommissionManager extends Service {
                 'comments' => $data['comments'] ?? null,
             ]);
 
+            if (config('aldebaran.settings.email_features') && $commission->commissioner->receive_notifications) {
+                Mail::to($commission->commissioner->email)->send(new CommissionRequestDeclined($commission));
+            }
+
             return $this->commitReturn($commission);
         } catch (\Exception $e) {
             $this->setError('error', $e->getMessage());
@@ -752,8 +801,15 @@ class CommissionManager extends Service {
 
             // If desired, send an email notification to the admin account
             // that a commission request was submitted
-            if (config('aldebaran.settings.email_features') && Settings::get('notif_emails') && !$manual && (config('aldebaran.settings.admin_email.address') && config('aldebaran.settings.admin_email.password'))) {
+            if (config('aldebaran.settings.email_features') && Settings::get('notif_emails') && !$manual) {
                 Mail::to(User::find(1))->send(new QuoteRequested($quote));
+            }
+
+            // And if email features are enabled, send a confirmation email
+            // to the commissioner. This is done regardless of preference
+            // to help make sure they don't lose the page.
+            if (config('aldebaran.settings.email_features')) {
+                Mail::to($quote->commissioner->email)->send(new QuoteRequestConfirmation($quote));
             }
 
             return $this->commitReturn($quote);
@@ -793,6 +849,12 @@ class CommissionManager extends Service {
                 'comments' => $data['comments'] ?? null,
             ]);
 
+            if (config('aldebaran.settings.email_features') && $quote->commissioner->receive_notifications) {
+                // If email features are enabled and the commissioner
+                // has opted in to notifications, send a notification
+                Mail::to($quote->commissioner->email)->send(new QuoteRequestAccepted($quote));
+            }
+
             return $this->commitReturn($quote);
         } catch (\Exception $e) {
             $this->setError('error', $e->getMessage());
@@ -818,14 +880,20 @@ class CommissionManager extends Service {
             if (!$user) {
                 throw new \Exception('Invalid user.');
             }
-            // Check that the commission exists and is accepted
+            // Check that the quote exists and is accepted
             $quote = CommissionQuote::where('id', $id)->where('status', 'Accepted')->first();
             if (!$quote) {
                 throw new \Exception('Invalid quote selected.');
             }
 
-            // Update the commission
+            // Update the quote
             $quote->update(Arr::only($data, ['amount', 'comments']));
+
+            if (config('aldebaran.settings.email_features') && $quote->commissioner->receive_notifications && ($data['send_notification'] ?? 0)) {
+                // If email features are enabled and the commissioner
+                // has opted in to notifications, send a notification
+                Mail::to($quote->commissioner->email)->send(new QuoteRequestUpdate($quote));
+            }
 
             return $this->commitReturn($quote);
         } catch (\Exception $e) {
@@ -890,17 +958,21 @@ class CommissionManager extends Service {
             if (!$user) {
                 throw new \Exception('Invalid user.');
             }
-            // Check that the commission exists and is pending
+            // Check that the quote exists and is pending
             $quote = CommissionQuote::where('id', $id)->whereIn('status', ['Pending', 'Accepted'])->first();
             if (!$quote) {
-                throw new \Exception('Invalid commission selected.');
+                throw new \Exception('Invalid quote selected.');
             }
 
-            // Update the commission status and comments
+            // Update the quote status and comments
             $quote->update([
                 'status'   => 'Declined',
                 'comments' => $data['comments'] ?? null,
             ]);
+
+            if (config('aldebaran.settings.email_features') && $quote->commissioner->receive_notifications) {
+                Mail::to($quote->commissioner->email)->send(new QuoteRequestDeclined($quote));
+            }
 
             return $this->commitReturn($quote);
         } catch (\Exception $e) {
@@ -1014,19 +1086,21 @@ class CommissionManager extends Service {
             }
 
             $commissioner->update([
-                'email'         => (isset($data['email']) && $data['email'] != $commissioner->email ? $data['email'] : $commissioner->email),
-                'name'          => (isset($data['name']) && $data['name'] != $commissioner->getRawOriginal('name') ? $data['name'] : $commissioner->name),
-                'contact'       => (isset($data['contact']) && $data['contact'] != $commissioner->contact ? strip_tags($data['contact']) : $commissioner->contact),
-                'payment_email' => (isset($data['payment_email']) && $data['payment_email'] != $commissioner->payment_email ? $data['payment_email'] : $commissioner->payment_email),
+                'email'                 => (isset($data['email']) && $data['email'] != $commissioner->email ? $data['email'] : $commissioner->email),
+                'name'                  => (isset($data['name']) && $data['name'] != $commissioner->getRawOriginal('name') ? $data['name'] : $commissioner->name),
+                'contact'               => (isset($data['contact']) && $data['contact'] != $commissioner->contact ? strip_tags($data['contact']) : $commissioner->contact),
+                'payment_email'         => (isset($data['payment_email']) && $data['payment_email'] != $commissioner->payment_email ? $data['payment_email'] : $commissioner->payment_email),
+                'receive_notifications' => $data['receive_notifications'] ?? 0,
             ]);
         }
         // Create commissioner information
         else {
             $commissioner = Commissioner::create([
-                'name'          => $data['name'] ?? null,
-                'email'         => $data['email'],
-                'contact'       => strip_tags($data['contact']),
-                'payment_email' => $data['payment_email'] ?? $data['email'],
+                'name'                  => $data['name'] ?? null,
+                'email'                 => $data['email'],
+                'contact'               => strip_tags($data['contact']),
+                'payment_email'         => $data['payment_email'] ?? $data['email'],
+                'receive_notifications' => $data['receive_notifications'] ?? 0,
             ]);
         }
 
