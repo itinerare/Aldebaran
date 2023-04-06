@@ -34,6 +34,12 @@ Note that use of commission components in a use that generates or contributes to
 - Admin-only ledger view which lists payments recorded per year, for the year in which they were paid, with link to the relevant commission
 - Support for multiple/configurable payment processors, with fee information adjustable per processor. If multiple payment processors are enabled, visitors may select from the available options when creating a new commission request; fees will then be calculated accordingly, and different commissions may use different payment processors
     - Optional Stripe and/or PayPal integrations, allowing for semi-automated invoice handling; can send an invoice for a relevant payment (associated with a commission using the relevant payment processor) via a button, and when paid, it is automatically marked as such within the site, and the (if appropriate) tip and final total-minus-fees retrieved directly from the payment processor for maximum accuracy
+- An optional system for handling commission quotes and associated queue(s)
+    - Quotes can be opened or closed and/or required per commission type
+    - A quote "key" can be provided when requesting a new commission, which will link the quote with the commission. If quotes are required for a commission type, visitors will be unable to request a commission of that type without providing a key for a quote for that type.
+- If email features are enabled, opt-in email notifications per commissioner for commissions and quotes
+    - If email features are enabled, commissioners are always sent an email on form submission as confirmation and to help ensure they do not lose their commission/quote's page
+    - If opted in, email notifications are also sent when a commission/quote is accepted or declined, and may be when it is updated (via a toggle set per update)
 
 ### Other functions
 - Two-factor authentication for the sole/admin account
