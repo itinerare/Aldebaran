@@ -71,7 +71,7 @@ class AdminQuoteTest extends TestCase {
      * @param bool   $expected
      */
     public function testPostEditQuoteState($status, $operation, $withComments, $withCommission, $sendMail, $expected) {
-        if($withCommission) {
+        if ($withCommission) {
             $commission = Commission::factory()->status($expected ? 'Declined' : 'Accepted')->create();
         }
 
