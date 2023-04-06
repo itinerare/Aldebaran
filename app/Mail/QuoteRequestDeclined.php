@@ -23,6 +23,7 @@ class QuoteRequestDeclined extends Mailable {
      * Create a new message instance.
      */
     public function __construct(CommissionQuote $quote) {
+        $this->afterCommit();
         $this->quote = $quote;
     }
 
