@@ -2,11 +2,14 @@
 
 namespace Tests\Feature;
 
-use App\Models\Commission\Commission;
+use App\Mail\QuoteRequestAccepted;
+use App\Mail\QuoteRequestDeclined;
+use App\Mail\QuoteRequestUpdate;
 use App\Models\Commission\CommissionQuote;
 use App\Models\Commission\CommissionType;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
 
 class AdminQuoteTest extends TestCase {
@@ -18,6 +21,8 @@ class AdminQuoteTest extends TestCase {
 
     protected function setUp(): void {
         parent::setUp();
+
+        Mail::fake();
 
         $this->type = CommissionType::factory()->testData(['type' => 'flat', 'cost' => 10])->create();
     }
@@ -60,11 +65,20 @@ class AdminQuoteTest extends TestCase {
      * @param string $status
      * @param string $operation
      * @param bool   $withComments
+     * @param bool   $sendMail
      * @param bool   $expected
      */
-    public function testPostEditQuoteState($status, $operation, $withComments, $expected) {
+    public function testPostEditQuoteState($status, $operation, $withComments, $sendMail, $expected) {
         $quote = CommissionQuote::factory()->status($status)->create();
         $comments = $withComments ? $this->faker->domainWord() : null;
+
+        if ($sendMail) {
+            // Enable email notifications
+            config(['aldebaran.settings.email_features' => 1]);
+            $quote->commissioner->update([
+                'receive_notifications' => 1,
+            ]);
+        }
 
         $response = $this
             ->actingAs($this->user)
@@ -83,6 +97,12 @@ class AdminQuoteTest extends TestCase {
                         'status'   => 'Accepted',
                         'comments' => $comments ?? null,
                     ]);
+
+                    if ($sendMail) {
+                        Mail::assertSent(QuoteRequestAccepted::class);
+                    } else {
+                        Mail::assertNotSent(QuoteRequestAccepted::class);
+                    }
                     break;
                 case 'complete':
                     $this->assertDatabaseHas('commission_quotes', [
@@ -97,6 +117,12 @@ class AdminQuoteTest extends TestCase {
                         'status'   => 'Declined',
                         'comments' => $comments ?? null,
                     ]);
+
+                    if ($sendMail) {
+                        Mail::assertSent(QuoteRequestDeclined::class);
+                    } else {
+                        Mail::assertNotSent(QuoteRequestDeclined::class);
+                    }
                     break;
                 case 'ban':
                     // Check both that the commission and the commissioner have been
@@ -120,24 +146,26 @@ class AdminQuoteTest extends TestCase {
 
     public function quoteStateProvider() {
         return [
-            'accept pending'                  => ['Pending', 'accept', 0, 1],
-            'accept pending with comments'    => ['Pending', 'accept', 1, 1],
-            'decline pending'                 => ['Pending', 'decline', 0, 1],
-            'decline pending with comments'   => ['Pending', 'decline', 1, 1],
-            'complete pending'                => ['Pending', 'complete', 0, 0],
+            'accept pending'                  => ['Pending', 'accept', 0, 0, 1],
+            'accept pending with comments'    => ['Pending', 'accept', 1, 0, 1],
+            'accept pending with mail'        => ['Pending', 'accept', 0, 1, 1],
+            'decline pending'                 => ['Pending', 'decline', 0, 0, 1],
+            'decline pending with comments'   => ['Pending', 'decline', 1, 0, 1],
+            'decline pending with mail'       => ['Pending', 'decline', 0, 1, 1],
+            'complete pending'                => ['Pending', 'complete', 0, 0, 0],
 
-            'accept accepted'                 => ['Accepted', 'accept', 0, 0],
-            'decline accepted'                => ['Accepted', 'decline', 0, 1],
-            'decline accepted with comments'  => ['Accepted', 'decline', 1, 1],
-            'complete accepted'               => ['Accepted', 'complete', 0, 1],
-            'complete accepted with comments' => ['Accepted', 'complete', 1, 1],
+            'accept accepted'                 => ['Accepted', 'accept', 0, 0, 0],
+            'decline accepted'                => ['Accepted', 'decline', 0, 0, 1],
+            'decline accepted with comments'  => ['Accepted', 'decline', 1, 0, 1],
+            'complete accepted'               => ['Accepted', 'complete', 0, 0, 1],
+            'complete accepted with comments' => ['Accepted', 'complete', 1, 0, 1],
 
-            'ban, pending'                    => ['Pending', 'ban', 0, 1],
-            'ban, pending with comments'      => ['Pending', 'ban', 1, 1],
-            'ban, accepted'                   => ['Accepted', 'ban', 0, 1],
-            'ban, accepted with comments'     => ['Accepted', 'ban', 1, 1],
-            'ban, complete'                   => ['Complete', 'ban', 0, 0],
-            'ban, declined'                   => ['Declined', 'ban', 0, 0],
+            'ban, pending'                    => ['Pending', 'ban', 0, 0, 1],
+            'ban, pending with comments'      => ['Pending', 'ban', 1, 0, 1],
+            'ban, accepted'                   => ['Accepted', 'ban', 0, 0, 1],
+            'ban, accepted with comments'     => ['Accepted', 'ban', 1, 0, 1],
+            'ban, complete'                   => ['Complete', 'ban', 0, 0, 0],
+            'ban, declined'                   => ['Declined', 'ban', 0, 0, 0],
         ];
     }
 
@@ -149,18 +177,28 @@ class AdminQuoteTest extends TestCase {
      * @param string $status
      * @param bool   $withAmount
      * @param bool   $withComments
+     * @param bool   $sendMail
      * @param bool   $expected
      */
-    public function testPostUpdateQuote($status, $withAmount, $withComments, $expected) {
+    public function testPostUpdateQuote($status, $withAmount, $withComments, $sendMail, $expected) {
         $quote = CommissionQuote::factory()->status($status)->create();
         $comments = $withComments ? $this->faker->domainWord() : null;
         $amount = (float) mt_rand(1, 50);
 
+        if ($sendMail) {
+            // Enable email notifications
+            config(['aldebaran.settings.email_features' => 1]);
+            $quote->commissioner->update([
+                'receive_notifications' => 1,
+            ]);
+        }
+
         $response = $this
             ->actingAs($this->user)
             ->post('/admin/commissions/quotes/edit/'.$quote->id.'/update', [
-                'comments' => $comments,
-                'amount'   => $withAmount ? $amount : 0.00,
+                'comments'          => $comments,
+                'amount'            => $withAmount ? $amount : 0.00,
+                'send_notification' => $sendMail,
             ]);
 
         if ($expected) {
@@ -170,20 +208,31 @@ class AdminQuoteTest extends TestCase {
                 'comments' => $comments,
                 'amount'   => $withAmount ? $amount : 0.00,
             ]);
+
+            if ($sendMail) {
+                Mail::assertSent(QuoteRequestUpdate::class);
+            } else {
+                Mail::assertNotSent(QuoteRequestUpdate::class);
+            }
         } else {
             $response->assertSessionHasErrors();
+
+            if ($sendMail) {
+                Mail::assertNotSent(QuoteRequestUpdate::class);
+            }
         }
     }
 
     public function quoteUpdateProvider() {
         return [
-            'basic'           => ['Accepted', 0, 0, 1],
-            'with comments'   => ['Accepted', 0, 1, 1],
-            'with amount'     => ['Accepted', 1, 1, 1],
+            'basic'           => ['Accepted', 0, 0, 0, 1],
+            'with comments'   => ['Accepted', 0, 1, 0, 1],
+            'with amount'     => ['Accepted', 1, 1, 0, 1],
+            'with mail'       => ['Accepted', 0, 0, 1, 1],
 
-            'update pending'  => ['Pending', 0, 0, 0],
-            'update declined' => ['Declined', 0, 0, 0],
-            'update complete' => ['Complete', 0, 0, 0],
+            'update pending'  => ['Pending', 0, 0, 0, 0],
+            'update declined' => ['Declined', 0, 0, 0, 0],
+            'update complete' => ['Complete', 0, 0, 0, 0],
         ];
     }
 }

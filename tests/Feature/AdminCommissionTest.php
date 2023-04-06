@@ -3,6 +3,9 @@
 namespace Tests\Feature;
 
 use App\Facades\Settings;
+use App\Mail\CommissionRequestAccepted;
+use App\Mail\CommissionRequestDeclined;
+use App\Mail\CommissionRequestUpdate;
 use App\Models\Commission\Commission;
 use App\Models\Commission\CommissionPayment;
 use App\Models\Commission\CommissionPiece;
@@ -14,6 +17,7 @@ use App\Services\GalleryService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Tests\TestCase;
 
@@ -26,6 +30,8 @@ class AdminCommissionTest extends TestCase {
 
     protected function setUp(): void {
         parent::setUp();
+
+        Mail::fake();
 
         $this->type = CommissionType::factory()->testData(['type' => 'flat', 'cost' => 10])->create();
 
@@ -204,16 +210,31 @@ class AdminCommissionTest extends TestCase {
      * @param string     $status
      * @param string     $operation
      * @param bool       $withComments
+     * @param bool       $sendMail
      * @param array|null $slotData
      * @param bool       $expected
      */
-    public function testPostEditCommissionState($status, $operation, $withComments, $slotData, $expected) {
+    public function testPostEditCommissionState($status, $operation, $withComments, $sendMail, $slotData, $expected) {
         $commission = Commission::factory()->status($status)->create();
         $comments = $withComments ? $this->faker->domainWord() : null;
+
+        if ($sendMail) {
+            // Enable email notifications
+            config(['aldebaran.settings.email_features' => 1]);
+            $commission->commissioner->update([
+                'receive_notifications' => 1,
+            ]);
+        }
 
         if ($slotData) {
             // Handle filler commission info to test slot-related operations
             $slotCommission = Commission::factory()->status($slotData[0])->create();
+
+            if ($sendMail) {
+                $slotCommission->commissioner->update([
+                    'receive_notifications' => 1,
+                ]);
+            }
 
             if ($slotData[1]) {
                 // Adjust settings for same-type tests
@@ -260,12 +281,24 @@ class AdminCommissionTest extends TestCase {
                         'comments' => $comments ?? null,
                     ]);
 
+                    if ($sendMail) {
+                        Mail::assertSent(CommissionRequestAccepted::class);
+                    } else {
+                        Mail::assertNotSent(CommissionRequestAccepted::class);
+                    }
+
                     if ($slotData) {
                         $this->assertDatabaseHas('commissions', [
                             'id'       => $slotCommission->id,
                             'status'   => $slotData[2] ? 'Accepted' : 'Declined',
                             'comments' => $slotData[2] ? null : ($slotData[1] ? '<p>Sorry, all slots for this commission type have been filled! '.Settings::get($commission->type->category->class->slug.'_full').'</p>' : '<p>Sorry, all slots have been filled! '.Settings::get($commission->type->category->class->slug.'_full').'</p>'),
                         ]);
+
+                        if ($sendMail) {
+                            Mail::assertSent(CommissionRequestDeclined::class);
+                        } else {
+                            Mail::assertNotSent(CommissionRequestDeclined::class);
+                        }
                     }
                     break;
                 case 'complete':
@@ -282,6 +315,12 @@ class AdminCommissionTest extends TestCase {
                         'status'   => 'Declined',
                         'comments' => $comments ?? null,
                     ]);
+
+                    if ($sendMail) {
+                        Mail::assertSent(CommissionRequestDeclined::class);
+                    } else {
+                        Mail::assertNotSent(CommissionRequestDeclined::class);
+                    }
                     break;
                 case 'ban':
                     // Check both that the commission and the commissioner have been
@@ -307,28 +346,32 @@ class AdminCommissionTest extends TestCase {
         // $slotData = (string) status, (bool) sameType, (bool) expected
 
         return [
-            'accept pending'                  => ['Pending', 'accept', 0, null, 1],
-            'accept pending with comments'    => ['Pending', 'accept', 1, null, 1],
-            'decline pending'                 => ['Pending', 'decline', 0, null, 1],
-            'decline pending with comments'   => ['Pending', 'decline', 1, null, 1],
-            'complete pending'                => ['Pending', 'complete', 0, null, 0],
-            'accept pending with full type'   => ['Pending', 'accept', 0, ['Accepted', 1, 1], 0],
-            'accept pending with full class'  => ['Pending', 'accept', 0, ['Accepted', 0, 1], 0],
-            'accept pending, filling type'    => ['Pending', 'accept', 0, ['Pending', 1, 0], 1],
-            'accept pending, filling class'   => ['Pending', 'accept', 0, ['Pending', 0, 0], 1],
+            'accept pending'                           => ['Pending', 'accept', 0, 0, null, 1],
+            'accept pending with comments'             => ['Pending', 'accept', 1, 0, null, 1],
+            'accept pending with mail'                 => ['Pending', 'accept', 0, 1, null, 1],
+            'decline pending'                          => ['Pending', 'decline', 0, 0, null, 1],
+            'decline pending with comments'            => ['Pending', 'decline', 1, 0, null, 1],
+            'decline pending with mail'                => ['Pending', 'decline', 0, 1, null, 1],
+            'complete pending'                         => ['Pending', 'complete', 0, 0, null, 0],
+            'accept pending with full type'            => ['Pending', 'accept', 0, 0, ['Accepted', 1, 1], 0],
+            'accept pending with full class'           => ['Pending', 'accept', 0, 0, ['Accepted', 0, 1], 0],
+            'accept pending, filling type'             => ['Pending', 'accept', 0, 0, ['Pending', 1, 0], 1],
+            'accept pending, filling type, with mail'  => ['Pending', 'accept', 0, 1, ['Pending', 1, 0], 1],
+            'accept pending, filling class'            => ['Pending', 'accept', 0, 0, ['Pending', 0, 0], 1],
+            'accept pending, filling class, with mail' => ['Pending', 'accept', 0, 1, ['Pending', 0, 0], 1],
 
-            'accept accepted'                 => ['Accepted', 'accept', 0, null, 0],
-            'decline accepted'                => ['Accepted', 'decline', 0, null, 1],
-            'decline accepted with comments'  => ['Accepted', 'decline', 1, null, 1],
-            'complete accepted'               => ['Accepted', 'complete', 0, null, 1],
-            'complete accepted with comments' => ['Accepted', 'complete', 1, null, 1],
+            'accept accepted'                 => ['Accepted', 'accept', 0, 0, null, 0],
+            'decline accepted'                => ['Accepted', 'decline', 0, 0, null, 1],
+            'decline accepted with comments'  => ['Accepted', 'decline', 1, 0, null, 1],
+            'complete accepted'               => ['Accepted', 'complete', 0, 0, null, 1],
+            'complete accepted with comments' => ['Accepted', 'complete', 1, 0, null, 1],
 
-            'ban, pending'                    => ['Pending', 'ban', 0, null, 1],
-            'ban, pending with comments'      => ['Pending', 'ban', 1, null, 1],
-            'ban, accepted'                   => ['Accepted', 'ban', 0, null, 1],
-            'ban, accepted with comments'     => ['Accepted', 'ban', 1, null, 1],
-            'ban, complete'                   => ['Complete', 'ban', 0, null, 0],
-            'ban, declined'                   => ['Declined', 'ban', 0, null, 0],
+            'ban, pending'                    => ['Pending', 'ban', 0, 0, null, 1],
+            'ban, pending with comments'      => ['Pending', 'ban', 1, 0, null, 1],
+            'ban, accepted'                   => ['Accepted', 'ban', 0, 0, null, 1],
+            'ban, accepted with comments'     => ['Accepted', 'ban', 1, 0, null, 1],
+            'ban, complete'                   => ['Complete', 'ban', 0, 0, null, 0],
+            'ban, declined'                   => ['Declined', 'ban', 0, 0, null, 0],
         ];
     }
 
@@ -342,11 +385,20 @@ class AdminCommissionTest extends TestCase {
      * @param array|null $paymentData
      * @param string     $progress
      * @param bool       $withComments
+     * @param bool       $sendMail
      * @param bool       $expected
      */
-    public function testPostUpdateCommission($status, $withPiece, $paymentData, $progress, $withComments, $expected) {
+    public function testPostUpdateCommission($status, $withPiece, $paymentData, $progress, $withComments, $sendMail, $expected) {
         $commission = Commission::factory()->status($status)->create();
         $comments = $withComments ? $this->faker->domainWord() : null;
+
+        if ($sendMail) {
+            // Enable email notifications
+            config(['aldebaran.settings.email_features' => 1]);
+            $commission->commissioner->update([
+                'receive_notifications' => 1,
+            ]);
+        }
 
         if ($withPiece) {
             // Create a piece to attach
@@ -371,14 +423,15 @@ class AdminCommissionTest extends TestCase {
         $response = $this
             ->actingAs($this->user)
             ->post('/admin/commissions/edit/'.$commission->id.'/update', [
-                'pieces'   => $withPiece ? [0 => $piece->id] : null,
-                'progress' => $progress,
-                'comments' => $comments,
-                'cost'     => $paymentData ? [$paymentData[0] ? $payment->id : 0 => $costData['cost']] : null,
-                'tip'      => $paymentData ? [$paymentData[0] ? $payment->id : 0 => $costData['tip']] : null,
-                'is_intl'  => isset($payment) ? [$payment->id => $paymentData[2]] : null,
-                'is_paid'  => isset($payment) ? [$payment->id => $paymentData[1]] : null,
-                'paid_at'  => isset($payment) ? [$payment->id => $paymentData[1] ? $payment->paid_at : null] : null,
+                'pieces'            => $withPiece ? [0 => $piece->id] : null,
+                'progress'          => $progress,
+                'comments'          => $comments,
+                'cost'              => $paymentData ? [$paymentData[0] ? $payment->id : 0 => $costData['cost']] : null,
+                'tip'               => $paymentData ? [$paymentData[0] ? $payment->id : 0 => $costData['tip']] : null,
+                'is_intl'           => isset($payment) ? [$payment->id => $paymentData[2]] : null,
+                'is_paid'           => isset($payment) ? [$payment->id => $paymentData[1]] : null,
+                'paid_at'           => isset($payment) ? [$payment->id => $paymentData[1] ? $payment->paid_at : null] : null,
+                'send_notification' => $sendMail,
             ]);
 
         if ($expected) {
@@ -417,26 +470,39 @@ class AdminCommissionTest extends TestCase {
                     ]);
                 }
             }
+
+            if ($sendMail) {
+                Mail::assertSent(CommissionRequestUpdate::class);
+            } else {
+                Mail::assertNotSent(CommissionRequestUpdate::class);
+            }
         } else {
             $response->assertSessionHasErrors();
+
+            if ($sendMail) {
+                Mail::assertNotSent(CommissionRequestUpdate::class);
+            }
         }
     }
 
     public function commissionUpdateProvider() {
         return [
-            'basic'                  => ['Accepted', 0, null, 'Not Started', 0, 1],
-            'with piece'             => ['Accepted', 1, null, 'Not Started', 0, 1],
-            'with progress'          => ['Accepted', 0, null, 'Working On', 0, 1],
-            'with comments'          => ['Accepted', 0, null, 'Not Started', 1, 1],
+            'basic'                  => ['Accepted', 0, null, 'Not Started', 0, 0, 1],
+            'basic with mail'        => ['Accepted', 0, null, 'Not Started', 0, 1, 1],
+            'with piece'             => ['Accepted', 1, null, 'Not Started', 0, 0, 1],
+            'with piece, mail'       => ['Accepted', 1, null, 'Not Started', 0, 1, 1],
+            'with progress'          => ['Accepted', 0, null, 'Working On', 0, 0, 1],
+            'with progress, mail'    => ['Accepted', 0, null, 'Working On', 0, 1, 1],
+            'with comments'          => ['Accepted', 0, null, 'Not Started', 1, 0, 1],
 
             // $paymentData = [(bool) existingPayment, (bool) isPaid, (bool) isIntl]
-            'mark payment intl'      => ['Accepted', 0, [1, 0, 1], 'Not Started', 0, 1],
-            'mark payment paid'      => ['Accepted', 0, [1, 1, 0], 'Not Started', 0, 1],
-            'mark intl payment paid' => ['Accepted', 0, [1, 1, 1], 'Not Started', 0, 1],
+            'mark payment intl'      => ['Accepted', 0, [1, 0, 1], 'Not Started', 0, 0, 1],
+            'mark payment paid'      => ['Accepted', 0, [1, 1, 0], 'Not Started', 0, 0, 1],
+            'mark intl payment paid' => ['Accepted', 0, [1, 1, 1], 'Not Started', 0, 0, 1],
 
-            'update pending'         => ['Pending', 0, null, 'Not Started', 0, 0],
-            'update declined'        => ['Declined', 0, null, 'Not Started', 0, 0],
-            'update complete'        => ['Complete', 0, null, 'Not Started', 0, 0],
+            'update pending'         => ['Pending', 0, null, 'Not Started', 0, 0, 0],
+            'update declined'        => ['Declined', 0, null, 'Not Started', 0, 0, 0],
+            'update complete'        => ['Complete', 0, null, 'Not Started', 0, 0, 0],
         ];
     }
 }

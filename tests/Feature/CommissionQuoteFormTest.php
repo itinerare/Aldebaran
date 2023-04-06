@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Mail\QuoteRequestConfirmation;
 use App\Mail\QuoteRequested;
 use App\Models\Commission\Commission;
 use App\Models\Commission\Commissioner;
@@ -158,11 +159,11 @@ class CommissionQuoteFormTest extends TestCase {
             $response->assertRedirectContains('commissions/quotes/view');
 
             if ($withEmail) {
-                // This works locally but not via GitHub action;
-                // feel free to uncomment when running your own tests.
-                //Mail::assertSent(QuoteRequested::class);
+                Mail::assertSent(QuoteRequested::class);
+                Mail::assertSent(QuoteRequestConfirmation::class);
             } else {
                 Mail::assertNotSent(QuoteRequested::class);
+                Mail::assertNotSent(QuoteRequestConfirmation::class);
             }
         } elseif ($expected == 0) {
             $response->assertSessionHasErrors();
