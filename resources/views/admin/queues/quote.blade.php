@@ -82,6 +82,20 @@
             {!! Form::textarea('comments', $quote->comments, ['class' => 'form-control wysiwyg']) !!}
         </div>
 
+        @if (config('aldebaran.settings.email_features') && $quote->status == 'Accepted' && $quote->commissioner->receive_notifications)
+            <div class="form-group text-right">
+                {!! Form::checkbox('send_notification', 1, old('send_notification'), [
+                    'class' => 'form-check-input',
+                    'data-toggle' => 'toggle',
+                    'data-on' => 'Yes',
+                    'data-off' => 'No',
+                ]) !!}
+                {!! Form::label('send_notification', 'Notify Commissioner', [
+                    'class' => 'form-check-label ml-3',
+                ]) !!} {!! add_help('If updating this quote, and this toggle is enabled, a notification email will be sent to the commissioner.') !!}
+            </div>
+        @endif
+
         @if ($quote->status == 'Pending')
             <div class="text-right">
                 <a href="#" class="btn btn-danger mr-2" id="banButton">Ban Commissioner</a>

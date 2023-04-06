@@ -257,6 +257,20 @@
             {!! Form::textarea('comments', $commission->comments, ['class' => 'form-control wysiwyg']) !!}
         </div>
 
+        @if (config('aldebaran.settings.email_features') && $commission->status == 'Accepted' && $commission->commissioner->receive_notifications)
+            <div class="form-group text-right">
+                {!! Form::checkbox('send_notification', 1, old('send_notification'), [
+                    'class' => 'form-check-input',
+                    'data-toggle' => 'toggle',
+                    'data-on' => 'Yes',
+                    'data-off' => 'No',
+                ]) !!}
+                {!! Form::label('send_notification', 'Notify Commissioner', [
+                    'class' => 'form-check-label ml-3',
+                ]) !!} {!! add_help('If updating this commission, and this toggle is enabled, a notification email will be sent to the commissioner.') !!}
+            </div>
+        @endif
+
         @if ($commission->status == 'Pending')
             <div class="text-right">
                 <a href="#" class="btn btn-danger mr-2" id="banButton">Ban Commissioner</a>
