@@ -8,7 +8,11 @@ use App\Mail\CommissionRequestDeclined;
 use App\Mail\CommissionRequested;
 use App\Mail\CommissionRequestUpdate;
 use App\Mail\MailListEntry;
+use App\Mail\QuoteRequestAccepted;
+use App\Mail\QuoteRequestConfirmation;
+use App\Mail\QuoteRequestDeclined;
 use App\Mail\QuoteRequested;
+use App\Mail\QuoteRequestUpdate;
 use App\Mail\VerifyMailingListSubscription;
 use App\Models\Commission\Commission;
 use App\Models\Commission\CommissionPayment;
@@ -63,27 +67,22 @@ class EmailContentsTest extends TestCase {
             case 'CommissionRequested':
                 $mailable = new CommissionRequested($commission);
                 $mailable->assertHasSubject('New Commission Request');
-                $mailable->assertSeeInHtml($commission->adminUrl);
                 break;
             case 'CommissionRequestConfirmation':
                 $mailable = new CommissionRequestConfirmation($commission);
                 $mailable->assertHasSubject('Commission Request Confirmation (#'.$commission->id.')');
-                $mailable->assertSeeInHtml($commission->url);
                 break;
             case 'CommissionRequestDeclined':
                 $mailable = new CommissionRequestDeclined($commission);
                 $mailable->assertHasSubject('Commission Request Declined (#'.$commission->id.')');
-                $mailable->assertSeeInHtml($commission->url);
                 break;
             case 'CommissionRequestAccepted':
                 $mailable = new CommissionRequestAccepted($commission);
                 $mailable->assertHasSubject('Commission Request Accepted (#'.$commission->id.')');
-                $mailable->assertSeeInHtml($commission->url);
                 break;
             case 'CommissionRequestUpdate':
                 $mailable = new CommissionRequestUpdate($commission);
                 $mailable->assertHasSubject('Commission Updated (#'.$commission->id.')');
-                $mailable->assertSeeInHtml($commission->url);
 
                 if ($withPiece) {
                     $mailable->assertSeeInText('has 1 piece');
@@ -96,6 +95,12 @@ class EmailContentsTest extends TestCase {
                     }
                 }
                 break;
+        }
+
+        if ($mailType == 'CommissionRequested') {
+            $mailable->assertSeeInHtml($commission->adminUrl);
+        } else {
+            $mailable->assertSeeInHtml($commission->url);
         }
     }
 
@@ -114,13 +119,52 @@ class EmailContentsTest extends TestCase {
 
     /**
      * Test quote notification email contents.
+     *
+     * @dataProvider quoteNotificationProvider
+     *
+     * @param string $mailType
+     * @param string $status
      */
-    public function testQuoteNotification() {
-        $quote = CommissionQuote::factory()->create();
-        $mailable = new QuoteRequested($quote);
+    public function testQuoteNotification($mailType, $status) {
+        $quote = CommissionQuote::factory()->status($status)->create();
 
-        $mailable->assertHasSubject('New Quote Request');
-        $mailable->assertSeeInHtml(url('admin/commissions/quotes/edit/'.$quote->id));
+        switch ($mailType) {
+            case 'QuoteRequested':
+                $mailable = new QuoteRequested($quote);
+                $mailable->assertHasSubject('New Quote Request');
+                break;
+            case 'QuoteRequestConfirmation':
+                $mailable = new QuoteRequestConfirmation($quote);
+                $mailable->assertHasSubject('Quote Request Confirmation (#'.$quote->id.')');
+                break;
+            case 'QuoteRequestDeclined':
+                $mailable = new QuoteRequestDeclined($quote);
+                $mailable->assertHasSubject('Quote Request Declined (#'.$quote->id.')');
+                break;
+            case 'QuoteRequestAccepted':
+                $mailable = new QuoteRequestAccepted($quote);
+                $mailable->assertHasSubject('Quote Request Accepted (#'.$quote->id.')');
+                break;
+            case 'QuoteRequestUpdate':
+                $mailable = new QuoteRequestUpdate($quote);
+                $mailable->assertHasSubject('Quote Updated (#'.$quote->id.')');
+        }
+
+        if ($mailType == 'QuoteRequested') {
+            $mailable->assertSeeInHtml($quote->adminUrl);
+        } else {
+            $mailable->assertSeeInHtml($quote->url);
+        }
+    }
+
+    public function quoteNotificationProvider() {
+        return [
+            'new request'              => ['QuoteRequested', 'Pending'],
+            'new request confirmation' => ['QuoteRequestConfirmation', 'Pending'],
+            'declined request'         => ['QuoteRequestDeclined', 'Declined'],
+            'accepted request'         => ['QuoteRequestAccepted', 'Accepted'],
+            'updated quote'            => ['QuoteRequestUpdate', 'Accepted'],
+        ];
     }
 
     /**
