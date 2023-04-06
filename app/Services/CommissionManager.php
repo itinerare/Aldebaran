@@ -964,6 +964,12 @@ class CommissionManager extends Service {
                 throw new \Exception('Invalid quote selected.');
             }
 
+            // If there is an associated commission,
+            // disallow declining the quote if the commission is not also declined
+            if ($quote->commission && $quote->commission->status != 'Declined') {
+                throw new \Exception('This quote is associated with an in-progress commission and cannot be declined.');
+            }
+
             // Update the quote status and comments
             $quote->update([
                 'status'   => 'Declined',
