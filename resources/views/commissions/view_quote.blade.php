@@ -80,8 +80,10 @@
 
     <div class="card card-body mb-4">
         <div class="borderhr">
-            <h3>Amount</h3>
-            <p>{{ config('aldebaran.commissions.currency_symbol') }}{{ $quote->amount }}</p>
+            @if ($quote->status == 'Accepted' || $quote->status == 'Complete')
+                <h3>Amount</h3>
+                <p>{{ config('aldebaran.commissions.currency_symbol') }}{{ $quote->amount }}</p>
+            @endif
             <h3>Comments</h3>
             {!! isset($quote->comments) ? $quote->comments : '<p><i>No comment provided.</i></p>' !!}
         </div>
