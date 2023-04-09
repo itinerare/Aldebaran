@@ -4,6 +4,56 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [3.9.0](https://github.com/itinerare/Aldebaran/compare/v3.8.0...v3.9.0) (2023-04-09)
+
+### Features
+
+
+##### Commissions
+
+* Add ability to provide a quote when requesting a commission ([ce4d97](https://github.com/itinerare/Aldebaran/commit/ce4d97777c5700e54a192f85c5ca09d1aca4366f))
+* Add commission/quote notification mails ([c219dd](https://github.com/itinerare/Aldebaran/commit/c219dd4f68f11da895cd9618115596b8cd615406))
+* Add public quote request form, view ([a8e8e6](https://github.com/itinerare/Aldebaran/commit/a8e8e6430bfacfc3f7b5499ce5f26e2e81be7b1f))
+* Add quotes, admin queue, and handling ([781b75](https://github.com/itinerare/Aldebaran/commit/781b75fe2034f7cf7273b0c3d0f48be556b0b327))
+* Add receive notifications to commissioners ([63575d](https://github.com/itinerare/Aldebaran/commit/63575d6fc00293f18cf17a0d11a50b0abca22d7f))
+* Implement optional comm/quote notif mails ([ea43c9](https://github.com/itinerare/Aldebaran/commit/ea43c93a2c1b27ecda5ab74fc4ac5fa5cc2ef4c9))
+
+##### Tests
+
+* Add admin quote tests ([88f3c7](https://github.com/itinerare/Aldebaran/commit/88f3c7442ecda4e2e36179e3ae1b0a5ee4d0ce1d))
+* Add check for comm to quote decline tests ([295ff3](https://github.com/itinerare/Aldebaran/commit/295ff359c518257d991166592d014c984a02979f))
+* Add new quote to site page edit tests ([4c8b8c](https://github.com/itinerare/Aldebaran/commit/4c8b8ce6b96c835749d265f64eb6a8ab567e764f))
+* Add post commission form with quote tests ([fc79bd](https://github.com/itinerare/Aldebaran/commit/fc79bd29e64e0d313a87638d58942e23465c31fb))
+* Add quote form tests ([9660a3](https://github.com/itinerare/Aldebaran/commit/9660a3cdc232f17bd7ae83555d336f38983a8667))
+* Add quote request to email contents tests ([407d72](https://github.com/itinerare/Aldebaran/commit/407d729678c2c02f83ae364ad786e937b74ab1ca))
+* Add quote to commission view tests ([dedf0d](https://github.com/itinerare/Aldebaran/commit/dedf0d559da6f007ee66b80b4e144078beda1997))
+* Add receive notifications to new commission, quote tests ([041486](https://github.com/itinerare/Aldebaran/commit/041486b16eb529bdd72f2a1d96f4c2bd79947810))
+* Update admin queue tests for quote queues ([bddacf](https://github.com/itinerare/Aldebaran/commit/bddacfb6ad5bd6e6759554bcffb145dc7c401e23))
+* Update commission notif email tests for new mails ([ffd458](https://github.com/itinerare/Aldebaran/commit/ffd4587c53e3dc921695b9d85cdcb108901abad2))
+* Update comm/quote tests for notification mails ([048e8b](https://github.com/itinerare/Aldebaran/commit/048e8b9237de096c11d0e85e6f6f88ea3515d663))
+* Update quote notif email tests for new mails ([08891b](https://github.com/itinerare/Aldebaran/commit/08891b1245fcef442c2c7f1c1e602ea965da13c4))
+
+### Bug Fixes
+
+
+##### Commissions
+
+* Add line break to admin index after each comm class' queues ([bb7239](https://github.com/itinerare/Aldebaran/commit/bb7239fe77859c5086cbe101b2b7ce4a52d62196))
+* Amount not displayed on quote ([f4bad9](https://github.com/itinerare/Aldebaran/commit/f4bad9f7feb3a18fd223853d4ab89ea0541ee63d))
+* Autodecline quotes when banning a commissioner ([9312c0](https://github.com/itinerare/Aldebaran/commit/9312c01da6284806ff9852583d3ca0ffc60bbb54))
+* Check that class is active when creating a new quote ([f9e552](https://github.com/itinerare/Aldebaran/commit/f9e5521493f4fe52f381043dba59fbca04685ecb))
+* Disable new quote form when class is inactive ([918550](https://github.com/itinerare/Aldebaran/commit/91855041e4091a93d68e0f0dd01adf7f7ecf99dd))
+* Fix filtering admin quote queue by type ([3ca910](https://github.com/itinerare/Aldebaran/commit/3ca910c3d6c811d7ffb01bc446f7b40aff0c6bcc))
+* Fix quote request email template ([3d8a4b](https://github.com/itinerare/Aldebaran/commit/3d8a4bf6acd04ce12a01f1b47a16bd44de1e22e8))
+* Improve check for quote commission link ([12fbe7](https://github.com/itinerare/Aldebaran/commit/12fbe7bb9491212b740c749fbb194539a38d9e20))
+* Only display quote amount if accepted/complete ([34c8ec](https://github.com/itinerare/Aldebaran/commit/34c8ece4c97cb41e3024ae47ddfdee5921215064))
+* Prevent declining a quote linked to an in-progress comm ([59abb7](https://github.com/itinerare/Aldebaran/commit/59abb7df36abd887d65130f780716384f4577cc0))
+* Set all comm/quote mails to send after commit ([a37940](https://github.com/itinerare/Aldebaran/commit/a37940d75a98422937b2006fa5cf568977d2c6c5))
+* Tidy up basic info formatting on commission page ([8fc447](https://github.com/itinerare/Aldebaran/commit/8fc4474a1aefd1579db216386a177ccaf0630965))
+
+
+---
+
 ## [3.8.0](https://github.com/itinerare/Aldebaran/compare/v3.7.0...v3.8.0) (2023-03-19)
 
 ### Features
