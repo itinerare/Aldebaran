@@ -14,7 +14,8 @@ class Commissioner extends Model {
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'contact', 'payment_email', 'is_banned', 'customer_id',
+        'name', 'email', 'contact', 'receive_notifications', 'is_banned',
+        'payment_email', 'customer_id',
     ];
 
     /**

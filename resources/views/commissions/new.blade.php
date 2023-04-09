@@ -36,60 +36,7 @@
 
     @honeypot
 
-    <h3>Basic Information</h3>
-    <p>This section concerns your contact information so that I can contact you about your commission (including status
-        updates) and invoice you.</p>
-
-    <div class="form-group">
-        {!! Form::label('name', 'Name (Optional)') !!} {!! add_help('You don\'t strictly need to provide this, but it helps identify you! Of course, it can be whatever name you prefer to be called. If left unfilled, your email address (minus the domain) will be used instead.') !!}
-        {!! Form::text('name', old('name'), ['class' => 'form-control']) !!}
-    </div>
-
-    <div class="form-group">
-        {!! Form::label('email', 'Email Address') !!}
-        {!! Form::text('email', old('email'), ['class' => 'form-control', 'required']) !!}
-    </div>
-
-    <div class="form-group">
-        {!! Form::label('contact', 'Preferred Method of Contact') !!} {!! Settings::get('contact_info') ? add_help(Settings::get('contact_info')) : '' !!}
-        {!! Form::text('contact', old('contact'), ['class' => 'form-control', 'required']) !!}
-    </div>
-
-    @if ($commission->paymentProcessors()->count() > 1)
-        <div class="form-group">
-            {!! Form::label('payment_processor', 'Payment Processor') !!}
-            @foreach ($commission->paymentProcessors() as $key => $label)
-                <div class="choice-wrapper">
-                    <input class="form-check-input ml-0 pr-4" name="payment_processor" id="{{ 'payment_processor_' . $key }}" type="radio" value="{{ old('payment_processor_' . $key) != null ? old('payment_processor_' . $key) : $key }}">
-                    <label for="{{ 'payment_processor_' . $key }}" class="label-class ml-3">{{ $label }}</label>
-                </div>
-            @endforeach
-        </div>
-    @elseif($commission->paymentProcessors()->first())
-        {!! Form::hidden(
-            'payment_processor',
-            $commission->paymentProcessors()->keys()->first(),
-        ) !!}
-    @endif
-
-    <div class="form-group">
-        {!! Form::checkbox('payment_address', 1, old('payment_address'), [
-            'class' => 'form-check-input',
-            'data-toggle' => 'toggle',
-            'data-on' => 'Yes',
-            'data-off' => 'No',
-            'id' => 'paymentAddress',
-        ]) !!}
-        {!! Form::label('payment_address', 'Is your payment address different from the email address above?', [
-            'class' => 'form-check-label ml-3',
-        ]) !!}
-    </div>
-    <div class="mb-3" id="paymentOptions">
-        <div class="form-group">
-            {!! Form::label('payment_email', 'Payment Address') !!}
-            {!! Form::text('payment_email', old('payment_email'), ['class' => 'form-control']) !!}
-        </div>
-    </div>
+    @include('commissions._basic_info_form', ['type' => 'commission', 'subject' => $commission])
 
     <h3>Commission-Specific Information</h3>
     <p>This section regards your commission itself and any information I need for it.</p>
@@ -100,6 +47,11 @@
     @endif
 
     @include('commissions._form_builder', ['type' => $type, 'form' => true])
+
+    <div class="form-group">
+        {!! Form::label('quote_key', 'Quote Key' . ($type->quote_required ? '' : ' (Optional)')) !!}
+        {!! Form::text('quote_key', old('commission_quote_key'), ['class' => 'form-control']) !!}
+    </div>
 
     <div class="form-group">
         {!! Form::label('additional_information', 'Anything Else? (Optional)') !!}
@@ -113,8 +65,7 @@
             'data-on' => 'Yes',
             'data-off' => 'No',
         ]) !!}
-        I have read and agree to the <a href="{{ url('/commissions/' . $type->category->class->slug . '/tos') }}">Terms of
-            Service</a> and <a href="{{ url('privacy') }}">Privacy Policy</a>.
+        I have read and agree to the <a href="{{ url('/commissions/' . $type->category->class->slug . '/tos') }}">Terms of Service</a> and <a href="{{ url('privacy') }}">Privacy Policy</a>.
     </label>
 
     @if (config('aldebaran.settings.captcha'))

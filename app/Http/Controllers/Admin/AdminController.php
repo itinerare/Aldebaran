@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Facades\Settings;
 use App\Http\Controllers\Controller;
 use App\Models\Commission\Commission;
+use App\Models\Commission\CommissionQuote;
 use App\Services\FileService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -28,8 +29,10 @@ class AdminController extends Controller {
         $pendingCount = [];
         $acceptedCount = [];
         foreach ($this->commissionClasses as $class) {
-            $pendingCount[$class->id] = Commission::where('status', 'Pending')->class($class->id)->count();
-            $acceptedCount[$class->id] = Commission::where('status', 'Accepted')->class($class->id)->count();
+            $pendingCount['commissions'][$class->id] = Commission::where('status', 'Pending')->class($class->id)->count();
+            $acceptedCount['commissions'][$class->id] = Commission::where('status', 'Accepted')->class($class->id)->count();
+            $pendingCount['quotes'][$class->id] = CommissionQuote::where('status', 'Pending')->class($class->id)->count();
+            $acceptedCount['quotes'][$class->id] = CommissionQuote::where('status', 'Accepted')->class($class->id)->count();
         }
 
         return view('admin.index', [

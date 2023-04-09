@@ -81,7 +81,7 @@
                 <div class="col-3 col-md">
                     <span class="btn btn-{{ $commission->status == 'Pending' ? 'secondary' : ($commission->status == 'Accepted' || $commission->status == 'Complete' ? 'success' : 'danger') }} btn-sm py-0 px-1">{{ $commission->status }}</span>
                 </div>
-                <div class="col-3 col-md-1"><a href="{{ url('admin/commissions/edit/' . $commission->id) }}" class="btn btn-primary btn-sm py-0 px-1">Details</a></div>
+                <div class="col-3 col-md-1"><a href="{{ $commission->adminUrl }}" class="btn btn-primary btn-sm py-0 px-1">Details</a></div>
             </div>
         @endforeach
 

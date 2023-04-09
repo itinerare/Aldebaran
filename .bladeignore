@@ -1,2 +1,2 @@
 vendor/*
-resources/views/mail/markdown/*
+resources/views/mail/*

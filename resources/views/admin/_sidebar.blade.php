@@ -8,6 +8,9 @@
                 <div class="sidebar-item"><a href="{{ url('admin/commissions/' . $class->slug) }}" class="{{ set_active('admin/commissions/' . $class->slug . '*') }}">{{ $class->name }}
                         Queue</a>
                 </div>
+                <div class="sidebar-item"><a href="{{ url('admin/commissions/quotes/' . $class->slug) }}" class="{{ set_active('admin/commissions/quotes/' . $class->slug . '*') }}">{{ $class->name }}
+                        Quotes Queue</a>
+                </div>
             @endforeach
             <div class="sidebar-item"><a href="{{ url('admin/ledger') }}" class="{{ set_active('admin/ledger*') }}">Ledger</a></div>
         </li>

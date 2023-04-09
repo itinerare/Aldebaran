@@ -55,7 +55,7 @@ class MailListEntry extends Mailable implements ShouldQueue {
      */
     public function content() {
         return new Content(
-            markdown: 'mail.markdown.mailing_list_entry',
+            markdown: 'mail.mailing_lists.mailing_list_entry',
         );
     }
 

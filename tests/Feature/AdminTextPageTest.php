@@ -63,6 +63,7 @@ class AdminTextPageTest extends TestCase {
             'about'          => ['about'],
             'gallery'        => ['gallery'],
             'new commission' => ['new_commission'],
+            'new quote'      => ['new_quote'],
             'privacy policy' => ['privacy'],
         ];
     }

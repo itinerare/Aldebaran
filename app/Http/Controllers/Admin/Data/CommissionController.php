@@ -477,7 +477,8 @@ class CommissionController extends Controller {
         $data = $request->only([
             'category_id', 'name', 'description', 'is_active', 'is_visible', 'availability',
             'price_type', 'flat_cost', 'cost_min', 'cost_max', 'minimum_cost', 'rate',
-            'extras', 'tags', 'show_examples', 'regenerate_key',
+            'extras', 'tags',
+            'show_examples', 'regenerate_key', 'quotes_open', 'quote_required',
             'field_key', 'field_type', 'field_label', 'field_rules', 'field_choices', 'field_value', 'field_help', 'include_class', 'include_category',
             'product_name', 'product_description', 'product_tax_code',  'product_category', 'unset_product_info',
         ]);
