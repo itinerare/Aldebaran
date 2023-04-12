@@ -185,6 +185,15 @@ class CommissionType extends Model {
     }
 
     /**
+     * Get the commission type's full name.
+     *
+     * @return string
+     */
+    public function getFullNameAttribute() {
+        return ucfirst($this->category->name).' ・ '.$this->name;
+    }
+
+    /**
      * Get any extras information.
      *
      * @return string
