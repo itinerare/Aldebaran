@@ -38,8 +38,6 @@
 
     {!! Form::open(['url' => 'admin/commissions/new', 'action' => 'admin/commissions/new']) !!}
 
-    @honeypot
-
     <h3>Basic Information</h3>
     <p>Either select an existing commissioner or enter contact information.</p>
 
