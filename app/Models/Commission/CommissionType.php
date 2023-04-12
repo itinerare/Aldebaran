@@ -357,9 +357,9 @@ class CommissionType extends Model {
      * @return array|null
      */
     public function getParentInvoiceDataAttribute() {
-        if (isset($this->category->invoice_data)) {
+        if ($this->category && isset($this->category->invoice_data)) {
             return $this->category->invoice_data;
-        } elseif ($this->category->parentInvoiceData) {
+        } elseif ($this->category && $this->category->parentInvoiceData) {
             return $this->category->parentInvoiceData;
         }
 
