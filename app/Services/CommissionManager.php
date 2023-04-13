@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Facades\Settings;
+use App\Mail\CommissionInvoicePaid;
 use App\Mail\CommissionRequestAccepted;
 use App\Mail\CommissionRequestConfirmation;
 use App\Mail\CommissionRequestDeclined;
@@ -611,6 +612,10 @@ class CommissionManager extends Service {
                             'paid_at'         => Carbon::now(),
                             'total_with_fees' => ($invoice['total'] - $fee) / 100,
                         ]);
+
+                        if (config('aldebaran.settings.email_features') && Settings::get('notif_emails')) {
+                            Mail::to(User::find(1))->send(new CommissionInvoicePaid($payment->commission));
+                        }
                         break;
                     case 'paypal':
                         // Retrieve the processing fee via transaction
@@ -644,6 +649,10 @@ class CommissionManager extends Service {
                             'tip'             => $invoice['gratuity']['value'] ?? 0.00,
                             'total_with_fees' => $net,
                         ]);
+
+                        if (config('aldebaran.settings.email_features') && Settings::get('notif_emails')) {
+                            Mail::to(User::find(1))->send(new CommissionInvoicePaid($payment->commission));
+                        }
                         break;
                     default:
                         Log::error('Attempted to process a paid invoice for a commission using a non-supported payment processor.', [
