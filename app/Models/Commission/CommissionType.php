@@ -272,7 +272,7 @@ class CommissionType extends Model {
         }
         if (null !== $this->getSlots($this->category->class)) {
             if ($this->availability > 0) {
-                return min(Settings::get('overall_'.$this->category->class->slug.'_slots'), $this->availability);
+                return min(Settings::get($this->category->class->slug.'_overall_slots'), $this->availability);
             } else {
                 return $this->getSlots($this->category->class);
             }

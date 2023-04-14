@@ -14,11 +14,11 @@
         {{ $class->name }} Queue
     </h1>
 
-    @if (Settings::get('overall_' . $class->slug . '_slots') > 0)
+    @if (Settings::get($class->slug . '_overall_slots') > 0)
         <p>There
-            {{ max($count->getSlots($class), Settings::get('overall_' . $class->slug . '_slots')) == 1 ? 'is' : 'are' }}
-            currently {{ $count->getSlots($class) . '/' . Settings::get('overall_' . $class->slug . '_slots') }}
-            slot{{ Settings::get('overall_' . $class->slug . '_slots') == 1 ? '' : 's' }} available for
+            {{ max($count->getSlots($class), Settings::get($class->slug . '_overall_slots')) == 1 ? 'is' : 'are' }}
+            currently {{ $count->getSlots($class) . '/' . Settings::get($class->slug . '_overall_slots') }}
+            slot{{ Settings::get($class->slug . '_overall_slots') == 1 ? '' : 's' }} available for
             {{ strtolower($class->name) }} commissions.</p>
     @endif
 
