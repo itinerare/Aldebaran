@@ -417,7 +417,7 @@ class CommissionController extends Controller {
         return view('admin.queues.new_quote', [
             'class'         => $class,
             'commissioners' => $commissioners,
-            'types'         => CommissionType::class($class->id)->pluck('name', 'id')->toArray(),
+            'types'         => CommissionType::class($class->id)->get()->pluck('fullName', 'id')->toArray(),
             'quote'         => new CommissionQuote,
         ]);
     }

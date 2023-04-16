@@ -68,10 +68,11 @@ class AdminController extends Controller {
         if (!$request->get($fieldname)) {
             $value = 0;
         }
-        if (DB::table('site_settings')->where('key', $key)->update(['value' => $value ?? $request->get($fieldname)])) {
+        if (DB::table('site_settings')->where('key', $key)->exists()) {
+            DB::table('site_settings')->where('key', $key)->update(['value' => $value ?? $request->get($fieldname)]);
             flash('Setting updated successfully.')->success();
         } else {
-            flash('Invalid setting selected.')->success();
+            flash('Invalid setting selected.')->error();
         }
 
         return redirect()->back();

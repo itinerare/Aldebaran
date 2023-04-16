@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Mail\CommissionInvoicePaid;
 use App\Mail\CommissionRequestAccepted;
 use App\Mail\CommissionRequestConfirmation;
 use App\Mail\CommissionRequestDeclined;
@@ -95,9 +96,12 @@ class EmailContentsTest extends TestCase {
                     }
                 }
                 break;
+            case 'CommissionInvoicePaid':
+                $mailable = new CommissionInvoicePaid($commission);
+                $mailable->assertHasSubject('Commission (#'.$commission->id.') Invoice Paid');
         }
 
-        if ($mailType == 'CommissionRequested') {
+        if ($mailType == 'CommissionRequested' || $mailType == 'CommissionInvoicePaid') {
             $mailable->assertSeeInHtml($commission->adminUrl);
         } else {
             $mailable->assertSeeInHtml($commission->url);
@@ -114,6 +118,7 @@ class EmailContentsTest extends TestCase {
             'updated commission with piece'          => ['CommissionRequestUpdate', 'Accepted', null, 1],
             'updated commission with unpaid payment' => ['CommissionRequestUpdate', 'Accepted', [0], 0],
             'updated commission with paid payment'   => ['CommissionRequestUpdate', 'Accepted', [1], 0],
+            'invoice paid'                           => ['CommissionInvoicePaid', 'Accepted', [1], 0],
         ];
     }
 

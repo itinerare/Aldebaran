@@ -110,7 +110,7 @@
                         {!! Form::close() !!}
                     </div>
                     <div class="col-md-6 mb-2">
-                        {!! Form::open(['url' => 'admin/site-settings/overall_' . $class->slug . '_slots']) !!}
+                        {!! Form::open(['url' => 'admin/site-settings/' . $class->slug . '_overall_slots']) !!}
                         <div class="form-group h-100">
                             <strong>{!! Form::label($class->slug . '_overall_slots_value', 'Overall Slots') !!}:</strong>
                             {{ $settings->where('key', $class->slug . '_overall_slots')->first()->description }}

@@ -4,6 +4,37 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [3.10.0](https://github.com/itinerare/Aldebaran/compare/v3.9.0...v3.10.0) (2023-04-16)
+
+### Features
+
+
+##### Commands
+
+* Improve update command ([5528fa](https://github.com/itinerare/Aldebaran/commit/5528fa5aa84b47893910ad8f38c789213b0551c4))
+
+##### Commissions
+
+* Add invoice paid notif email ([2887d7](https://github.com/itinerare/Aldebaran/commit/2887d7b6d11813604610dbc639325d9e0bb40405))
+* Include category name with type name in admin new quote type selection ([e097be](https://github.com/itinerare/Aldebaran/commit/e097be6cadcf526c54f6c0ead5d405790cfce727))
+
+### Bug Fixes
+
+* Better check when updating site settings ([c2e7c1](https://github.com/itinerare/Aldebaran/commit/c2e7c12a7223801096c433d3365b600da78c2c47))
+* Site settings error banner incorrectly coloured ([365d7d](https://github.com/itinerare/Aldebaran/commit/365d7d6623857fc9e56f9053f2658d2639087e8d))
+
+##### Commissions
+
+* Better checking for presence of parent when retrieving invoice data ([4f2ebd](https://github.com/itinerare/Aldebaran/commit/4f2ebd7004d5b1f976ce312f8943f9661783bc59))
+* Fix setting overall class slots ([0d6940](https://github.com/itinerare/Aldebaran/commit/0d69406e0335d522e5bdbe599f833d7940ced202))
+* Only allow setting invoice information for extant categories, types ([2aadbd](https://github.com/itinerare/Aldebaran/commit/2aadbd170929a9e876aa21442f3379caeeeaec1b))
+* Remove unnecessary honeypot fields from admin new quote/comm forms ([1640e3](https://github.com/itinerare/Aldebaran/commit/1640e3f0683731497381151a358f67eb055264b9))
+* Update contact info form tooltip setting name ([f59172](https://github.com/itinerare/Aldebaran/commit/f5917216c6b0bb836f7f2f32e35f743c5d332237))
+* Update references to class slot setting ([72bd38](https://github.com/itinerare/Aldebaran/commit/72bd386989affa88fe0387b9f61d4f18ddf0b291))
+
+
+---
+
 ## [3.9.0](https://github.com/itinerare/Aldebaran/compare/v3.8.0...v3.9.0) (2023-04-09)
 
 ### Features

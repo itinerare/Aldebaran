@@ -185,6 +185,15 @@ class CommissionType extends Model {
     }
 
     /**
+     * Get the commission type's full name.
+     *
+     * @return string
+     */
+    public function getFullNameAttribute() {
+        return ucfirst($this->category->name).' ・ '.$this->name;
+    }
+
+    /**
      * Get any extras information.
      *
      * @return string
@@ -263,7 +272,7 @@ class CommissionType extends Model {
         }
         if (null !== $this->getSlots($this->category->class)) {
             if ($this->availability > 0) {
-                return min(Settings::get('overall_'.$this->category->class->slug.'_slots'), $this->availability);
+                return min(Settings::get($this->category->class->slug.'_overall_slots'), $this->availability);
             } else {
                 return $this->getSlots($this->category->class);
             }
@@ -357,9 +366,9 @@ class CommissionType extends Model {
      * @return array|null
      */
     public function getParentInvoiceDataAttribute() {
-        if (isset($this->category->invoice_data)) {
+        if ($this->category && isset($this->category->invoice_data)) {
             return $this->category->invoice_data;
-        } elseif ($this->category->parentInvoiceData) {
+        } elseif ($this->category && $this->category->parentInvoiceData) {
             return $this->category->parentInvoiceData;
         }
 

@@ -30,7 +30,7 @@
 @endif
 
 <div class="form-group">
-    {!! Form::label('contact', 'Preferred Method of Contact') !!} {!! Settings::get('contact_info') ? add_help(Settings::get('contact_info')) : '' !!}
+    {!! Form::label('contact', 'Preferred Method of Contact') !!} {!! Settings::get('comm_contact_info') ? add_help(Settings::get('comm_contact_info')) : '' !!}
     {!! Form::text('contact', old('contact'), ['class' => 'form-control', 'required']) !!}
 </div>
 
