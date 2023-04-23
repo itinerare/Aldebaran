@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Spatie\Honeypot\ProtectAgainstSpam;
 
 /*
 |--------------------------------------------------------------------------
@@ -38,7 +39,7 @@ Route::group(['prefix' => 'mailing-lists'], function () {
     Route::get('{id}', 'MailingListController@getMailingList');
     Route::get('verify/{id}', 'MailingListController@getVerify');
     Route::get('unsubscribe/{id}', 'MailingListController@getUnsubscribe');
-    Route::post('{id}/subscribe', 'MailingListController@postSubscribe');
+    Route::post('{id}/subscribe', 'MailingListController@postSubscribe')->middleware(ProtectAgainstSpam::class);
 });
 
 // COMMISSIONS
@@ -50,13 +51,13 @@ Route::group(['prefix' => 'commissions'], function () {
     Route::get('types/{key}', 'CommissionController@getType');
     Route::get('types/{key}/gallery', 'CommissionController@getTypeGallery');
     Route::get('{class}/new', 'CommissionController@getNewCommission');
-    Route::post('new', 'CommissionController@postNewCommission');
+    Route::post('new', 'CommissionController@postNewCommission')->middleware(ProtectAgainstSpam::class);
 
     Route::get('view/{key}', 'CommissionController@getViewCommission');
     Route::get('view/{key}/{id}', 'CommissionController@getViewCommissionImage');
 
     Route::get('{class}/quotes/new', 'CommissionController@getNewQuote');
-    Route::post('quotes/new', 'CommissionController@postNewQuote');
+    Route::post('quotes/new', 'CommissionController@postNewQuote')->middleware(ProtectAgainstSpam::class);
     Route::get('quotes/view/{key}', 'CommissionController@getViewQuote');
 
     Route::get('{class}/{key}', 'CommissionController@getClassPage');
