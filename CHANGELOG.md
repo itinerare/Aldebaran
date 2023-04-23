@@ -4,6 +4,19 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [3.10.1](https://github.com/itinerare/Aldebaran/compare/v3.10.0...v3.10.1) (2023-04-23)
+
+### Bug Fixes
+
+* Route form submissions through honeypot middleware ([fe0399](https://github.com/itinerare/Aldebaran/commit/fe03990cadd7bafc4ed216e95d150463714f1245))
+
+##### Commissions
+
+* Clarify global slots message ([70343e](https://github.com/itinerare/Aldebaran/commit/70343e2069b05600810747848b2fd5ae3af88304))
+
+
+---
+
 ## [3.10.0](https://github.com/itinerare/Aldebaran/compare/v3.9.0...v3.10.0) (2023-04-16)
 
 ### Features

@@ -28,8 +28,7 @@
                 slot{{ Settings::get($class->slug . '_overall_slots') == 1 ? ' is' : 's are' }} available.<br />
             </h4>
             <p>
-                Some commission types may also have limited slots; these types will display to the best of their ability how
-                many slots are available accounting for both commissions of the type as well as commissions of other types.
+                Note that some commission types may also have limited slots.
             </p>
         </div>
     @endif
@@ -49,7 +48,7 @@
                     <x-admin-edit-button name="Commission Category" :object="$category" />
                     <h2>{{ $category->name }} Commissions</h2>
                 </div>
-                @foreach ($category->types->where('is_visible', 1) as $type)
+                @foreach ($category->types()->with('commissions:id,commission_type,status')->visible()->get() as $type)
                     @include('commissions._type_info', ['type' => $type])
                 @endforeach
             </div>
