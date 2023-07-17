@@ -4500,16 +4500,16 @@
         },
         {
             "name": "spatie/laravel-honeypot",
-            "version": "4.3.2",
+            "version": "4.3.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/laravel-honeypot.git",
-                "reference": "eab92dd2096f1cdb83c28ced4f4632d3cfde2872"
+                "reference": "fa303f537e0f2119861ab75efaa9b5ef792da12d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/laravel-honeypot/zipball/eab92dd2096f1cdb83c28ced4f4632d3cfde2872",
-                "reference": "eab92dd2096f1cdb83c28ced4f4632d3cfde2872",
+                "url": "https://api.github.com/repos/spatie/laravel-honeypot/zipball/fa303f537e0f2119861ab75efaa9b5ef792da12d",
+                "reference": "fa303f537e0f2119861ab75efaa9b5ef792da12d",
                 "shasum": ""
             },
             "require": {
@@ -4564,7 +4564,7 @@
                 "spatie"
             ],
             "support": {
-                "source": "https://github.com/spatie/laravel-honeypot/tree/4.3.2"
+                "source": "https://github.com/spatie/laravel-honeypot/tree/4.3.3"
             },
             "funding": [
                 {
@@ -4572,7 +4572,7 @@
                     "type": "custom"
                 }
             ],
-            "time": "2023-01-17T07:09:34+00:00"
+            "time": "2023-07-17T20:02:47+00:00"
         },
         {
             "name": "spatie/laravel-package-tools",
