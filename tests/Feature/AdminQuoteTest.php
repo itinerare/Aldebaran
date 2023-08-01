@@ -39,8 +39,8 @@ class AdminQuoteTest extends TestCase {
     public function testGetViewQuote($status, $expected) {
         // Create a quote to view, alternately with or without payment information
         $quote = CommissionQuote::factory()
-                ->type($this->type->id)->status($status)
-                ->create();
+            ->type($this->type->id)->status($status)
+            ->create();
 
         $response = $this->actingAs($this->user)
             ->get('admin/commissions/quotes/edit/'.($expected == 200 ? $quote->id : mt_rand(5, 10)))

@@ -160,7 +160,7 @@ class Piece extends Model implements Feedable {
             ->whereRelation('project', 'is_visible', true)
             ->where(function ($query) {
                 $query->whereRelation('images', 'is_visible', true)
-                ->orWhereRelation('literatures', 'is_visible', true);
+                    ->orWhereRelation('literatures', 'is_visible', true);
             });
     }
 
