@@ -152,7 +152,7 @@ class Piece extends Model implements Feedable {
      */
     public function scopeVisible($query, $user = null) {
         if ($user) {
-            return $query->has('images')->orHas('literatures');
+            return $query->whereRelation('images', 'is_visible', true)->orWhereRelation('literatures', 'is_visible', true);
         }
 
         return $query
