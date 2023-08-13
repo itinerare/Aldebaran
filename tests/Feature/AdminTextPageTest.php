@@ -16,8 +16,6 @@ class AdminTextPageTest extends TestCase {
 
     protected function setUp(): void {
         parent::setUp();
-
-        $this->text = '<p>'.$this->faker->unique()->domainWord().'</p>';
     }
 
     /**
@@ -43,17 +41,20 @@ class AdminTextPageTest extends TestCase {
         // Get the information for the page
         $page = TextPage::where('key', $key)->first();
 
+        // Generate some test data
+        $text = '<p>'.$this->faker->unique()->domainWord().'</p>';
+
         // Try to post data
         $response = $this
             ->actingAs($this->user)
             ->post('/admin/pages/edit/'.$page->id, [
-                'text' => $this->text,
+                'text' => $text,
             ]);
 
         $response->assertSessionHasNoErrors();
         $this->assertDatabaseHas('text_pages', [
             'key'  => $key,
-            'text' => $this->text,
+            'text' => $text,
         ]);
     }
 
