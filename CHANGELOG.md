@@ -4,6 +4,18 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [3.10.2](https://github.com/itinerare/Aldebaran/compare/v3.10.1...v3.10.2) (2023-08-13)
+
+### Bug Fixes
+
+
+##### Pieces
+
+* Only show pieces in gallery with visible images/literatures for users ([3ace1b](https://github.com/itinerare/Aldebaran/commit/3ace1b67f71d01b3a3bb4d8e3c769886f4e64490))
+
+
+---
+
 ## [3.10.1](https://github.com/itinerare/Aldebaran/compare/v3.10.0...v3.10.1) (2023-04-23)
 
 ### Bug Fixes
