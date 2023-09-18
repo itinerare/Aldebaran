@@ -4892,16 +4892,16 @@
         },
         {
             "name": "srmklive/paypal",
-            "version": "3.0.24",
+            "version": "3.0.25",
             "source": {
                 "type": "git",
                 "url": "https://github.com/srmklive/laravel-paypal.git",
-                "reference": "f9b3e6162f4b7ded0f53737101af5cf1ea9a02a2"
+                "reference": "3e151690f6d5e80f1d3ca6bb7957e2b0222f5768"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/srmklive/laravel-paypal/zipball/f9b3e6162f4b7ded0f53737101af5cf1ea9a02a2",
-                "reference": "f9b3e6162f4b7ded0f53737101af5cf1ea9a02a2",
+                "url": "https://api.github.com/repos/srmklive/laravel-paypal/zipball/3e151690f6d5e80f1d3ca6bb7957e2b0222f5768",
+                "reference": "3e151690f6d5e80f1d3ca6bb7957e2b0222f5768",
                 "shasum": ""
             },
             "require": {
@@ -4952,9 +4952,9 @@
             ],
             "support": {
                 "issues": "https://github.com/srmklive/laravel-paypal/issues",
-                "source": "https://github.com/srmklive/laravel-paypal/tree/3.0.24"
+                "source": "https://github.com/srmklive/laravel-paypal/tree/3.0.25"
             },
-            "time": "2023-09-06T22:26:06+00:00"
+            "time": "2023-09-12T21:52:40+00:00"
         },
         {
             "name": "stripe/stripe-php",
