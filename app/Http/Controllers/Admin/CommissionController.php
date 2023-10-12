@@ -344,6 +344,24 @@ class CommissionController extends Controller {
         switch ($event['event_type']) {
             case 'INVOICING.INVOICE.PAID':
                 $invoice = $event['resource']['invoice'];
+
+                // Attempt to verify payment completion, and if not, defer processing
+                // Pending payments do not have final payment data (minus fees, etc.)
+                // This depends on PayPal resending the event if not received successfully
+                if(isset($invoice['payments']['transactions'][0]['payment_id'])) {
+                    // Initialize PayPal client
+                    $paypal = new PayPalClient;
+                    $paypal->getAccessToken();
+
+                    $capturedPayment = $paypal->showCapturedPaymentDetails($invoice['payments']['transactions'][0]['payment_id']);
+                    if(isset($capturedPayment['debug_id'])) {
+                        Log::error('Failed to locate payment information.');
+                        exit();
+                    } elseif ($capturedPayment['status'] == 'PENDING') {
+                        Log::notice('Payment pending. Deferring processing.');
+                        exit();
+                    }
+                }
             default:
                 // Unexpected event type
                 Log::notice('PayPal webhook received unknown event type.');
