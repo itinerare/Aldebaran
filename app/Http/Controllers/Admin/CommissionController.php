@@ -315,7 +315,7 @@ class CommissionController extends Controller {
         $headers = array_change_key_case($headers, CASE_UPPER);
 
         // Check that the certificate comes from PayPal
-        if(preg_match('/https:\/\/paypal.com\//', (string) $headers['PAYPAL-CERT-URL']) || preg_match('/https:\/\/api.paypal.com\//', (string) $headers['PAYPAL-CERT-URL'])) {
+        if(preg_match('/https:\/\/api.sandbox.paypal.com\//', (string) $headers['PAYPAL-CERT-URL']) || preg_match('/https:\/\/api.paypal.com\//', (string) $headers['PAYPAL-CERT-URL']) || preg_match('/https:\/\/paypal.com\//', (string) $headers['PAYPAL-CERT-URL'])) {
             $verifyUrl = true;
         } else {
             $verifyUrl = false;
