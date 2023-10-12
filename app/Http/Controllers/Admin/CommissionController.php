@@ -311,24 +311,31 @@ class CommissionController extends Controller {
     public function postPaypalWebhook(CommissionManager $service) {
         $payload = @file_get_contents('php://input');
         $event = json_decode($payload, true);
-
-        // Initialize PayPal client
-        $paypal = new PayPalClient;
-        $paypal->getAccessToken();
-
-        // Verify the header signature
         $headers = getallheaders();
         $headers = array_change_key_case($headers, CASE_UPPER);
-        $verification = $paypal->verifyWebHook([
-            'auth_algo'         => $headers['PAYPAL-AUTH-ALGO'],
-            'cert_url'          => $headers['PAYPAL-CERT-URL'],
-            'transmission_id'   => $headers['PAYPAL-TRANSMISSION-ID'],
-            'transmission_sig'  => $headers['PAYPAL-TRANSMISSION-SIG'],
-            'transmission_time' => $headers['PAYPAL-TRANSMISSION-TIME'],
-            'webhook_id'        => config('aldebaran.commissions.payment_processors.paypal.integration.webhook_id'),
-            'webhook_event'     => $event,
-        ]);
-        if (!isset($verification['verification_status']) || $verification['verification_status'] != 'SUCCESS') {
+
+        // Check that the certificate comes from PayPal
+        if(preg_match('/https:\/\/paypal.com\//', (string) $headers['PAYPAL-CERT-URL']) || preg_match('/https:\/\/api.paypal.com\//', (string) $headers['PAYPAL-CERT-URL'])) {
+            $verifyUrl = true;
+        } else {
+            $verifyUrl = false;
+            Log::error('Certificate URL ('.(string) $headers['PAYPAL-CERT-URL'].') does not appear to originate from PayPal.');
+        }
+
+        // Verify the webhook signature
+        if ($verifyUrl && openssl_verify(
+            data: implode(separator: '|', array: [
+                $headers['PAYPAL-TRANSMISSION-ID'],
+                $headers['PAYPAL-TRANSMISSION-TIME'],
+                config('aldebaran.commissions.payment_processors.paypal.integration.webhook_id'),
+                crc32(string: $payload),
+            ]),
+            signature: base64_decode(string: $headers['PAYPAL-TRANSMISSION-SIG']),
+            public_key: openssl_pkey_get_public(public_key: file_get_contents(filename: $headers['PAYPAL-CERT-URL'])),
+            algorithm: 'sha256WithRSAEncryption'
+            ) === 1) {
+            Log::info('PayPal webhook signature verified successfully.');
+        } else {
             Log::error('Error verifying PayPal webhook event signature.');
             exit();
         }
