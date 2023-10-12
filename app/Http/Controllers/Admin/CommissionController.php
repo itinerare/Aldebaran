@@ -315,7 +315,7 @@ class CommissionController extends Controller {
         $headers = array_change_key_case($headers, CASE_UPPER);
 
         // Check that the certificate comes from PayPal
-        if(preg_match('/https:\/\/api.sandbox.paypal.com\//', (string) $headers['PAYPAL-CERT-URL']) || preg_match('/https:\/\/api.paypal.com\//', (string) $headers['PAYPAL-CERT-URL']) || preg_match('/https:\/\/paypal.com\//', (string) $headers['PAYPAL-CERT-URL'])) {
+        if (preg_match('/https:\/\/api.sandbox.paypal.com\//', (string) $headers['PAYPAL-CERT-URL']) || preg_match('/https:\/\/api.paypal.com\//', (string) $headers['PAYPAL-CERT-URL']) || preg_match('/https:\/\/paypal.com\//', (string) $headers['PAYPAL-CERT-URL'])) {
             $verifyUrl = true;
         } else {
             $verifyUrl = false;
@@ -333,7 +333,7 @@ class CommissionController extends Controller {
             signature: base64_decode(string: $headers['PAYPAL-TRANSMISSION-SIG']),
             public_key: openssl_pkey_get_public(public_key: file_get_contents(filename: $headers['PAYPAL-CERT-URL'])),
             algorithm: 'sha256WithRSAEncryption'
-            ) === 1) {
+        ) === 1) {
             Log::info('PayPal webhook signature verified successfully.');
         } else {
             Log::error('Error verifying PayPal webhook event signature.');
@@ -348,13 +348,13 @@ class CommissionController extends Controller {
                 // Attempt to verify payment completion, and if not, defer processing
                 // Pending payments do not have final payment data (minus fees, etc.)
                 // This depends on PayPal resending the event if not received successfully
-                if(isset($invoice['payments']['transactions'][0]['payment_id'])) {
+                if (isset($invoice['payments']['transactions'][0]['payment_id'])) {
                     // Initialize PayPal client
                     $paypal = new PayPalClient;
                     $paypal->getAccessToken();
 
                     $capturedPayment = $paypal->showCapturedPaymentDetails($invoice['payments']['transactions'][0]['payment_id']);
-                    if(isset($capturedPayment['debug_id'])) {
+                    if (isset($capturedPayment['debug_id'])) {
                         Log::error('Failed to locate payment information.');
                         exit();
                     } elseif ($capturedPayment['status'] == 'PENDING') {
