@@ -11,18 +11,18 @@
         "format": "./node_modules/.bin/blade-formatter --progress --write '**/*.blade.php'"
     },
     "devDependencies": {
-        "axios": "^1.4",
-        "blade-formatter": "^1.36.0",
+        "axios": "^1.5",
+        "blade-formatter": "^1.38.3",
         "bootstrap": "^4.6",
         "buffer": "^6.0.3",
         "jquery": "^3.7",
         "laravel-mix": "^6.0.43",
         "popper.js": "^1.12",
-        "postcss": "^8.4.27",
+        "postcss": "^8.4.31",
         "process": "0.11.10",
         "resolve-url-loader": "^5.0.0",
-        "sass": "^1.64.2",
+        "sass": "^1.69.0",
         "sass-loader": "^13.3.2"
     },
-    "version": "3.10.2"
+    "version": "3.10.3"
 }
