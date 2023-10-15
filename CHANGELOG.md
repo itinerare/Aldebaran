@@ -4,6 +4,20 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [3.10.3](https://github.com/itinerare/Aldebaran/compare/v3.10.2...v3.10.3) (2023-10-15)
+
+### Bug Fixes
+
+
+##### Commissions
+
+* Account for PayPal sandbox certs ([341f93](https://github.com/itinerare/Aldebaran/commit/341f930bf144f2f9ffa82fe9fd7506ea2da9eb20))
+* Attempt to defer PayPal webhook processing if payment is pending ([8ad040](https://github.com/itinerare/Aldebaran/commit/8ad0407296d198453096aeeb8759fddd434f1bd0))
+* Switch PayPal webhook signature verification method ([ce9713](https://github.com/itinerare/Aldebaran/commit/ce97135a9d583022a420c1e1af51499809dfa206))
+
+
+---
+
 ## [3.10.2](https://github.com/itinerare/Aldebaran/compare/v3.10.1...v3.10.2) (2023-08-13)
 
 ### Bug Fixes
