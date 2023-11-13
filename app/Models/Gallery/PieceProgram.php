@@ -25,6 +25,15 @@ class PieceProgram extends Model {
     protected $table = 'piece_programs';
 
     /**
+     * The relationships that should always be loaded.
+     *
+     * @var array
+     */
+    protected $with = [
+        'program',
+    ];
+
+    /**
      * Whether the model contains timestamps to be saved and updated.
      *
      * @var string

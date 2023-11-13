@@ -136,7 +136,7 @@ class GalleryController extends Controller {
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function getPiece(Request $request, $id, $slug = null) {
-        $piece = Piece::find($id);
+        $piece = Piece::with('programs')->find($id);
         if (!$piece || (!Auth::check() && !$piece->is_visible)) {
             abort(404);
         }
