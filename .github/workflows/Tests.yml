@@ -17,7 +17,7 @@ jobs:
   laravel-tests:
     strategy:
       matrix:
-        target: ['8.0', '8.1', '8.2']
+        target: ['8.1', '8.2']
     uses: itinerare/github-actions/.github/workflows/laravel_tests.yml@main
     with:
       php-version: ${{ matrix.target }}
