@@ -160,7 +160,7 @@ class CommissionInfoTest extends TestCase {
         }
     }
 
-    public function commissionInfoProvider() {
+    public static function commissionInfoProvider() {
         // $data = [hasCategory, hasType, withExamples, [withPiece, isVisible, isGoodExample, goodExamples, okExamples, hasImage, hasLiterature/[hasLiterature, hasThumb]]]
 
         return [
@@ -314,7 +314,7 @@ class CommissionInfoTest extends TestCase {
         }
     }
 
-    public function commissionTypeProvider() {
+    public static function commissionTypeProvider() {
         // $visibility = [commsEnabled, classActive, commsOpen, typeActive, typeVisible, withKey]
         // $data = [hasCategory, hasType, withExamples, [withPiece, isVisible, isGoodExample, goodExamples, okExamples, hasImage, hasLiterature/[hasLiterature, hasThumb]]]
 
@@ -459,7 +459,7 @@ class CommissionInfoTest extends TestCase {
         }
     }
 
-    public function commissionTypeGalleryProvider() {
+    public static function commissionTypeGalleryProvider() {
         // $data = [[hasPiece, isVisible, hasImage, hasLiterature/[hasLiterature, hasThumb]], [searchType, expectedResult]]
         // Search is dependent on presence of at least one piece
 
@@ -543,7 +543,7 @@ class CommissionInfoTest extends TestCase {
         $response->assertStatus($status);
     }
 
-    public function commissionQueueProvider() {
+    public static function commissionQueueProvider() {
         return [
             //'with commission' => [[1, 1], 0, null, 200],
         ];
@@ -583,14 +583,14 @@ class CommissionInfoTest extends TestCase {
         $response->assertStatus($status);
     }
 
-    public function commissionPageProvider() {
+    public static function commissionPageProvider() {
         return [
             'with valid page'   => [[1, 1], 0, [1], 200],
             'with invalid page' => [[1, 1], 0, [0], 404],
         ];
     }
 
-    public function commissionAccessProvider() {
+    public static function commissionAccessProvider() {
         return [
             'visitor, comms enabled, active'    => [[1, 1], 0, null, 200],
             'visitor, comms enabled, inactive'  => [[1, 0], 0, null, 404],

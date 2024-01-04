@@ -60,7 +60,7 @@ class AdminSiteImagesTest extends TestCase {
         $this->artisan('copy-default-images');
     }
 
-    public function siteImageProvider() {
+    public static function siteImageProvider() {
         return [
             'avatar'    => ['avatar'],
             'watermark' => ['watermark'],

@@ -96,8 +96,13 @@ class DataGalleryProgramTest extends TestCase {
         }
     }
 
-    public function programCreateProvider() {
-        return $this->booleanSequences(2);
+    public static function programCreateProvider() {
+        return [
+            'hidden'              => [0, 0],
+            'visible'             => [0, 1],
+            'with image, hidden'  => [1, 0],
+            'with image, visible' => [1, 1],
+        ];
     }
 
     /**
@@ -141,8 +146,25 @@ class DataGalleryProgramTest extends TestCase {
         }
     }
 
-    public function programEditProvider() {
-        return $this->booleanSequences(4);
+    public static function programEditProvider() {
+        return [
+            'hidden'                         => [0, 0, 0, 0],
+            'visible'                        => [0, 0, 0, 1],
+            'remove image, hidden'           => [0, 0, 1, 0],
+            'remove image, visible'          => [0, 0, 1, 1],
+            'with image, hidden'             => [0, 1, 0, 0],
+            'with image, visible'            => [0, 1, 0, 1],
+            'with image+remove, hidden'      => [0, 1, 1, 0],
+            'with image+remove, visible'     => [0, 1, 1, 1],
+            'has image, hidden'              => [1, 0, 0, 0],
+            'has image, visible'             => [1, 0, 0, 1],
+            'has image+remove, hidden'       => [1, 0, 1, 0],
+            'has image+remove, visible'      => [1, 0, 1, 1],
+            'with+has image, hidden'         => [1, 1, 0, 0],
+            'with+has image, visible'        => [1, 1, 0, 1],
+            'with+has image+remove, hidden'  => [1, 1, 1, 0],
+            'with+has image+remove, visible' => [1, 1, 1, 1],
+        ];
     }
 
     /**
@@ -183,7 +205,7 @@ class DataGalleryProgramTest extends TestCase {
         }
     }
 
-    public function programDeleteProvider() {
+    public static function programDeleteProvider() {
         return [
             'basic'      => [0, 1],
             'with piece' => [1, 0],

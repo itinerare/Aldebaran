@@ -76,7 +76,7 @@ class DataCommissionTypeTest extends TestCase {
         });
     }
 
-    public function typeIndexProvider() {
+    public static function typeIndexProvider() {
         return [
             'basic'                             => [0, null],
             'with type'                         => [1, null],
@@ -158,7 +158,7 @@ class DataCommissionTypeTest extends TestCase {
         ]);
     }
 
-    public function createTypeProvider() {
+    public static function createTypeProvider() {
         // $withDescription, $pricing, $withExtras, $isActive, $isVisible, $slots, $withTag, $showExamples
         return [
             'basic'            => [0, ['type' => 'flat', 'cost' => mt_rand(1, 100)], 0, 1, 1, null, 0, 1],
@@ -238,7 +238,7 @@ class DataCommissionTypeTest extends TestCase {
         ]);
     }
 
-    public function editTypeProvider() {
+    public static function editTypeProvider() {
         // $withDescription, $pricing, $withExtras, $isActive, $isVisible, $slots, $withTag, $showExamples, $includeClass, $includeCategory, $fieldData
         return [
             'basic'                      => [0, ['type' => 'flat', 'cost' => mt_rand(1, 100)], 0, 1, 1, null, 0, 1, 0, 0, null],

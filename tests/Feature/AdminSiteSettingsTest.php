@@ -46,7 +46,7 @@ class AdminSiteSettingsTest extends TestCase {
             ->assertStatus($expected);
     }
 
-    public function settingsViewProvider() {
+    public static function settingsViewProvider() {
         return [
             'basic'               => [0, 200],
             'commissions enabled' => [1, 200],
@@ -74,7 +74,7 @@ class AdminSiteSettingsTest extends TestCase {
         ]);
     }
 
-    public function settingsProvider() {
+    public static function settingsProvider() {
         // Values here should *not* be the defaults for the setting
         // For settings which ordinarily use a string, provide null;
         // The test will substitute in a generated string

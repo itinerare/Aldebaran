@@ -78,7 +78,7 @@ class DataGalleryPieceLiteratureTest extends TestCase {
             ->assertStatus($expected);
     }
 
-    public function literatureCreateEditViewProvider() {
+    public static function literatureCreateEditViewProvider() {
         return [
             'valid'   => [1, 200],
             'invalid' => [0, 404],
@@ -131,9 +131,17 @@ class DataGalleryPieceLiteratureTest extends TestCase {
         }
     }
 
-    public function literatureCreateProvider() {
-        // Get all possible sequences
-        return $this->booleanSequences(3);
+    public static function literatureCreateProvider() {
+        return [
+            'hidden'                       => [0, 0, 0],
+            'primary, hidden'              => [0, 0, 1],
+            'visible'                      => [0, 1, 0],
+            'primary, visible'             => [0, 1, 1],
+            'with image, hidden'           => [1, 0, 0],
+            'with image, primary, hidden'  => [1, 0, 1],
+            'with image, visible'          => [1, 1, 0],
+            'with image, primary, visible' => [1, 1, 1],
+        ];
     }
 
     /**
@@ -197,9 +205,41 @@ class DataGalleryPieceLiteratureTest extends TestCase {
         }
     }
 
-    public function literatureEditProvider() {
-        // Get all possible sequences
-        return $this->booleanSequences(5);
+    public static function literatureEditProvider() {
+        return [
+            'hidden'                                    => [0, 0, 0, 0, 0],
+            'primary, hidden'                           => [0, 0, 0, 0, 1],
+            'visible'                                   => [0, 0, 0, 1, 0],
+            'primary, visible'                          => [0, 0, 0, 1, 1],
+            'remove image, hidden'                      => [0, 0, 1, 0, 0],
+            'remove image, primary, hidden'             => [0, 0, 1, 0, 1],
+            'remove image, visible'                     => [0, 0, 1, 1, 0],
+            'remove image, primary, visible'            => [0, 0, 1, 1, 1],
+            'with image, hidden'                        => [0, 1, 0, 0, 0],
+            'with image, primary, hidden'               => [0, 1, 0, 0, 1],
+            'with image, visible'                       => [0, 1, 0, 1, 0],
+            'with image, primary, visible'              => [0, 1, 0, 1, 1],
+            'with+remove image, hidden'                 => [0, 1, 1, 0, 0],
+            'with+remove image, primary, hidden'        => [0, 1, 1, 0, 1],
+            'with+remove image, visible'                => [0, 1, 1, 1, 0],
+            'with+remove image, primary, visible'       => [0, 1, 1, 1, 1],
+            'with data, hidden'                         => [1, 0, 0, 0, 0],
+            'with data, primary, hidden'                => [1, 0, 0, 0, 1],
+            'with data, visible'                        => [1, 0, 0, 1, 0],
+            'with data, primary, visible'               => [1, 0, 0, 1, 1],
+            'with data, remove image, hidden'           => [1, 0, 1, 0, 0],
+            'with data, remove image, primary, hidden'  => [1, 0, 1, 0, 1],
+            'with data, remove image, visible'          => [1, 0, 1, 1, 0],
+            'with data, remove image, primary, visible' => [1, 0, 1, 1, 1],
+            'with data, image, hidden'                  => [1, 1, 0, 0, 0],
+            'with data, image, primary, hidden'         => [1, 1, 0, 0, 1],
+            'with data, image, visible'                 => [1, 1, 0, 1, 0],
+            'with data, image, primary, visible'        => [1, 1, 0, 1, 1],
+            'with data, image+remove, hidden'           => [1, 1, 1, 0, 0],
+            'with data, image+remove, primary, hidden'  => [1, 1, 1, 0, 1],
+            'with data, image+remove, visible'          => [1, 1, 1, 1, 0],
+            'with data, image+remove, primary, visible' => [1, 1, 1, 1, 1],
+        ];
     }
 
     /**
@@ -238,7 +278,7 @@ class DataGalleryPieceLiteratureTest extends TestCase {
         }
     }
 
-    public function literatureDeleteProvider() {
+    public static function literatureDeleteProvider() {
         return [
             'valid'   => [1, 200],
             'invalid' => [0, 404],

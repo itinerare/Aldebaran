@@ -111,7 +111,7 @@ class FeedViewTest extends TestCase {
         }
     }
 
-    public function feedProvider() {
+    public static function feedProvider() {
         return [
             'gallery'                     => ['gallery', [0, 0], 200],
             'gallery with piece'          => ['gallery', [1, 1], 200],

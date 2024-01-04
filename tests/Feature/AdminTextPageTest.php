@@ -58,7 +58,7 @@ class AdminTextPageTest extends TestCase {
         ]);
     }
 
-    public function textPageProvider() {
+    public static function textPageProvider() {
         return [
             'index'          => ['index'],
             'about'          => ['about'],

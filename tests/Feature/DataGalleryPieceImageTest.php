@@ -79,7 +79,7 @@ class DataGalleryPieceImageTest extends TestCase {
             ->assertStatus($expected);
     }
 
-    public function imageCreateEditViewProvider() {
+    public static function imageCreateEditViewProvider() {
         return [
             'valid'   => [1, 200],
             'invalid' => [0, 404],
@@ -101,7 +101,7 @@ class DataGalleryPieceImageTest extends TestCase {
             ->assertStatus($expected);
     }
 
-    public function imageViewProvider() {
+    public static function imageViewProvider() {
         return [
             'valid full'      => [1, 'full', 302],
             'valid display'   => [1, 'display', 200],
@@ -163,9 +163,25 @@ class DataGalleryPieceImageTest extends TestCase {
         $this->service->testImages($image, false);
     }
 
-    public function imageCreateProvider() {
-        // Get all possible sequences
-        return $this->booleanSequences(4);
+    public static function imageCreateProvider() {
+        return [
+            'hidden'                          => [0, 0, 0, 0],
+            'hidden, primary'                 => [0, 0, 0, 1],
+            'visible'                         => [0, 0, 1, 0],
+            'visible, primary'                => [0, 0, 1, 1],
+            'alt text, hidden'                => [0, 1, 0, 0],
+            'alt text, primary, hidden'       => [0, 1, 0, 1],
+            'alt text, visible'               => [0, 1, 1, 0],
+            'alt text, primary, visible'      => [0, 1, 1, 1],
+            'desc, hidden'                    => [1, 0, 0, 0],
+            'desc, primary, hidden'           => [1, 0, 0, 1],
+            'desc, visible'                   => [1, 0, 1, 0],
+            'desc, primary, visible'          => [1, 0, 1, 1],
+            'desc, alt text, hidden'          => [1, 1, 0, 0],
+            'desc, alt text, primary, hidden' => [1, 1, 0, 1],
+            'desc, alt text, visible'         => [1, 1, 1, 0],
+            'everything'                      => [1, 1, 1, 1],
+        ];
     }
 
     /**
@@ -199,9 +215,41 @@ class DataGalleryPieceImageTest extends TestCase {
         ]);
     }
 
-    public function imageEditProvider() {
-        // Get all possible sequences
-        return $this->booleanSequences(5);
+    public static function imageEditProvider() {
+        return [
+            'hidden'                                => [0, 0, 0, 0, 0],
+            'hidden, primary'                       => [0, 0, 0, 0, 1],
+            'visible'                               => [0, 0, 0, 1, 0],
+            'visible, primary'                      => [0, 0, 0, 1, 1],
+            'alt text, hidden'                      => [0, 0, 1, 0, 0],
+            'alt text, primary'                     => [0, 0, 1, 0, 1],
+            'alt text, visible'                     => [0, 0, 1, 1, 0],
+            'alt text, primary, visible'            => [0, 0, 1, 1, 1],
+            'desc, hidden'                          => [0, 1, 0, 0, 0],
+            'desc, primary, hidden'                 => [0, 1, 0, 0, 1],
+            'desc, visible'                         => [0, 1, 0, 1, 0],
+            'desc, primary, visible'                => [0, 1, 0, 1, 1],
+            'desc, alt text, hidden'                => [0, 1, 1, 0, 0],
+            'desc, alt text, hidden, primary'       => [0, 1, 1, 0, 1],
+            'desc, alt text, visible'               => [0, 1, 1, 1, 0],
+            'desc, alt text, visible, primary'      => [0, 1, 1, 1, 1],
+            'data, hidden'                          => [1, 0, 0, 0, 0],
+            'data, primary, hidden'                 => [1, 0, 0, 0, 1],
+            'data, visible'                         => [1, 0, 0, 1, 0],
+            'data, visible, primary'                => [1, 0, 0, 1, 1],
+            'data, alt text, hidden'                => [1, 0, 1, 0, 0],
+            'data, alt text, primary, hidden'       => [1, 0, 1, 0, 1],
+            'data, alt text, visible'               => [1, 0, 1, 1, 0],
+            'data, alt text, primary, visible'      => [1, 0, 1, 1, 1],
+            'data, desc, hidden'                    => [1, 1, 0, 0, 0],
+            'data, desc, primary, hidden'           => [1, 1, 0, 0, 1],
+            'data, desc, visible'                   => [1, 1, 0, 1, 0],
+            'data, desc, primary, visible'          => [1, 1, 0, 1, 1],
+            'data, desc, alt text, hidden'          => [1, 1, 1, 0, 0],
+            'data, desc, alt text, primary, hidden' => [1, 1, 1, 0, 1],
+            'data, desc, alt text, visible'         => [1, 1, 1, 1, 0],
+            'everything'                            => [1, 1, 1, 1, 1],
+        ];
     }
 
     /**
@@ -240,7 +288,7 @@ class DataGalleryPieceImageTest extends TestCase {
         }
     }
 
-    public function imageDeleteProvider() {
+    public static function imageDeleteProvider() {
         return [
             'valid'   => [1, 200],
             'invalid' => [0, 404],

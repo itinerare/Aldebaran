@@ -61,7 +61,7 @@ class MailingListSubscriberTest extends TestCase {
             ->assertStatus($expected);
     }
 
-    public function mailingListViewProvider() {
+    public static function mailingListViewProvider() {
         return [
             'mail enabled, valid, open'      => [1, [1, 1], 200],
             'mail enabled, valid, closed'    => [1, [1, 0], 404],
@@ -116,7 +116,7 @@ class MailingListSubscriberTest extends TestCase {
         }
     }
 
-    public function mailingListSubscribeProvider() {
+    public static function mailingListSubscribeProvider() {
         return [
             'mail enabled, valid, open'      => [1, [1, 1], 1],
             'mail enabled, valid, closed'    => [1, [1, 0], 0],
@@ -173,7 +173,7 @@ class MailingListSubscriberTest extends TestCase {
         }
     }
 
-    public function subscriptionVerificationProvider() {
+    public static function subscriptionVerificationProvider() {
         return [
             'mail enabled, unverified, with token'     => [1, [0, 1], 1, 302],
             'mail enabled, unverified, without token'  => [1, [0, 0], 0, 404],
@@ -234,7 +234,7 @@ class MailingListSubscriberTest extends TestCase {
         }
     }
 
-    public function unsubscriptionProvider() {
+    public static function unsubscriptionProvider() {
         return [
             'mail enabled, unverified, with token'     => [1, [0, 1], 1, 302],
             'mail enabled, unverified, without token'  => [1, [0, 0], 0, 404],

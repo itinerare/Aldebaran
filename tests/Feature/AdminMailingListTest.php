@@ -67,7 +67,7 @@ class AdminMailingListTest extends TestCase {
         }
     }
 
-    public function listIndexProvider() {
+    public static function listIndexProvider() {
         return [
             'empty'                                    => [null],
             'with open list'                           => [[0, 0, 1]],
@@ -122,7 +122,7 @@ class AdminMailingListTest extends TestCase {
         }
     }
 
-    public function listGetEditProvider() {
+    public static function listGetEditProvider() {
         return [
             'with open list'                           => [0, 0, 1],
             'with closed list'                         => [0, 0, 0],
@@ -192,9 +192,17 @@ class AdminMailingListTest extends TestCase {
         ]);
     }
 
-    public function listCreateEditProvider() {
-        // Get all possible sequences
-        return $this->booleanSequences(3);
+    public static function listCreateEditProvider() {
+        return [
+            'closed'                  => [0, 0, 0],
+            'open'                    => [0, 0, 1],
+            'with desc, closed'       => [0, 1, 0],
+            'with desc, open'         => [0, 1, 1],
+            'with data, closed'       => [1, 0, 0],
+            'with data, open'         => [1, 0, 1],
+            'with data, desc, closed' => [1, 1, 0],
+            'with data, desc, open'   => [1, 1, 1],
+        ];
     }
 
     /**
@@ -242,8 +250,12 @@ class AdminMailingListTest extends TestCase {
         $this->assertModelMissing($list);
     }
 
-    public function listDeleteProvider() {
-        // Get all possible sequences
-        return $this->booleanSequences(2);
+    public static function listDeleteProvider() {
+        return [
+            'with nothing'    => [0, 0],
+            'with subscriber' => [0, 1],
+            'with entry'      => [1, 0],
+            'with both'       => [1, 1],
+        ];
     }
 }

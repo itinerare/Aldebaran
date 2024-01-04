@@ -82,7 +82,7 @@ class DataCommissionCategoryTest extends TestCase {
         ]);
     }
 
-    public function createCategoryProvider() {
+    public static function createCategoryProvider() {
         return [
             'active'   => [1],
             'inactive' => [0],
@@ -126,7 +126,7 @@ class DataCommissionCategoryTest extends TestCase {
         ]);
     }
 
-    public function editCategoryProvider() {
+    public static function editCategoryProvider() {
         return [
             'basic'                 => [0, null, 1, 0],
             'inactive'              => [0, null, 0, 0],
@@ -184,7 +184,7 @@ class DataCommissionCategoryTest extends TestCase {
         }
     }
 
-    public function categoryDeleteProvider() {
+    public static function categoryDeleteProvider() {
         return [
             'basic'     => [0, 1],
             'with type' => [1, 0],

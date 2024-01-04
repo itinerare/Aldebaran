@@ -116,9 +116,25 @@ class DataGalleryTagTest extends TestCase {
         ]);
     }
 
-    public function tagProvider() {
-        // Get all possible sequences
-        return $this->booleanSequences(4);
+    public static function tagProvider() {
+        return [
+            'hidden'                           => [0, 0, 0, 0],
+            'active, hidden'                   => [0, 0, 0, 1],
+            'visible'                          => [0, 0, 1, 0],
+            'active, visible'                  => [0, 0, 1, 1],
+            'with desc, hidden'                => [0, 1, 0, 0],
+            'with desc, active, hidden'        => [0, 1, 0, 1],
+            'with desc, visible'               => [0, 1, 1, 0],
+            'with desc, active, visible'       => [0, 1, 1, 1],
+            'with data, hidden'                => [1, 0, 0, 0],
+            'with data, active, hidden'        => [1, 0, 0, 1],
+            'with data, visible'               => [1, 0, 1, 0],
+            'with data, active, visible'       => [1, 0, 1, 1],
+            'with data, desc, hidden'          => [1, 1, 0, 0],
+            'with data, desc, active, hidden'  => [1, 1, 0, 1],
+            'with data, desc, visible'         => [1, 1, 1, 0],
+            'with data, desc, active, visible' => [1, 1, 1, 1],
+        ];
     }
 
     /**
@@ -162,7 +178,7 @@ class DataGalleryTagTest extends TestCase {
         }
     }
 
-    public function tagDeleteProvider() {
+    public static function tagDeleteProvider() {
         return [
             'basic'      => [[0, 0], 1],
             'with piece' => [[1, 0], 0],

@@ -80,7 +80,7 @@ class DataGalleryPieceTest extends TestCase {
         });
     }
 
-    public function pieceIndexProvider() {
+    public static function pieceIndexProvider() {
         return [
             'basic'                             => [0, null],
             'with piece'                        => [1, null],
@@ -226,7 +226,7 @@ class DataGalleryPieceTest extends TestCase {
         }
     }
 
-    public function pieceProvider() {
+    public static function pieceProvider() {
         // ($hasData, $description, $isVisible, $timestamp, $tag, $program, $goodExample)
 
         return [

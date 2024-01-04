@@ -94,7 +94,7 @@ class AdminMailingListEntryTest extends TestCase {
         }
     }
 
-    public function mailingListEntryCreateProvider() {
+    public static function mailingListEntryCreateProvider() {
         return [
             'draft'   => [1],
             'sending' => [0],
@@ -142,7 +142,7 @@ class AdminMailingListEntryTest extends TestCase {
         }
     }
 
-    public function mailingListEntryEditProvider() {
+    public static function mailingListEntryEditProvider() {
         return [
             'draft'   => [0, 1, 1],
             'sending' => [0, 0, 1],

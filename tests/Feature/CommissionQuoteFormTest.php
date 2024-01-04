@@ -63,7 +63,7 @@ class CommissionQuoteFormTest extends TestCase {
         $response->assertStatus($status);
     }
 
-    public function commissionFormAccessProvider() {
+    public static function commissionFormAccessProvider() {
         // $visibility = [commsEnabled, classActive, quotesOpen, typeVisible, typeActive]
 
         return [
@@ -170,7 +170,7 @@ class CommissionQuoteFormTest extends TestCase {
         }
     }
 
-    public function newQuoteProvider() {
+    public static function newQuoteProvider() {
         // $visibility = [commsEnabled, classActive, quotesOpen, typeVisible, typeActive]
 
         return [
@@ -227,7 +227,7 @@ class CommissionQuoteFormTest extends TestCase {
         }
     }
 
-    public function quoteViewProvider() {
+    public static function quoteViewProvider() {
         return [
             'basic'                    => [1, 'Pending', 0, 200],
             'accepted quote'           => [1, 'Accepted', 0, 200],

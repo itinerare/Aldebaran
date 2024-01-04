@@ -99,7 +99,7 @@ class CommissionFormTest extends TestCase {
         $response->assertStatus($status);
     }
 
-    public function commissionFormAccessProvider() {
+    public static function commissionFormAccessProvider() {
         // $visibility = [commsEnabled, classActive, commsOpen, typeActive, typeVisible, withKey]
 
         return [
@@ -124,7 +124,7 @@ class CommissionFormTest extends TestCase {
         ];
     }
 
-    public function commissionFormProvider() {
+    public static function commissionFormProvider() {
         return [
             // (string) type, (bool) rules, (bool) choices, value, (string) help, (bool) include category, (bool) include class, (bool) include class in category
 
@@ -330,7 +330,7 @@ class CommissionFormTest extends TestCase {
         }
     }
 
-    public function newCommissionProvider() {
+    public static function newCommissionProvider() {
         // $visibility = [commsEnabled, classActive, commsOpen, typeActive, typeVisible, withKey]
 
         return [
@@ -470,7 +470,7 @@ class CommissionFormTest extends TestCase {
         }
     }
 
-    public function quoteCommissionProvider() {
+    public static function quoteCommissionProvider() {
         return [
             'with quote'              => [1, 0, 1],
             'with quote, required'    => [1, 1, 1],
@@ -611,7 +611,7 @@ class CommissionFormTest extends TestCase {
         }
     }
 
-    public function commissionViewProvider() {
+    public static function commissionViewProvider() {
         return [
             'basic'                           => [1, 'Pending', null, null, 0, 200],
             'accepted commission'             => [1, 'Accepted', null, null, 0, 200],
@@ -694,7 +694,7 @@ class CommissionFormTest extends TestCase {
         }
     }
 
-    public function commissionImageViewProvider() {
+    public static function commissionImageViewProvider() {
         return [
             'valid image'     => [1, 0, 302],
             'converted image' => [1, 1, 200],

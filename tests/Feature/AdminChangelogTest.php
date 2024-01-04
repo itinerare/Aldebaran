@@ -109,9 +109,17 @@ class AdminChangelogTest extends TestCase {
         ]);
     }
 
-    public function changelogProvider() {
-        // Get all possible sequences
-        return $this->booleanSequences(3);
+    public static function changelogProvider() {
+        return [
+            'visible'                   => ['0', '0', '1'],
+            'hidden'                    => ['0', '0', '0'],
+            'with title, visible'       => ['0', '1', '1'],
+            'with title, hidden'        => ['0', '1', '0'],
+            'with data, visible'        => ['1', '0', '1'],
+            'with data, hidden'         => ['1', '0', '0'],
+            'with data, title, hidden'  => ['1', '1', '0'],
+            'with data, title, visible' => ['1', '1', '1'],
+        ];
     }
 
     /**

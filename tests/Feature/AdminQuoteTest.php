@@ -47,7 +47,7 @@ class AdminQuoteTest extends TestCase {
             ->assertStatus($expected);
     }
 
-    public function commissionViewProvider() {
+    public static function commissionViewProvider() {
         return [
             'pending'  => ['Pending', 200],
             'accepted' => ['Accepted', 200],
@@ -152,7 +152,7 @@ class AdminQuoteTest extends TestCase {
         }
     }
 
-    public function quoteStateProvider() {
+    public static function quoteStateProvider() {
         return [
             'accept pending'                  => ['Pending', 'accept', 0, 0, 0, 1],
             'accept pending with comments'    => ['Pending', 'accept', 1, 0, 0, 1],
@@ -233,7 +233,7 @@ class AdminQuoteTest extends TestCase {
         }
     }
 
-    public function quoteUpdateProvider() {
+    public static function quoteUpdateProvider() {
         return [
             'basic'           => ['Accepted', 0, 0, 0, 1],
             'with comments'   => ['Accepted', 0, 1, 0, 1],

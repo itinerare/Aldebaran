@@ -163,7 +163,7 @@ class AdminCommissionTest extends TestCase {
         }
     }
 
-    public function commissionViewProvider() {
+    public static function commissionViewProvider() {
         return [
             'basic'                           => [null, 0, 'Pending', null, 200],
             'with payment'                    => [null, 1, 'Pending', null, 200],
@@ -342,7 +342,7 @@ class AdminCommissionTest extends TestCase {
         }
     }
 
-    public function commissionStateProvider() {
+    public static function commissionStateProvider() {
         // $slotData = (string) status, (bool) sameType, (bool) expected
 
         return [
@@ -485,7 +485,7 @@ class AdminCommissionTest extends TestCase {
         }
     }
 
-    public function commissionUpdateProvider() {
+    public static function commissionUpdateProvider() {
         return [
             'basic'                  => ['Accepted', 0, null, 'Not Started', 0, 0, 1],
             'basic with mail'        => ['Accepted', 0, null, 'Not Started', 0, 1, 1],

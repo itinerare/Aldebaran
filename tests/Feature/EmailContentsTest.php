@@ -108,7 +108,7 @@ class EmailContentsTest extends TestCase {
         }
     }
 
-    public function commissionNotificationProvider() {
+    public static function commissionNotificationProvider() {
         return [
             'new request'                            => ['CommissionRequested', 'Pending', null, 0],
             'new request confirmation'               => ['CommissionRequestConfirmation', 'Pending', null, 0],
@@ -162,7 +162,7 @@ class EmailContentsTest extends TestCase {
         }
     }
 
-    public function quoteNotificationProvider() {
+    public static function quoteNotificationProvider() {
         return [
             'new request'              => ['QuoteRequested', 'Pending'],
             'new request confirmation' => ['QuoteRequestConfirmation', 'Pending'],

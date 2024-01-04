@@ -129,7 +129,7 @@ class GalleryViewTest extends TestCase {
         }
     }
 
-    public function galleryAccessProvider() {
+    public static function galleryAccessProvider() {
         return [
             'visitor, enabled'                                                    => [0, 1, null, [0, 0, 0, 0], 200],
             'visitor, disabled'                                                   => [0, 0, null, [0, 0, 0, 0], 404],
@@ -269,7 +269,7 @@ class GalleryViewTest extends TestCase {
         }
     }
 
-    public function projectAccessProvider() {
+    public static function projectAccessProvider() {
         return [
             'visitor, visible'                                                   => [0, 1, null, [0, 0, 0, 0], 200],
             'visitor, hidden'                                                    => [0, 0, null, [0, 0, 0, 0], 404],
@@ -379,7 +379,7 @@ class GalleryViewTest extends TestCase {
         }
     }
 
-    public function pieceAccessProvider() {
+    public static function pieceAccessProvider() {
         // ($user, $image, $literature, $isVisible, $description, $altText, $timestamp, $tag, $program, $goodExample, $status)
 
         return [
