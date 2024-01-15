@@ -100,7 +100,7 @@ class CommissionClassFactory extends Factory {
     /**
      * Generate an inactive class.
      *
-     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     * @return Factory
      */
     public function inactive() {
         return $this->state(function (array $attributes) {
@@ -115,7 +115,7 @@ class CommissionClassFactory extends Factory {
      *
      * @param \App\Models\TextPage $page
      *
-     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     * @return Factory
      */
     public function testData($page) {
         return $this->state(function (array $attributes) use ($page) {

@@ -22,7 +22,7 @@ class CommissionPaymentFactory extends Factory {
     /**
      * Generate a paid payment.
      *
-     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     * @return Factory
      */
     public function paid() {
         return $this->state(function (array $attributes) {

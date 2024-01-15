@@ -52,9 +52,9 @@ class MailingListService extends Service {
     /**
      * Updates a mailing list.
      *
-     * @param \App\Models\MailingList\MailingList $mailingList
-     * @param array                               $data
-     * @param \App\Models\User\User               $user
+     * @param MailingList           $mailingList
+     * @param array                 $data
+     * @param \App\Models\User\User $user
      *
      * @return \App\Models\MailingList\MailingList|bool
      */
@@ -87,7 +87,7 @@ class MailingListService extends Service {
     /**
      * Deletes a mailing list.
      *
-     * @param \App\Models\MailingList\MailingList $mailingList
+     * @param MailingList $mailingList
      *
      * @return bool
      */
@@ -160,9 +160,9 @@ class MailingListService extends Service {
     /**
      * Updates an entry.
      *
-     * @param \App\Models\MailingList\MailingListEntry $entry
-     * @param array                                    $data
-     * @param \App\Models\User\User                    $user
+     * @param MailingListEntry      $entry
+     * @param array                 $data
+     * @param \App\Models\User\User $user
      *
      * @return \App\Models\MailingList\MailingListEntry|bool
      */
@@ -204,7 +204,7 @@ class MailingListService extends Service {
     /**
      * Deletes an entry.
      *
-     * @param \App\Models\MailingList\MailingListEntry $entry
+     * @param MailingListEntry $entry
      *
      * @return bool
      */

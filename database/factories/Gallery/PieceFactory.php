@@ -27,7 +27,7 @@ class PieceFactory extends Factory {
      *
      * @param int $id
      *
-     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     * @return Factory
      */
     public function project($id) {
         return $this->state(function (array $attributes) use ($id) {
@@ -40,7 +40,7 @@ class PieceFactory extends Factory {
     /**
      * Generate a piece with a description.
      *
-     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     * @return Factory
      */
     public function description() {
         return $this->state(function (array $attributes) {
@@ -53,7 +53,7 @@ class PieceFactory extends Factory {
     /**
      * Generate a piece that is hidden.
      *
-     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     * @return Factory
      */
     public function hidden() {
         return $this->state(function (array $attributes) {
@@ -66,7 +66,7 @@ class PieceFactory extends Factory {
     /**
      * Generate a piece that is marked as a good example.
      *
-     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     * @return Factory
      */
     public function goodExample() {
         return $this->state(function (array $attributes) {
@@ -79,7 +79,7 @@ class PieceFactory extends Factory {
     /**
      * Generate a piece with a timestamp.
      *
-     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     * @return Factory
      */
     public function timestamp() {
         return $this->state(function (array $attributes) {

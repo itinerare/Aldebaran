@@ -44,7 +44,7 @@ class ChangelogService extends Service {
     /**
      * Updates a changelog entry.
      *
-     * @param \App\Models\Changelog $log
+     * @param Changelog             $log
      * @param array                 $data
      * @param \App\Models\User\User $user
      *
@@ -71,7 +71,7 @@ class ChangelogService extends Service {
     /**
      * Deletes a changelog entry.
      *
-     * @param \App\Models\Changelog $log
+     * @param Changelog $log
      *
      * @return bool
      */

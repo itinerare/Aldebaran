@@ -22,7 +22,7 @@ class UserService extends Service {
      *
      * @param array $data
      *
-     * @return \App\Models\User
+     * @return User
      */
     public function createUser($data) {
         $user = User::create([
@@ -39,7 +39,7 @@ class UserService extends Service {
      *
      * @param array $data
      *
-     * @return \App\Models\User
+     * @return User
      */
     public function updateUser($data) {
         $user = User::find($data['id']);
@@ -56,8 +56,8 @@ class UserService extends Service {
     /**
      * Updates the user's password.
      *
-     * @param array            $data
-     * @param \App\Models\User $user
+     * @param array $data
+     * @param User  $user
      *
      * @return bool
      */
@@ -86,8 +86,8 @@ class UserService extends Service {
     /**
      * Updates the user's email and resends a verification email.
      *
-     * @param array            $data
-     * @param \App\Models\User $user
+     * @param array $data
+     * @param User  $user
      *
      * @return bool
      */
@@ -105,9 +105,9 @@ class UserService extends Service {
     /**
      * Confirms a user's two-factor auth.
      *
-     * @param string           $code
-     * @param array            $data
-     * @param \App\Models\User $user
+     * @param string $code
+     * @param array  $data
+     * @param User   $user
      *
      * @return bool
      */
@@ -135,8 +135,8 @@ class UserService extends Service {
     /**
      * Disables a user's two-factor auth.
      *
-     * @param string           $code
-     * @param \App\Models\User $user
+     * @param string $code
+     * @param User   $user
      *
      * @return bool
      */

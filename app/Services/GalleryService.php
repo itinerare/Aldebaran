@@ -62,9 +62,9 @@ class GalleryService extends Service {
     /**
      * Update a project.
      *
-     * @param \App\Models\Gallery\Project $project
-     * @param array                       $data
-     * @param \App\Models\User\User       $user
+     * @param Project               $project
+     * @param array                 $data
+     * @param \App\Models\User\User $user
      *
      * @return \App\Models\Gallery\Project|bool
      */
@@ -94,7 +94,7 @@ class GalleryService extends Service {
     /**
      * Delete a project.
      *
-     * @param \App\Models\Gallery\Project $project
+     * @param Project $project
      *
      * @return bool
      */
@@ -184,9 +184,9 @@ class GalleryService extends Service {
     /**
      * Updates a piece.
      *
-     * @param \App\Models\Gallery\Piece $piece
-     * @param array                     $data
-     * @param \App\Models\User\User     $user
+     * @param Piece                 $piece
+     * @param array                 $data
+     * @param \App\Models\User\User $user
      *
      * @return \App\Models\Gallery\Piece|bool
      */
@@ -222,7 +222,7 @@ class GalleryService extends Service {
     /**
      * Deletes a piece.
      *
-     * @param \App\Models\Gallery\Piece $piece
+     * @param Piece $piece
      *
      * @return bool
      */
@@ -410,7 +410,7 @@ class GalleryService extends Service {
     /**
      * Deletes an image.
      *
-     * @param \App\Models\Gallery\PieceImage $image
+     * @param PieceImage $image
      *
      * @return bool
      */
@@ -501,9 +501,9 @@ class GalleryService extends Service {
     /**
      * Updates a literature.
      *
-     * @param \App\models\Gallery\PieceLiterature $literature
-     * @param array                               $data
-     * @param \App\Models\User\User               $user
+     * @param PieceLiterature       $literature
+     * @param array                 $data
+     * @param \App\Models\User\User $user
      *
      * @return \App\Models\Gallery\PieceLiterature|bool
      */
@@ -564,7 +564,7 @@ class GalleryService extends Service {
     /**
      * Deletes a literature.
      *
-     * @param \App\Models\Gallery\PieceLiterature $literature
+     * @param PieceLiterature $literature
      *
      * @return bool
      */
@@ -628,9 +628,9 @@ class GalleryService extends Service {
     /**
      * Update a tag.
      *
-     * @param \App\Models\Gallery\Tag $tag
-     * @param array                   $data
-     * @param \App\Models\User\User   $user
+     * @param Tag                   $tag
+     * @param array                 $data
+     * @param \App\Models\User\User $user
      *
      * @return \App\Models\Gallery\Tag|bool
      */
@@ -663,7 +663,7 @@ class GalleryService extends Service {
     /**
      * Delete a tag.
      *
-     * @param \App\Models\Gallery\Tag $tag
+     * @param Tag $tag
      *
      * @return bool
      */
@@ -738,9 +738,9 @@ class GalleryService extends Service {
     /**
      * Update a program.
      *
-     * @param \App\Models\Gallery\Program $program
-     * @param array                       $data
-     * @param \App\Models\User\User       $user
+     * @param Program               $program
+     * @param array                 $data
+     * @param \App\Models\User\User $user
      *
      * @return \App\Models\Gallery\Program|bool
      */
@@ -791,7 +791,7 @@ class GalleryService extends Service {
     /**
      * Delete a program.
      *
-     * @param \App\Models\Gallery\Program $program
+     * @param Program $program
      *
      * @return bool
      */
@@ -819,8 +819,8 @@ class GalleryService extends Service {
      * Generates and saves test images for page image test purposes.
      * This is a workaround for normal image processing depending on Intervention.
      *
-     * @param \App\Models\Gallery\PieceImage $image
-     * @param bool                           $create
+     * @param PieceImage $image
+     * @param bool       $create
      *
      * @return bool
      */
@@ -929,10 +929,10 @@ class GalleryService extends Service {
     /**
      * Processes images.
      *
-     * @param array                          $data
-     * @param \App\Models\Gallery\PieceImage $image
-     * @param bool                           $reupload
-     * @param mixed                          $regen
+     * @param array      $data
+     * @param PieceImage $image
+     * @param bool       $reupload
+     * @param mixed      $regen
      *
      * @return array
      */
