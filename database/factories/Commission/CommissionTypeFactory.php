@@ -32,7 +32,7 @@ class CommissionTypeFactory extends Factory {
      *
      * @param int $id
      *
-     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     * @return Factory
      */
     public function category($id) {
         return $this->state(function (array $attributes) use ($id) {
@@ -45,7 +45,7 @@ class CommissionTypeFactory extends Factory {
     /**
      * Generate a hidden type.
      *
-     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     * @return Factory
      */
     public function hidden() {
         return $this->state(function (array $attributes) {
@@ -60,7 +60,7 @@ class CommissionTypeFactory extends Factory {
      *
      * @param int $slots
      *
-     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     * @return Factory
      */
     public function slots($slots) {
         return $this->state(function (array $attributes) use ($slots) {
@@ -79,7 +79,7 @@ class CommissionTypeFactory extends Factory {
      * @param bool        $includeCategory
      * @param string|null $extras
      *
-     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     * @return Factory
      */
     public function testData($pricing, $tag = null, $includeClass = 0, $includeCategory = 0, $extras = null) {
         return $this->state(function (array $attributes) use ($pricing, $extras, $tag, $includeClass, $includeCategory) {

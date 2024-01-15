@@ -21,7 +21,7 @@ class CommissionPieceFactory extends Factory {
      *
      * @param int $id
      *
-     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     * @return Factory
      */
     public function commission($id) {
         return $this->state(function (array $attributes) use ($id) {
@@ -36,7 +36,7 @@ class CommissionPieceFactory extends Factory {
      *
      * @param int $id
      *
-     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     * @return Factory
      */
     public function piece($id) {
         return $this->state(function (array $attributes) use ($id) {

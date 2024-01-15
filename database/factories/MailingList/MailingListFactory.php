@@ -25,7 +25,7 @@ class MailingListFactory extends Factory {
     /**
      * Generate a mailing list with a description.
      *
-     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     * @return Factory
      */
     public function description() {
         return $this->state(function (array $attributes) {
@@ -38,7 +38,7 @@ class MailingListFactory extends Factory {
     /**
      * Generate a mailng list that is hidden.
      *
-     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     * @return Factory
      */
     public function closed() {
         return $this->state(function (array $attributes) {

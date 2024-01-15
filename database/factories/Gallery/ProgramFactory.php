@@ -22,7 +22,7 @@ class ProgramFactory extends Factory {
     /**
      * Generate a program that is hidden.
      *
-     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     * @return Factory
      */
     public function hidden() {
         return $this->state(function (array $attributes) {

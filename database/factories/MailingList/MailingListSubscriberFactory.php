@@ -25,7 +25,7 @@ class MailingListSubscriberFactory extends Factory {
      *
      * @param int $id
      *
-     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     * @return Factory
      */
     public function mailingList($id) {
         return $this->state(function (array $attributes) use ($id) {
@@ -38,7 +38,7 @@ class MailingListSubscriberFactory extends Factory {
     /**
      * Generate a verified subscriber.
      *
-     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     * @return Factory
      */
     public function verified() {
         return $this->state(function (array $attributes) {

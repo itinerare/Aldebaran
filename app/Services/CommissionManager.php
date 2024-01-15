@@ -373,8 +373,8 @@ class CommissionManager extends Service {
     /**
      * Sends an invoice for a payment.
      *
-     * @param \App\Models\Commission\CommissionPayment $payment
-     * @param \App\Models\User\User                    $user
+     * @param CommissionPayment     $payment
+     * @param \App\Models\User\User $user
      *
      * @return mixed
      */
@@ -1077,7 +1077,7 @@ class CommissionManager extends Service {
      * @param array $data
      * @param bool  $processIp
      *
-     * @return \App\Models\Commission\Commissioner
+     * @return Commissioner
      */
     private function processCommissioner($data, $processIp = true) {
         // Attempt to fetch commissioner, first by email, then by IP as a fallback
