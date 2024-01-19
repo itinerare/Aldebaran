@@ -98,11 +98,11 @@ class DataGalleryPieceLiteratureTest extends TestCase {
         $response = $this
             ->actingAs($this->user)
             ->post('/admin/data/pieces/literatures/create', [
-                'piece_id'    => $this->piece->id,
-                'image'       => $withImage ? $this->file : null,
-                'text'        => $this->text,
-                'is_visible'  => $isVisible,
-                'is_primary'  => $isPrimary,
+                'piece_id'   => $this->piece->id,
+                'image'      => $withImage ? $this->file : null,
+                'text'       => $this->text,
+                'is_visible' => $isVisible,
+                'is_primary' => $isPrimary,
             ]);
 
         $literature = PieceLiterature::where('piece_id', $this->piece->id)->whereNotIn('id', [$this->literature->id, $this->dataLiterature->id])->where('is_visible', $isVisible)->where('is_primary', $isPrimary)->first();

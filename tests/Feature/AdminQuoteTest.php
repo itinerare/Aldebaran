@@ -154,13 +154,13 @@ class AdminQuoteTest extends TestCase {
 
     public static function quoteStateProvider() {
         return [
-            'accept pending'                  => ['Pending', 'accept', 0, 0, 0, 1],
-            'accept pending with comments'    => ['Pending', 'accept', 1, 0, 0, 1],
-            'accept pending with mail'        => ['Pending', 'accept', 0, 0, 1, 1],
-            'decline pending'                 => ['Pending', 'decline', 0, 0, 0, 1],
-            'decline pending with comments'   => ['Pending', 'decline', 1, 0, 0, 1],
-            'decline pending with mail'       => ['Pending', 'decline', 0, 0, 1, 1],
-            'complete pending'                => ['Pending', 'complete', 0, 0, 0, 0],
+            'accept pending'                => ['Pending', 'accept', 0, 0, 0, 1],
+            'accept pending with comments'  => ['Pending', 'accept', 1, 0, 0, 1],
+            'accept pending with mail'      => ['Pending', 'accept', 0, 0, 1, 1],
+            'decline pending'               => ['Pending', 'decline', 0, 0, 0, 1],
+            'decline pending with comments' => ['Pending', 'decline', 1, 0, 0, 1],
+            'decline pending with mail'     => ['Pending', 'decline', 0, 0, 1, 1],
+            'complete pending'              => ['Pending', 'complete', 0, 0, 0, 0],
 
             'accept accepted'                 => ['Accepted', 'accept', 0, 0, 0, 0],
             'decline accepted'                => ['Accepted', 'decline', 0, 0, 0, 1],
@@ -170,12 +170,12 @@ class AdminQuoteTest extends TestCase {
             'complete accepted'               => ['Accepted', 'complete', 0, 0, 0, 1],
             'complete accepted with comments' => ['Accepted', 'complete', 1, 0, 0, 1],
 
-            'ban, pending'                    => ['Pending', 'ban', 0, 0, 0, 1],
-            'ban, pending with comments'      => ['Pending', 'ban', 1, 0, 0, 1],
-            'ban, accepted'                   => ['Accepted', 'ban', 0, 0, 0, 1],
-            'ban, accepted with comments'     => ['Accepted', 'ban', 1, 0, 0, 1],
-            'ban, complete'                   => ['Complete', 'ban', 0, 0, 0, 0],
-            'ban, declined'                   => ['Declined', 'ban', 0, 0, 0, 0],
+            'ban, pending'                => ['Pending', 'ban', 0, 0, 0, 1],
+            'ban, pending with comments'  => ['Pending', 'ban', 1, 0, 0, 1],
+            'ban, accepted'               => ['Accepted', 'ban', 0, 0, 0, 1],
+            'ban, accepted with comments' => ['Accepted', 'ban', 1, 0, 0, 1],
+            'ban, complete'               => ['Complete', 'ban', 0, 0, 0, 0],
+            'ban, declined'               => ['Declined', 'ban', 0, 0, 0, 0],
         ];
     }
 
@@ -235,10 +235,10 @@ class AdminQuoteTest extends TestCase {
 
     public static function quoteUpdateProvider() {
         return [
-            'basic'           => ['Accepted', 0, 0, 0, 1],
-            'with comments'   => ['Accepted', 0, 1, 0, 1],
-            'with amount'     => ['Accepted', 1, 1, 0, 1],
-            'with mail'       => ['Accepted', 0, 0, 1, 1],
+            'basic'         => ['Accepted', 0, 0, 0, 1],
+            'with comments' => ['Accepted', 0, 1, 0, 1],
+            'with amount'   => ['Accepted', 1, 1, 0, 1],
+            'with mail'     => ['Accepted', 0, 0, 1, 1],
 
             'update pending'  => ['Pending', 0, 0, 0, 0],
             'update declined' => ['Declined', 0, 0, 0, 0],

@@ -13,7 +13,7 @@ class AddTextPages extends Command {
      *
      * @var string
      */
-    protected $signature = 'add-text-pages';
+    protected $signature = 'app:add-text-pages';
 
     /**
      * The console command description.

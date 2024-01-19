@@ -16,7 +16,7 @@ return [
     |
     */
 
-    'guard'      => 'web',
+    'guard' => 'web',
 
     /*
     |--------------------------------------------------------------------------
@@ -29,7 +29,7 @@ return [
     |
     */
 
-    'passwords'  => 'users',
+    'passwords' => 'users',
 
     /*
     |--------------------------------------------------------------------------
@@ -46,9 +46,22 @@ return [
     |
     */
 
-    'username'   => 'email',
+    'username' => 'email',
 
-    'email'      => 'email',
+    'email' => 'email',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Lowercase Usernames
+    |--------------------------------------------------------------------------
+    |
+    | This value defines whether usernames should be lowercased before saving
+    | them in the database, as some database system string fields are case
+    | sensitive. You may disable this for your application if necessary.
+    |
+    */
+
+    'lowercase_usernames' => false,
 
     /*
     |--------------------------------------------------------------------------
@@ -61,7 +74,7 @@ return [
     |
     */
 
-    'home'       => RouteServiceProvider::HOME,
+    'home' => RouteServiceProvider::HOME,
 
     /*
     |--------------------------------------------------------------------------
@@ -74,9 +87,9 @@ return [
     |
     */
 
-    'prefix'     => '',
+    'prefix' => '',
 
-    'domain'     => null,
+    'domain' => null,
 
     /*
     |--------------------------------------------------------------------------
@@ -102,7 +115,7 @@ return [
     |
     */
 
-    'limiters'   => [
+    'limiters' => [
         'login'      => 'login',
         'two-factor' => 'two-factor',
     ],
@@ -118,7 +131,7 @@ return [
     |
     */
 
-    'views'      => true,
+    'views' => true,
 
     /*
     |--------------------------------------------------------------------------
@@ -131,14 +144,16 @@ return [
     |
     */
 
-    'features'   => [
+    'features' => [
         // Features::registration(),
         // Features::resetPasswords(),
         // Features::emailVerification(),
         // Features::updateProfileInformation(),
         // Features::updatePasswords(),
         Features::twoFactorAuthentication([
+            'confirm'         => true,
             'confirmPassword' => true,
+            // 'window' => 0,
         ]),
     ],
 

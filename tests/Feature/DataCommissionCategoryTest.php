@@ -37,7 +37,7 @@ class DataCommissionCategoryTest extends TestCase {
      */
     public function testGetCategoryIndex() {
         $this->actingAs($this->user)
-            ->get('/admin/data/commission-categories')
+            ->get('/admin/data/commissions/categories')
             ->assertStatus(200);
     }
 
@@ -46,7 +46,7 @@ class DataCommissionCategoryTest extends TestCase {
      */
     public function testGetCreateCategory() {
         $this->actingAs($this->user)
-            ->get('/admin/data/commission-categories/create')
+            ->get('/admin/data/commissions/categories/create')
             ->assertStatus(200);
     }
 
@@ -55,7 +55,7 @@ class DataCommissionCategoryTest extends TestCase {
      */
     public function testGetEditCategory() {
         $this->actingAs($this->user)
-            ->get('/admin/data/commission-categories/edit/'.$this->category->id)
+            ->get('/admin/data/commissions/categories/edit/'.$this->category->id)
             ->assertStatus(200);
     }
 
@@ -69,7 +69,7 @@ class DataCommissionCategoryTest extends TestCase {
     public function testPostCreateCategory($isActive) {
         $response = $this
             ->actingAs($this->user)
-            ->post('/admin/data/commission-categories/create', [
+            ->post('/admin/data/commissions/categories/create', [
                 'name'      => $this->name,
                 'is_active' => $isActive,
                 'class_id'  => CommissionClass::factory()->create()->id,
@@ -102,7 +102,7 @@ class DataCommissionCategoryTest extends TestCase {
     public function testPostEditCategory($hasData, $fieldData, $isActive, $include) {
         $response = $this
             ->actingAs($this->user)
-            ->post('/admin/data/commission-categories/edit/'.($hasData ? $this->dataCategory->id : $this->category->id), [
+            ->post('/admin/data/commissions/categories/edit/'.($hasData ? $this->dataCategory->id : $this->category->id), [
                 'name'          => $this->name,
                 'is_active'     => $isActive,
                 'class_id'      => $hasData ? $this->dataCategory->class_id : $this->category->class_id,
@@ -128,12 +128,12 @@ class DataCommissionCategoryTest extends TestCase {
 
     public static function editCategoryProvider() {
         return [
-            'basic'                 => [0, null, 1, 0],
-            'inactive'              => [0, null, 0, 0],
-            'include class fields'  => [0, null, 1, 1],
-            'basic with data'       => [1, null, 1, 0],
-            'inactive with data'    => [1, null, 0, 0],
-            'include with data'     => [1, null, 1, 1],
+            'basic'                => [0, null, 1, 0],
+            'inactive'             => [0, null, 0, 0],
+            'include class fields' => [0, null, 1, 1],
+            'basic with data'      => [1, null, 1, 0],
+            'inactive with data'   => [1, null, 0, 0],
+            'include with data'    => [1, null, 1, 1],
 
             // Field type tests
             // (string) type, (bool) rules, (bool) choices, value, (string) help
@@ -154,7 +154,7 @@ class DataCommissionCategoryTest extends TestCase {
      */
     public function testGetDeleteCategory() {
         $this->actingAs($this->user)
-            ->get('/admin/data/commission-categories/delete/'.$this->category->id)
+            ->get('/admin/data/commissions/categories/delete/'.$this->category->id)
             ->assertStatus(200);
     }
 
@@ -173,7 +173,7 @@ class DataCommissionCategoryTest extends TestCase {
 
         $response = $this
             ->actingAs($this->user)
-            ->post('/admin/data/commission-categories/delete/'.$this->category->id);
+            ->post('/admin/data/commissions/categories/delete/'.$this->category->id);
 
         if ($expected) {
             $response->assertSessionHasNoErrors();

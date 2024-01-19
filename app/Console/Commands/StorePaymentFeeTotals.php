@@ -11,7 +11,7 @@ class StorePaymentFeeTotals extends Command {
      *
      * @var string
      */
-    protected $signature = 'store-payment-fee-totals';
+    protected $signature = 'app:store-payment-fee-totals';
 
     /**
      * The console command description.

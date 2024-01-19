@@ -12,7 +12,7 @@ class UpdateImages extends Command {
      *
      * @var string
      */
-    protected $signature = 'update-images';
+    protected $signature = 'app:update-images';
 
     /**
      * The console command description.

@@ -11,7 +11,7 @@ class PruneUnverifiedSubscriptions extends Command {
      *
      * @var string
      */
-    protected $signature = 'prune-unverified-subscriptions';
+    protected $signature = 'app:prune-unverified-subscriptions';
 
     /**
      * The console command description.

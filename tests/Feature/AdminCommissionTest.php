@@ -165,35 +165,35 @@ class AdminCommissionTest extends TestCase {
 
     public static function commissionViewProvider() {
         return [
-            'basic'                           => [null, 0, 'Pending', null, 200],
-            'with payment'                    => [null, 1, 'Pending', null, 200],
-            'accepted'                        => [null, 0, 'Accepted', null, 200],
-            'declined'                        => [null, 0, 'Declined', null, 200],
-            'complete'                        => [null, 0, 'Complete', null, 200],
+            'basic'        => [null, 0, 'Pending', null, 200],
+            'with payment' => [null, 1, 'Pending', null, 200],
+            'accepted'     => [null, 0, 'Accepted', null, 200],
+            'declined'     => [null, 0, 'Declined', null, 200],
+            'complete'     => [null, 0, 'Complete', null, 200],
 
             // $pieceData = [(bool) withImage, (bool) isVisible]
-            'with piece'                      => [[0, 1, 0], 0, 'Accepted', null, 200],
-            'with hidden piece'               => [[0, 0, 0], 0, 'Accepted', null, 200],
-            'with piece with image'           => [[1, 1, 0], 0, 'Accepted', null, 200],
-            'with piece with literature'      => [[0, 1, 1], 0, 'Accepted', null, 200],
+            'with piece'                 => [[0, 1, 0], 0, 'Accepted', null, 200],
+            'with hidden piece'          => [[0, 0, 0], 0, 'Accepted', null, 200],
+            'with piece with image'      => [[1, 1, 0], 0, 'Accepted', null, 200],
+            'with piece with literature' => [[0, 1, 1], 0, 'Accepted', null, 200],
 
             // Field testing
             // (string) type, (bool) rules, (bool) choices, value, (string) help, (bool) include category, (bool) include class, (bool) is empty
-            'text field'                      => [null, 0, 'Pending', ['text', 0, 0, null, null, 0, 0, 1], 200],
-            'text field, empty'               => [null, 0, 'Pending', ['text', 0, 0, null, null, 0, 0, 0], 200],
-            'text field with rule'            => [null, 0, 'Pending', ['text', 1, 0, null, null, 0, 0, 1], 200],
-            'text field with value'           => [null, 0, 'Pending', ['text', 0, 0, 'test', null, 0, 0, 1], 200],
-            'text field with help'            => [null, 0, 'Pending', ['text', 0, 0, null, 'test', 0, 0, 1], 200],
-            'textbox field'                   => [null, 0, 'Pending', ['textarea', 0, 0, null, null, 0, 0, 1], 200],
-            'textbox field, empty'            => [null, 0, 'Pending', ['textarea', 0, 0, null, null, 0, 0, 0], 200],
-            'number field'                    => [null, 0, 'Pending', ['number', 0, 0, null, null, 0, 0, 1], 200],
-            'number field, empty'             => [null, 0, 'Pending', ['number', 0, 0, null, null, 0, 0, 0], 200],
-            'checkbox field'                  => [null, 0, 'Pending', ['checkbox', 0, 0, null, null, 0, 0, 1], 200],
-            'checkbox field, empty'           => [null, 0, 'Pending', ['checkbox', 0, 0, null, null, 0, 0, 0], 200],
-            'choose one field'                => [null, 0, 'Pending', ['choice', 0, 0, null, null, 0, 0, 1], 200],
-            'choose one field, empty'         => [null, 0, 'Pending', ['choice', 0, 0, null, null, 0, 0, 0], 200],
-            'choose multiple field'           => [null, 0, 'Pending', ['multiple', 0, 0, null, null, 0, 0, 1], 200],
-            'choose multiple field, empty'    => [null, 0, 'Pending', ['multiple', 0, 0, null, null, 0, 0, 0], 200],
+            'text field'                   => [null, 0, 'Pending', ['text', 0, 0, null, null, 0, 0, 1], 200],
+            'text field, empty'            => [null, 0, 'Pending', ['text', 0, 0, null, null, 0, 0, 0], 200],
+            'text field with rule'         => [null, 0, 'Pending', ['text', 1, 0, null, null, 0, 0, 1], 200],
+            'text field with value'        => [null, 0, 'Pending', ['text', 0, 0, 'test', null, 0, 0, 1], 200],
+            'text field with help'         => [null, 0, 'Pending', ['text', 0, 0, null, 'test', 0, 0, 1], 200],
+            'textbox field'                => [null, 0, 'Pending', ['textarea', 0, 0, null, null, 0, 0, 1], 200],
+            'textbox field, empty'         => [null, 0, 'Pending', ['textarea', 0, 0, null, null, 0, 0, 0], 200],
+            'number field'                 => [null, 0, 'Pending', ['number', 0, 0, null, null, 0, 0, 1], 200],
+            'number field, empty'          => [null, 0, 'Pending', ['number', 0, 0, null, null, 0, 0, 0], 200],
+            'checkbox field'               => [null, 0, 'Pending', ['checkbox', 0, 0, null, null, 0, 0, 1], 200],
+            'checkbox field, empty'        => [null, 0, 'Pending', ['checkbox', 0, 0, null, null, 0, 0, 0], 200],
+            'choose one field'             => [null, 0, 'Pending', ['choice', 0, 0, null, null, 0, 0, 1], 200],
+            'choose one field, empty'      => [null, 0, 'Pending', ['choice', 0, 0, null, null, 0, 0, 0], 200],
+            'choose multiple field'        => [null, 0, 'Pending', ['multiple', 0, 0, null, null, 0, 0, 1], 200],
+            'choose multiple field, empty' => [null, 0, 'Pending', ['multiple', 0, 0, null, null, 0, 0, 0], 200],
 
             'include from category'           => [null, 0, 'Pending', ['text', 0, 0, null, null, 1, 0, 1], 200],
             'include from class'              => [null, 0, 'Pending', ['text', 0, 0, null, null, 0, 1, 1], 200],
@@ -366,12 +366,12 @@ class AdminCommissionTest extends TestCase {
             'complete accepted'               => ['Accepted', 'complete', 0, 0, null, 1],
             'complete accepted with comments' => ['Accepted', 'complete', 1, 0, null, 1],
 
-            'ban, pending'                    => ['Pending', 'ban', 0, 0, null, 1],
-            'ban, pending with comments'      => ['Pending', 'ban', 1, 0, null, 1],
-            'ban, accepted'                   => ['Accepted', 'ban', 0, 0, null, 1],
-            'ban, accepted with comments'     => ['Accepted', 'ban', 1, 0, null, 1],
-            'ban, complete'                   => ['Complete', 'ban', 0, 0, null, 0],
-            'ban, declined'                   => ['Declined', 'ban', 0, 0, null, 0],
+            'ban, pending'                => ['Pending', 'ban', 0, 0, null, 1],
+            'ban, pending with comments'  => ['Pending', 'ban', 1, 0, null, 1],
+            'ban, accepted'               => ['Accepted', 'ban', 0, 0, null, 1],
+            'ban, accepted with comments' => ['Accepted', 'ban', 1, 0, null, 1],
+            'ban, complete'               => ['Complete', 'ban', 0, 0, null, 0],
+            'ban, declined'               => ['Declined', 'ban', 0, 0, null, 0],
         ];
     }
 
@@ -487,22 +487,22 @@ class AdminCommissionTest extends TestCase {
 
     public static function commissionUpdateProvider() {
         return [
-            'basic'                  => ['Accepted', 0, null, 'Not Started', 0, 0, 1],
-            'basic with mail'        => ['Accepted', 0, null, 'Not Started', 0, 1, 1],
-            'with piece'             => ['Accepted', 1, null, 'Not Started', 0, 0, 1],
-            'with piece, mail'       => ['Accepted', 1, null, 'Not Started', 0, 1, 1],
-            'with progress'          => ['Accepted', 0, null, 'Working On', 0, 0, 1],
-            'with progress, mail'    => ['Accepted', 0, null, 'Working On', 0, 1, 1],
-            'with comments'          => ['Accepted', 0, null, 'Not Started', 1, 0, 1],
+            'basic'               => ['Accepted', 0, null, 'Not Started', 0, 0, 1],
+            'basic with mail'     => ['Accepted', 0, null, 'Not Started', 0, 1, 1],
+            'with piece'          => ['Accepted', 1, null, 'Not Started', 0, 0, 1],
+            'with piece, mail'    => ['Accepted', 1, null, 'Not Started', 0, 1, 1],
+            'with progress'       => ['Accepted', 0, null, 'Working On', 0, 0, 1],
+            'with progress, mail' => ['Accepted', 0, null, 'Working On', 0, 1, 1],
+            'with comments'       => ['Accepted', 0, null, 'Not Started', 1, 0, 1],
 
             // $paymentData = [(bool) existingPayment, (bool) isPaid, (bool) isIntl]
             'mark payment intl'      => ['Accepted', 0, [1, 0, 1], 'Not Started', 0, 0, 1],
             'mark payment paid'      => ['Accepted', 0, [1, 1, 0], 'Not Started', 0, 0, 1],
             'mark intl payment paid' => ['Accepted', 0, [1, 1, 1], 'Not Started', 0, 0, 1],
 
-            'update pending'         => ['Pending', 0, null, 'Not Started', 0, 0, 0],
-            'update declined'        => ['Declined', 0, null, 'Not Started', 0, 0, 0],
-            'update complete'        => ['Complete', 0, null, 'Not Started', 0, 0, 0],
+            'update pending'  => ['Pending', 0, null, 'Not Started', 0, 0, 0],
+            'update declined' => ['Declined', 0, null, 'Not Started', 0, 0, 0],
+            'update complete' => ['Complete', 0, null, 'Not Started', 0, 0, 0],
         ];
     }
 }

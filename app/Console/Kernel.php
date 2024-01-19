@@ -7,18 +7,9 @@ use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
 class Kernel extends ConsoleKernel {
     /**
-     * The Artisan commands provided by your application.
-     *
-     * @var array
-     */
-    protected $commands = [
-        //
-    ];
-
-    /**
      * Define the application's command schedule.
      */
-    protected function schedule(Schedule $schedule) {
+    protected function schedule(Schedule $schedule): void {
         if (config('aldebaran.settings.enable_backups')) {
             $schedule->command('backup:clean')
                 ->daily()->at('01:30');
@@ -27,14 +18,14 @@ class Kernel extends ConsoleKernel {
             $schedule->command('backup:monitor')
                 ->daily()->at('01:40');
         }
-        $schedule->command('prune-unverified-subscriptions')
+        $schedule->command('app:prune-unverified-subscriptions')
             ->weekly();
     }
 
     /**
      * Register the commands for the application.
      */
-    protected function commands() {
+    protected function commands(): void {
         $this->load(__DIR__.'/Commands');
 
         require base_path('routes/console.php');

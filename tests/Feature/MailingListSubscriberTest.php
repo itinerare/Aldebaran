@@ -63,12 +63,12 @@ class MailingListSubscriberTest extends TestCase {
 
     public static function mailingListViewProvider() {
         return [
-            'mail enabled, valid, open'      => [1, [1, 1], 200],
-            'mail enabled, valid, closed'    => [1, [1, 0], 404],
-            'mail enabled, invalid'          => [1, null, 404],
-            'mail disabled, valid, open'     => [0, [1, 1], 404],
-            'mail disabled, valid, closed'   => [0, [1, 0], 404],
-            'mail disabled, invalid'         => [0, null, 404],
+            'mail enabled, valid, open'    => [1, [1, 1], 200],
+            'mail enabled, valid, closed'  => [1, [1, 0], 404],
+            'mail enabled, invalid'        => [1, null, 404],
+            'mail disabled, valid, open'   => [0, [1, 1], 404],
+            'mail disabled, valid, closed' => [0, [1, 0], 404],
+            'mail disabled, invalid'       => [0, null, 404],
         ];
     }
 
@@ -118,12 +118,12 @@ class MailingListSubscriberTest extends TestCase {
 
     public static function mailingListSubscribeProvider() {
         return [
-            'mail enabled, valid, open'      => [1, [1, 1], 1],
-            'mail enabled, valid, closed'    => [1, [1, 0], 0],
-            'mail enabled, invalid'          => [1, null, 0],
-            'mail disabled, valid, open'     => [0, [1, 1], 0],
-            'mail disabled, valid, closed'   => [0, [1, 0], 0],
-            'mail disabled, invalid'         => [0, null, 0],
+            'mail enabled, valid, open'    => [1, [1, 1], 1],
+            'mail enabled, valid, closed'  => [1, [1, 0], 0],
+            'mail enabled, invalid'        => [1, null, 0],
+            'mail disabled, valid, open'   => [0, [1, 1], 0],
+            'mail disabled, valid, closed' => [0, [1, 0], 0],
+            'mail disabled, invalid'       => [0, null, 0],
         ];
     }
 
