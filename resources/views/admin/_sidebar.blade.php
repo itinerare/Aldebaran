@@ -27,9 +27,9 @@
     @if (config('aldebaran.commissions.enabled'))
         <li class="sidebar-section">
             <div class="sidebar-section-header">Commission Data</div>
-            <div class="sidebar-item"><a href="{{ url('admin/data/commission-classes') }}" class="{{ set_active('admin/data/commission-classes*') }}">Classes</a></div>
-            <div class="sidebar-item"><a href="{{ url('admin/data/commission-categories') }}" class="{{ set_active('admin/data/commission-categories*') }}">Categories</a></div>
-            <div class="sidebar-item"><a href="{{ url('admin/data/commission-types') }}" class="{{ set_active('admin/data/commission-types*') }}">Types</a></div>
+            <div class="sidebar-item"><a href="{{ url('admin/data/commissions/classes') }}" class="{{ set_active('admin/data/commissions/classes*') }}">Classes</a></div>
+            <div class="sidebar-item"><a href="{{ url('admin/data/commissions/categories') }}" class="{{ set_active('admin/data/commissions/categories*') }}">Categories</a></div>
+            <div class="sidebar-item"><a href="{{ url('admin/data/commissions/types') }}" class="{{ set_active('admin/data/commissions/types*') }}">Types</a></div>
         </li>
     @endif
 

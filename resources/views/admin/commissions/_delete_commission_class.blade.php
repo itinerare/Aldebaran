@@ -1,5 +1,5 @@
 @if ($class)
-    {!! Form::open(['url' => 'admin/data/commission-classes/delete/' . $class->id]) !!}
+    {!! Form::open(['url' => 'admin/data/commissions/classes/delete/' . $class->id]) !!}
 
     <p>You are about to delete the class <strong>{{ $class->name }}</strong>. This is not reversible. If commission
         categories in this class exist, you will not be able to delete this class.</p>

@@ -7,8 +7,8 @@
 @section('admin-content')
     {!! breadcrumbs([
         'Admin Panel' => 'admin',
-        'Commission Types' => 'admin/data/commission-types',
-        ($type->id ? 'Edit' : 'Create') . ' Type' => $type->id ? 'admin/data/commission-types/edit/' . $type->id : 'admin/data/commission-types/create',
+        'Commission Types' => 'admin/data/commissions/types',
+        ($type->id ? 'Edit' : 'Create') . ' Type' => $type->id ? 'admin/data/commissions/types/edit/' . $type->id : 'admin/data/commissions/types/create',
     ]) !!}
 
     <h1>{{ $type->id ? 'Edit' : 'Create' }} Commission Type
@@ -18,7 +18,7 @@
     </h1>
 
     {!! Form::open([
-        'url' => $type->id ? 'admin/data/commission-types/edit/' . $type->id : 'admin/data/commission-types/create',
+        'url' => $type->id ? 'admin/data/commissions/types/edit/' . $type->id : 'admin/data/commissions/types/create',
     ]) !!}
 
     <h3>Basic Information</h3>
@@ -242,7 +242,7 @@
 
             $('.delete-type-button').on('click', function(e) {
                 e.preventDefault();
-                loadModal("{{ url('admin/data/commission-types/delete') }}/{{ $type->id }}",
+                loadModal("{{ url('admin/data/commissions/types/delete') }}/{{ $type->id }}",
                     'Delete Commission Type');
             });
 

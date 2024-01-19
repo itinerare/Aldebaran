@@ -139,7 +139,7 @@ class CommissionCategory extends Model {
      * @return string
      */
     public function getAdminUrlAttribute() {
-        return url('/admin/data/commission-categories/edit/'.$this->id);
+        return url('/admin/data/commissions/categories/edit/'.$this->id);
     }
 
     /**

@@ -42,8 +42,8 @@
                     <a href="{{ url('admin/data/programs') }}">Media/Programs</a><br />
                     @if (config('aldebaran.commissions.enabled'))
                         Commission Data:
-                        <a href="{{ url('admin/data/commission-categories') }}">Commission Categories</a> ・
-                        <a href="{{ url('admin/data/commission-types') }}">Commission Types</a><br />
+                        <a href="{{ url('admin/data/commissions/categories') }}">Commission Categories</a> ・
+                        <a href="{{ url('admin/data/commissions/types') }}">Commission Types</a><br />
                     @endif
                     @if (config('aldebaran.settings.email_features'))
                         Mailing Lists:

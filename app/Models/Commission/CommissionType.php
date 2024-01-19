@@ -168,7 +168,7 @@ class CommissionType extends Model {
      * @return string
      */
     public function getAdminUrlAttribute() {
-        return url('/admin/data/commission-types/edit/'.$this->id);
+        return url('/admin/data/commissions/types/edit/'.$this->id);
     }
 
     /**
