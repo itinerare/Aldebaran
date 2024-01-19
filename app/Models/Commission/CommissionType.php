@@ -446,7 +446,7 @@ class CommissionType extends Model {
     /**
      * Gets the current total commission slots.
      *
-     * @param \App\Models\Commission\CommissionClass $class
+     * @param CommissionClass $class
      *
      * @return int
      */

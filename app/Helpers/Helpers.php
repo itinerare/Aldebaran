@@ -72,8 +72,8 @@ function breadcrumbs($links) {
 /**
  * Formats the timestamp to a standard format.
  *
- * @param \Illuminate\Support\Carbon\Carbon $timestamp
- * @param mixed                             $showTime
+ * @param Illuminate\Support\Carbon\Carbon $timestamp
+ * @param mixed                            $showTime
  *
  * @return string
  */

@@ -17,14 +17,14 @@ class MailListEntry extends Mailable implements ShouldQueue {
     /**
      * The entry instance.
      *
-     * @var \App\Models\MailingList\MailingListEntry
+     * @var MailingListEntry
      */
     public $entry;
 
     /**
      * The entry instance.
      *
-     * @var \App\Models\MailingList\MailingListSubscriber
+     * @var MailingListSubscriber
      */
     public $subscriber;
 
@@ -40,7 +40,7 @@ class MailListEntry extends Mailable implements ShouldQueue {
     /**
      * Get the message envelope.
      *
-     * @return \Illuminate\Mail\Mailables\Envelope
+     * @return Envelope
      */
     public function envelope() {
         return new Envelope(
@@ -51,7 +51,7 @@ class MailListEntry extends Mailable implements ShouldQueue {
     /**
      * Get the message content definition.
      *
-     * @return \Illuminate\Mail\Mailables\Content
+     * @return Content
      */
     public function content() {
         return new Content(

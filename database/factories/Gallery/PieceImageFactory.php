@@ -28,7 +28,7 @@ class PieceImageFactory extends Factory {
      *
      * @param int $id
      *
-     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     * @return Factory
      */
     public function piece($id) {
         return $this->state(function (array $attributes) use ($id) {
@@ -41,7 +41,7 @@ class PieceImageFactory extends Factory {
     /**
      * Generate an image with a caption.
      *
-     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     * @return Factory
      */
     public function caption() {
         return $this->state(function (array $attributes) {
@@ -54,7 +54,7 @@ class PieceImageFactory extends Factory {
     /**
      * Generate a primary image.
      *
-     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     * @return Factory
      */
     public function primary() {
         return $this->state(function (array $attributes) {
@@ -67,7 +67,7 @@ class PieceImageFactory extends Factory {
     /**
      * Generate an image that is hidden.
      *
-     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     * @return Factory
      */
     public function hidden() {
         return $this->state(function (array $attributes) {

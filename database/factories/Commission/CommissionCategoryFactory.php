@@ -28,7 +28,7 @@ class CommissionCategoryFactory extends Factory {
      *
      * @param int $id
      *
-     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     * @return Factory
      */
     public function class($id) {
         return $this->state(function (array $attributes) use ($id) {
@@ -41,7 +41,7 @@ class CommissionCategoryFactory extends Factory {
     /**
      * Generate an inactive category.
      *
-     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     * @return Factory
      */
     public function inactive() {
         return $this->state(function (array $attributes) {
@@ -56,7 +56,7 @@ class CommissionCategoryFactory extends Factory {
      *
      * @param bool $include
      *
-     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     * @return Factory
      */
     public function testData($include) {
         return $this->state(function (array $attributes) use ($include) {

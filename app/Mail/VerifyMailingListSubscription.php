@@ -15,7 +15,7 @@ class VerifyMailingListSubscription extends Mailable {
     /**
      * The subscriber instance.
      *
-     * @var \App\Models\MailingList\MailingListSubscriber
+     * @var MailingListSubscriber
      */
     public $subscriber;
 
@@ -29,7 +29,7 @@ class VerifyMailingListSubscription extends Mailable {
     /**
      * Get the message envelope.
      *
-     * @return \Illuminate\Mail\Mailables\Envelope
+     * @return Envelope
      */
     public function envelope() {
         return new Envelope(
@@ -40,7 +40,7 @@ class VerifyMailingListSubscription extends Mailable {
     /**
      * Get the message content definition.
      *
-     * @return \Illuminate\Mail\Mailables\Content
+     * @return Content
      */
     public function content() {
         return new Content(

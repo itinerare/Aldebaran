@@ -67,8 +67,8 @@ class MailingListManager extends Service {
     /**
      * Verifies a subscription.
      *
-     * @param \App\Models\MailingList\MailingListSubscriber $subscriber
-     * @param string                                        $token
+     * @param MailingListSubscriber $subscriber
+     * @param string                $token
      *
      * @return \App\Models\MailingList\MailingListSubscriber|bool
      */
@@ -102,8 +102,8 @@ class MailingListManager extends Service {
     /**
      * Unsubscribes.
      *
-     * @param \App\Models\MailingList\MailingListSubscriber $subscriber
-     * @param string                                        $token
+     * @param MailingListSubscriber $subscriber
+     * @param string                $token
      *
      * @return \App\Models\MailingList\MailingListSubscriber|bool
      */
@@ -129,7 +129,7 @@ class MailingListManager extends Service {
     /**
      * Kicks a subscriber.
      *
-     * @param \App\Models\MailingList\MailingListSubscriber $subscriber
+     * @param MailingListSubscriber $subscriber
      *
      * @return bool
      */

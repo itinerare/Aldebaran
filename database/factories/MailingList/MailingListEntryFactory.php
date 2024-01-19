@@ -28,7 +28,7 @@ class MailingListEntryFactory extends Factory {
      *
      * @param int $id
      *
-     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     * @return Factory
      */
     public function mailingList($id) {
         return $this->state(function (array $attributes) use ($id) {
@@ -41,7 +41,7 @@ class MailingListEntryFactory extends Factory {
     /**
      * Generate a mailng list that is sent.
      *
-     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     * @return Factory
      */
     public function sent() {
         return $this->state(function (array $attributes) {
