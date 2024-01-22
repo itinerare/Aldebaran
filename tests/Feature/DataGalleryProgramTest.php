@@ -30,12 +30,6 @@ class DataGalleryProgramTest extends TestCase {
         $this->file = UploadedFile::fake()->image('test_image.png');
     }
 
-    protected function tearDown(): void {
-        if (File::exists(public_path('images/programs/'.$this->program->id.'-image.png'))) {
-            unlink('public/images/programs/'.$this->program->id.'-image.png');
-        }
-    }
-
     /**
      * Test program index access.
      */
@@ -92,7 +86,8 @@ class DataGalleryProgramTest extends TestCase {
             // and perform cleanup after the fact
             $this->program = Program::where('name', $this->name)->first();
 
-            $this->assertTrue(File::exists(public_path('images/programs/'.$this->program->id.'-image.png')));
+            $this->assertTrue(File::exists($this->program->imagePath.'/'.$this->program->imageFileName));
+            unlink($this->program->imagePath.'/'.$this->program->imageFileName);
         }
     }
 
@@ -139,10 +134,11 @@ class DataGalleryProgramTest extends TestCase {
         ]);
 
         if ($image) {
-            $this->assertTrue(File::exists(public_path('images/programs/'.$this->program->id.'-image.png')));
+            $this->assertTrue(File::exists($this->program->imagePath.'/'.$this->program->imageFileName));
+            unlink($this->program->imagePath.'/'.$this->program->imageFileName);
         } elseif ($removeImage) {
             // Check that the file is not present
-            $this->assertFalse(File::exists(public_path('images/programs/'.$this->program->id.'-image.png')));
+            $this->assertFalse(File::exists($this->program->imagePath.'/'.$this->program->imageFileName));
         }
     }
 
