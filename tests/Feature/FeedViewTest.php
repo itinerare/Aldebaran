@@ -24,7 +24,7 @@ class FeedViewTest extends TestCase {
 
         // Set up gallery service for image processing
         $this->service = new GalleryService;
-        $this->artisan('add-site-settings');
+        $this->artisan('app:add-site-settings');
     }
 
     /**
