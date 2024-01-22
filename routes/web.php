@@ -41,7 +41,7 @@ Route::feeds('feeds');
 Route::controller(GalleryController::class)->group(function () {
     Route::prefix('gallery')->group(function () {
         Route::get('/', 'getGallery');
-        Route::get('pieces/{id}.', 'getPiece');
+        Route::get('pieces/{id}', 'getPiece');
         Route::get('pieces/{id}.{slug?}', 'getPiece');
     });
 
@@ -62,11 +62,10 @@ Route::controller(CommissionController::class)->prefix('commissions')->group(fun
     Route::get('{class}', 'getInfo');
     Route::get('{class}/tos', 'getVerify');
     Route::get('class}/queue', 'getQueue');
-    Route::get('{class}/{key}', 'getClassPage');
 
     Route::get('types/{key}', 'getType');
     Route::get('types/{key}/gallery', 'getTypeGallery');
-    Route::get('{class}/new', 'CgetNewCommission');
+    Route::get('{class}/new', 'getNewCommission');
     Route::post('new', 'postNewCommission')
         ->middleware(ProtectAgainstSpam::class);
 
@@ -77,6 +76,9 @@ Route::controller(CommissionController::class)->prefix('commissions')->group(fun
     Route::get('quotes/view/{key}', 'getViewQuote');
     Route::post('quotes/new', 'postNewQuote')
         ->middleware(ProtectAgainstSpam::class);
+
+    // Clobbers the above routes otherwise
+    Route::get('{class}/{key}', 'getClassPage');
 });
 
 // WEBHOOK ENDPOINTS
