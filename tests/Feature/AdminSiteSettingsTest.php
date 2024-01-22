@@ -21,7 +21,7 @@ class AdminSiteSettingsTest extends TestCase {
         $this->value = $this->faker->unique()->domainWord();
 
         // Ensure site settings are present
-        $this->artisan('add-site-settings');
+        $this->artisan('app:add-site-settings');
     }
 
     /**
