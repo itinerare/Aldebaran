@@ -159,6 +159,7 @@ return [
         /*
          * Package Service Providers...
          */
+        Collective\Html\HtmlServiceProvider::class,
         App\Providers\FortifyServiceProvider::class,
 
         /*
@@ -170,6 +171,7 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         App\Providers\SettingsProvider::class,
+        App\Providers\DropboxServiceProvider::class,
     ])->toArray(),
 
     /*
