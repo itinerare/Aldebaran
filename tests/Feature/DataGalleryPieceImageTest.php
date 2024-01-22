@@ -56,7 +56,7 @@ class DataGalleryPieceImageTest extends TestCase {
      */
     public function testGetCreateImage($piece, $expected) {
         $this->actingAs($this->user)
-            ->get('/admin/data/pieces/images/create/'.($piece ? $this->piece->id : mt_rand(5, 10)))
+            ->get('/admin/data/pieces/images/create/'.($piece ? $this->piece->id : $this->piece->id+10))
             ->assertStatus($expected);
     }
 
@@ -75,7 +75,7 @@ class DataGalleryPieceImageTest extends TestCase {
         $this->image->save();
 
         $this->actingAs($this->user)
-            ->get('/admin/data/pieces/images/edit/'.($image ? $this->image->id : mt_rand(5, 10)))
+            ->get('/admin/data/pieces/images/edit/'.($image ? $this->image->id : $this->image->id+10))
             ->assertStatus($expected);
     }
 
@@ -97,7 +97,7 @@ class DataGalleryPieceImageTest extends TestCase {
      */
     public function testGetViewImage($image, $type, $expected) {
         $this->actingAs($this->user)
-            ->get('/admin/data/pieces/images/view/'.($image ? $this->image->id : mt_rand(5, 10)).'/'.$type)
+            ->get('/admin/data/pieces/images/view/'.($image ? $this->image->id : $this->image->id+10).'/'.$type)
             ->assertStatus($expected);
     }
 

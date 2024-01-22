@@ -43,7 +43,7 @@ class AdminQuoteTest extends TestCase {
             ->create();
 
         $response = $this->actingAs($this->user)
-            ->get('admin/commissions/quotes/edit/'.($expected == 200 ? $quote->id : mt_rand(5, 10)))
+            ->get('admin/commissions/quotes/edit/'.($expected == 200 ? $quote->id : $quote->id+10))
             ->assertStatus($expected);
     }
 

@@ -60,7 +60,7 @@ class DataGalleryPieceLiteratureTest extends TestCase {
      */
     public function testGetCreateLiterature($piece, $expected) {
         $this->actingAs($this->user)
-            ->get('/admin/data/pieces/literatures/create/'.($piece ? $this->piece->id : mt_rand(5, 10)))
+            ->get('/admin/data/pieces/literatures/create/'.($piece ? $this->piece->id : $this->piece->id+10))
             ->assertStatus($expected);
     }
 
@@ -74,7 +74,7 @@ class DataGalleryPieceLiteratureTest extends TestCase {
      */
     public function testGetEditLiterature($literature, $expected) {
         $this->actingAs($this->user)
-            ->get('/admin/data/pieces/literatures/edit/'.($literature ? $this->literature->id : mt_rand(5, 10)))
+            ->get('/admin/data/pieces/literatures/edit/'.($literature ? $this->literature->id : $this->literature->id+10))
             ->assertStatus($expected);
     }
 
@@ -252,7 +252,7 @@ class DataGalleryPieceLiteratureTest extends TestCase {
      */
     public function testGetDeleteLiterature($literature, $expected) {
         $this->actingAs($this->user)
-            ->get('/admin/data/pieces/literatures/delete/'.($literature ? $this->literature->id : mt_rand(5, 50)))
+            ->get('/admin/data/pieces/literatures/delete/'.($literature ? $this->literature->id : $this->literature->id+10))
             ->assertStatus($expected);
     }
 
@@ -264,10 +264,10 @@ class DataGalleryPieceLiteratureTest extends TestCase {
      * @param bool $literature
      * @param bool $expected
      */
-    public function testPostDeleteImage($literature, $expected) {
+    public function testPostDeleteLiterature($literature, $expected) {
         $response = $this
             ->actingAs($this->user)
-            ->post('/admin/data/pieces/literatures/delete/'.($literature ? $this->literature->id : mt_rand(5, 50)));
+            ->post('/admin/data/pieces/literatures/delete/'.($literature ? $this->literature->id : $this->literature->id+10));
 
         if ($expected == 200) {
             $response->assertSessionHasNoErrors();

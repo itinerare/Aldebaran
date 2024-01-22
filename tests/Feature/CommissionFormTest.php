@@ -34,7 +34,7 @@ class CommissionFormTest extends TestCase {
 
         // Set up testing type and default pages (necessary to view new commission page)
         $this->type = CommissionType::factory()->testData(['type' => 'flat', 'cost' => 10])->create();
-        $this->artisan('add-text-pages');
+        $this->artisan('app:add-text-pages');
 
         // Set up gallery service for image processing
         $this->service = new GalleryService;
@@ -685,7 +685,7 @@ class CommissionFormTest extends TestCase {
         }
 
         $this->actingAs($this->user)
-            ->get($commission->url.'/'.($withImage ? $image->id : mt_rand(5, 10)))
+            ->get($commission->url.'/'.($withImage ? $image->id : mt_rand(500, 1000)))
             ->assertStatus($expected);
 
         if ($withImage) {

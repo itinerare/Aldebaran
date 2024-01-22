@@ -57,7 +57,7 @@ class MailingListSubscriberTest extends TestCase {
         }
 
         $response = $this
-            ->get('/mailing-lists/'.($list && isset($mailingList) ? $mailingList->id : mt_rand(5, 10)))
+            ->get('/mailing-lists/'.($list && isset($mailingList) ? $mailingList->id : mt_rand(500, 1000)))
             ->assertStatus($expected);
     }
 
@@ -95,7 +95,7 @@ class MailingListSubscriberTest extends TestCase {
         }
 
         $response = $this
-            ->post('/mailing-lists/'.($list && isset($mailingList) ? $mailingList->id : mt_rand(5, 10)).'/subscribe', [
+            ->post('/mailing-lists/'.($list && isset($mailingList) ? $mailingList->id : mt_rand(500, 1000)).'/subscribe', [
                 'email' => $this->email,
             ]);
 
