@@ -78,9 +78,9 @@ class AdminMailingListEntryTest extends TestCase {
 
         $response->assertSessionHasNoErrors();
         $this->assertDatabaseHas('mailing_list_entries', [
-            'subject'    => $this->subject,
-            'text'       => $this->text,
-            'is_draft'   => $isDraft,
+            'subject'  => $this->subject,
+            'text'     => $this->text,
+            'is_draft' => $isDraft,
         ]);
 
         if (!$isDraft) {
@@ -94,7 +94,7 @@ class AdminMailingListEntryTest extends TestCase {
         }
     }
 
-    public function mailingListEntryCreateProvider() {
+    public static function mailingListEntryCreateProvider() {
         return [
             'draft'   => [1],
             'sending' => [0],
@@ -114,18 +114,18 @@ class AdminMailingListEntryTest extends TestCase {
         $response = $this
             ->actingAs($this->user)
             ->post('/admin/mailing-lists/entries/edit/'.($isSent ? $this->sentEntry->id : $this->entry->id), [
-                'subject'    => $this->subject,
-                'text'       => $this->text,
-                'is_draft'   => $isDraft,
+                'subject'  => $this->subject,
+                'text'     => $this->text,
+                'is_draft' => $isDraft,
             ]);
 
         if ($expected) {
             $response->assertSessionHasNoErrors();
             $this->assertDatabaseHas('mailing_list_entries', [
-                'id'         => $isSent ? $this->sentEntry->id : $this->entry->id,
-                'subject'    => $this->subject,
-                'text'       => $this->text,
-                'is_draft'   => $isDraft,
+                'id'       => $isSent ? $this->sentEntry->id : $this->entry->id,
+                'subject'  => $this->subject,
+                'text'     => $this->text,
+                'is_draft' => $isDraft,
             ]);
 
             if (!$isDraft && !$isSent) {
@@ -142,7 +142,7 @@ class AdminMailingListEntryTest extends TestCase {
         }
     }
 
-    public function mailingListEntryEditProvider() {
+    public static function mailingListEntryEditProvider() {
         return [
             'draft'   => [0, 1, 1],
             'sending' => [0, 0, 1],

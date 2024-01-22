@@ -80,16 +80,16 @@ class DataGalleryPieceTest extends TestCase {
         });
     }
 
-    public function pieceIndexProvider() {
+    public static function pieceIndexProvider() {
         return [
-            'basic'                             => [0, null],
-            'with piece'                        => [1, null],
-            'search by name (successful)'       => [1, ['name', 1]],
-            'search by name (unsuccessful)'     => [1, ['name', 0]],
-            'search by project (successful)'    => [1, ['project_id', 1]],
-            'search by project (unsuccessful)'  => [1, ['project_id', 0]],
-            'search by tag (successful)'        => [1, ['tags%5B%5D', 1]],
-            'search by tag (unsuccessful)'      => [1, ['tags%5B%5D', 0]],
+            'basic'                            => [0, null],
+            'with piece'                       => [1, null],
+            'search by name (successful)'      => [1, ['name', 1]],
+            'search by name (unsuccessful)'    => [1, ['name', 0]],
+            'search by project (successful)'   => [1, ['project_id', 1]],
+            'search by project (unsuccessful)' => [1, ['project_id', 0]],
+            'search by tag (successful)'       => [1, ['tags%5B%5D', 1]],
+            'search by tag (unsuccessful)'     => [1, ['tags%5B%5D', 0]],
         ];
     }
 
@@ -226,7 +226,7 @@ class DataGalleryPieceTest extends TestCase {
         }
     }
 
-    public function pieceProvider() {
+    public static function pieceProvider() {
         // ($hasData, $description, $isVisible, $timestamp, $tag, $program, $goodExample)
 
         return [

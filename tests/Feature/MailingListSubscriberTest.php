@@ -57,18 +57,18 @@ class MailingListSubscriberTest extends TestCase {
         }
 
         $response = $this
-            ->get('/mailing-lists/'.($list && isset($mailingList) ? $mailingList->id : mt_rand(5, 10)))
+            ->get('/mailing-lists/'.($list && isset($mailingList) ? $mailingList->id : mt_rand(500, 1000)))
             ->assertStatus($expected);
     }
 
-    public function mailingListViewProvider() {
+    public static function mailingListViewProvider() {
         return [
-            'mail enabled, valid, open'      => [1, [1, 1], 200],
-            'mail enabled, valid, closed'    => [1, [1, 0], 404],
-            'mail enabled, invalid'          => [1, null, 404],
-            'mail disabled, valid, open'     => [0, [1, 1], 404],
-            'mail disabled, valid, closed'   => [0, [1, 0], 404],
-            'mail disabled, invalid'         => [0, null, 404],
+            'mail enabled, valid, open'    => [1, [1, 1], 200],
+            'mail enabled, valid, closed'  => [1, [1, 0], 404],
+            'mail enabled, invalid'        => [1, null, 404],
+            'mail disabled, valid, open'   => [0, [1, 1], 404],
+            'mail disabled, valid, closed' => [0, [1, 0], 404],
+            'mail disabled, invalid'       => [0, null, 404],
         ];
     }
 
@@ -95,7 +95,7 @@ class MailingListSubscriberTest extends TestCase {
         }
 
         $response = $this
-            ->post('/mailing-lists/'.($list && isset($mailingList) ? $mailingList->id : mt_rand(5, 10)).'/subscribe', [
+            ->post('/mailing-lists/'.($list && isset($mailingList) ? $mailingList->id : mt_rand(500, 1000)).'/subscribe', [
                 'email' => $this->email,
             ]);
 
@@ -116,14 +116,14 @@ class MailingListSubscriberTest extends TestCase {
         }
     }
 
-    public function mailingListSubscribeProvider() {
+    public static function mailingListSubscribeProvider() {
         return [
-            'mail enabled, valid, open'      => [1, [1, 1], 1],
-            'mail enabled, valid, closed'    => [1, [1, 0], 0],
-            'mail enabled, invalid'          => [1, null, 0],
-            'mail disabled, valid, open'     => [0, [1, 1], 0],
-            'mail disabled, valid, closed'   => [0, [1, 0], 0],
-            'mail disabled, invalid'         => [0, null, 0],
+            'mail enabled, valid, open'    => [1, [1, 1], 1],
+            'mail enabled, valid, closed'  => [1, [1, 0], 0],
+            'mail enabled, invalid'        => [1, null, 0],
+            'mail disabled, valid, open'   => [0, [1, 1], 0],
+            'mail disabled, valid, closed' => [0, [1, 0], 0],
+            'mail disabled, invalid'       => [0, null, 0],
         ];
     }
 
@@ -173,7 +173,7 @@ class MailingListSubscriberTest extends TestCase {
         }
     }
 
-    public function subscriptionVerificationProvider() {
+    public static function subscriptionVerificationProvider() {
         return [
             'mail enabled, unverified, with token'     => [1, [0, 1], 1, 302],
             'mail enabled, unverified, without token'  => [1, [0, 0], 0, 404],
@@ -234,7 +234,7 @@ class MailingListSubscriberTest extends TestCase {
         }
     }
 
-    public function unsubscriptionProvider() {
+    public static function unsubscriptionProvider() {
         return [
             'mail enabled, unverified, with token'     => [1, [0, 1], 1, 302],
             'mail enabled, unverified, without token'  => [1, [0, 0], 0, 404],

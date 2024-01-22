@@ -30,12 +30,6 @@ class DataGalleryProgramTest extends TestCase {
         $this->file = UploadedFile::fake()->image('test_image.png');
     }
 
-    protected function tearDown(): void {
-        if (File::exists(public_path('images/programs/'.$this->program->id.'-image.png'))) {
-            unlink('public/images/programs/'.$this->program->id.'-image.png');
-        }
-    }
-
     /**
      * Test program index access.
      */
@@ -92,12 +86,18 @@ class DataGalleryProgramTest extends TestCase {
             // and perform cleanup after the fact
             $this->program = Program::where('name', $this->name)->first();
 
-            $this->assertTrue(File::exists(public_path('images/programs/'.$this->program->id.'-image.png')));
+            $this->assertTrue(File::exists($this->program->imagePath.'/'.$this->program->imageFileName));
+            unlink($this->program->imagePath.'/'.$this->program->imageFileName);
         }
     }
 
-    public function programCreateProvider() {
-        return $this->booleanSequences(2);
+    public static function programCreateProvider() {
+        return [
+            'hidden'              => [0, 0],
+            'visible'             => [0, 1],
+            'with image, hidden'  => [1, 0],
+            'with image, visible' => [1, 1],
+        ];
     }
 
     /**
@@ -134,15 +134,33 @@ class DataGalleryProgramTest extends TestCase {
         ]);
 
         if ($image) {
-            $this->assertTrue(File::exists(public_path('images/programs/'.$this->program->id.'-image.png')));
+            $this->assertTrue(File::exists($this->program->imagePath.'/'.$this->program->imageFileName));
+            unlink($this->program->imagePath.'/'.$this->program->imageFileName);
         } elseif ($removeImage) {
             // Check that the file is not present
-            $this->assertFalse(File::exists(public_path('images/programs/'.$this->program->id.'-image.png')));
+            $this->assertFalse(File::exists($this->program->imagePath.'/'.$this->program->imageFileName));
         }
     }
 
-    public function programEditProvider() {
-        return $this->booleanSequences(4);
+    public static function programEditProvider() {
+        return [
+            'hidden'                         => [0, 0, 0, 0],
+            'visible'                        => [0, 0, 0, 1],
+            'remove image, hidden'           => [0, 0, 1, 0],
+            'remove image, visible'          => [0, 0, 1, 1],
+            'with image, hidden'             => [0, 1, 0, 0],
+            'with image, visible'            => [0, 1, 0, 1],
+            'with image+remove, hidden'      => [0, 1, 1, 0],
+            'with image+remove, visible'     => [0, 1, 1, 1],
+            'has image, hidden'              => [1, 0, 0, 0],
+            'has image, visible'             => [1, 0, 0, 1],
+            'has image+remove, hidden'       => [1, 0, 1, 0],
+            'has image+remove, visible'      => [1, 0, 1, 1],
+            'with+has image, hidden'         => [1, 1, 0, 0],
+            'with+has image, visible'        => [1, 1, 0, 1],
+            'with+has image+remove, hidden'  => [1, 1, 1, 0],
+            'with+has image+remove, visible' => [1, 1, 1, 1],
+        ];
     }
 
     /**
@@ -183,7 +201,7 @@ class DataGalleryProgramTest extends TestCase {
         }
     }
 
-    public function programDeleteProvider() {
+    public static function programDeleteProvider() {
         return [
             'basic'      => [0, 1],
             'with piece' => [1, 0],

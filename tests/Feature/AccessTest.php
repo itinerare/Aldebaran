@@ -35,7 +35,7 @@ class AccessTest extends TestCase {
         $response->assertStatus($status);
     }
 
-    public function accessProvider() {
+    public static function accessProvider() {
         return [
             'visitor' => [0, 200],
             'user'    => [1, 200],
@@ -61,7 +61,7 @@ class AccessTest extends TestCase {
         $response->assertStatus($status);
     }
 
-    public function adminAccessProvider() {
+    public static function adminAccessProvider() {
         return [
             'visitor' => [0, 302],
             'user'    => [1, 200],

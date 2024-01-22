@@ -57,10 +57,10 @@ class AdminSiteImagesTest extends TestCase {
             assertTrue(File::exists(public_path('images/assets/'.$key.'.'.config('aldebaran.settings.image_formats.site_images', 'png'))));
 
         // Replace with default images for tidiness
-        $this->artisan('copy-default-images');
+        $this->artisan('app:copy-default-images');
     }
 
-    public function siteImageProvider() {
+    public static function siteImageProvider() {
         return [
             'avatar'    => ['avatar'],
             'watermark' => ['watermark'],

@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Facades\Settings;
 use App\Http\Controllers\Controller;
 use App\Models\Commission\Commission;
 use App\Models\Commission\CommissionQuote;
@@ -26,18 +25,20 @@ class AdminController extends Controller {
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function getIndex() {
-        $pendingCount = [];
-        $acceptedCount = [];
-        foreach ($this->commissionClasses as $class) {
-            $pendingCount['commissions'][$class->id] = Commission::where('status', 'Pending')->class($class->id)->count();
-            $acceptedCount['commissions'][$class->id] = Commission::where('status', 'Accepted')->class($class->id)->count();
-            $pendingCount['quotes'][$class->id] = CommissionQuote::where('status', 'Pending')->class($class->id)->count();
-            $acceptedCount['quotes'][$class->id] = CommissionQuote::where('status', 'Accepted')->class($class->id)->count();
+        if (config('aldebaran.commissions.enabled')) {
+            $pendingCount = [];
+            $acceptedCount = [];
+            foreach ($this->commissionClasses as $class) {
+                $pendingCount['commissions'][$class->id] = Commission::where('status', 'Pending')->class($class->id)->count();
+                $acceptedCount['commissions'][$class->id] = Commission::where('status', 'Accepted')->class($class->id)->count();
+                $pendingCount['quotes'][$class->id] = CommissionQuote::where('status', 'Pending')->class($class->id)->count();
+                $acceptedCount['quotes'][$class->id] = CommissionQuote::where('status', 'Accepted')->class($class->id)->count();
+            }
         }
 
         return view('admin.index', [
-            'pendingCount'  => $pendingCount,
-            'acceptedCount' => $acceptedCount,
+            'pendingCount'  => $pendingCount ?? 0,
+            'acceptedCount' => $acceptedCount ?? 0,
         ]);
     }
 

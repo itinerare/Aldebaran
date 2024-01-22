@@ -69,7 +69,7 @@
                 @endforeach
             </div>
         @else
-            <p>There are no commission classes to display queues for. Go <a href="{{ url('admin/data/commission-classes') }}">here</a> to create one!</p>
+            <p>There are no commission classes to display queues for. Go <a href="{{ url('admin/data/commissions/classes') }}">here</a> to create one!</p>
         @endif
     @endif
 

@@ -36,7 +36,7 @@ class AdminTextPageTest extends TestCase {
      */
     public function testPostEditSitePage($key) {
         // Ensure text pages are present to modify
-        $this->artisan('add-text-pages');
+        $this->artisan('app:add-text-pages');
 
         // Get the information for the page
         $page = TextPage::where('key', $key)->first();
@@ -58,7 +58,7 @@ class AdminTextPageTest extends TestCase {
         ]);
     }
 
-    public function textPageProvider() {
+    public static function textPageProvider() {
         return [
             'index'          => ['index'],
             'about'          => ['about'],

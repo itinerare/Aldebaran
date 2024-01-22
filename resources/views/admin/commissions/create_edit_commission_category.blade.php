@@ -7,8 +7,8 @@
 @section('admin-content')
     {!! breadcrumbs([
         'Admin Panel' => 'admin',
-        'Commission Categories' => 'admin/data/commission-categories',
-        ($category->id ? 'Edit' : 'Create') . ' Category' => $category->id ? 'admin/data/commission-categories/edit/' . $category->id : 'admin/data/commission-categories/create',
+        'Commission Categories' => 'admin/data/commissions/categories',
+        ($category->id ? 'Edit' : 'Create') . ' Category' => $category->id ? 'admin/data/commissions/categories/edit/' . $category->id : 'admin/data/commissions/categories/create',
     ]) !!}
 
     <h1>{{ $category->id ? 'Edit' : 'Create' }} Category
@@ -18,7 +18,7 @@
     </h1>
 
     {!! Form::open([
-        'url' => $category->id ? 'admin/data/commission-categories/edit/' . $category->id : 'admin/data/commission-categories/create',
+        'url' => $category->id ? 'admin/data/commissions/categories/edit/' . $category->id : 'admin/data/commissions/categories/create',
     ]) !!}
 
     <div class="form-group">
@@ -101,7 +101,7 @@
         $(document).ready(function() {
             $('.delete-category-button').on('click', function(e) {
                 e.preventDefault();
-                loadModal("{{ url('admin/data/commission-categories/delete') }}/{{ $category->id }}",
+                loadModal("{{ url('admin/data/commissions/categories/delete') }}/{{ $category->id }}",
                     'Delete Category');
             });
         });

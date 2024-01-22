@@ -34,7 +34,7 @@ class CommissionFormTest extends TestCase {
 
         // Set up testing type and default pages (necessary to view new commission page)
         $this->type = CommissionType::factory()->testData(['type' => 'flat', 'cost' => 10])->create();
-        $this->artisan('add-text-pages');
+        $this->artisan('app:add-text-pages');
 
         // Set up gallery service for image processing
         $this->service = new GalleryService;
@@ -99,7 +99,7 @@ class CommissionFormTest extends TestCase {
         $response->assertStatus($status);
     }
 
-    public function commissionFormAccessProvider() {
+    public static function commissionFormAccessProvider() {
         // $visibility = [commsEnabled, classActive, commsOpen, typeActive, typeVisible, withKey]
 
         return [
@@ -124,20 +124,20 @@ class CommissionFormTest extends TestCase {
         ];
     }
 
-    public function commissionFormProvider() {
+    public static function commissionFormProvider() {
         return [
             // (string) type, (bool) rules, (bool) choices, value, (string) help, (bool) include category, (bool) include class, (bool) include class in category
 
             // Visible
-            'text field'                      => [[1, 1, 1, 1, 1, 0], 0, ['text', 0, 0, null, null, 0, 0], 200],
-            'text field with rule'            => [[1, 1, 1, 1, 1, 0], 0, ['text', 1, 0, null, null, 0, 0], 200],
-            'text field with value'           => [[1, 1, 1, 1, 1, 0], 0, ['text', 0, 0, 'test', null, 0, 0], 200],
-            'text field with help'            => [[1, 1, 1, 1, 1, 0], 0, ['text', 0, 0, null, 'test', 0, 0], 200],
-            'textbox field'                   => [[1, 1, 1, 1, 1, 0], 0, ['textarea', 0, 0, null, null, 0, 0], 200],
-            'number field'                    => [[1, 1, 1, 1, 1, 0], 0, ['number', 0, 0, null, null, 0, 0], 200],
-            'checkbox field'                  => [[1, 1, 1, 1, 1, 0], 0, ['checkbox', 0, 0, null, null, 0, 0], 200],
-            'choose one field'                => [[1, 1, 1, 1, 1, 0], 0, ['choice', 0, 0, null, null, 0, 0], 200],
-            'choose multiple field'           => [[1, 1, 1, 1, 1, 0], 0, ['multiple', 0, 0, null, null, 0, 0], 200],
+            'text field'            => [[1, 1, 1, 1, 1, 0], 0, ['text', 0, 0, null, null, 0, 0], 200],
+            'text field with rule'  => [[1, 1, 1, 1, 1, 0], 0, ['text', 1, 0, null, null, 0, 0], 200],
+            'text field with value' => [[1, 1, 1, 1, 1, 0], 0, ['text', 0, 0, 'test', null, 0, 0], 200],
+            'text field with help'  => [[1, 1, 1, 1, 1, 0], 0, ['text', 0, 0, null, 'test', 0, 0], 200],
+            'textbox field'         => [[1, 1, 1, 1, 1, 0], 0, ['textarea', 0, 0, null, null, 0, 0], 200],
+            'number field'          => [[1, 1, 1, 1, 1, 0], 0, ['number', 0, 0, null, null, 0, 0], 200],
+            'checkbox field'        => [[1, 1, 1, 1, 1, 0], 0, ['checkbox', 0, 0, null, null, 0, 0], 200],
+            'choose one field'      => [[1, 1, 1, 1, 1, 0], 0, ['choice', 0, 0, null, null, 0, 0], 200],
+            'choose multiple field' => [[1, 1, 1, 1, 1, 0], 0, ['multiple', 0, 0, null, null, 0, 0], 200],
 
             'include from category'           => [[1, 1, 1, 1, 1, 0], 0, ['text', 0, 0, null, null, 1, 0], 200],
             'include from class'              => [[1, 1, 1, 1, 1, 0], 0, ['text', 0, 0, null, null, 0, 1], 200],
@@ -167,7 +167,7 @@ class CommissionFormTest extends TestCase {
             // Enable email notifications
             config(['aldebaran.settings.email_features' => 1]);
 
-            $this->artisan('add-site-settings');
+            $this->artisan('app:add-site-settings');
             DB::table('site_settings')->where('key', 'notif_emails')->update([
                 'value' => 1,
             ]);
@@ -330,7 +330,7 @@ class CommissionFormTest extends TestCase {
         }
     }
 
-    public function newCommissionProvider() {
+    public static function newCommissionProvider() {
         // $visibility = [commsEnabled, classActive, commsOpen, typeActive, typeVisible, withKey]
 
         return [
@@ -346,46 +346,46 @@ class CommissionFormTest extends TestCase {
             'visitor, comms disabled'                 => [0, 1, 0, 'paypal', [0, 1, 1, 1, 1, 0], null, 0, null, 1, 0, 0],
 
             // Form testing
-            'basic'                                   => [0, 1, 0, 'paypal', [1, 1, 1, 1, 1, 0], null, 0, null, 1, 0, 1],
-            'with notification opt-in'                => [0, 1, 0, 'paypal', [1, 1, 1, 1, 1, 0], null, 1, null, 1, 0, 1],
-            'without email'                           => [0, 0, 0, 'paypal', [1, 1, 1, 1, 1, 0], null, 0, null, 1, 0, 0],
-            'non-agreement'                           => [0, 1, 0, 'paypal', [1, 1, 1, 1, 1, 0], null, 0, null, 0, 0, 0],
-            'banned commissioner'                     => [0, 1, 0, 'paypal', [1, 1, 1, 1, 1, 0], null, 0, null, 1, 1, 0],
+            'basic'                    => [0, 1, 0, 'paypal', [1, 1, 1, 1, 1, 0], null, 0, null, 1, 0, 1],
+            'with notification opt-in' => [0, 1, 0, 'paypal', [1, 1, 1, 1, 1, 0], null, 1, null, 1, 0, 1],
+            'without email'            => [0, 0, 0, 'paypal', [1, 1, 1, 1, 1, 0], null, 0, null, 1, 0, 0],
+            'non-agreement'            => [0, 1, 0, 'paypal', [1, 1, 1, 1, 1, 0], null, 0, null, 0, 0, 0],
+            'banned commissioner'      => [0, 1, 0, 'paypal', [1, 1, 1, 1, 1, 0], null, 0, null, 1, 1, 0],
 
             // Slot testing
-            'with full type'                          => [0, 1, 0, 'paypal', [1, 1, 1, 1, 1, 0], null, 0, ['Accepted', 1, 1], 1, 0, 0],
-            'with full class'                         => [0, 1, 0, 'paypal', [1, 1, 1, 1, 1, 0], null, 0, ['Accepted', 0, 1], 1, 0, 0],
+            'with full type'  => [0, 1, 0, 'paypal', [1, 1, 1, 1, 1, 0], null, 0, ['Accepted', 1, 1], 1, 0, 0],
+            'with full class' => [0, 1, 0, 'paypal', [1, 1, 1, 1, 1, 0], null, 0, ['Accepted', 0, 1], 1, 0, 0],
 
             // Payment processor testing
-            'paypal, enabled'                         => [0, 1, 0, 'paypal', [1, 1, 1, 1, 1, 0], null, 0, null, 1, 0, 1],
-            'paypal, disabled'                        => [0, 1, 0, 'paypal', [1, 1, 1, 1, 1, 0], null, 0, null, 1, 0, 0],
-            'stripe, enabled'                         => [0, 1, 0, 'stripe', [1, 1, 1, 1, 1, 0], null, 0, null, 1, 0, 1],
-            'stripe, disabled'                        => [0, 1, 0, 'stripe', [1, 1, 1, 1, 1, 0], null, 0, null, 1, 0, 0],
-            'other, enabled'                          => [0, 1, 0, 'other', [1, 1, 1, 1, 1, 0], null, 0, null, 1, 0, 1],
-            'other, disabled'                         => [0, 1, 0, 'other', [1, 1, 1, 1, 1, 0], null, 0, null, 1, 0, 0],
+            'paypal, enabled'  => [0, 1, 0, 'paypal', [1, 1, 1, 1, 1, 0], null, 0, null, 1, 0, 1],
+            'paypal, disabled' => [0, 1, 0, 'paypal', [1, 1, 1, 1, 1, 0], null, 0, null, 1, 0, 0],
+            'stripe, enabled'  => [0, 1, 0, 'stripe', [1, 1, 1, 1, 1, 0], null, 0, null, 1, 0, 1],
+            'stripe, disabled' => [0, 1, 0, 'stripe', [1, 1, 1, 1, 1, 0], null, 0, null, 1, 0, 0],
+            'other, enabled'   => [0, 1, 0, 'other', [1, 1, 1, 1, 1, 0], null, 0, null, 1, 0, 1],
+            'other, disabled'  => [0, 1, 0, 'other', [1, 1, 1, 1, 1, 0], null, 0, null, 1, 0, 0],
 
             // Form field testing
             // (string) type, (bool) rules, (bool) choices, value, (string) help, (bool) include category, (bool) include class, (bool) is empty
-            'text field'                              => [0, 1, 0, 'paypal', [1, 1, 1, 1, 1, 0], ['text', 0, 0, null, null, 0, 0, 1], 0, null, 1, 0, 1],
-            'text field, empty'                       => [0, 1, 0, 'paypal', [1, 1, 1, 1, 1, 0], ['text', 0, 0, null, null, 0, 0, 0], 0, null, 1, 0, 1],
-            'text field with rule'                    => [0, 1, 0, 'paypal', [1, 1, 1, 1, 1, 0], ['text', 1, 0, null, null, 0, 0, 1], 0, null, 1, 0, 1],
-            'text field with rule, empty'             => [0, 1, 0, 'paypal', [1, 1, 1, 1, 1, 0], ['text', 1, 0, null, null, 0, 0, 0], 0, null, 1, 0, 0],
-            'text field with value'                   => [0, 1, 0, 'paypal', [1, 1, 1, 1, 1, 0], ['text', 0, 0, 'test', null, 0, 0, 1], 0, null, 1, 0, 1],
-            'text field with help'                    => [0, 1, 0, 'paypal', [1, 1, 1, 1, 1, 0], ['text', 0, 0, null, 'test', 0, 0, 1], 0, null, 1, 0, 1],
-            'textbox field'                           => [0, 1, 0, 'paypal', [1, 1, 1, 1, 1, 0], ['textarea', 0, 0, null, null, 0, 0, 1], 0, null, 1, 0, 1],
-            'textbox field, empty'                    => [0, 1, 0, 'paypal', [1, 1, 1, 1, 1, 0], ['textarea', 0, 0, null, null, 0, 0, 0], 0, null, 1, 0, 1],
-            'number field'                            => [0, 1, 0, 'paypal', [1, 1, 1, 1, 1, 0], ['number', 0, 0, null, null, 0, 0, 1], 0, null, 1, 0, 1],
-            'number field,empty'                      => [0, 1, 0, 'paypal', [1, 1, 1, 1, 1, 0], ['number', 0, 0, null, null, 0, 0, 0], 0, null, 1, 0, 1],
-            'checkbox field'                          => [0, 1, 0, 'paypal', [1, 1, 1, 1, 1, 0], ['checkbox', 0, 0, null, null, 0, 0, 1], 0, null, 1, 0, 1],
-            'checkbox field, empty'                   => [0, 1, 0, 'paypal', [1, 1, 1, 1, 1, 0], ['checkbox', 0, 0, null, null, 0, 0, 0], 0, null, 1, 0, 1],
-            'choose one field'                        => [0, 1, 0, 'paypal', [1, 1, 1, 1, 1, 0], ['choice', 0, 0, null, null, 0, 0, 1], 0, null, 1, 0, 1],
-            'choose one field, empty'                 => [0, 1, 0, 'paypal', [1, 1, 1, 1, 1, 0], ['choice', 0, 0, null, null, 0, 0, 0], 0, null, 1, 0, 1],
-            'choose multiple field'                   => [0, 1, 0, 'paypal', [1, 1, 1, 1, 1, 0], ['multiple', 0, 0, null, null, 0, 0, 1], 0, null, 1, 0, 1],
-            'choose multiple field, empty'            => [0, 1, 0, 'paypal', [1, 1, 1, 1, 1, 0], ['multiple', 0, 0, null, null, 0, 0, 0], 0, null, 1, 0, 1],
+            'text field'                   => [0, 1, 0, 'paypal', [1, 1, 1, 1, 1, 0], ['text', 0, 0, null, null, 0, 0, 1], 0, null, 1, 0, 1],
+            'text field, empty'            => [0, 1, 0, 'paypal', [1, 1, 1, 1, 1, 0], ['text', 0, 0, null, null, 0, 0, 0], 0, null, 1, 0, 1],
+            'text field with rule'         => [0, 1, 0, 'paypal', [1, 1, 1, 1, 1, 0], ['text', 1, 0, null, null, 0, 0, 1], 0, null, 1, 0, 1],
+            'text field with rule, empty'  => [0, 1, 0, 'paypal', [1, 1, 1, 1, 1, 0], ['text', 1, 0, null, null, 0, 0, 0], 0, null, 1, 0, 0],
+            'text field with value'        => [0, 1, 0, 'paypal', [1, 1, 1, 1, 1, 0], ['text', 0, 0, 'test', null, 0, 0, 1], 0, null, 1, 0, 1],
+            'text field with help'         => [0, 1, 0, 'paypal', [1, 1, 1, 1, 1, 0], ['text', 0, 0, null, 'test', 0, 0, 1], 0, null, 1, 0, 1],
+            'textbox field'                => [0, 1, 0, 'paypal', [1, 1, 1, 1, 1, 0], ['textarea', 0, 0, null, null, 0, 0, 1], 0, null, 1, 0, 1],
+            'textbox field, empty'         => [0, 1, 0, 'paypal', [1, 1, 1, 1, 1, 0], ['textarea', 0, 0, null, null, 0, 0, 0], 0, null, 1, 0, 1],
+            'number field'                 => [0, 1, 0, 'paypal', [1, 1, 1, 1, 1, 0], ['number', 0, 0, null, null, 0, 0, 1], 0, null, 1, 0, 1],
+            'number field,empty'           => [0, 1, 0, 'paypal', [1, 1, 1, 1, 1, 0], ['number', 0, 0, null, null, 0, 0, 0], 0, null, 1, 0, 1],
+            'checkbox field'               => [0, 1, 0, 'paypal', [1, 1, 1, 1, 1, 0], ['checkbox', 0, 0, null, null, 0, 0, 1], 0, null, 1, 0, 1],
+            'checkbox field, empty'        => [0, 1, 0, 'paypal', [1, 1, 1, 1, 1, 0], ['checkbox', 0, 0, null, null, 0, 0, 0], 0, null, 1, 0, 1],
+            'choose one field'             => [0, 1, 0, 'paypal', [1, 1, 1, 1, 1, 0], ['choice', 0, 0, null, null, 0, 0, 1], 0, null, 1, 0, 1],
+            'choose one field, empty'      => [0, 1, 0, 'paypal', [1, 1, 1, 1, 1, 0], ['choice', 0, 0, null, null, 0, 0, 0], 0, null, 1, 0, 1],
+            'choose multiple field'        => [0, 1, 0, 'paypal', [1, 1, 1, 1, 1, 0], ['multiple', 0, 0, null, null, 0, 0, 1], 0, null, 1, 0, 1],
+            'choose multiple field, empty' => [0, 1, 0, 'paypal', [1, 1, 1, 1, 1, 0], ['multiple', 0, 0, null, null, 0, 0, 0], 0, null, 1, 0, 1],
 
-            'include from category'                   => [0, 1, 0, 'paypal', [1, 1, 1, 1, 1, 0], ['text', 0, 0, null, null, 1, 0, 1], 0, null, 1, 0, 1],
-            'include from class'                      => [0, 1, 0, 'paypal', [1, 1, 1, 1, 1, 0], ['text', 0, 0, null, null, 0, 1, 1], 0, null, 1, 0, 1],
-            'include from category and class'         => [0, 1, 0, 'paypal', [1, 1, 1, 1, 1, 0], ['text', 0, 0, null, null, 1, 1, 1], 0, null, 1, 0, 1],
+            'include from category'           => [0, 1, 0, 'paypal', [1, 1, 1, 1, 1, 0], ['text', 0, 0, null, null, 1, 0, 1], 0, null, 1, 0, 1],
+            'include from class'              => [0, 1, 0, 'paypal', [1, 1, 1, 1, 1, 0], ['text', 0, 0, null, null, 0, 1, 1], 0, null, 1, 0, 1],
+            'include from category and class' => [0, 1, 0, 'paypal', [1, 1, 1, 1, 1, 0], ['text', 0, 0, null, null, 1, 1, 1], 0, null, 1, 0, 1],
         ];
     }
 
@@ -446,9 +446,9 @@ class CommissionFormTest extends TestCase {
             // Then check for the existence of the commission using this info
             // as the commissioner is one of a few ready ways to identify the object
             $this->assertDatabaseHas('commissions', [
-                'commissioner_id'   => $commissioner->id,
-                'status'            => 'Pending',
-                'commission_type'   => $this->type->id,
+                'commissioner_id' => $commissioner->id,
+                'status'          => 'Pending',
+                'commission_type' => $this->type->id,
             ]);
             $response->assertRedirectContains('commissions/view');
 
@@ -470,7 +470,7 @@ class CommissionFormTest extends TestCase {
         }
     }
 
-    public function quoteCommissionProvider() {
+    public static function quoteCommissionProvider() {
         return [
             'with quote'              => [1, 0, 1],
             'with quote, required'    => [1, 1, 1],
@@ -611,39 +611,39 @@ class CommissionFormTest extends TestCase {
         }
     }
 
-    public function commissionViewProvider() {
+    public static function commissionViewProvider() {
         return [
-            'basic'                           => [1, 'Pending', null, null, 0, 200],
-            'accepted commission'             => [1, 'Accepted', null, null, 0, 200],
-            'complete commission'             => [1, 'Complete', null, null, 0, 200],
-            'declined commission'             => [1, 'Declined', null, null, 0, 200],
-            'invalid commission'              => [0, 'Pending', null, null, 0, 404],
+            'basic'               => [1, 'Pending', null, null, 0, 200],
+            'accepted commission' => [1, 'Accepted', null, null, 0, 200],
+            'complete commission' => [1, 'Complete', null, null, 0, 200],
+            'declined commission' => [1, 'Declined', null, null, 0, 200],
+            'invalid commission'  => [0, 'Pending', null, null, 0, 404],
 
             // $pieceData = [(bool) withImage, (bool) isVisible, (bool) withLiterature]
-            'with piece'                      => [1, 'Accepted', null, [0, 1, 0], 0, 200],
-            'with hidden piece'               => [1, 'Accepted', null, [0, 0, 0], 0, 200],
-            'with piece with image'           => [1, 'Accepted', null, [1, 1, 0], 0, 200],
-            'with piece with literature'      => [1, 'Accepted', null, [1, 1, 1], 0, 200],
+            'with piece'                 => [1, 'Accepted', null, [0, 1, 0], 0, 200],
+            'with hidden piece'          => [1, 'Accepted', null, [0, 0, 0], 0, 200],
+            'with piece with image'      => [1, 'Accepted', null, [1, 1, 0], 0, 200],
+            'with piece with literature' => [1, 'Accepted', null, [1, 1, 1], 0, 200],
 
-            'with quote'                      => [1, 'Accepted', null, null, 1, 200],
+            'with quote' => [1, 'Accepted', null, null, 1, 200],
 
             // Field testing
             // (string) type, (bool) rules, (bool) choices, value, (string) help, (bool) include category, (bool) include class, (bool) is empty
-            'text field'                      => [1, 'Pending', ['text', 0, 0, null, null, 0, 0, 1], null, 0, 200],
-            'text field, empty'               => [1, 'Pending', ['text', 0, 0, null, null, 0, 0, 0], null, 0, 200],
-            'text field with rule'            => [1, 'Pending', ['text', 1, 0, null, null, 0, 0, 1], null, 0, 200],
-            'text field with value'           => [1, 'Pending', ['text', 0, 0, 'test', null, 0, 0, 1], null, 0, 200],
-            'text field with help'            => [1, 'Pending', ['text', 0, 0, null, 'test', 0, 0, 1], null, 0, 200],
-            'textbox field'                   => [1, 'Pending', ['textarea', 0, 0, null, null, 0, 0, 1], null, 0, 200],
-            'textbox field, empty'            => [1, 'Pending', ['textarea', 0, 0, null, null, 0, 0, 0], null, 0, 200],
-            'number field'                    => [1, 'Pending', ['number', 0, 0, null, null, 0, 0, 1], null, 0, 200],
-            'number field, empty'             => [1, 'Pending', ['number', 0, 0, null, null, 0, 0, 0], null, 0, 200],
-            'checkbox field'                  => [1, 'Pending', ['checkbox', 0, 0, null, null, 0, 0, 1], null, 0, 200],
-            'checkbox field, empty'           => [1, 'Pending', ['checkbox', 0, 0, null, null, 0, 0, 0], null, 0, 200],
-            'choose one field'                => [1, 'Pending', ['choice', 0, 0, null, null, 0, 0, 1], null, 0, 200],
-            'choose one field, empty'         => [1, 'Pending', ['choice', 0, 0, null, null, 0, 0, 0], null, 0, 200],
-            'choose multiple field'           => [1, 'Pending', ['multiple', 0, 0, null, null, 0, 0, 1], null, 0, 200],
-            'choose multiple field, empty'    => [1, 'Pending', ['multiple', 0, 0, null, null, 0, 0, 0], null, 0, 200],
+            'text field'                   => [1, 'Pending', ['text', 0, 0, null, null, 0, 0, 1], null, 0, 200],
+            'text field, empty'            => [1, 'Pending', ['text', 0, 0, null, null, 0, 0, 0], null, 0, 200],
+            'text field with rule'         => [1, 'Pending', ['text', 1, 0, null, null, 0, 0, 1], null, 0, 200],
+            'text field with value'        => [1, 'Pending', ['text', 0, 0, 'test', null, 0, 0, 1], null, 0, 200],
+            'text field with help'         => [1, 'Pending', ['text', 0, 0, null, 'test', 0, 0, 1], null, 0, 200],
+            'textbox field'                => [1, 'Pending', ['textarea', 0, 0, null, null, 0, 0, 1], null, 0, 200],
+            'textbox field, empty'         => [1, 'Pending', ['textarea', 0, 0, null, null, 0, 0, 0], null, 0, 200],
+            'number field'                 => [1, 'Pending', ['number', 0, 0, null, null, 0, 0, 1], null, 0, 200],
+            'number field, empty'          => [1, 'Pending', ['number', 0, 0, null, null, 0, 0, 0], null, 0, 200],
+            'checkbox field'               => [1, 'Pending', ['checkbox', 0, 0, null, null, 0, 0, 1], null, 0, 200],
+            'checkbox field, empty'        => [1, 'Pending', ['checkbox', 0, 0, null, null, 0, 0, 0], null, 0, 200],
+            'choose one field'             => [1, 'Pending', ['choice', 0, 0, null, null, 0, 0, 1], null, 0, 200],
+            'choose one field, empty'      => [1, 'Pending', ['choice', 0, 0, null, null, 0, 0, 0], null, 0, 200],
+            'choose multiple field'        => [1, 'Pending', ['multiple', 0, 0, null, null, 0, 0, 1], null, 0, 200],
+            'choose multiple field, empty' => [1, 'Pending', ['multiple', 0, 0, null, null, 0, 0, 0], null, 0, 200],
 
             'include from category'           => [1, 'Pending', ['text', 0, 0, null, null, 1, 0, 1], null, 0, 200],
             'include from class'              => [1, 'Pending', ['text', 0, 0, null, null, 0, 1, 1], null, 0, 200],
@@ -685,7 +685,7 @@ class CommissionFormTest extends TestCase {
         }
 
         $this->actingAs($this->user)
-            ->get($commission->url.'/'.($withImage ? $image->id : mt_rand(5, 10)))
+            ->get($commission->url.'/'.($withImage ? $image->id : mt_rand(500, 1000)))
             ->assertStatus($expected);
 
         if ($withImage) {
@@ -694,7 +694,7 @@ class CommissionFormTest extends TestCase {
         }
     }
 
-    public function commissionImageViewProvider() {
+    public static function commissionImageViewProvider() {
         return [
             'valid image'     => [1, 0, 302],
             'converted image' => [1, 1, 200],

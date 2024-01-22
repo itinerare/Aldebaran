@@ -108,8 +108,17 @@ class DataGalleryProjectTest extends TestCase {
         ]);
     }
 
-    public function projectProvider() {
-        return $this->booleanSequences(3);
+    public static function projectProvider() {
+        return [
+            'hidden'                   => [0, 0, 0],
+            'visible'                  => [0, 0, 1],
+            'with desc, hidden'        => [0, 1, 0],
+            'with desc, visible'       => [0, 1, 1],
+            'with data, hidden'        => [1, 0, 0],
+            'with data, visible'       => [1, 0, 1],
+            'with data, desc, hidden'  => [1, 1, 0],
+            'with data, desc, visible' => [1, 1, 1],
+        ];
     }
 
     /**
@@ -147,7 +156,7 @@ class DataGalleryProjectTest extends TestCase {
         }
     }
 
-    public function projectDeleteProvider() {
+    public static function projectDeleteProvider() {
         return [
             'basic'      => [0, 1],
             'with piece' => [1, 0],

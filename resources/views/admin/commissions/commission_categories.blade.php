@@ -5,14 +5,14 @@
 @endsection
 
 @section('admin-content')
-    {!! breadcrumbs(['Admin Panel' => 'admin', 'Commission Categories' => 'admin/data/commission-categories']) !!}
+    {!! breadcrumbs(['Admin Panel' => 'admin', 'Commission Categories' => 'admin/data/commissions/categories']) !!}
 
     <h1>Commission Categories</h1>
 
     <p>This is a list of commission categories that will be used to sort commission types. Creating commission categories is
         required, as commission types must be assigned to a category.</p>
 
-    <div class="text-right mb-3"><a class="btn btn-primary" href="{{ url('admin/data/commission-categories/create') }}"><i class="fas fa-plus"></i> Create New Category</a></div>
+    <div class="text-right mb-3"><a class="btn btn-primary" href="{{ url('admin/data/commissions/categories/create') }}"><i class="fas fa-plus"></i> Create New Category</a></div>
     @if (!count($categories))
         <p>No commission categories found.</p>
     @else
@@ -35,7 +35,7 @@
                         <td>{{ $category->class->name }}</td>
                         <td>{!! $category->is_active ? '<i class="text-success fas fa-check"></i>' : '-' !!} </td>
                         <td class="text-right">
-                            <a href="{{ url('admin/data/commission-categories/edit/' . $category->id) }}" class="btn btn-primary">Edit</a>
+                            <a href="{{ url('admin/data/commissions/categories/edit/' . $category->id) }}" class="btn btn-primary">Edit</a>
                         </td>
                     </tr>
                 @endforeach
@@ -43,7 +43,7 @@
 
         </table>
         <div class="mb-4">
-            {!! Form::open(['url' => 'admin/data/commission-categories/sort']) !!}
+            {!! Form::open(['url' => 'admin/data/commissions/categories/sort']) !!}
             {!! Form::hidden('sort', '', ['id' => 'sortableOrder']) !!}
             {!! Form::submit('Save Order', ['class' => 'btn btn-primary']) !!}
             {!! Form::close() !!}

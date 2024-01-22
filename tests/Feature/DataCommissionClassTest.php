@@ -41,7 +41,7 @@ class DataCommissionClassTest extends TestCase {
      */
     public function testGetClassIndex() {
         $this->actingAs($this->user)
-            ->get('/admin/data/commission-classes')
+            ->get('/admin/data/commissions/classes')
             ->assertStatus(200);
     }
 
@@ -50,7 +50,7 @@ class DataCommissionClassTest extends TestCase {
      */
     public function testGetCreateClass() {
         $this->actingAs($this->user)
-            ->get('/admin/data/commission-classes/create')
+            ->get('/admin/data/commissions/classes/create')
             ->assertStatus(200);
     }
 
@@ -59,7 +59,7 @@ class DataCommissionClassTest extends TestCase {
      */
     public function testGetEditClass() {
         $this->actingAs($this->user)
-            ->get('/admin/data/commission-classes/edit/'.$this->class->id)
+            ->get('/admin/data/commissions/classes/edit/'.$this->class->id)
             ->assertStatus(200);
     }
 
@@ -73,7 +73,7 @@ class DataCommissionClassTest extends TestCase {
     public function testPostCreateClass($isActive) {
         $response = $this
             ->actingAs($this->user)
-            ->post('/admin/data/commission-classes/create', [
+            ->post('/admin/data/commissions/classes/create', [
                 'name'      => $this->name,
                 'is_active' => $isActive,
             ]);
@@ -100,7 +100,7 @@ class DataCommissionClassTest extends TestCase {
         }
     }
 
-    public function createClassProvider() {
+    public static function createClassProvider() {
         return [
             'active'   => [1],
             'inactive' => [0],
@@ -120,7 +120,7 @@ class DataCommissionClassTest extends TestCase {
     public function testPostEditClass($hasData, $hasPage, $fieldData, $isActive) {
         $response = $this
             ->actingAs($this->user)
-            ->post('/admin/data/commission-classes/edit/'.($hasData ? $this->dataClass->id : $this->class->id), [
+            ->post('/admin/data/commissions/classes/edit/'.($hasData ? $this->dataClass->id : $this->class->id), [
                 'name'          => $this->name,
                 'is_active'     => $isActive,
                 'page_id'       => $hasPage ? [0 => null] + ($hasData ? [1 => $this->page->id] : []) : null,
@@ -166,12 +166,12 @@ class DataCommissionClassTest extends TestCase {
         }
     }
 
-    public function editClassProvider() {
+    public static function editClassProvider() {
         return [
-            'basic'                 => [0, 0, null, 1],
-            'inactive'              => [0, 0, null, 0],
-            'with page'             => [0, 1, null, 1],
-            'additional page'       => [1, 1, null, 1],
+            'basic'           => [0, 0, null, 1],
+            'inactive'        => [0, 0, null, 0],
+            'with page'       => [0, 1, null, 1],
+            'additional page' => [1, 1, null, 1],
 
             // Field type tests
             // (string) type, (bool) rules, (bool) choices, value, (string) help
@@ -195,7 +195,7 @@ class DataCommissionClassTest extends TestCase {
      */
     public function testGetDeleteClass() {
         $this->actingAs($this->user)
-            ->get('/admin/data/commission-classes/delete/'.$this->class->id)
+            ->get('/admin/data/commissions/classes/delete/'.$this->class->id)
             ->assertStatus(200);
     }
 
@@ -217,7 +217,7 @@ class DataCommissionClassTest extends TestCase {
 
         $response = $this
             ->actingAs($this->user)
-            ->post('/admin/data/commission-classes/delete/'.$this->class->id);
+            ->post('/admin/data/commissions/classes/delete/'.$this->class->id);
 
         if ($expected) {
             $response->assertSessionHasNoErrors();
@@ -243,7 +243,7 @@ class DataCommissionClassTest extends TestCase {
         }
     }
 
-    public function classDeleteProvider() {
+    public static function classDeleteProvider() {
         return [
             'basic'         => [0, 1],
             'with category' => [1, 0],

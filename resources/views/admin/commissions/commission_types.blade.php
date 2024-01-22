@@ -5,14 +5,14 @@
 @endsection
 
 @section('admin-content')
-    {!! breadcrumbs(['Admin Panel' => 'admin', 'Commission Types' => 'admin/data/commission-types']) !!}
+    {!! breadcrumbs(['Admin Panel' => 'admin', 'Commission Types' => 'admin/data/commissions/types']) !!}
 
     <h1>Commission Types</h1>
 
     <p>This is a list of commission types that commissioners can request.</p>
 
     <div class="text-right mb-3">
-        <a class="btn btn-primary" href="{{ url('admin/data/commission-types/create') }}"><i class="fas fa-plus"></i> Create
+        <a class="btn btn-primary" href="{{ url('admin/data/commissions/types/create') }}"><i class="fas fa-plus"></i> Create
             New Type</a>
     </div>
 
@@ -57,7 +57,7 @@
                         <td>{!! $type->is_active ? '<i class="text-success fas fa-check"></i>' : '-' !!}/{!! $type->is_visible ? '<i class="text-success fas fa-check"></i>' : '-' !!}</td>
                         <td class="text-right">
                             <a href="{{ url('admin/commissions/new/' . $type->id) }}" class="btn btn-primary py-0 px-2" data-toggle="tooltip" title="Manually create a new commission of this type.">New</a>
-                            <a href="{{ url('admin/data/commission-types/edit/' . $type->id) }}" class="btn btn-primary py-0 px-2">Edit</a>
+                            <a href="{{ url('admin/data/commissions/types/edit/' . $type->id) }}" class="btn btn-primary py-0 px-2">Edit</a>
                         </td>
                     </tr>
                 @endforeach
@@ -65,7 +65,7 @@
 
         </table>
         <div class="mb-4">
-            {!! Form::open(['url' => 'admin/data/commission-types/sort']) !!}
+            {!! Form::open(['url' => 'admin/data/commissions/types/sort']) !!}
             {!! Form::hidden('sort', '', ['id' => 'sortableOrder']) !!}
             {!! Form::submit('Save Order', ['class' => 'btn btn-primary']) !!}
             {!! Form::close() !!}
