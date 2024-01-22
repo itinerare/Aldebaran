@@ -44,6 +44,8 @@ class DataGalleryPieceLiteratureTest extends TestCase {
     }
 
     protected function tearDown(): void {
+        parent::tearDown();
+
         if (File::exists($this->dataLiterature->imagePath.'/'.$this->dataLiterature->thumbnailFilename)) {
             // Remove test thumbnail file
             unlink($this->dataLiterature->imagePath.'/'.$this->dataLiterature->thumbnailFileName);
@@ -60,7 +62,7 @@ class DataGalleryPieceLiteratureTest extends TestCase {
      */
     public function testGetCreateLiterature($piece, $expected) {
         $this->actingAs($this->user)
-            ->get('/admin/data/pieces/literatures/create/'.($piece ? $this->piece->id : $this->piece->id+10))
+            ->get('/admin/data/pieces/literatures/create/'.($piece ? $this->piece->id : $this->piece->id + 10))
             ->assertStatus($expected);
     }
 
@@ -74,7 +76,7 @@ class DataGalleryPieceLiteratureTest extends TestCase {
      */
     public function testGetEditLiterature($literature, $expected) {
         $this->actingAs($this->user)
-            ->get('/admin/data/pieces/literatures/edit/'.($literature ? $this->literature->id : $this->literature->id+10))
+            ->get('/admin/data/pieces/literatures/edit/'.($literature ? $this->literature->id : $this->literature->id + 10))
             ->assertStatus($expected);
     }
 
@@ -252,7 +254,7 @@ class DataGalleryPieceLiteratureTest extends TestCase {
      */
     public function testGetDeleteLiterature($literature, $expected) {
         $this->actingAs($this->user)
-            ->get('/admin/data/pieces/literatures/delete/'.($literature ? $this->literature->id : $this->literature->id+10))
+            ->get('/admin/data/pieces/literatures/delete/'.($literature ? $this->literature->id : $this->literature->id + 10))
             ->assertStatus($expected);
     }
 
@@ -267,7 +269,7 @@ class DataGalleryPieceLiteratureTest extends TestCase {
     public function testPostDeleteLiterature($literature, $expected) {
         $response = $this
             ->actingAs($this->user)
-            ->post('/admin/data/pieces/literatures/delete/'.($literature ? $this->literature->id : $this->literature->id+10));
+            ->post('/admin/data/pieces/literatures/delete/'.($literature ? $this->literature->id : $this->literature->id + 10));
 
         if ($expected == 200) {
             $response->assertSessionHasNoErrors();

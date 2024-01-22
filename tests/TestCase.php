@@ -16,4 +16,8 @@ abstract class TestCase extends BaseTestCase {
         // as no user ID is ever recorded.
         $this->user = User::factory()->make();
     }
+
+    protected function tearDown(): void {
+        parent::tearDown();
+    }
 }
