@@ -60,8 +60,8 @@ Route::controller(MailingListController::class)->prefix('mailing-lists')->group(
 
 Route::controller(CommissionController::class)->prefix('commissions')->group(function () {
     Route::get('{class}', 'getInfo');
-    Route::get('{class}/tos', 'getVerify');
-    Route::get('class}/queue', 'getQueue');
+    Route::get('{class}/tos', 'getTos');
+    Route::get('{class}/queue', 'getQueue');
 
     Route::get('types/{key}', 'getType');
     Route::get('types/{key}/gallery', 'getTypeGallery');
