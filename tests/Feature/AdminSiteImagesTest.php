@@ -38,6 +38,9 @@ class AdminSiteImagesTest extends TestCase {
      * @param string $key
      */
     public function testPostUploadImage($key) {
+        // Copy default images to ensure that the directory exists
+        $this->artisan('app:copy-default-images');
+
         // Remove the current file if it exists
         if (File::exists(public_path('images/assets/'.$key.'.'.config('aldebaran.settings.image_formats.site_images', 'png')))) {
             unlink('public/images/assets/'.$key.'.'.config('aldebaran.settings.image_formats.site_images', 'png'));
