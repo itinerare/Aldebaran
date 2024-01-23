@@ -328,18 +328,6 @@ class GalleryService extends Service {
                 throw new \Exception('No valid piece found!');
             }
 
-            // Collect and encode watermark settings
-            $data['data'] = [
-                'scale'          => $data['watermark_scale'],
-                'opacity'        => $data['watermark_opacity'],
-                'position'       => $data['watermark_position'],
-                'color'          => $data['watermark_color'] ?? null,
-                'image_scale'    => $data['image_scale'] ?? null,
-                'watermarked'    => $data['watermark_image'] ?? 0,
-                'text_watermark' => $data['text_watermark'] ?? null,
-                'text_opacity'   => $data['text_opacity'] ?? null,
-            ];
-
             // Record data for the image
             $image = PieceImage::create([
                 'piece_id'          => $piece->id,
@@ -350,7 +338,7 @@ class GalleryService extends Service {
                 'alt_text'          => $data['alt_text'],
                 'is_primary_image'  => $data['is_primary_image'] ?? 0,
                 'is_visible'        => $data['is_visible'] ?? 0,
-                'data'              => $data['data'],
+                'data'              => [],
                 'display_extension' => config('aldebaran.settings.image_formats.display') && config('aldebaran.settings.image_formats.display') != config('aldebaran.settings.image_formats.full') ? config('aldebaran.settings.image_formats.display') : null,
             ]);
 
@@ -388,7 +376,7 @@ class GalleryService extends Service {
             }
 
             if (isset($data['image']) || $data['regenerate_watermark']) {
-                $this->processImage($data, $image, true, $data['regenerate_watermark']);
+                $this->processImage($data, $image, isset($data['image']), $data['regenerate_watermark']);
             }
 
             $image->update([
@@ -396,7 +384,6 @@ class GalleryService extends Service {
                 'is_primary_image' => $data['is_primary_image'] ?? 0,
                 'is_visible'       => $data['is_visible'] ?? 0,
                 'alt_text'         => $data['alt_text'],
-                'data'             => $data['data'] ?? $image->data,
             ]);
 
             return $this->commitReturn($image);
@@ -899,7 +886,7 @@ class GalleryService extends Service {
      * Processes program data.
      *
      * @param array                   $data
-     * @param \App\Models\piece\Piece $piece
+     * @param \App\Models\Piece\Piece $piece
      *
      * @return array
      */
@@ -934,56 +921,54 @@ class GalleryService extends Service {
      * @param bool       $reupload
      * @param mixed      $regen
      *
-     * @return array
+     * @return PieceImage
      */
     private function processImage($data, $image, $reupload = false, $regen = false) {
-        // If the image is a reupload, unlink the old image and regenerate the hashes
-        // as well as re-setting the extension.
-        if ($reupload) {
-            // Unlink images as necessary
-            if (file_exists($image->imagePath.'/'.$image->thumbnailFileName)) {
-                unlink($image->imagePath.'/'.$image->thumbnailFileName);
-            }
+        // Unlink display image if a reupload or watermark regen
+        if ($reupload || $regen) {
             if (file_exists($image->imagePath.'/'.$image->imageFileName)) {
                 unlink($image->imagePath.'/'.$image->imageFileName);
             }
-            if (!$regen && file_exists($image->imagePath.'/'.$image->fullsizeFileName)) {
+        }
+
+        // If the image is a reupload, unlink the old image and regenerate the hashes
+        // as well as re-setting the extension.
+        if ($reupload) {
+            // Unlink fullsize and thumbnail images
+            if (file_exists($image->imagePath.'/'.$image->fullsizeFileName)) {
                 unlink($image->imagePath.'/'.$image->fullsizeFileName);
+            }
+            if (file_exists($image->imagePath.'/'.$image->thumbnailFileName)) {
+                unlink($image->imagePath.'/'.$image->thumbnailFileName);
             }
 
             $image->update([
                 'hash'              => randomString(15),
-                'fullsize_hash'     => $regen ? $image->fullsize_hash : randomString(15),
-                'extension'         => $regen ? $image->extension : (config('aldebaran.settings.image_formats.full') ?? $data['image']->getClientOriginalExtension()),
+                'fullsize_hash'     => randomString(15),
+                'extension'         => config('aldebaran.settings.image_formats.full') ?? $data['image']->getClientOriginalExtension(),
                 'display_extension' => config('aldebaran.settings.image_formats.display') ?? null,
             ]);
+        } elseif ($regen) {
+            // Otherwise, just regenerate the display hash and move the thumbnail
+            $oldHash = $image->hash;
+            $image->update([
+                'hash' => randomString(15),
+            ]);
+
+            $this->handleImage(null, $image->imagePath, $image->thumbnailFileName, $image->id.'_'.$oldHash.'_th.'.($image->display_extension ?? $image->extension));
         }
 
-        // Save fullsize image before doing any processing
         if (!$regen) {
+            // Save fullsize image before doing any processing
             $this->handleImage($data['image'], $image->imagePath, $image->fullsizeFileName);
 
             if (config('aldebaran.settings.image_formats.full')) {
                 Image::make($image->imagePath.'/'.$image->fullsizeFileName)->save($image->imagePath.'/'.$image->fullsizeFileName, null, config('aldebaran.settings.image_formats.full'));
             }
-        }
 
-        // Process and save thumbnail from the fullsize image
-        $thumbnail = Image::make($image->imagePath.'/'.$image->fullsizeFileName);
-        // Resize and save thumbnail
-        if (config('aldebaran.settings.gallery_arrangement') == 'columns') {
-            $thumbnail->resize(config('aldebaran.settings.thumbnail_width'), null, function ($constraint) {
-                $constraint->aspectRatio();
-                $constraint->upsize();
-            });
-        } else {
-            $thumbnail->resize(null, config('aldebaran.settings.thumbnail_height'), function ($constraint) {
-                $constraint->aspectRatio();
-                $constraint->upsize();
-            });
+            // Process thumbnail
+            $this->processThumbnail($image, $data);
         }
-        $thumbnail->save($image->thumbnailPath.'/'.$image->thumbnailFileName, null, config('aldebaran.settings.image_formats.display') ?? $image->extension);
-        $thumbnail->destroy();
 
         // Process and save watermarked image
         $processImage = Image::make($image->imagePath.'/'.$image->fullsizeFileName);
@@ -1081,20 +1066,60 @@ class GalleryService extends Service {
 
         $processImage->save($image->imagePath.'/'.$image->imageFileName, null, config('aldebaran.settings.image_formats.display') ?? $image->extension);
 
-        if ($reupload) {
-            $data['data'] = [
-                'scale'          => $data['watermark_scale'],
-                'opacity'        => $data['watermark_opacity'],
-                'position'       => $data['watermark_position'],
-                'color'          => $data['watermark_color'] ?? null,
-                'image_scale'    => $data['image_scale'] ?? null,
-                'watermarked'    => $data['watermark_image'] ?? 0,
-                'text_watermark' => $data['text_watermark'] ?? null,
-                'text_opacity'   => $data['text_opacity'] ?? null,
-            ];
-            $image->update(['data' => $data['data']]);
-        }
+        // Collect and encode watermark settings
+        $data['data'] = [
+            'scale'          => $data['watermark_scale'],
+            'opacity'        => $data['watermark_opacity'],
+            'position'       => $data['watermark_position'],
+            'color'          => $data['watermark_color'] ?? null,
+            'image_scale'    => $data['image_scale'] ?? null,
+            'watermarked'    => $data['watermark_image'] ?? 0,
+            'text_watermark' => $data['text_watermark'] ?? null,
+            'text_opacity'   => $data['text_opacity'] ?? null,
+        ];
+        $image->update(['data' => $data['data']]);
 
         return $image;
+    }
+
+    /**
+     * Processes and saves piece image thumbnails.
+     *
+     * @param PieceImage $image
+     * @param array      $data
+     *
+     * @return bool
+     */
+    private function processThumbnail($image, $data) {
+        $thumbnail = Image::make($image->imagePath.'/'.$image->fullsizeFileName);
+
+        if ($data['use_cropper'] ?? 0) {
+            $cropWidth = $data['x1'] - $data['x0'];
+            $cropHeight = $data['y1'] - $data['y0'];
+
+            $thumbnail->crop($cropWidth, $cropHeight, $data['x0'], $data['y0']);
+
+            // Resize to fit the thumbnail size
+            $thumbnail->resize(config('aldebaran.settings.thumbnail_width'), config('aldebaran.settings.thumbnail_height'));
+        } else {
+            // Resize and save thumbnail
+            if (config('aldebaran.settings.gallery_arrangement') == 'columns') {
+                $thumbnail->resize(config('aldebaran.settings.thumbnail_width'), null, function ($constraint) {
+                    $constraint->aspectRatio();
+                    $constraint->upsize();
+                });
+            } else {
+                $thumbnail->resize(null, config('aldebaran.settings.thumbnail_height'), function ($constraint) {
+                    $constraint->aspectRatio();
+                    $constraint->upsize();
+                });
+            }
+        }
+
+        $thumbnail->save($image->thumbnailPath.'/'.$image->thumbnailFileName, null, config('aldebaran.settings.image_formats.display') ?? $image->extension);
+
+        $thumbnail->destroy();
+
+        return true;
     }
 }
