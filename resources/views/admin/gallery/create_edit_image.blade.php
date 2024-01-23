@@ -76,9 +76,7 @@
             'data-toggle' => 'toggle',
             'id' => 'useCropper',
         ]) !!}
-        {!! Form::label('use_cropper', 'Use Thumbnail Cropper', ['class' => 'form-check-label ml-3']) !!} {!! add_help(
-            'You can use the image cropper (thumbnail dimensions can be adjusted in the site\'s config files), or let the site generate a thumbnail automatically.',
-        ) !!}
+        {!! Form::label('use_cropper', 'Use Thumbnail Cropper', ['class' => 'form-check-label ml-3']) !!} {!! add_help('You can use the image cropper (thumbnail dimensions can be adjusted in the site\'s config files), or let the site generate a thumbnail automatically.') !!}
     </div>
     <div class="card mb-3 hide" id="thumbnailCrop">
         <div class="card-body">
