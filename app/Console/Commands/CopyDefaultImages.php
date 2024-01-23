@@ -37,14 +37,26 @@ class CopyDefaultImages extends Command {
         $this->info('* COPY DEFAULT IMAGES *');
         $this->info('***********************'."\n");
 
-        $images = config('aldebaran.image_files');
+        $outputDir = public_path().'/images/assets/';
 
-        $sourceDir = base_path().'/data/assets/';
-        $destDir = public_path().'/images/assets/';
+        if (!file_exists($outputDir)) {
+            // Create the directory.
+            if (!mkdir($outputDir, 0755, true)) {
+                $this->setError('error', 'Failed to create image directory.');
+
+                return false;
+            }
+            chmod($outputDir, 0755);
+        }
+
+        $images = config('aldebaran.image_files');
 
         foreach ($images as $image) {
             $this->line('Copying image: '.$image['filename']."\n");
-            copy($sourceDir.$image['filename'].'.'.config('aldebaran.settings.image_formats.site_images', 'png'), $destDir.$image['filename'].'.'.config('aldebaran.settings.image_formats.site_images', 'png'));
+            copy(
+                base_path().'/data/assets/'.$image['filename'].'.'.config('aldebaran.settings.image_formats.site_images', 'png'),
+                $outputDir.$image['filename'].'.'.config('aldebaran.settings.image_formats.site_images', 'png')
+            );
         }
         $this->line('Done!');
     }
