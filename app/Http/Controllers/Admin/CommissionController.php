@@ -15,11 +15,11 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Srmklive\PayPal\Services\PayPal as PayPalClient;
-use Stripe\Event;
+use Stripe\Event as StripeEvent;
 use Stripe\Exception\SignatureVerificationException;
 use Stripe\Stripe;
 use Stripe\StripeClient;
-use Stripe\Webhook;
+use Stripe\Webhook as StripeWebhook;
 use UnexpectedValueException;
 
 class CommissionController extends Controller {
@@ -261,7 +261,7 @@ class CommissionController extends Controller {
         $event = null;
 
         try {
-            $event = Event::constructFrom(json_decode($payload, true));
+            $event = StripeEvent::constructFrom(json_decode($payload, true));
         } catch (UnexpectedValueException $e) {
             // Invalid payload
             Log::error('Stripe webhook error while parsing basic request.');
@@ -274,7 +274,7 @@ class CommissionController extends Controller {
             // Otherwise use the basic decoded event
             $sigHeader = $_SERVER['HTTP_STRIPE_SIGNATURE'];
             try {
-                $event = Webhook::constructEvent(
+                $event = StripeWebhook::constructEvent(
                     $payload,
                     $sigHeader,
                     config('aldebaran.commissions.payment_processors.stripe.integration.webhook_secret')
