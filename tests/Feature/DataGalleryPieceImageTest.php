@@ -140,6 +140,7 @@ class DataGalleryPieceImageTest extends TestCase {
                 'watermark_color'    => null,
                 'text_watermark'     => null,
                 'text_opacity'       => '.'.mt_rand(1, 9).'0',
+                'use_cropper'        => 0,
             ]);
 
         $image = PieceImage::where('piece_id', $this->piece->id)->whereNotIn('id', [$this->image->id, $this->dataImage->id])->where('is_visible', $isVisible)->where('is_primary_image', $isPrimary)->first();

@@ -412,6 +412,7 @@ class GalleryController extends Controller {
         $id ? $request->validate(PieceImage::$updateRules) : $request->validate(PieceImage::$createRules);
         $data = $request->only([
             'image', 'description', 'is_primary_image', 'piece_id', 'alt_text', 'is_visible',
+            'x0', 'x1', 'y0', 'y1', 'use_cropper',
             'image_scale', 'watermark_scale', 'watermark_opacity', 'watermark_position', 'watermark_color',
             'regenerate_watermark', 'watermark_image', 'text_watermark', 'text_opacity',
         ]);
