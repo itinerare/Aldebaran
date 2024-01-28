@@ -6,6 +6,7 @@
 
 @section('admin-head-scripts')
     <script src="{{ asset('js/bootstrap-colorpicker.min.js') }}"></script>
+    <script src="{{ asset('js/croppie.min.js') }}"></script>
 @endsection
 
 @section('admin-content')
@@ -66,6 +67,25 @@
             {!! Form::file('image', ['id' => 'mainImage']) !!}
             <small>Images may be PNG, GIF, JPEG, or WebP and up to
                 {{ min(ini_get('upload_max_filesize'), ini_get('post_max_size'), '10') }}MB in size.</small>
+        </div>
+    </div>
+
+    <div id="cropperOptions" class="form-group hide">
+        {!! Form::checkbox('use_cropper', 1, 1, [
+            'class' => 'form-check-input',
+            'data-toggle' => 'toggle',
+            'id' => 'useCropper',
+        ]) !!}
+        {!! Form::label('use_cropper', 'Use Thumbnail Cropper', ['class' => 'form-check-label ml-3']) !!} {!! add_help('You can use the image cropper (thumbnail dimensions can be adjusted in the site\'s config files), or let the site generate a thumbnail automatically.') !!}
+    </div>
+    <div class="card mb-3 hide" id="thumbnailCrop">
+        <div class="card-body">
+            <div id="cropSelect">Select an image to use the thumbnail cropper.</div>
+            <img src="#" id="cropper" class="hide" />
+            {!! Form::hidden('x0', null, ['id' => 'cropX0']) !!}
+            {!! Form::hidden('x1', null, ['id' => 'cropX1']) !!}
+            {!! Form::hidden('y0', null, ['id' => 'cropY0']) !!}
+            {!! Form::hidden('y1', null, ['id' => 'cropY1']) !!}
         </div>
     </div>
 
@@ -188,7 +208,7 @@
 
     <div class="row">
         @if ($image->id)
-            <div class="col-md form-group">
+            <div id="regenWatermark" class="col-md form-group">
                 {!! Form::checkbox('regenerate_watermark', 1, 0, ['class' => 'form-check-input', 'data-toggle' => 'toggle']) !!}
                 {!! Form::label('regenerate_watermark', 'Regenerate Watermarked Image', ['class' => 'form-check-label ml-3']) !!}
             </div>
@@ -252,24 +272,90 @@
                 loadModal("{{ url('admin/data/pieces/images/delete') }}/{{ $image->id }}",
                     'Delete Image');
             });
-            0.
-        });
 
-        var $image = $('#image');
+            var $image = $('#image');
+            var $cropper = $('#cropper');
 
-        function readURL(input) {
-            if (input.files && input.files[0]) {
-                var reader = new FileReader();
-                reader.onload = function(e) {
-                    $image.attr('src', e.target.result);
-                    $('#existingImage').addClass('hide');
-                    $('#imageContainer').removeClass('hide');
+            // Cropper ////////////////////////////////////////////////////////////////////////////////////
+
+            var $useCropper = $('#useCropper');
+            var $thumbnailCrop = $('#thumbnailCrop');
+
+            var useCropper = $useCropper.is(':checked');
+
+            $useCropper.on('change', function(e) {
+                useCropper = $useCropper.is(':checked');
+
+                updateCropper();
+            });
+
+            function updateCropper() {
+                if (useCropper) {
+                    $thumbnailCrop.removeClass('hide');
+                } else {
+                    $thumbnailCrop.addClass('hide');
                 }
-                reader.readAsDataURL(input.files[0]);
             }
-        }
-        $("#mainImage").change(function() {
-            readURL(this);
+
+            // Croppie ////////////////////////////////////////////////////////////////////////////////////
+
+            var thumbnailWidth = {{ config('aldebaran.settings.thumbnail_width') }};
+            var thumbnailHeight = {{ config('aldebaran.settings.thumbnail_height') }};
+            var c = null;
+            var $x0 = $('#cropX0');
+            var $y0 = $('#cropY0');
+            var $x1 = $('#cropX1');
+            var $y1 = $('#cropY1');
+            var zoom = 0;
+
+            function readURL(input) {
+                console.log('Reading image URL...');
+                if (input.files && input.files[0]) {
+                    var reader = new FileReader();
+                    reader.onload = function(e) {
+                        // Update image preview
+                        $image.attr('src', e.target.result);
+                        $('#existingImage').addClass('hide');
+                        $('#imageContainer').removeClass('hide');
+
+                        $cropper.attr('src', e.target.result);
+                        c = new Croppie($cropper[0], {
+                            viewport: {
+                                width: thumbnailWidth,
+                                height: thumbnailHeight
+                            },
+                            boundary: {
+                                width: thumbnailWidth + 100,
+                                height: thumbnailHeight + 100
+                            },
+                            update: function() {
+                                updateCropValues();
+                            }
+                        });
+                        updateCropValues();
+                        $('#cropSelect').addClass('hide');
+                        $cropper.removeClass('hide');
+                    }
+                    reader.readAsDataURL(input.files[0]);
+                }
+            }
+
+            $("#mainImage").change(function() {
+                $('#regenWatermark').addClass('hide');
+                $('#cropperOptions').removeClass('hide');
+                $thumbnailCrop.removeClass('hide');
+                readURL(this);
+            });
+
+            function updateCropValues() {
+                var values = c.get();
+                console.log(values);
+                //console.log([$x0.val(),$x1.val(),$y0.val(),$y1.val()]);
+                $x0.val(values.points[0]);
+                $y0.val(values.points[1]);
+                $x1.val(values.points[2]);
+                $y1.val(values.points[3]);
+            }
         });
 
         $('.original.gallery-select').selectize();

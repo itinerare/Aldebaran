@@ -23,7 +23,7 @@ class PieceProgramFactory extends Factory {
      *
      * @param int $id
      *
-     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     * @return Factory
      */
     public function piece($id) {
         return $this->state(function (array $attributes) use ($id) {
@@ -38,7 +38,7 @@ class PieceProgramFactory extends Factory {
      *
      * @param int $id
      *
-     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     * @return Factory
      */
     public function program($id) {
         return $this->state(function (array $attributes) use ($id) {

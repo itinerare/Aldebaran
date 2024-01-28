@@ -60,7 +60,7 @@ class ChangelogViewTest extends TestCase {
         }
     }
 
-    public function changelogProvider() {
+    public static function changelogProvider() {
         return [
             'visitor'                               => [0, [0, 0, 0], 200],
             'user'                                  => [1, [0, 0, 0], 200],

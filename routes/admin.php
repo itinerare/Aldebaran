@@ -1,5 +1,13 @@
 <?php
 
+use App\Http\Controllers\Admin\AccountController;
+use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\ChangelogController;
+use App\Http\Controllers\Admin\CommissionController;
+use App\Http\Controllers\Admin\Data\CommissionController as CommissionDataController;
+use App\Http\Controllers\Admin\Data\GalleryController;
+use App\Http\Controllers\Admin\MailingListController;
+use App\Http\Controllers\Admin\PageController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -7,188 +15,219 @@ use Illuminate\Support\Facades\Route;
 | Admin Routes
 |--------------------------------------------------------------------------
 |
-| Behind-the-scenes routes.
+| Routes requiring authentication; as this is a one-user application,
+| user and admin functions are functionally one and the same.
 |
 */
 
-Route::get('/', 'AdminController@getIndex');
+Route::controller(AdminController::class)->group(function () {
+    Route::get('/', 'getIndex');
 
-// QUEUES
-Route::group(['prefix' => 'commissions'], function () {
-    Route::get('{class}', 'CommissionController@getCommissionIndex');
-    Route::get('{class}/{status}', 'CommissionController@getCommissionIndex')->where('status', 'pending|accepted|complete|declined');
-    Route::get('edit/{id}', 'CommissionController@getCommission');
-    Route::post('edit/{id}', 'CommissionController@postCommission');
-    Route::post('edit/{id}/{action}', 'CommissionController@postCommission')->where('action', 'accept|update|complete|decline|ban');
+    // SITE SETTINGS/IMAGES
+    Route::prefix('site-settings')->group(function () {
+        Route::get('/', 'getSettings');
+        Route::post('{key}', 'postEditSetting');
+    });
 
-    Route::get('invoice/{id}', 'CommissionController@getSendInvoice');
-    Route::post('invoice/{id}', 'CommissionController@postSendInvoice');
-
-    Route::get('new/{id}', 'CommissionController@getNewCommission');
-    Route::post('new', 'CommissionController@postNewCommission');
-
-    Route::get('quotes/{class}', 'CommissionController@getQuoteIndex');
-    Route::get('quotes/{class}/{status}', 'CommissionController@getQuoteIndex')->where('status', 'pending|accepted|complete|declined');
-    Route::get('quotes/{class}/new', 'CommissionController@getNewQuote');
-    Route::get('quotes/edit/{id}', 'CommissionController@getQuote');
-    Route::post('quotes/new', 'CommissionController@postNewQuote');
-    Route::post('quotes/edit/{id}', 'CommissionController@postQuote');
-    Route::post('quotes/edit/{id}/{action}', 'CommissionController@postQuote')->where('action', 'accept|update|complete|decline|ban');
+    Route::prefix('site-images')->group(function () {
+        Route::get('/', 'getSiteImages');
+        Route::post('upload', 'postUploadImage');
+        Route::post('upload/css', 'postUploadCss');
+    });
 });
 
-Route::get('ledger', 'CommissionController@getLedger');
+// COMMISSION QUEUES
+Route::controller(CommissionController::class)->group(function () {
+    Route::get('ledger', 'getLedger');
+
+    Route::prefix('commissions')->group(function () {
+        Route::get('{class}', 'getCommissionIndex');
+        Route::get('{class}/{status}', 'getCommissionIndex')
+            ->where('status', 'pending|accepted|complete|declined');
+        Route::get('edit/{id}', 'getCommission');
+        Route::post('edit/{id}', 'postCommission');
+        Route::post('edit/{id}/{action}', 'postCommission')
+            ->where('action', 'accept|update|complete|decline|ban');
+
+        Route::get('invoice/{id}', 'getSendInvoice');
+        Route::post('invoice/{id}', 'postSendInvoice');
+
+        Route::get('new/{id}', 'getNewCommission');
+        Route::post('new', 'postNewCommission');
+
+        // QUOTES
+        Route::prefix('quotes')->group(function () {
+            Route::get('{class}', 'getQuoteIndex');
+            Route::get('{class}/{status}', 'getQuoteIndex')
+                ->where('status', 'pending|accepted|complete|declined');
+            Route::get('{class}/new', 'getNewQuote');
+            Route::get('edit/{id}', 'getQuote');
+            Route::post('new', 'postNewQuote');
+            Route::post('edit/{id}', 'postQuote');
+            Route::post('edit/{id}/{action}', 'postQuote')
+                ->where('action', 'accept|update|complete|decline|ban');
+        });
+    });
+});
 
 // DATA
-Route::group(['prefix' => 'data', 'namespace' => 'Data'], function () {
-    // PROJECTS
-    Route::get('projects', 'GalleryController@getProjectIndex');
-    Route::get('projects/create', 'GalleryController@getCreateProject');
-    Route::get('projects/edit/{id}', 'GalleryController@getEditProject');
-    Route::get('projects/delete/{id}', 'GalleryController@getDeleteProject');
-    Route::post('projects/create', 'GalleryController@postCreateEditProject');
-    Route::post('projects/edit/{id?}', 'GalleryController@postCreateEditProject');
-    Route::post('projects/delete/{id}', 'GalleryController@postDeleteProject');
-    Route::post('projects/sort', 'GalleryController@postSortProject');
+Route::prefix('data')->group(function () {
+    // GALLERY DATA
+    Route::controller(GalleryController::class)->group(function () {
+        Route::prefix('projects')->group(function () {
+            Route::get('/', 'getProjectIndex');
+            Route::get('create', 'getCreateProject');
+            Route::get('edit/{id}', 'getEditProject');
+            Route::get('delete/{id}', 'getDeleteProject');
+            Route::post('create', 'postCreateEditProject');
+            Route::post('edit/{id?}', 'postCreateEditProject');
+            Route::post('delete/{id}', 'postDeleteProject');
+            Route::post('sort', 'postSortProject');
+        });
 
-    // PIECES
-    Route::get('pieces', 'GalleryController@getPieceIndex');
-    Route::get('pieces/create', 'GalleryController@getCreatePiece');
-    Route::get('pieces/edit/{id}', 'GalleryController@getEditPiece');
-    Route::get('pieces/delete/{id}', 'GalleryController@getDeletePiece');
-    Route::post('pieces/create', 'GalleryController@postCreateEditPiece');
-    Route::post('pieces/edit/{id?}', 'GalleryController@postCreateEditPiece');
-    Route::post('pieces/delete/{id}', 'GalleryController@postDeletePiece');
+        Route::prefix('pieces')->group(function () {
+            Route::get('/', 'getPieceIndex');
+            Route::get('create', 'getCreatePiece');
+            Route::get('edit/{id}', 'getEditPiece');
+            Route::get('delete/{id}', 'getDeletePiece');
+            Route::post('create', 'postCreateEditPiece');
+            Route::post('edit/{id?}', 'postCreateEditPiece');
+            Route::post('delete/{id}', 'postDeletePiece');
 
-    Route::get('pieces/images/create/{id}', 'GalleryController@getCreateImage');
-    Route::post('pieces/images/create', 'GalleryController@postCreateEditImage');
-    Route::get('pieces/images/edit/{id}', 'GalleryController@getEditImage');
-    Route::post('pieces/images/edit/{id}', 'GalleryController@postCreateEditImage');
-    Route::get('pieces/images/delete/{id}', 'GalleryController@getDeleteImage');
-    Route::post('pieces/images/delete/{id}', 'GalleryController@postDeleteImage');
-    Route::get('pieces/images/view/{id}/{type}', 'GalleryController@getImageFile');
+            Route::post('{id}/sort-images', 'postSortPieceImages');
+            Route::post('{id}/sort-literatures', 'postSortPieceLiteratures');
 
-    Route::post('pieces/{id}/sort-images', 'GalleryController@postSortPieceImages');
+            Route::prefix('images')->group(function () {
+                Route::get('create/{id}', 'getCreateImage');
+                Route::post('create', 'postCreateEditImage');
+                Route::get('edit/{id}', 'getEditImage');
+                Route::post('edit/{id}', 'postCreateEditImage');
+                Route::get('delete/{id}', 'getDeleteImage');
+                Route::post('delete/{id}', 'postDeleteImage');
+                Route::get('view/{id}/{type}', 'getImageFile');
+            });
 
-    Route::get('pieces/literatures/create/{id}', 'GalleryController@getCreateLiterature');
-    Route::post('pieces/literatures/create', 'GalleryController@postCreateEditLiterature');
-    Route::get('pieces/literatures/edit/{id}', 'GalleryController@getEditLiterature');
-    Route::post('pieces/literatures/edit/{id}', 'GalleryController@postCreateEditLiterature');
-    Route::get('pieces/literatures/delete/{id}', 'GalleryController@getDeleteLiterature');
-    Route::post('pieces/literatures/delete/{id}', 'GalleryController@postDeleteLiterature');
+            Route::prefix('literatures')->group(function () {
+                Route::get('create/{id}', 'getCreateLiterature');
+                Route::post('create', 'postCreateEditLiterature');
+                Route::get('edit/{id}', 'getEditLiterature');
+                Route::post('edit/{id}', 'postCreateEditLiterature');
+                Route::get('delete/{id}', 'getDeleteLiterature');
+                Route::post('delete/{id}', 'postDeleteLiterature');
+            });
+        });
 
-    Route::post('pieces/{id}/sort-literatures', 'GalleryController@postSortPieceLiteratures');
+        Route::prefix('tags')->group(function () {
+            Route::get('/', 'getTagIndex');
+            Route::get('create', 'getCreateTag');
+            Route::get('edit/{id}', 'getEditTag');
+            Route::get('delete/{id}', 'getDeleteTag');
+            Route::post('create', 'postCreateEditTag');
+            Route::post('edit/{id?}', 'postCreateEditTag');
+            Route::post('delete/{id}', 'postDeleteTag');
+        });
 
-    // TAGS
-    Route::get('tags', 'GalleryController@getTagIndex');
-    Route::get('tags/create', 'GalleryController@getCreateTag');
-    Route::get('tags/edit/{id}', 'GalleryController@getEditTag');
-    Route::get('tags/delete/{id}', 'GalleryController@getDeleteTag');
-    Route::post('tags/create', 'GalleryController@postCreateEditTag');
-    Route::post('tags/edit/{id?}', 'GalleryController@postCreateEditTag');
-    Route::post('tags/delete/{id}', 'GalleryController@postDeleteTag');
+        Route::prefix('programs')->group(function () {
+            Route::get('/', 'getProgramIndex');
+            Route::get('create', 'getCreateProgram');
+            Route::get('edit/{id}', 'getEditProgram');
+            Route::get('delete/{id}', 'getDeleteProgram');
+            Route::post('create', 'postCreateEditProgram');
+            Route::post('edit/{id?}', 'postCreateEditProgram');
+            Route::post('delete/{id}', 'postDeleteProgram');
+        });
+    });
 
-    // PROGRAMS
-    Route::get('programs', 'GalleryController@getProgramIndex');
-    Route::get('programs/create', 'GalleryController@getCreateProgram');
-    Route::get('programs/edit/{id}', 'GalleryController@getEditProgram');
-    Route::get('programs/delete/{id}', 'GalleryController@getDeleteProgram');
-    Route::post('programs/create', 'GalleryController@postCreateEditProgram');
-    Route::post('programs/edit/{id?}', 'GalleryController@postCreateEditProgram');
-    Route::post('programs/delete/{id}', 'GalleryController@postDeleteProgram');
+    // COMMISSIONS DATA
+    Route::controller(CommissionDataController::class)->prefix('commissions')->group(function () {
+        Route::prefix('classes')->group(function () {
+            Route::get('/', 'getCommissionClassIndex');
+            Route::get('create', 'getCreateCommissionClass');
+            Route::get('edit/{id}', 'getEditCommissionClass');
+            Route::get('delete/{id}', 'getDeleteCommissionClass');
+            Route::post('create', 'postCreateEditCommissionClass');
+            Route::post('edit/{id?}', 'postCreateEditCommissionClass');
+            Route::post('delete/{id}', 'postDeleteCommissionClass');
+            Route::post('sort', 'postSortCommissionClass');
+        });
 
-    // COMMISSION CLASSES
-    Route::get('commission-classes', 'CommissionController@getCommissionClassIndex');
-    Route::get('commission-classes/create', 'CommissionController@getCreateCommissionClass');
-    Route::get('commission-classes/edit/{id}', 'CommissionController@getEditCommissionClass');
-    Route::get('commission-classes/delete/{id}', 'CommissionController@getDeleteCommissionClass');
-    Route::post('commission-classes/create', 'CommissionController@postCreateEditCommissionClass');
-    Route::post('commission-classes/edit/{id?}', 'CommissionController@postCreateEditCommissionClass');
-    Route::post('commission-classes/delete/{id}', 'CommissionController@postDeleteCommissionClass');
-    Route::post('commission-classes/sort', 'CommissionController@postSortCommissionClass');
+        Route::prefix('categories')->group(function () {
+            Route::get('/', 'getIndex');
+            Route::get('create', 'getCreateCommissionCategory');
+            Route::get('edit/{id}', 'getEditCommissionCategory');
+            Route::get('delete/{id}', 'getDeleteCommissionCategory');
+            Route::post('create', 'postCreateEditCommissionCategory');
+            Route::post('edit/{id?}', 'postCreateEditCommissionCategory');
+            Route::post('delete/{id}', 'postDeleteCommissionCategory');
+            Route::post('sort', 'postSortCommissionCategory');
+        });
 
-    // COMMISSION CATEGORIES
-    Route::get('commission-categories', 'CommissionController@getIndex');
-    Route::get('commission-categories/create', 'CommissionController@getCreateCommissionCategory');
-    Route::get('commission-categories/edit/{id}', 'CommissionController@getEditCommissionCategory');
-    Route::get('commission-categories/delete/{id}', 'CommissionController@getDeleteCommissionCategory');
-    Route::post('commission-categories/create', 'CommissionController@postCreateEditCommissionCategory');
-    Route::post('commission-categories/edit/{id?}', 'CommissionController@postCreateEditCommissionCategory');
-    Route::post('commission-categories/delete/{id}', 'CommissionController@postDeleteCommissionCategory');
-    Route::post('commission-categories/sort', 'CommissionController@postSortCommissionCategory');
-
-    // COMMISSION TYPES
-    Route::get('commission-types', 'CommissionController@getCommissionTypeIndex');
-    Route::get('commission-types/create', 'CommissionController@getCreateCommissionType');
-    Route::get('commission-types/edit/{id}', 'CommissionController@getEditCommissionType');
-    Route::get('commission-types/delete/{id}', 'CommissionController@getDeleteCommissionType');
-    Route::post('commission-types/create', 'CommissionController@postCreateEditCommissionType');
-    Route::post('commission-types/edit/{id?}', 'CommissionController@postCreateEditCommissionType');
-    Route::post('commission-types/delete/{id}', 'CommissionController@postDeleteCommissionType');
-    Route::post('commission-types/sort', 'CommissionController@postSortCommissionType');
+        Route::prefix('types')->group(function () {
+            Route::get('/', 'getCommissionTypeIndex');
+            Route::get('create', 'getCreateCommissionType');
+            Route::get('edit/{id}', 'getEditCommissionType');
+            Route::get('delete/{id}', 'getDeleteCommissionType');
+            Route::post('create', 'postCreateEditCommissionType');
+            Route::post('edit/{id?}', 'postCreateEditCommissionType');
+            Route::post('delete/{id}', 'postDeleteCommissionType');
+            Route::post('sort', 'postSortCommissionType');
+        });
+    });
 });
 
 // MAILING LISTS
-Route::group(['prefix' => 'mailing-lists'], function () {
-    Route::get('/', 'MailingListController@getMailingListIndex');
-    Route::get('create', 'MailingListController@getCreateMailingList');
-    Route::get('edit/{id}', 'MailingListController@getEditMailingList');
-    Route::get('delete/{id}', 'MailingListController@getDeleteMailingList');
-    Route::post('create', 'MailingListController@postCreateEditMailingList');
-    Route::post('edit/{id?}', 'MailingListController@postCreateEditMailingList');
-    Route::post('delete/{id}', 'MailingListController@postDeleteMailingList');
+Route::controller(MailingListController::class)->prefix('mailing-lists')->group(function () {
+    Route::get('/', 'getMailingListIndex');
+    Route::get('create', 'getCreateMailingList');
+    Route::get('edit/{id}', 'getEditMailingList');
+    Route::get('delete/{id}', 'getDeleteMailingList');
+    Route::post('create', 'postCreateEditMailingList');
+    Route::post('edit/{id?}', 'postCreateEditMailingList');
+    Route::post('delete/{id}', 'postDeleteMailingList');
 
-    Route::get('entries/create/{id}', 'MailingListController@getCreateEntry');
-    Route::post('entries/create', 'MailingListController@postCreateEditEntry');
-    Route::get('entries/edit/{id}', 'MailingListController@getEditEntry');
-    Route::post('entries/edit/{id}', 'MailingListController@postCreateEditEntry');
-    Route::get('entries/delete/{id}', 'MailingListController@getDeleteEntry');
-    Route::post('entries/delete/{id}', 'MailingListController@postDeleteEntry');
+    Route::prefix('entries')->group(function () {
+        Route::get('create/{id}', 'getCreateEntry');
+        Route::post('create', 'postCreateEditEntry');
+        Route::get('edit/{id}', 'getEditEntry');
+        Route::post('edit/{id}', 'postCreateEditEntry');
+        Route::get('delete/{id}', 'getDeleteEntry');
+        Route::post('delete/{id}', 'postDeleteEntry');
+    });
 
-    Route::get('subscriber/{id}/kick', 'MailingListController@getKickSubscriber');
-    Route::get('subscriber/{id}/ban', 'MailingListController@getBanSubscriber');
-    Route::post('subscriber/{id}/kick', 'MailingListController@postKickSubscriber');
-    Route::post('subscriber/{id}/ban', 'MailingListController@postBanSubscriber');
+    Route::prefix('subscriber')->group(function () {
+        Route::get('{id}/kick', 'getKickSubscriber');
+        Route::get('{id}/ban', 'getBanSubscriber');
+        Route::post('{id}/kick', 'postKickSubscriber');
+        Route::post('{id}/ban', 'postBanSubscriber');
+    });
 });
 
-// TEXT PAGES
-Route::group(['prefix' => 'pages'], function () {
-    Route::get('/', 'PageController@getPagesIndex');
-    Route::get('edit/{id}', 'PageController@getEditPage');
-    Route::post('edit/{id?}', 'PageController@postEditPage');
+// MAINTENANCE, ETC.
+Route::controller(PageController::class)->prefix('pages')->group(function () {
+    Route::get('/', 'getPagesIndex');
+    Route::get('edit/{id}', 'getEditPage');
+    Route::post('edit/{id?}', 'postEditPage');
 });
 
-// CHANGELOG
-Route::group(['prefix' => 'changelog'], function () {
-    Route::get('/', 'ChangelogController@getChangelogIndex');
-    Route::get('create', 'ChangelogController@getCreateLog');
-    Route::get('edit/{id}', 'ChangelogController@getEditLog');
-    Route::get('delete/{id}', 'ChangelogController@getDeleteLog');
-    Route::post('create', 'ChangelogController@postCreateEditLog');
-    Route::post('edit/{id?}', 'ChangelogController@postCreateEditLog');
-    Route::post('delete/{id}', 'ChangelogController@postDeleteLog');
+Route::controller(ChangelogController::class)->prefix('changelog')->group(function () {
+    Route::get('/', 'getChangelogIndex');
+    Route::get('create', 'getCreateLog');
+    Route::get('edit/{id}', 'getEditLog');
+    Route::get('delete/{id}', 'getDeleteLog');
+    Route::post('create', 'postCreateEditLog');
+    Route::post('edit/{id?}', 'postCreateEditLog');
+    Route::post('delete/{id}', 'postDeleteLog');
 });
 
-// SITE SETTINGS
-Route::get('site-settings', 'AdminController@getSettings');
-Route::post('site-settings/{key}', 'AdminController@postEditSetting');
+Route::controller(AccountController::class)->prefix('account-settings')->group(function () {
+    Route::get('/', 'getAccountSettings');
+    Route::post('email', 'postEmail');
+    Route::post('password', 'postPassword');
 
-// SITE IMAGES
-Route::group(['prefix' => 'site-images'], function () {
-    Route::get('/', 'AdminController@getSiteImages');
-    Route::post('upload', 'AdminController@postUploadImage');
-    Route::post('upload/css', 'AdminController@postUploadCss');
-});
-
-// ACCOUNT SETTINGS
-Route::group(['prefix' => 'account-settings'], function () {
-    Route::get('/', 'AccountController@getAccountSettings');
-    Route::post('email', 'AccountController@postEmail');
-    Route::post('password', 'AccountController@postPassword');
-
-    Route::group(['prefix' => 'two-factor'], function () {
-        Route::post('enable', 'AccountController@postEnableTwoFactor');
-        Route::get('confirm', 'AccountController@getConfirmTwoFactor');
-        Route::post('confirm', 'AccountController@postConfirmTwoFactor');
-        Route::post('disable', 'AccountController@postDisableTwoFactor');
+    Route::prefix('two-factor')->group(function () {
+        Route::post('enable', 'postEnableTwoFactor');
+        Route::get('confirm', 'getConfirmTwoFactor');
+        Route::post('confirm', 'postConfirmTwoFactor');
+        Route::post('disable', 'postDisableTwoFactor');
     });
 });

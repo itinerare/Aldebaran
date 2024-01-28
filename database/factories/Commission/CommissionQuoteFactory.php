@@ -53,7 +53,7 @@ class CommissionQuoteFactory extends Factory {
      *
      * @param int $id
      *
-     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     * @return Factory
      */
     public function type($id) {
         return $this->state(function (array $attributes) use ($id) {
@@ -68,7 +68,7 @@ class CommissionQuoteFactory extends Factory {
      *
      * @param string $status
      *
-     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     * @return Factory
      */
     public function status($status) {
         return $this->state(function (array $attributes) use ($status) {

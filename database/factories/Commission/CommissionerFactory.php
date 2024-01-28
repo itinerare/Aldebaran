@@ -23,7 +23,7 @@ class CommissionerFactory extends Factory {
     /**
      * Generate a banned commissioner.
      *
-     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     * @return Factory
      */
     public function banned() {
         return $this->state(function (array $attributes) {

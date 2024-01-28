@@ -44,6 +44,8 @@ class DataGalleryPieceLiteratureTest extends TestCase {
     }
 
     protected function tearDown(): void {
+        parent::tearDown();
+
         if (File::exists($this->dataLiterature->imagePath.'/'.$this->dataLiterature->thumbnailFilename)) {
             // Remove test thumbnail file
             unlink($this->dataLiterature->imagePath.'/'.$this->dataLiterature->thumbnailFileName);
@@ -60,7 +62,7 @@ class DataGalleryPieceLiteratureTest extends TestCase {
      */
     public function testGetCreateLiterature($piece, $expected) {
         $this->actingAs($this->user)
-            ->get('/admin/data/pieces/literatures/create/'.($piece ? $this->piece->id : mt_rand(5, 10)))
+            ->get('/admin/data/pieces/literatures/create/'.($piece ? $this->piece->id : $this->piece->id + 10))
             ->assertStatus($expected);
     }
 
@@ -74,11 +76,11 @@ class DataGalleryPieceLiteratureTest extends TestCase {
      */
     public function testGetEditLiterature($literature, $expected) {
         $this->actingAs($this->user)
-            ->get('/admin/data/pieces/literatures/edit/'.($literature ? $this->literature->id : mt_rand(5, 10)))
+            ->get('/admin/data/pieces/literatures/edit/'.($literature ? $this->literature->id : $this->literature->id + 10))
             ->assertStatus($expected);
     }
 
-    public function literatureCreateEditViewProvider() {
+    public static function literatureCreateEditViewProvider() {
         return [
             'valid'   => [1, 200],
             'invalid' => [0, 404],
@@ -98,11 +100,11 @@ class DataGalleryPieceLiteratureTest extends TestCase {
         $response = $this
             ->actingAs($this->user)
             ->post('/admin/data/pieces/literatures/create', [
-                'piece_id'    => $this->piece->id,
-                'image'       => $withImage ? $this->file : null,
-                'text'        => $this->text,
-                'is_visible'  => $isVisible,
-                'is_primary'  => $isPrimary,
+                'piece_id'   => $this->piece->id,
+                'image'      => $withImage ? $this->file : null,
+                'text'       => $this->text,
+                'is_visible' => $isVisible,
+                'is_primary' => $isPrimary,
             ]);
 
         $literature = PieceLiterature::where('piece_id', $this->piece->id)->whereNotIn('id', [$this->literature->id, $this->dataLiterature->id])->where('is_visible', $isVisible)->where('is_primary', $isPrimary)->first();
@@ -131,9 +133,17 @@ class DataGalleryPieceLiteratureTest extends TestCase {
         }
     }
 
-    public function literatureCreateProvider() {
-        // Get all possible sequences
-        return $this->booleanSequences(3);
+    public static function literatureCreateProvider() {
+        return [
+            'hidden'                       => [0, 0, 0],
+            'primary, hidden'              => [0, 0, 1],
+            'visible'                      => [0, 1, 0],
+            'primary, visible'             => [0, 1, 1],
+            'with image, hidden'           => [1, 0, 0],
+            'with image, primary, hidden'  => [1, 0, 1],
+            'with image, visible'          => [1, 1, 0],
+            'with image, primary, visible' => [1, 1, 1],
+        ];
     }
 
     /**
@@ -197,9 +207,41 @@ class DataGalleryPieceLiteratureTest extends TestCase {
         }
     }
 
-    public function literatureEditProvider() {
-        // Get all possible sequences
-        return $this->booleanSequences(5);
+    public static function literatureEditProvider() {
+        return [
+            'hidden'                                    => [0, 0, 0, 0, 0],
+            'primary, hidden'                           => [0, 0, 0, 0, 1],
+            'visible'                                   => [0, 0, 0, 1, 0],
+            'primary, visible'                          => [0, 0, 0, 1, 1],
+            'remove image, hidden'                      => [0, 0, 1, 0, 0],
+            'remove image, primary, hidden'             => [0, 0, 1, 0, 1],
+            'remove image, visible'                     => [0, 0, 1, 1, 0],
+            'remove image, primary, visible'            => [0, 0, 1, 1, 1],
+            'with image, hidden'                        => [0, 1, 0, 0, 0],
+            'with image, primary, hidden'               => [0, 1, 0, 0, 1],
+            'with image, visible'                       => [0, 1, 0, 1, 0],
+            'with image, primary, visible'              => [0, 1, 0, 1, 1],
+            'with+remove image, hidden'                 => [0, 1, 1, 0, 0],
+            'with+remove image, primary, hidden'        => [0, 1, 1, 0, 1],
+            'with+remove image, visible'                => [0, 1, 1, 1, 0],
+            'with+remove image, primary, visible'       => [0, 1, 1, 1, 1],
+            'with data, hidden'                         => [1, 0, 0, 0, 0],
+            'with data, primary, hidden'                => [1, 0, 0, 0, 1],
+            'with data, visible'                        => [1, 0, 0, 1, 0],
+            'with data, primary, visible'               => [1, 0, 0, 1, 1],
+            'with data, remove image, hidden'           => [1, 0, 1, 0, 0],
+            'with data, remove image, primary, hidden'  => [1, 0, 1, 0, 1],
+            'with data, remove image, visible'          => [1, 0, 1, 1, 0],
+            'with data, remove image, primary, visible' => [1, 0, 1, 1, 1],
+            'with data, image, hidden'                  => [1, 1, 0, 0, 0],
+            'with data, image, primary, hidden'         => [1, 1, 0, 0, 1],
+            'with data, image, visible'                 => [1, 1, 0, 1, 0],
+            'with data, image, primary, visible'        => [1, 1, 0, 1, 1],
+            'with data, image+remove, hidden'           => [1, 1, 1, 0, 0],
+            'with data, image+remove, primary, hidden'  => [1, 1, 1, 0, 1],
+            'with data, image+remove, visible'          => [1, 1, 1, 1, 0],
+            'with data, image+remove, primary, visible' => [1, 1, 1, 1, 1],
+        ];
     }
 
     /**
@@ -212,7 +254,7 @@ class DataGalleryPieceLiteratureTest extends TestCase {
      */
     public function testGetDeleteLiterature($literature, $expected) {
         $this->actingAs($this->user)
-            ->get('/admin/data/pieces/literatures/delete/'.($literature ? $this->literature->id : mt_rand(5, 50)))
+            ->get('/admin/data/pieces/literatures/delete/'.($literature ? $this->literature->id : $this->literature->id + 10))
             ->assertStatus($expected);
     }
 
@@ -224,10 +266,10 @@ class DataGalleryPieceLiteratureTest extends TestCase {
      * @param bool $literature
      * @param bool $expected
      */
-    public function testPostDeleteImage($literature, $expected) {
+    public function testPostDeleteLiterature($literature, $expected) {
         $response = $this
             ->actingAs($this->user)
-            ->post('/admin/data/pieces/literatures/delete/'.($literature ? $this->literature->id : mt_rand(5, 50)));
+            ->post('/admin/data/pieces/literatures/delete/'.($literature ? $this->literature->id : $this->literature->id + 10));
 
         if ($expected == 200) {
             $response->assertSessionHasNoErrors();
@@ -238,7 +280,7 @@ class DataGalleryPieceLiteratureTest extends TestCase {
         }
     }
 
-    public function literatureDeleteProvider() {
+    public static function literatureDeleteProvider() {
         return [
             'valid'   => [1, 200],
             'invalid' => [0, 404],

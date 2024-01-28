@@ -26,7 +26,7 @@ class UserFactory extends Factory {
     /**
      * Generate a user with a safe username.
      *
-     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     * @return Factory
      */
     public function safeUsername() {
         return $this->state(function (array $attributes) {
@@ -39,7 +39,7 @@ class UserFactory extends Factory {
     /**
      * Generate a user with a simple, known password.
      *
-     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     * @return Factory
      */
     public function simplePass() {
         return $this->state(function (array $attributes) {

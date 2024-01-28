@@ -64,9 +64,9 @@ class CommissionService extends Service {
     /**
      * Update a class.
      *
-     * @param \App\Models\Commission\CommissionClass $class
-     * @param array                                  $data
-     * @param \App\Models\User\User                  $user
+     * @param CommissionClass       $class
+     * @param array                 $data
+     * @param \App\Models\User\User $user
      *
      * @return \App\Models\Commission\CommissionClass|bool
      */
@@ -119,7 +119,7 @@ class CommissionService extends Service {
     /**
      * Delete a class.
      *
-     * @param \App\Models\Commission\CommissionClass $class
+     * @param CommissionClass $class
      *
      * @return bool
      */
@@ -237,9 +237,9 @@ class CommissionService extends Service {
     /**
      * Update a category.
      *
-     * @param \App\Models\Commission\CommissionCategory $category
-     * @param array                                     $data
-     * @param \App\Models\User\User                     $user
+     * @param CommissionCategory    $category
+     * @param array                 $data
+     * @param \App\Models\User\User $user
      *
      * @return \App\Models\Commission\CommissionCategory|bool
      */
@@ -293,7 +293,7 @@ class CommissionService extends Service {
     /**
      * Delete a category.
      *
-     * @param \App\Models\Commission\CommissionCategory $category
+     * @param CommissionCategory $category
      *
      * @return bool
      */
@@ -390,9 +390,9 @@ class CommissionService extends Service {
     /**
      * Updates a commission type.
      *
-     * @param \App\Models\Commission\CommissionType $type
-     * @param array                                 $data
-     * @param \App\Models\User\User                 $user
+     * @param CommissionType        $type
+     * @param array                 $data
+     * @param \App\Models\User\User $user
      *
      * @return \App\Models\Commission\CommissionType|bool
      */
@@ -436,7 +436,7 @@ class CommissionService extends Service {
     /**
      * Deletes a commission type.
      *
-     * @param \App\Models\Commission\CommissionType $type
+     * @param CommissionType $type
      *
      * @return bool
      */
@@ -510,8 +510,8 @@ class CommissionService extends Service {
     /**
      * Processes site settings and pages for a commission class.
      *
-     * @param \App\Models\Commission\CommissionClass $class
-     * @param array                                  $data
+     * @param CommissionClass $class
+     * @param array           $data
      *
      * @return array
      */
@@ -703,8 +703,8 @@ class CommissionService extends Service {
     /**
      * Processes user input for creating/updating a commission type.
      *
-     * @param array                                 $data
-     * @param \App\Models\Commission\CommissionType $type
+     * @param array          $data
+     * @param CommissionType $type
      *
      * @return array
      */

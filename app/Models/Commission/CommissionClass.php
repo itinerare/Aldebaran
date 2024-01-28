@@ -107,6 +107,6 @@ class CommissionClass extends Model {
      * @return string
      */
     public function getAdminUrlAttribute() {
-        return url('/admin/data/commission-classes/edit/'.$this->id);
+        return url('/admin/data/commissions/classes/edit/'.$this->id);
     }
 }

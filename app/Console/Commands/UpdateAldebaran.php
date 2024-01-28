@@ -42,8 +42,8 @@ class UpdateAldebaran extends Command {
 
             // Run setup commands
             $this->line("\n".'Updating site pages and settings...');
-            $this->call('add-site-settings');
-            $this->call('add-text-pages');
+            $this->call('app:add-site-settings');
+            $this->call('app:add-text-pages');
 
             $oldVersion = $this->ask('What version are you updating from? Please enter only the major and minor version number, e.g. 3.9 for v3.9.0. If you do not know, or wish to run all updates, please enter 0.');
             if ($oldVersion < 3.7) {
@@ -59,13 +59,13 @@ class UpdateAldebaran extends Command {
             if ($oldVersion < 3.4) {
                 // Update images
                 $this->line("\n".'Updating images...');
-                $this->call('update-images');
+                $this->call('app:update-images');
             }
 
             if ($oldVersion < 3.7) {
                 // Store commission payment fees
                 $this->line("\n".'Updating commission payments...');
-                $this->call('store-payment-fee-totals');
+                $this->call('app:store-payment-fee-totals');
             }
 
             $this->line('Updates complete!');

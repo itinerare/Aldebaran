@@ -1,5 +1,10 @@
 <?php
 
+use App\Http\Controllers\Admin\CommissionController as AdminCommissionController;
+use App\Http\Controllers\CommissionController;
+use App\Http\Controllers\Controller;
+use App\Http\Controllers\GalleryController;
+use App\Http\Controllers\MailingListController;
 use Illuminate\Support\Facades\Route;
 use Spatie\Honeypot\ProtectAgainstSpam;
 
@@ -9,76 +14,74 @@ use Spatie\Honeypot\ProtectAgainstSpam;
 |--------------------------------------------------------------------------
 |
 | Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
+| routes are loaded by the RouteServiceProvider and all of them will
+| be assigned to the "web" middleware group. Make something great!
 |
 */
 
-/**************************************************************************************************
-    General routes
-**************************************************************************************************/
+// GENERAL
+Route::controller(Controller::class)->group(function () {
+    Route::get('/', 'getIndex');
+    Route::get('about', 'getAbout');
+    Route::get('privacy', 'getPrivacyPolicy');
+    Route::get('changelog', 'getChangelog');
 
-Route::get('/', 'Controller@getIndex');
-Route::get('/about', 'Controller@getAbout');
-Route::get('/privacy', 'Controller@getPrivacyPolicy');
-Route::get('/changelog', 'Controller@getChangelog');
-
-// GALLERY
-Route::group(['prefix' => 'gallery'], function () {
-    Route::get('/', 'GalleryController@getGallery');
-    Route::get('pieces/{id}.', 'GalleryController@getPiece');
-    Route::get('pieces/{id}.{slug?}', 'GalleryController@getPiece');
+    Route::get('feeds', 'getFeeds');
 });
 
-Route::group(['prefix' => 'projects'], function () {
-    Route::get('{name}', 'GalleryController@getProject');
-});
-
-// MAILING LISTS
-Route::group(['prefix' => 'mailing-lists'], function () {
-    Route::get('{id}', 'MailingListController@getMailingList');
-    Route::get('verify/{id}', 'MailingListController@getVerify');
-    Route::get('unsubscribe/{id}', 'MailingListController@getUnsubscribe');
-    Route::post('{id}/subscribe', 'MailingListController@postSubscribe')->middleware(ProtectAgainstSpam::class);
-});
-
-// COMMISSIONS
-Route::group(['prefix' => 'commissions'], function () {
-    Route::get('{class}', 'CommissionController@getInfo');
-    Route::get('{class}/tos', 'CommissionController@getTos');
-    Route::get('{class}/queue', 'CommissionController@getQueue');
-
-    Route::get('types/{key}', 'CommissionController@getType');
-    Route::get('types/{key}/gallery', 'CommissionController@getTypeGallery');
-    Route::get('{class}/new', 'CommissionController@getNewCommission');
-    Route::post('new', 'CommissionController@postNewCommission')->middleware(ProtectAgainstSpam::class);
-
-    Route::get('view/{key}', 'CommissionController@getViewCommission');
-    Route::get('view/{key}/{id}', 'CommissionController@getViewCommissionImage');
-
-    Route::get('{class}/quotes/new', 'CommissionController@getNewQuote');
-    Route::post('quotes/new', 'CommissionController@postNewQuote')->middleware(ProtectAgainstSpam::class);
-    Route::get('quotes/view/{key}', 'CommissionController@getViewQuote');
-
-    Route::get('{class}/{key}', 'CommissionController@getClassPage');
-});
-
-Route::get('/feeds', 'Controller@getFeeds');
 Route::feeds('feeds');
 
-Route::group(['prefix' => 'admin/webhooks', 'namespace' => 'Admin'], function () {
+Route::controller(GalleryController::class)->group(function () {
+    Route::prefix('gallery')->group(function () {
+        Route::get('/', 'getGallery');
+        Route::get('pieces/{id}', 'getPiece');
+        Route::get('pieces/{id}.{slug?}', 'getPiece');
+    });
+
+    Route::prefix('projects')->group(function () {
+        Route::get('{name}', 'getProject');
+    });
+});
+
+Route::controller(MailingListController::class)->prefix('mailing-lists')->group(function () {
+    Route::get('{id}', 'getMailingList');
+    Route::get('verify/{id}', 'getVerify');
+    Route::get('unsubscribe/{id}', 'getUnsubscribe');
+    Route::post('{id}/subscribe', 'postSubscribe')
+        ->middleware(ProtectAgainstSpam::class);
+});
+
+Route::controller(CommissionController::class)->prefix('commissions')->group(function () {
+    Route::get('{class}', 'getInfo');
+    Route::get('{class}/tos', 'getTos');
+    Route::get('{class}/queue', 'getQueue');
+
+    Route::get('types/{key}', 'getType');
+    Route::get('types/{key}/gallery', 'getTypeGallery');
+    Route::get('{class}/new', 'getNewCommission');
+    Route::post('new', 'postNewCommission')
+        ->middleware(ProtectAgainstSpam::class);
+
+    Route::get('view/{key}', 'getViewCommission');
+    Route::get('view/{key}/{id}', 'getViewCommissionImage');
+
+    Route::get('{class}/quotes/new', 'getNewQuote');
+    Route::get('quotes/view/{key}', 'getViewQuote');
+    Route::post('quotes/new', 'postNewQuote')
+        ->middleware(ProtectAgainstSpam::class);
+
+    // Clobbers the above routes otherwise
+    Route::get('{class}/{key}', 'getClassPage');
+});
+
+// WEBHOOK ENDPOINTS
+Route::controller(AdminCommissionController::class)->prefix('admin/webhooks')->group(function () {
     if (config('aldebaran.commissions.payment_processors.stripe.integration.enabled')) {
-        Route::post('stripe', 'CommissionController@postStripeWebhook');
+        Route::post('stripe', 'postStripeWebhook');
     }
     if (config('aldebaran.commissions.payment_processors.paypal.integration.enabled')) {
-        Route::post('paypal', 'CommissionController@postPaypalWebhook');
+        Route::post('paypal', 'postPaypalWebhook');
     }
 });
 
-/***************************************************
-    Routes that require login
-****************************************************/
-
-Route::group(['prefix' => 'admin', 'namespace' => 'Admin', 'middleware' => ['auth', 'verified']], function () {
-    require_once __DIR__.'/admin.php';
-});
+Route::prefix('admin')->middleware(['auth', 'verified'])->group(__DIR__.'/admin.php');

@@ -7,8 +7,8 @@
 @section('admin-content')
     {!! breadcrumbs([
         'Admin Panel' => 'admin',
-        'Commission Types' => 'admin/data/commission-types',
-        $type->name => 'admin/data/commission-types/edit/' . $type->id,
+        'Commission Types' => 'admin/data/commissions/types',
+        $type->name => 'admin/data/commissions/types/edit/' . $type->id,
         'New Commission' => 'admin/commissions/new/' . $type->id,
     ]) !!}
 
@@ -16,7 +16,7 @@
         <h1>
             New Commmission
             <div class="float-right ml-2">
-                <a class="btn btn-secondary" href="{{ url('admin/data/commission-types') }}">Back to Commission Type
+                <a class="btn btn-secondary" href="{{ url('admin/data/commissions/types') }}">Back to Commission Type
                     Index</a>
             </div>
         </h1>

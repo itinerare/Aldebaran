@@ -81,7 +81,7 @@ class AdminQueueTest extends TestCase {
         }
     }
 
-    public function adminIndexProvider() {
+    public static function adminIndexProvider() {
         return [
             'basic'           => [0, 0],
             'with commission' => [1, 0],
@@ -141,7 +141,7 @@ class AdminQueueTest extends TestCase {
         }
     }
 
-    public function queueProvider() {
+    public static function queueProvider() {
         return [
             'basic'                       => [1, [0, null], null, 200],
             'search (successful)'         => [1, [0, null], [1, 1], 200],
@@ -218,7 +218,7 @@ class AdminQueueTest extends TestCase {
         }
     }
 
-    public function quoteQueueProvider() {
+    public static function quoteQueueProvider() {
         return [
             'basic'                        => [1, [0, null], null, 200],
             'search (successful)'          => [1, [0, null], [1, 1], 200],
@@ -323,7 +323,7 @@ class AdminQueueTest extends TestCase {
         }
     }
 
-    public function ledgerProvider() {
+    public static function ledgerProvider() {
         return [
             'basic'                              => [1, 0, 0, 0, 200],
             'with commission'                    => [1, 1, 0, 0, 200],
@@ -358,7 +358,7 @@ class AdminQueueTest extends TestCase {
         $this->assertTrue($expected == $payment->totalWithFees);
     }
 
-    public function feeCalcProvider() {
+    public static function feeCalcProvider() {
         return [
             'paypal, domestic' => ['paypal', 0, 100.85],
             'paypal, intl'     => ['paypal', 1, 99.27],

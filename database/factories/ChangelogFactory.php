@@ -23,7 +23,7 @@ class ChangelogFactory extends Factory {
     /**
      * Generate a changelog with a title.
      *
-     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     * @return Factory
      */
     public function title() {
         return $this->state(function (array $attributes) {
@@ -36,7 +36,7 @@ class ChangelogFactory extends Factory {
     /**
      * Generate a changelog that is hidden.
      *
-     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     * @return Factory
      */
     public function hidden() {
         return $this->state(function (array $attributes) {

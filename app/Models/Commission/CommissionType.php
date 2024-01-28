@@ -168,7 +168,7 @@ class CommissionType extends Model {
      * @return string
      */
     public function getAdminUrlAttribute() {
-        return url('/admin/data/commission-types/edit/'.$this->id);
+        return url('/admin/data/commissions/types/edit/'.$this->id);
     }
 
     /**
@@ -446,7 +446,7 @@ class CommissionType extends Model {
     /**
      * Gets the current total commission slots.
      *
-     * @param \App\Models\Commission\CommissionClass $class
+     * @param CommissionClass $class
      *
      * @return int
      */

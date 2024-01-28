@@ -58,10 +58,12 @@ return [
     |
     */
 
-    // Image dimensions, in px. Which thumbnail dimension is used
-    // depends on the "gallery_arrangement" setting above
+    // Image dimensions, in px.
+    // Which thumbnail dimension is used when automatically generating thumbnails
+    // depends on the "gallery_arrangement" setting above-- height for rows, width for columns
+    // but both are used when manually cropping thumbnails
     // Note that these settings are not retroactive!
-    'thumbnail_width'    => 250,
+    'thumbnail_width'    => 300,
     'thumbnail_height'   => 200,
     'display_image_size' => 2000,
 
@@ -156,7 +158,7 @@ return [
     |
     */
 
-    'version' => '3.10.3',
+    'version' => '3.11.0',
 
     /*
     |--------------------------------------------------------------------------

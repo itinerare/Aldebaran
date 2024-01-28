@@ -44,7 +44,7 @@ class GalleryViewTest extends TestCase {
     public function testGetGallery($user, $enabled, $search, $pieceStatus, $status) {
         config(['aldebaran.settings.navigation.gallery' => $enabled]);
 
-        $this->artisan('add-text-pages');
+        $this->artisan('app:add-text-pages');
 
         if ($pieceStatus[0]) {
             // Create a piece to view
@@ -129,30 +129,30 @@ class GalleryViewTest extends TestCase {
         }
     }
 
-    public function galleryAccessProvider() {
+    public static function galleryAccessProvider() {
         return [
-            'visitor, enabled'                                                    => [0, 1, null, [0, 0, 0, 0], 200],
-            'visitor, disabled'                                                   => [0, 0, null, [0, 0, 0, 0], 404],
-            'user, enabled'                                                       => [1, 1, null, [0, 0, 0, 0], 200],
-            'user, disabled'                                                      => [1, 0, null, [0, 0, 0, 0], 404],
+            'visitor, enabled'  => [0, 1, null, [0, 0, 0, 0], 200],
+            'visitor, disabled' => [0, 0, null, [0, 0, 0, 0], 404],
+            'user, enabled'     => [1, 1, null, [0, 0, 0, 0], 200],
+            'user, disabled'    => [1, 0, null, [0, 0, 0, 0], 404],
 
-            'visitor, enabled with visible piece with image'                      => [0, 1, null, [1, 1, 1, 0], 200],
-            'visitor, disabled with visible piece with image'                     => [0, 0, null, [1, 1, 1, 0], 404],
-            'user, enabled with visible piece with image'                         => [1, 1, null, [1, 1, 1, 0], 200],
-            'user, disabled with visible piece with image'                        => [1, 0, null, [1, 1, 1, 0], 404],
-            'visitor, enabled with hidden piece with image'                       => [0, 1, null, [1, 0, 1, 0], 200],
-            'visitor, disabled with hidden piece with image'                      => [0, 0, null, [1, 0, 1, 0], 404],
-            'user, enabled with hidden piece with image'                          => [1, 1, null, [1, 0, 1, 0], 200],
-            'user, disabled with hidden piece with image'                         => [1, 0, null, [1, 0, 1, 0], 404],
+            'visitor, enabled with visible piece with image'  => [0, 1, null, [1, 1, 1, 0], 200],
+            'visitor, disabled with visible piece with image' => [0, 0, null, [1, 1, 1, 0], 404],
+            'user, enabled with visible piece with image'     => [1, 1, null, [1, 1, 1, 0], 200],
+            'user, disabled with visible piece with image'    => [1, 0, null, [1, 1, 1, 0], 404],
+            'visitor, enabled with hidden piece with image'   => [0, 1, null, [1, 0, 1, 0], 200],
+            'visitor, disabled with hidden piece with image'  => [0, 0, null, [1, 0, 1, 0], 404],
+            'user, enabled with hidden piece with image'      => [1, 1, null, [1, 0, 1, 0], 200],
+            'user, disabled with hidden piece with image'     => [1, 0, null, [1, 0, 1, 0], 404],
 
-            'visitor, enabled with visible piece with literature'                 => [0, 1, null, [1, 1, 0, [1, 0]], 200],
-            'visitor, disabled with visible piece with literature'                => [0, 0, null, [1, 1, 0, [1, 0]], 404],
-            'user, enabled with visible piece with literature'                    => [1, 1, null, [1, 1, 0, [1, 0]], 200],
-            'user, disabled with visible piece with literature'                   => [1, 0, null, [1, 1, 0, [1, 0]], 404],
-            'visitor, enabled with hidden piece with literature'                  => [0, 1, null, [1, 0, 0, [1, 0]], 200],
-            'visitor, disabled with hidden piece with literature'                 => [0, 0, null, [1, 0, 0, [1, 0]], 404],
-            'user, enabled with hidden piece with literature'                     => [1, 1, null, [1, 0, 0, [1, 0]], 200],
-            'user, disabled with hidden piece with literature'                    => [1, 0, null, [1, 0, 0, [1, 0]], 404],
+            'visitor, enabled with visible piece with literature'  => [0, 1, null, [1, 1, 0, [1, 0]], 200],
+            'visitor, disabled with visible piece with literature' => [0, 0, null, [1, 1, 0, [1, 0]], 404],
+            'user, enabled with visible piece with literature'     => [1, 1, null, [1, 1, 0, [1, 0]], 200],
+            'user, disabled with visible piece with literature'    => [1, 0, null, [1, 1, 0, [1, 0]], 404],
+            'visitor, enabled with hidden piece with literature'   => [0, 1, null, [1, 0, 0, [1, 0]], 200],
+            'visitor, disabled with hidden piece with literature'  => [0, 0, null, [1, 0, 0, [1, 0]], 404],
+            'user, enabled with hidden piece with literature'      => [1, 1, null, [1, 0, 0, [1, 0]], 200],
+            'user, disabled with hidden piece with literature'     => [1, 0, null, [1, 0, 0, [1, 0]], 404],
 
             'visitor, enabled with visible piece with literature with thumbnail'  => [0, 1, null, [1, 1, 0, [1, 1]], 200],
             'visitor, disabled with visible piece with literature with thumbnail' => [0, 0, null, [1, 1, 0, [1, 1]], 404],
@@ -163,12 +163,12 @@ class GalleryViewTest extends TestCase {
             'user, enabled with hidden piece with literature with thumbnail'      => [1, 1, null, [1, 0, 0, [1, 1]], 200],
             'user, disabled with hidden piece with literature with thumbnail'     => [1, 0, null, [1, 0, 0, [1, 1]], 404],
 
-            'search by title (successful)'                                        => [1, 1, ['name', 1], [1, 1, 1, 0], 200],
-            'search by title (unsuccessful)'                                      => [1, 1, ['name', 0], [1, 1, 1, 0], 200],
-            'search by project (successful)'                                      => [1, 1, ['project_id', 1], [1, 1, 1, 0], 200],
-            'search by project (unsuccessful)'                                    => [1, 1, ['project_id', 0], [1, 1, 1, 0], 200],
-            'search by tag (successful)'                                          => [1, 1, ['tags%5B%5D', 1], [1, 1, 1, 0], 200],
-            'search by tag (unsuccessful)'                                        => [1, 1, ['tags%5B%5D', 0], [1, 1, 1, 0], 200],
+            'search by title (successful)'     => [1, 1, ['name', 1], [1, 1, 1, 0], 200],
+            'search by title (unsuccessful)'   => [1, 1, ['name', 0], [1, 1, 1, 0], 200],
+            'search by project (successful)'   => [1, 1, ['project_id', 1], [1, 1, 1, 0], 200],
+            'search by project (unsuccessful)' => [1, 1, ['project_id', 0], [1, 1, 1, 0], 200],
+            'search by tag (successful)'       => [1, 1, ['tags%5B%5D', 1], [1, 1, 1, 0], 200],
+            'search by tag (unsuccessful)'     => [1, 1, ['tags%5B%5D', 0], [1, 1, 1, 0], 200],
         ];
     }
 
@@ -269,30 +269,30 @@ class GalleryViewTest extends TestCase {
         }
     }
 
-    public function projectAccessProvider() {
+    public static function projectAccessProvider() {
         return [
-            'visitor, visible'                                                   => [0, 1, null, [0, 0, 0, 0], 200],
-            'visitor, hidden'                                                    => [0, 0, null, [0, 0, 0, 0], 404],
-            'user, visible'                                                      => [1, 1, null, [0, 0, 0, 0], 200],
-            'user, hidden'                                                       => [1, 0, null, [0, 0, 0, 0], 200],
+            'visitor, visible' => [0, 1, null, [0, 0, 0, 0], 200],
+            'visitor, hidden'  => [0, 0, null, [0, 0, 0, 0], 404],
+            'user, visible'    => [1, 1, null, [0, 0, 0, 0], 200],
+            'user, hidden'     => [1, 0, null, [0, 0, 0, 0], 200],
 
-            'visitor, visible with visible piece with image'                     => [0, 1, null, [1, 1, 1, 0], 200],
-            'visitor, hidden with visible piece with image'                      => [0, 0, null, [1, 1, 1, 0], 404],
-            'user, visible with visible piece with image'                        => [1, 1, null, [1, 1, 1, 0], 200],
-            'user, hidden with visible piece with image'                         => [1, 0, null, [1, 1, 1, 0], 200],
-            'visitor, visible with hidden piece with image'                      => [0, 1, null, [1, 0, 1, 0], 200],
-            'visitor, hidden with hidden piece with image'                       => [0, 0, null, [1, 0, 1, 0], 404],
-            'user, visible with hidden piece with image'                         => [1, 1, null, [1, 0, 1, 0], 200],
-            'user, hidden with hidden piece with image'                          => [1, 0, null, [1, 0, 1, 0], 200],
+            'visitor, visible with visible piece with image' => [0, 1, null, [1, 1, 1, 0], 200],
+            'visitor, hidden with visible piece with image'  => [0, 0, null, [1, 1, 1, 0], 404],
+            'user, visible with visible piece with image'    => [1, 1, null, [1, 1, 1, 0], 200],
+            'user, hidden with visible piece with image'     => [1, 0, null, [1, 1, 1, 0], 200],
+            'visitor, visible with hidden piece with image'  => [0, 1, null, [1, 0, 1, 0], 200],
+            'visitor, hidden with hidden piece with image'   => [0, 0, null, [1, 0, 1, 0], 404],
+            'user, visible with hidden piece with image'     => [1, 1, null, [1, 0, 1, 0], 200],
+            'user, hidden with hidden piece with image'      => [1, 0, null, [1, 0, 1, 0], 200],
 
-            'visitor, visible with visible piece with literature'                => [0, 1, null, [1, 1, 0, [1, 0]], 200],
-            'visitor, hidden with visible piece with literature'                 => [0, 0, null, [1, 1, 0, [1, 0]], 404],
-            'user, visible with visible piece with literature'                   => [1, 1, null, [1, 1, 0, [1, 0]], 200],
-            'user, hidden with visible piece with literature'                    => [1, 0, null, [1, 1, 0, [1, 0]], 200],
-            'visitor, visible with hidden piece with literature'                 => [0, 1, null, [1, 0, 0, [1, 0]], 200],
-            'visitor, hidden with hidden piece with literature'                  => [0, 0, null, [1, 0, 0, [1, 0]], 404],
-            'user, visible with hidden piece with literature'                    => [1, 1, null, [1, 0, 0, [1, 0]], 200],
-            'user, hidden with hidden piece with literature'                     => [1, 0, null, [1, 0, 0, [1, 0]], 200],
+            'visitor, visible with visible piece with literature' => [0, 1, null, [1, 1, 0, [1, 0]], 200],
+            'visitor, hidden with visible piece with literature'  => [0, 0, null, [1, 1, 0, [1, 0]], 404],
+            'user, visible with visible piece with literature'    => [1, 1, null, [1, 1, 0, [1, 0]], 200],
+            'user, hidden with visible piece with literature'     => [1, 0, null, [1, 1, 0, [1, 0]], 200],
+            'visitor, visible with hidden piece with literature'  => [0, 1, null, [1, 0, 0, [1, 0]], 200],
+            'visitor, hidden with hidden piece with literature'   => [0, 0, null, [1, 0, 0, [1, 0]], 404],
+            'user, visible with hidden piece with literature'     => [1, 1, null, [1, 0, 0, [1, 0]], 200],
+            'user, hidden with hidden piece with literature'      => [1, 0, null, [1, 0, 0, [1, 0]], 200],
 
             'visitor, visible with visible piece with literature with thumbnail' => [0, 1, null, [1, 1, 0, [1, 1]], 200],
             'visitor, hidden with visible piece with literature with thumbnail'  => [0, 0, null, [1, 1, 0, [1, 1]], 404],
@@ -303,10 +303,10 @@ class GalleryViewTest extends TestCase {
             'user, visible with hidden piece with literature with thumbnail'     => [1, 1, null, [1, 0, 0, [1, 1]], 200],
             'user, hidden with hidden piece with literature with thumbnail'      => [1, 0, null, [1, 0, 0, [1, 1]], 200],
 
-            'search by title (successful)'                                       => [1, 1, ['name', 1], [1, 1, 1, 0], 200],
-            'search by title (unsuccessful)'                                     => [1, 1, ['name', 0], [1, 1, 1, 0], 200],
-            'search by tag (successful)'                                         => [1, 1, ['tags%5B%5D', 1], [1, 1, 1, 0], 200],
-            'search by tag (unsuccessful)'                                       => [1, 1, ['tags%5B%5D', 0], [1, 1, 1, 0], 200],
+            'search by title (successful)'   => [1, 1, ['name', 1], [1, 1, 1, 0], 200],
+            'search by title (unsuccessful)' => [1, 1, ['name', 0], [1, 1, 1, 0], 200],
+            'search by tag (successful)'     => [1, 1, ['tags%5B%5D', 1], [1, 1, 1, 0], 200],
+            'search by tag (unsuccessful)'   => [1, 1, ['tags%5B%5D', 0], [1, 1, 1, 0], 200],
         ];
     }
 
@@ -379,26 +379,26 @@ class GalleryViewTest extends TestCase {
         }
     }
 
-    public function pieceAccessProvider() {
+    public static function pieceAccessProvider() {
         // ($user, $image, $literature, $isVisible, $description, $altText, $timestamp, $tag, $program, $goodExample, $status)
 
         return [
-            'visitor, visible with image'           => [0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 200],
-            'visitor, hidden with image'            => [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 404],
-            'user, visible with image'              => [1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 200],
-            'user, hidden with image'               => [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 200],
-            'visitor, description with image'       => [0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 200],
-            'user, description with image'          => [1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 200],
-            'visitor, alt text with image'          => [0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 200],
-            'user, alt text with image'             => [1, 1, 0, 1, 1, 1, 0, 0, 0, 0, 200],
-            'visitor, timestamp with image'         => [0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 200],
-            'user, timestamp with image'            => [1, 1, 0, 1, 0, 0, 1, 0, 0, 0, 200],
-            'visitor, tag with image'               => [0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 200],
-            'user, tag with image'                  => [1, 1, 0, 1, 0, 0, 0, 1, 0, 0, 200],
-            'visitor, program with image'           => [0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 200],
-            'user, program with image'              => [1, 1, 0, 1, 0, 0, 0, 0, 1, 0, 200],
-            'visitor, good example with image'      => [0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 200],
-            'user, good example with image'         => [1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 200],
+            'visitor, visible with image'      => [0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 200],
+            'visitor, hidden with image'       => [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 404],
+            'user, visible with image'         => [1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 200],
+            'user, hidden with image'          => [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 200],
+            'visitor, description with image'  => [0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 200],
+            'user, description with image'     => [1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 200],
+            'visitor, alt text with image'     => [0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 200],
+            'user, alt text with image'        => [1, 1, 0, 1, 1, 1, 0, 0, 0, 0, 200],
+            'visitor, timestamp with image'    => [0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 200],
+            'user, timestamp with image'       => [1, 1, 0, 1, 0, 0, 1, 0, 0, 0, 200],
+            'visitor, tag with image'          => [0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 200],
+            'user, tag with image'             => [1, 1, 0, 1, 0, 0, 0, 1, 0, 0, 200],
+            'visitor, program with image'      => [0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 200],
+            'user, program with image'         => [1, 1, 0, 1, 0, 0, 0, 0, 1, 0, 200],
+            'visitor, good example with image' => [0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 200],
+            'user, good example with image'    => [1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 200],
 
             'visitor, visible with literature'      => [0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 200],
             'visitor, hidden with literature'       => [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 404],
@@ -415,22 +415,22 @@ class GalleryViewTest extends TestCase {
             'visitor, good example with literature' => [0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 200],
             'user, good example with literature'    => [1, 0, 1, 1, 0, 0, 0, 0, 0, 1, 200],
 
-            'visitor, visible with both'            => [0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 200],
-            'visitor, hidden with both'             => [0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 404],
-            'user, visible with both'               => [1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 200],
-            'user, hidden with both'                => [1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 200],
-            'visitor, description with both'        => [0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 200],
-            'user, description with both'           => [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 200],
-            'visitor, alt text with both'           => [0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 200],
-            'user, alt text with both'              => [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 200],
-            'visitor, timestamp with both'          => [0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 200],
-            'user, timestamp with both'             => [1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 200],
-            'visitor, tag with both'                => [0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 200],
-            'user, tag with both'                   => [1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 200],
-            'visitor, program with both'            => [0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 200],
-            'user, program with both'               => [1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 200],
-            'visitor, good example with both'       => [0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 200],
-            'user, good example with both'          => [1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 200],
+            'visitor, visible with both'      => [0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 200],
+            'visitor, hidden with both'       => [0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 404],
+            'user, visible with both'         => [1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 200],
+            'user, hidden with both'          => [1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 200],
+            'visitor, description with both'  => [0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 200],
+            'user, description with both'     => [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 200],
+            'visitor, alt text with both'     => [0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 200],
+            'user, alt text with both'        => [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 200],
+            'visitor, timestamp with both'    => [0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 200],
+            'user, timestamp with both'       => [1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 200],
+            'visitor, tag with both'          => [0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 200],
+            'user, tag with both'             => [1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 200],
+            'visitor, program with both'      => [0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 200],
+            'user, program with both'         => [1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 200],
+            'visitor, good example with both' => [0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 200],
+            'user, good example with both'    => [1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 200],
         ];
     }
 }

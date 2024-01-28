@@ -4,6 +4,65 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [3.11.0](https://github.com/itinerare/Aldebaran/compare/v3.10.3...v3.11.0) (2024-01-28)
+
+### Features
+
+* Update to Laravel 10 ([2f9650](https://github.com/itinerare/Aldebaran/commit/2f96506119c04c1682ee9c0620c079bdfa198436))
+
+##### Pieces
+
+* Add option to manually crop piece image thumbnails ([bc85ae](https://github.com/itinerare/Aldebaran/commit/bc85aed278be45e1c2abe43ceecbf1b038e6e832))
+
+##### Tests
+
+* Update data providers ([91c90c](https://github.com/itinerare/Aldebaran/commit/91c90c92109387c05f107acfaf5b4efdcbd73528))
+* Update phpunit config schema ([4a2a5f](https://github.com/itinerare/Aldebaran/commit/4a2a5fcd86b5d6d4a551c362180c858e0f6507a5))
+
+### Bug Fixes
+
+
+##### Auth
+
+* Add fortify back to service providers ([554c29](https://github.com/itinerare/Aldebaran/commit/554c2980c0112a69cfe6945f1458f30ccf37a98f))
+
+##### Commands
+
+* Make default image command create assets dir if not extant ([6f3ef2](https://github.com/itinerare/Aldebaran/commit/6f3ef226d145176a7a292f81fbbf4a37ade09af3))
+* Update site images tests ([a9889d](https://github.com/itinerare/Aldebaran/commit/a9889dd303afdea57d54437d36f576295fdb64ec))
+
+##### Commissions
+
+* Only query commission queues on admin index if enabled ([f0f9d4](https://github.com/itinerare/Aldebaran/commit/f0f9d4dac340f84efe71876b172ac4d7538fb044))
+
+##### Gallery
+
+* Use Str helper for literature thumbs ([76980e](https://github.com/itinerare/Aldebaran/commit/76980eee437b1f424ab1869eb5124d23c8b00bb6))
+
+##### Pieces
+
+* Eager load programs on piece views ([1b2cb9](https://github.com/itinerare/Aldebaran/commit/1b2cb991ef433b5e6b2a11f940ec8c1f966dcf8d))
+
+##### Routes
+
+* Add honeypot middleware to use ([3a81f1](https://github.com/itinerare/Aldebaran/commit/3a81f139d2bcd0e34496f88149cd5e5a907580a6))
+* Fix commission ToS/queue routes ([313d87](https://github.com/itinerare/Aldebaran/commit/313d8776e373bc82138113fe50c72f204eeba8f9))
+* Prevent commission class page route from clobbering other class routes ([a59ca2](https://github.com/itinerare/Aldebaran/commit/a59ca22286c9db6c6fe4da9fe41e67d815733a61))
+
+##### Tests
+
+* Add missing parent::tearDown() ([487023](https://github.com/itinerare/Aldebaran/commit/48702381e08fce2f04f6e4258b5366adbc0f52a4))
+* Make invalid cases more consistent ([1aabc8](https://github.com/itinerare/Aldebaran/commit/1aabc87970f73594affd02f32e1d7f8bad4cb081))
+* Update command reference in feed view tests ([330fe7](https://github.com/itinerare/Aldebaran/commit/330fe7935849bb029717a50e40d07cc2c2754802))
+* Update command reference in gallery view tests ([8bd31d](https://github.com/itinerare/Aldebaran/commit/8bd31d056dc2594dd0e7384a889dd4ad22742516))
+* Update command reference in page view tests ([6591d8](https://github.com/itinerare/Aldebaran/commit/6591d86fca70bf356c0e5fa71ebfaceb96e1ea34))
+* Update command references in admin tests ([fef584](https://github.com/itinerare/Aldebaran/commit/fef584a0c75255fceb08068629f16575b83b294c))
+* Update command references in commission/quote form tests ([846c2c](https://github.com/itinerare/Aldebaran/commit/846c2ce12b8bf8e2d5de811e48102c2585be42a8))
+* Update program test image file references ([da70ff](https://github.com/itinerare/Aldebaran/commit/da70ff86eab74e0fa38bf558e9b7c187cc87c3e7))
+
+
+---
+
 ## [3.10.3](https://github.com/itinerare/Aldebaran/compare/v3.10.2...v3.10.3) (2023-10-15)
 
 ### Bug Fixes

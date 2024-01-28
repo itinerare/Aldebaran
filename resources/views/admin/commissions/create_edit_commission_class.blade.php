@@ -7,8 +7,8 @@
 @section('admin-content')
     {!! breadcrumbs([
         'Admin Panel' => 'admin',
-        'Commission Classes' => 'admin/data/commission-classes',
-        ($class->id ? 'Edit' : 'Create') . ' Class' => $class->id ? 'admin/data/commission-classes/edit/' . $class->id : 'admin/data/commission-classes/create',
+        'Commission Classes' => 'admin/data/commissions/classes',
+        ($class->id ? 'Edit' : 'Create') . ' Class' => $class->id ? 'admin/data/commissions/classes/edit/' . $class->id : 'admin/data/commissions/classes/create',
     ]) !!}
 
     <h1>{{ $class->id ? 'Edit' : 'Create' }} Class
@@ -18,7 +18,7 @@
     </h1>
 
     {!! Form::open([
-        'url' => $class->id ? 'admin/data/commission-classes/edit/' . $class->id : 'admin/data/commission-classes/create',
+        'url' => $class->id ? 'admin/data/commissions/classes/edit/' . $class->id : 'admin/data/commissions/classes/create',
     ]) !!}
 
     <div class="row">
@@ -159,7 +159,7 @@
         $(document).ready(function() {
             $('.delete-class-button').on('click', function(e) {
                 e.preventDefault();
-                loadModal("{{ url('admin/data/commission-classes/delete') }}/{{ $class->id }}",
+                loadModal("{{ url('admin/data/commissions/classes/delete') }}/{{ $class->id }}",
                     'Delete Class');
             });
 

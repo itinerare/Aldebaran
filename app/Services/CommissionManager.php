@@ -190,9 +190,9 @@ class CommissionManager extends Service {
     /**
      * Accepts a commission.
      *
-     * @param int                   $id
-     * @param array                 $data
-     * @param \App\Models\User\User $user
+     * @param int       $id
+     * @param array     $data
+     * @param User\User $user
      *
      * @return mixed
      */
@@ -279,9 +279,9 @@ class CommissionManager extends Service {
     /**
      * Updates a commission.
      *
-     * @param int                   $id
-     * @param array                 $data
-     * @param \App\Models\User\User $user
+     * @param int       $id
+     * @param array     $data
+     * @param User\User $user
      *
      * @return mixed
      */
@@ -373,8 +373,8 @@ class CommissionManager extends Service {
     /**
      * Sends an invoice for a payment.
      *
-     * @param \App\Models\Commission\CommissionPayment $payment
-     * @param \App\Models\User\User                    $user
+     * @param CommissionPayment $payment
+     * @param User\User         $user
      *
      * @return mixed
      */
@@ -675,9 +675,9 @@ class CommissionManager extends Service {
     /**
      * Marks a commission complete.
      *
-     * @param int                   $id
-     * @param array                 $data
-     * @param \App\Models\User\User $user
+     * @param int       $id
+     * @param array     $data
+     * @param User\User $user
      *
      * @return mixed
      */
@@ -719,9 +719,9 @@ class CommissionManager extends Service {
     /**
      * Declines a commission.
      *
-     * @param int                   $id
-     * @param array                 $data
-     * @param \App\Models\User\User $user
+     * @param int       $id
+     * @param array     $data
+     * @param User\User $user
      *
      * @return mixed
      */
@@ -832,9 +832,9 @@ class CommissionManager extends Service {
     /**
      * Accepts a quote.
      *
-     * @param int                   $id
-     * @param array                 $data
-     * @param \App\Models\User\User $user
+     * @param int       $id
+     * @param array     $data
+     * @param User\User $user
      *
      * @return mixed
      */
@@ -875,9 +875,9 @@ class CommissionManager extends Service {
     /**
      * Updates a quote.
      *
-     * @param int                   $id
-     * @param array                 $data
-     * @param \App\Models\User\User $user
+     * @param int       $id
+     * @param array     $data
+     * @param User\User $user
      *
      * @return mixed
      */
@@ -915,9 +915,9 @@ class CommissionManager extends Service {
     /**
      * Marks a quote complete.
      *
-     * @param int                   $id
-     * @param array                 $data
-     * @param \App\Models\User\User $user
+     * @param int       $id
+     * @param array     $data
+     * @param User\User $user
      *
      * @return mixed
      */
@@ -953,9 +953,9 @@ class CommissionManager extends Service {
     /**
      * Declines a quote.
      *
-     * @param int                   $id
-     * @param array                 $data
-     * @param \App\Models\User\User $user
+     * @param int       $id
+     * @param array     $data
+     * @param User\User $user
      *
      * @return mixed
      */
@@ -1000,9 +1000,9 @@ class CommissionManager extends Service {
     /**
      * Handles bans from the commission or mailing list systems.
      *
-     * @param int|string            $subject
-     * @param array                 $data
-     * @param \App\Models\User\User $user
+     * @param int|string $subject
+     * @param array      $data
+     * @param User\User  $user
      *
      * @return \App\Models\Commission\Commission|bool
      */
@@ -1077,7 +1077,7 @@ class CommissionManager extends Service {
      * @param array $data
      * @param bool  $processIp
      *
-     * @return \App\Models\Commission\Commissioner
+     * @return Commissioner
      */
     private function processCommissioner($data, $processIp = true) {
         // Attempt to fetch commissioner, first by email, then by IP as a fallback

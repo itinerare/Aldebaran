@@ -28,7 +28,7 @@ class PieceLiteratureFactory extends Factory {
      *
      * @param int $id
      *
-     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     * @return Factory
      */
     public function piece($id) {
         return $this->state(function (array $attributes) use ($id) {
@@ -41,7 +41,7 @@ class PieceLiteratureFactory extends Factory {
     /**
      * Generate an literature with a thumbnail.
      *
-     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     * @return Factory
      */
     public function thumbnail() {
         return $this->state(function (array $attributes) {
@@ -55,7 +55,7 @@ class PieceLiteratureFactory extends Factory {
     /**
      * Generate a primary literature.
      *
-     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     * @return Factory
      */
     public function primary() {
         return $this->state(function (array $attributes) {
@@ -68,7 +68,7 @@ class PieceLiteratureFactory extends Factory {
     /**
      * Generate a literature that is hidden.
      *
-     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     * @return Factory
      */
     public function hidden() {
         return $this->state(function (array $attributes) {

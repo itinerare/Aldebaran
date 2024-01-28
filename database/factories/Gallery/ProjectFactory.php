@@ -22,7 +22,7 @@ class ProjectFactory extends Factory {
     /**
      * Generate a piece with a description.
      *
-     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     * @return Factory
      */
     public function description() {
         return $this->state(function (array $attributes) {
@@ -35,7 +35,7 @@ class ProjectFactory extends Factory {
     /**
      * Generate a project that is hidden.
      *
-     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     * @return Factory
      */
     public function hidden() {
         return $this->state(function (array $attributes) {

@@ -28,7 +28,7 @@ class PageViewTest extends TestCase {
      */
     public function testGetPage($page, $setup, $user, $status) {
         if ($setup) {
-            $this->artisan('add-text-pages');
+            $this->artisan('app:add-text-pages');
         }
 
         if ($user) {
@@ -40,7 +40,7 @@ class PageViewTest extends TestCase {
         $response->assertStatus($status);
     }
 
-    public function pageProvider() {
+    public static function pageProvider() {
         return [
             'about, not set up, visitor'          => ['about', 0, 0, 404],
             'about, not set up, user'             => ['about', 0, 1, 404],

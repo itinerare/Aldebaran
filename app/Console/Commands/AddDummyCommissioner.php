@@ -11,7 +11,7 @@ class AddDummyCommissioner extends Command {
      *
      * @var string
      */
-    protected $signature = 'add-dummy-commissioner';
+    protected $signature = 'app:add-dummy-commissioner';
 
     /**
      * The console command description.
