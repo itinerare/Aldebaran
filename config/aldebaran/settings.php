@@ -158,7 +158,7 @@ return [
     |
     */
 
-    'version' => '3.11.0',
+    'version' => \Composer\InstalledVersions::getRootPackage()['pretty_version'],
 
     /*
     |--------------------------------------------------------------------------
