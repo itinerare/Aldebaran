@@ -26,7 +26,7 @@
                     @elseif($piece->literatures->where('is_visible', 1)->count())
                         <div class="text-secondary justify-content-center pt-2"
                             style="{{ config('aldebaran.settings.gallery_arrangement') == 'rows' ? 'width: auto; height: ' . config('aldebaran.settings.thumbnail_height') . 'px' : 'height: auto; max-width: ' . config('aldebaran.settings.thumbnail_width') . 'px' }}; overflow: hidden;">
-                            {{ Str::limit(strip_tags($piece->literatures->where('is_visible', 1)->where('is_primary', 1)->count()? $piece->literatures->where('is_visible', 1)->where('is_primary', 1)->first()->text: $piece->literatures->where('is_visible', 1)->random()->text),450) }}
+                            {{ Str::limit(strip_tags($piece->literatures->where('is_visible', 1)->where('is_primary', 1)->count() ? $piece->literatures->where('is_visible', 1)->where('is_primary', 1)->first()->text : $piece->literatures->where('is_visible', 1)->random()->text), 450) }}
                         </div>
                     @endif
                 </div>

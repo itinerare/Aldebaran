@@ -87,10 +87,7 @@
             @endforeach
         </div>
     @elseif($commission->paymentProcessors()->first())
-        {!! Form::hidden(
-            'payment_processor',
-            $commission->paymentProcessors()->keys()->first(),
-        ) !!}
+        {!! Form::hidden('payment_processor', $commission->paymentProcessors()->keys()->first()) !!}
     @endif
 
     <h3>Commission-Specific Information</h3>

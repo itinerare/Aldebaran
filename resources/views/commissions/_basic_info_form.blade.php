@@ -46,10 +46,7 @@
             @endforeach
         </div>
     @elseif($subject->paymentProcessors()->first())
-        {!! Form::hidden(
-            'payment_processor',
-            $subject->paymentProcessors()->keys()->first(),
-        ) !!}
+        {!! Form::hidden('payment_processor', $subject->paymentProcessors()->keys()->first()) !!}
     @endif
 
 
