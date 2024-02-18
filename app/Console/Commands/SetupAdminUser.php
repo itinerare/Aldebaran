@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Models\User;
 use App\Services\UserService;
 use Illuminate\Console\Command;
+use Illuminate\Support\Str;
 
 class SetupAdminUser extends Command {
     /**
@@ -50,7 +51,7 @@ class SetupAdminUser extends Command {
             $confirm = $this->confirm('Proceed to create account with this information?');
 
             if ($confirm) {
-                $password = str_random(20);
+                $password = Str::random(20);
 
                 $service = new UserService;
                 $service->createUser([
@@ -70,7 +71,7 @@ class SetupAdminUser extends Command {
             $this->line('Admin account ['.$user->name.'] already exists.');
             if ($this->confirm('Reset email address and password for this account?')) {
                 $email = $this->ask('Email Address');
-                $password = str_random(20);
+                $password = Str::random(20);
 
                 $this->line("\nEmail: ".$email);
                 $this->line("\nPassword: ".$password);

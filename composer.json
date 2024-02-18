@@ -5,6 +5,7 @@
     "license": "Polyform-Noncommercial-1.0",
     "require": {
         "php": "^8.1",
+        "doctrine/dbal": "^3.8",
         "guzzlehttp/guzzle": "^7.2",
         "intervention/image": "^2.0",
         "josiasmontag/laravel-recaptchav3": "^1.0.0",
@@ -86,5 +87,5 @@
     },
     "minimum-stability": "stable",
     "prefer-stable": true,
-    "version": "3.11.0"
+    "version": "3.11.1"
 }

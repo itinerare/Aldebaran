@@ -4,6 +4,18 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [3.11.1](https://github.com/itinerare/Aldebaran/compare/v3.11.0...v3.11.1) (2024-02-18)
+
+### Bug Fixes
+
+
+##### Commands
+
+* Use Str helper in admin user setup command ([2c6276](https://github.com/itinerare/Aldebaran/commit/2c6276054d6a691804e0e4d41977208c6201188b))
+
+
+---
+
 ## [3.11.0](https://github.com/itinerare/Aldebaran/compare/v3.10.3...v3.11.0) (2024-01-28)
 
 ### Features
