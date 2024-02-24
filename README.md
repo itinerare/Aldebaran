@@ -59,7 +59,7 @@ For those not familiar with web development, please refer to the [Full Guide](/i
 ### Obtain a copy of the code
 
 ```
-$ git clone https://github.com/itinerare/aldebaran.git
+$ git clone https://code.itinerare.net/itinerare/aldebaran.git
 ```
 
 ### Configure .env in the directory
