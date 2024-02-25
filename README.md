@@ -54,12 +54,12 @@ Note that use of commission components in a use that generates or contributes to
 
 ## Setup
 
-For those not familiar with web development, please refer to the [Full Guide](https://github.com/itinerare/Aldebaran/wiki/Setup-Guide) for a much more detailed set of instructions!
+For those not familiar with web development, please refer to the [Full Guide](/itinerare/Aldebaran/wiki/Setup-Guide) for a much more detailed set of instructions!
 
 ### Obtain a copy of the code
 
 ```
-$ git clone https://github.com/itinerare/aldebaran.git
+$ git clone https://code.itinerare.net/itinerare/aldebaran.git
 ```
 
 ### Configure .env in the directory
