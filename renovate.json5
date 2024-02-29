@@ -5,7 +5,7 @@
     ],
     "packageRules": [
     {
-      "matchPackageNames": ["stripe-php", "paypal"],
+      "matchPackageNames": ["stripe/stripe-php", "srmklive/paypal"],
       "automerge": false,
       "platformAutomerge": false
     }
