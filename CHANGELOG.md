@@ -4,6 +4,19 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [3.11.3](https://code.itinerare.net/itinerare/Aldebaran/compare/v3.11.2...v3.11.3) (2024-03-03)
+
+### Bug Fixes
+
+* Resolve issues with dropbox filesystem connection ([506782](https://code.itinerare.net/itinerare/Aldebaran/commit/506782c9394a1d2a58ef7ae2abd24d3d660c43c2))
+
+##### Backups
+
+* Use env value for backup notification email setting again ([63b338](https://code.itinerare.net/itinerare/Aldebaran/commit/63b33864b2d4d9276b60afe25864772ea5c27629))
+
+
+---
+
 ## [3.11.2](https://code.itinerare.net/itinerare/Aldebaran/compare/v3.11.1...v3.11.2) (2024-02-25)
 
 
