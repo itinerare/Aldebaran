@@ -2,5 +2,12 @@
     "$schema": "https://docs.renovatebot.com/renovate-schema.json",
     "extends": [
         "local>itinerare/renovate-config"
-    ]
+    ],
+    "packageRules": [
+    {
+      "matchPackageNames": ["stripe/stripe-php", "srmklive/paypal"],
+      "automerge": false,
+      "platformAutomerge": false
+    }
+  ]
 }
