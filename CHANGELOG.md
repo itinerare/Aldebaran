@@ -4,6 +4,18 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [3.11.4](https://code.itinerare.net/itinerare/Aldebaran/compare/v3.11.3...v3.11.4) (2024-03-10)
+
+### Bug Fixes
+
+
+##### Commissions
+
+* Exempt webhook endpoints from CSRF token verification ([887131](https://code.itinerare.net/itinerare/Aldebaran/commit/8871314855b8264da4b0ea4dd7369b2176f81ff0))
+
+
+---
+
 ## [3.11.3](https://code.itinerare.net/itinerare/Aldebaran/compare/v3.11.2...v3.11.3) (2024-03-03)
 
 ### Bug Fixes
