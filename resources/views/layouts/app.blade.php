@@ -23,7 +23,8 @@
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ config('app.url', 'http://localhost') }}">
-    <meta property="og:image" content="@if (View::hasSection('meta-img')) @yield('meta-img') @else @if (screenshot(url()->current())){{ screenshot(url()->current()) }}@else{{ asset('images/assets/avatar.png') }} @endif @endif">
+    <meta property="og:image"
+        content="@if (View::hasSection('meta-img')) @yield('meta-img') @else @if (screenshot(url()->current())){{ screenshot(url()->current()) }}@else{{ asset('images/assets/avatar.' . config('aldebaran.settings.image_formats.site_images')) }} @endif @endif">
     <meta property="og:site_name" content="{{ Settings::get('site_name') }}" />
     <meta property="og:title" content="
         @if (View::hasSection('title')) @yield('title') @else {{ Settings::get('site_name') }} @endif
@@ -33,7 +34,8 @@
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="{{ config('app.url', 'http://localhost') }}">
-    <meta property="twitter:image" content="@if (View::hasSection('meta-img')) @yield('meta-img') @else @if (screenshot(url()->current())){{ screenshot(url()->current()) }}@else{{ asset('images/assets/avatar.png') }} @endif @endif">
+    <meta property="twitter:image"
+        content="@if (View::hasSection('meta-img')) @yield('meta-img') @else @if (screenshot(url()->current())){{ screenshot(url()->current()) }}@else{{ asset('images/assets/avatar.' . config('aldebaran.settings.image_formats.site_images')) }} @endif @endif">
     <meta name="twitter:site" content="{{ Settings::get('site_name') }}" />
     <meta property="twitter:title" content="
         @if (View::hasSection('title')) @yield('title') @else {{ Settings::get('site_name') }} @endif
