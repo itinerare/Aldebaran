@@ -4,6 +4,15 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [3.11.5](https://code.itinerare.net/itinerare/Aldebaran/compare/v3.11.4...v3.11.5) (2024-03-17)
+
+### Bug Fixes
+
+* Use site image format config setting for meta image ([23db4a](https://code.itinerare.net/itinerare/Aldebaran/commit/23db4aa6077079bd9de13b49fd6020cd0146d1e8))
+
+
+---
+
 ## [3.11.4](https://code.itinerare.net/itinerare/Aldebaran/compare/v3.11.3...v3.11.4) (2024-03-10)
 
 ### Bug Fixes
