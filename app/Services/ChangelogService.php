@@ -21,7 +21,7 @@ class ChangelogService extends Service {
      * @param array                 $data
      * @param \App\Models\User\User $user
      *
-     * @return \App\Models\Changelog|bool
+     * @return bool|Changelog
      */
     public function createLog($data, $user) {
         DB::beginTransaction();
@@ -48,7 +48,7 @@ class ChangelogService extends Service {
      * @param array                 $data
      * @param \App\Models\User\User $user
      *
-     * @return \App\Models\Changelog|bool
+     * @return bool|Changelog
      */
     public function updateLog($log, $data, $user) {
         DB::beginTransaction();

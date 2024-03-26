@@ -39,7 +39,7 @@ class GalleryService extends Service {
      * @param array                 $data
      * @param \App\Models\User\User $user
      *
-     * @return \App\Models\Gallery\Project|bool
+     * @return bool|Project
      */
     public function createProject($data, $user) {
         DB::beginTransaction();
@@ -66,7 +66,7 @@ class GalleryService extends Service {
      * @param array                 $data
      * @param \App\Models\User\User $user
      *
-     * @return \App\Models\Gallery\Project|bool
+     * @return bool|Project
      */
     public function updateProject($project, $data, $user) {
         DB::beginTransaction();
@@ -153,7 +153,7 @@ class GalleryService extends Service {
      * @param array                 $data
      * @param \App\Models\User\User $user
      *
-     * @return \App\Models\Gallery\Piece|bool
+     * @return bool|Piece
      */
     public function createPiece($data, $user) {
         DB::beginTransaction();
@@ -188,7 +188,7 @@ class GalleryService extends Service {
      * @param array                 $data
      * @param \App\Models\User\User $user
      *
-     * @return \App\Models\Gallery\Piece|bool
+     * @return bool|Piece
      */
     public function updatePiece($piece, $data, $user) {
         DB::beginTransaction();
@@ -316,7 +316,7 @@ class GalleryService extends Service {
      * @param array                 $data
      * @param \App\Models\User\User $user
      *
-     * @return \App\Models\Gallery\PieceImage|bool
+     * @return bool|PieceImage
      */
     public function createImage($data, $user) {
         DB::beginTransaction();
@@ -435,7 +435,7 @@ class GalleryService extends Service {
      * @param array                 $data
      * @param \App\Models\User\User $user
      *
-     * @return \App\Models\Gallery\PieceLiterature|bool
+     * @return bool|PieceLiterature
      */
     public function createLiterature($data, $user) {
         DB::beginTransaction();
@@ -492,7 +492,7 @@ class GalleryService extends Service {
      * @param array                 $data
      * @param \App\Models\User\User $user
      *
-     * @return \App\Models\Gallery\PieceLiterature|bool
+     * @return bool|PieceLiterature
      */
     public function updateLiterature($literature, $data, $user) {
         DB::beginTransaction();
@@ -589,7 +589,7 @@ class GalleryService extends Service {
      * @param array                 $data
      * @param \App\Models\User\User $user
      *
-     * @return \App\Models\Gallery\Tag|bool
+     * @return bool|Tag
      */
     public function createTag($data, $user) {
         DB::beginTransaction();
@@ -619,7 +619,7 @@ class GalleryService extends Service {
      * @param array                 $data
      * @param \App\Models\User\User $user
      *
-     * @return \App\Models\Gallery\Tag|bool
+     * @return bool|Tag
      */
     public function updateTag($tag, $data, $user) {
         DB::beginTransaction();
@@ -687,7 +687,7 @@ class GalleryService extends Service {
      * @param array                 $data
      * @param \App\Models\User\User $user
      *
-     * @return \App\Models\Gallery\Program|bool
+     * @return bool|Program
      */
     public function createProgram($data, $user) {
         DB::beginTransaction();
@@ -729,7 +729,7 @@ class GalleryService extends Service {
      * @param array                 $data
      * @param \App\Models\User\User $user
      *
-     * @return \App\Models\Gallery\Program|bool
+     * @return bool|Program
      */
     public function updateProgram($program, $data, $user) {
         DB::beginTransaction();

@@ -50,7 +50,7 @@ class CommissionManager extends Service {
      * @param array $data
      * @param bool  $manual
      *
-     * @return \App\Models\Commission\Commission|bool
+     * @return bool|Commission
      */
     public function createCommission($data, $manual = false) {
         DB::beginTransaction();
@@ -763,7 +763,7 @@ class CommissionManager extends Service {
      * @param array $data
      * @param bool  $manual
      *
-     * @return \App\Models\Commission\Commission|bool
+     * @return bool|Commission
      */
     public function createQuote($data, $manual = false) {
         DB::beginTransaction();
@@ -1004,7 +1004,7 @@ class CommissionManager extends Service {
      * @param array      $data
      * @param User\User  $user
      *
-     * @return \App\Models\Commission\Commission|bool
+     * @return bool|Commission
      */
     public function banCommissioner($subject, $data, $user) {
         DB::beginTransaction();
