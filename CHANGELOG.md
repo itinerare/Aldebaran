@@ -4,6 +4,18 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [3.11.6](https://code.itinerare.net/itinerare/Aldebaran/compare/v3.11.5...v3.11.6) (2024-03-31)
+
+### Bug Fixes
+
+
+##### Pieces
+
+* Fix 404 with slugs beginning with numbers ([27a57a](https://code.itinerare.net/itinerare/Aldebaran/commit/27a57a4a3aba52aba4a128f171991903ffce3c10))
+
+
+---
+
 ## [3.11.5](https://code.itinerare.net/itinerare/Aldebaran/compare/v3.11.4...v3.11.5) (2024-03-17)
 
 ### Bug Fixes

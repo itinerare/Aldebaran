@@ -24,7 +24,7 @@ class MailingListManager extends Service {
      *
      * @param array $data
      *
-     * @return \App\Models\MailingList\MailingListSubscriber|bool
+     * @return bool|MailingListSubscriber
      */
     public function createSubscriber($data) {
         DB::beginTransaction();
@@ -70,7 +70,7 @@ class MailingListManager extends Service {
      * @param MailingListSubscriber $subscriber
      * @param string                $token
      *
-     * @return \App\Models\MailingList\MailingListSubscriber|bool
+     * @return bool|MailingListSubscriber
      */
     public function verifySubscriber($subscriber, $token) {
         DB::beginTransaction();
@@ -105,7 +105,7 @@ class MailingListManager extends Service {
      * @param MailingListSubscriber $subscriber
      * @param string                $token
      *
-     * @return \App\Models\MailingList\MailingListSubscriber|bool
+     * @return bool|MailingListSubscriber
      */
     public function removeSubscriber($subscriber, $token) {
         DB::beginTransaction();

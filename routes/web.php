@@ -34,7 +34,8 @@ Route::feeds('feeds');
 Route::controller(GalleryController::class)->group(function () {
     Route::prefix('gallery')->group(function () {
         Route::get('/', 'getGallery');
-        Route::get('pieces/{id}', 'getPiece');
+        Route::get('pieces/{id}', 'getPiece')
+            ->whereNumber('id');
         Route::get('pieces/{id}.{slug?}', 'getPiece');
     });
 

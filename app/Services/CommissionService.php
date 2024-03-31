@@ -31,7 +31,7 @@ class CommissionService extends Service {
      * @param array                 $data
      * @param \App\Models\User\User $user
      *
-     * @return \App\Models\Commission\CommissionClass|bool
+     * @return bool|CommissionClass
      */
     public function createCommissionClass($data, $user) {
         DB::beginTransaction();
@@ -68,7 +68,7 @@ class CommissionService extends Service {
      * @param array                 $data
      * @param \App\Models\User\User $user
      *
-     * @return \App\Models\Commission\CommissionClass|bool
+     * @return bool|CommissionClass
      */
     public function updateCommissionClass($class, $data, $user) {
         DB::beginTransaction();
@@ -199,7 +199,7 @@ class CommissionService extends Service {
      * @param array                 $data
      * @param \App\Models\User\User $user
      *
-     * @return \App\Models\Commission\CommissionCategory|bool
+     * @return bool|CommissionCategory
      */
     public function createCommissionCategory($data, $user) {
         DB::beginTransaction();
@@ -241,7 +241,7 @@ class CommissionService extends Service {
      * @param array                 $data
      * @param \App\Models\User\User $user
      *
-     * @return \App\Models\Commission\CommissionCategory|bool
+     * @return bool|CommissionCategory
      */
     public function updateCommissionCategory($category, $data, $user) {
         DB::beginTransaction();
@@ -352,7 +352,7 @@ class CommissionService extends Service {
      * @param array                 $data
      * @param \App\Models\User\User $user
      *
-     * @return \App\Models\Commission\CommissionType|bool
+     * @return bool|CommissionType
      */
     public function createCommissionType($data, $user) {
         DB::beginTransaction();
@@ -394,7 +394,7 @@ class CommissionService extends Service {
      * @param array                 $data
      * @param \App\Models\User\User $user
      *
-     * @return \App\Models\Commission\CommissionType|bool
+     * @return bool|CommissionType
      */
     public function updateCommissionType($type, $data, $user) {
         DB::beginTransaction();

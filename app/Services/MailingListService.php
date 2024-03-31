@@ -25,7 +25,7 @@ class MailingListService extends Service {
      * @param array                 $data
      * @param \App\Models\User\User $user
      *
-     * @return \App\Models\MailingList\MailingList|bool
+     * @return bool|MailingList
      */
     public function createMailingList($data, $user) {
         DB::beginTransaction();
@@ -56,7 +56,7 @@ class MailingListService extends Service {
      * @param array                 $data
      * @param \App\Models\User\User $user
      *
-     * @return \App\Models\MailingList\MailingList|bool
+     * @return bool|MailingList
      */
     public function updateMailingList($mailingList, $data, $user) {
         DB::beginTransaction();
@@ -124,7 +124,7 @@ class MailingListService extends Service {
      * @param array                 $data
      * @param \App\Models\User\User $user
      *
-     * @return \App\Models\MailingList\MailingListEntry|bool
+     * @return bool|MailingListEntry
      */
     public function createEntry($data, $user) {
         DB::beginTransaction();
@@ -164,7 +164,7 @@ class MailingListService extends Service {
      * @param array                 $data
      * @param \App\Models\User\User $user
      *
-     * @return \App\Models\MailingList\MailingListEntry|bool
+     * @return bool|MailingListEntry
      */
     public function updateEntry($entry, $data, $user) {
         DB::beginTransaction();
