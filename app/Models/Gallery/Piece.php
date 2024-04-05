@@ -200,7 +200,7 @@ class Piece extends Model implements Feedable {
      * @return string
      */
     public function getUrlAttribute() {
-        return url('/gallery/pieces/'.$this->id.'.'.$this->slug);
+        return url('/gallery/pieces/'.$this->id.(strlen($this->slug) > 0 ? '.'.$this->slug : ''));
     }
 
     /**
