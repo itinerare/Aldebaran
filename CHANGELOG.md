@@ -4,6 +4,23 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [3.11.7](https://code.itinerare.net/itinerare/Aldebaran/compare/v3.11.6...v3.11.7) (2024-04-07)
+
+### Bug Fixes
+
+
+##### Commands
+
+* Remove buggy old version conditionals from update command ([13b504](https://code.itinerare.net/itinerare/Aldebaran/commit/13b504720176c5d581a28eb295d9c92faf4fcf92))
+
+##### Pieces
+
+* Do not include empty slug in piece URL ([c89674](https://code.itinerare.net/itinerare/Aldebaran/commit/c896743d604245154e4840dd8f59b2cf707bb302))
+* Strip tags from source info ([f188ca](https://code.itinerare.net/itinerare/Aldebaran/commit/f188caf904f9a76eea7f74ebdf9b3ae97224303a))
+
+
+---
+
 ## [3.11.6](https://code.itinerare.net/itinerare/Aldebaran/compare/v3.11.5...v3.11.6) (2024-03-31)
 
 ### Bug Fixes

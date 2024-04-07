@@ -141,6 +141,12 @@ class GalleryController extends Controller {
             abort(404);
         }
 
+        if ($request->get('source')) {
+            $request->merge([
+                'source' => strip_tags($request->get('source')),
+            ]);
+        }
+
         $source = $request->get('source');
         // Determine the context in which the piece is being viewed as best able
         switch ($source) {
