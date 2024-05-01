@@ -938,7 +938,7 @@ class CommissionManager extends Service {
             // Update the quote status and comments
             $quote->update([
                 'status'   => 'Complete',
-                'amount'   => $data['amount'] ?? 0.00,
+                'amount'   => $data['amount'] ?? ($quote->amount ?? 0.00),
                 'comments' => $data['comments'] ?? null,
             ]);
 
