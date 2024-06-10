@@ -9,7 +9,7 @@ jobs:
   laravel-tests:
     strategy:
       matrix:
-        target: ['8.1', '8.2']
+        target: ['8.2', '8.3']
 
     runs-on: docker
 
@@ -19,9 +19,6 @@ jobs:
       with:
         php-version: ${{ matrix.target }}
         extensions: gd, imagick
-
-    - name: Set up MariaDB
-      run: apt install -y mariadb-client
 
     - name: Checkout code
       uses: actions/checkout@v4
@@ -45,6 +42,6 @@ jobs:
       env:
         DB_HOST: ${{ vars.MYSQL_HOST }}
         DB_PORT: 3306
-        DB_DATABASE: aldebaran_test
+        DB_DATABASE: alcyone_test
         DB_USERNAME: forgejo_runner
         DB_PASSWORD: ${{ secrets.MYSQL_PASS }}
