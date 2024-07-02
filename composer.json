@@ -15,7 +15,7 @@
         "laravel/tinker": "^2.8",
         "laravelcollective/html": "^6.0",
         "spatie/flysystem-dropbox": "^3.0.0",
-        "spatie/laravel-backup": "^8.0",
+        "spatie/laravel-backup": "^9.0",
         "spatie/laravel-feed": "^4.1",
         "spatie/laravel-honeypot": "^4.1",
         "spatie/laravel-validation-rules": "^3.0",
