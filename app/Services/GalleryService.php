@@ -358,7 +358,7 @@ class GalleryService extends Service {
                 'display_extension' => $data['display_extension'],
             ]);
 
-            if ($extension = 'gif' || $extension == 'mp4' || $extension == 'webm') {
+            if ($image->isMultimedia) {
                 $this->processMultimedia($data, $image);
             } else {
                 $this->processImage($data, $image);
