@@ -3,7 +3,7 @@
         <a title="Close (Esc)" class="mfp-close position-relative text-light">×</a>
     </div>
     <div class="text-center">
-        <video class="img-fluid" style="max-height:60vh; box-shadow: 0 0 10px black;" controls>
+        <video class="img-fluid" style="box-shadow: 0 0 7px black;" controls>
             <source src="{{ $image->imageUrl }}" />
         </video>
         @isset($image->description)
