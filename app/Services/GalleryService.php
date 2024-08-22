@@ -334,7 +334,7 @@ class GalleryService extends Service {
             // Determine whether the file is multimedia (gif/video) or an image
             // as this determines whether the configured settings are used or not
             $extension = $data['image']->getClientOriginalExtension();
-            if ($extension = 'gif' || $extension == 'mp4' || $extension == 'webm') {
+            if (in_array($extension, ['gif', 'mp4', 'webm'])) {
                 $data['extension'] = $data['image']->getClientOriginalExtension();
                 $data['display_extension'] = config('aldebaran.settings.image_formats.display') ?? 'webp';
 
@@ -399,7 +399,7 @@ class GalleryService extends Service {
                 if (isset($data['image'])) {
                     // If a new file is being uploaded, check if it's an image or multimedia
                     $extension = $data['image']->getClientOriginalExtension();
-                    if ($extension = 'gif' || $extension == 'mp4' || $extension == 'webm') {
+                    if (in_array($extension, ['gif', 'mp4', 'webm'])) {
                         $data['extension'] = $data['image']->getClientOriginalExtension();
                         $data['use_cropper'] = 0;
 
@@ -1155,7 +1155,7 @@ class GalleryService extends Service {
         $this->handleImage($data['image'], $image->imagePath, $image->fullsizeFileName);
 
         // Process thumbnail
-        if ($data['extension'] == 'mp4' || $data['extension'] == 'webm') {
+        if (in_array($data['extension'], ['mp4', 'webm'])) {
             // Use FFMpeg to grab a frame from the video
             $ffmpeg = FFMpeg::create();
             $video = $ffmpeg->open($image->imagePath.'/'.$image->fullsizeFileName);
