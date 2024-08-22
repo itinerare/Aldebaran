@@ -14,7 +14,9 @@ class PieceImage extends Model {
      * @var array
      */
     protected $fillable = [
-        'piece_id', 'hash', 'fullsize_hash', 'extension', 'display_extension', 'description', 'is_primary_image', 'data', 'is_visible', 'sort', 'alt_text',
+        'piece_id', 'hash', 'fullsize_hash',
+        'extension', 'display_extension', 'is_multimedia',
+        'description', 'is_primary_image', 'data', 'is_visible', 'sort', 'alt_text',
     ];
 
     /**
@@ -41,13 +43,12 @@ class PieceImage extends Model {
     public $timestamps = false;
 
     /**
-     * Validation rules for submission creation.
+     * Validation rules for piece image creation.
      *
      * @var array
      */
     public static $createRules = [
-        //
-        'image'              => 'required|mimes:png,jpg,jpeg,gif,webp|max:10000',
+        'image'              => 'required|mimes:png,jpg,jpeg,gif,webp,mp4,webm|max:15000',
         'watermark_scale'    => 'required',
         'watermark_opacity'  => 'required',
         'watermark_position' => 'required',
@@ -57,13 +58,12 @@ class PieceImage extends Model {
     ];
 
     /**
-     * Validation rules for submission creation.
+     * Validation rules for piece image creation.
      *
      * @var array
      */
     public static $updateRules = [
-        //
-        'image'              => 'mimes:png,jpg,jpeg,gif,webp|max:10000',
+        'image'              => 'mimes:png,jpg,jpeg,gif,webp,mp4,webm|max:15000',
         'watermark_scale'    => 'required_with:image,regenerate_watermark',
         'watermark_opacity'  => 'required_with:image,regenerate_watermark',
         'watermark_position' => 'required_with:image,regenerate_watermark',
@@ -128,6 +128,10 @@ class PieceImage extends Model {
      * @return string
      */
     public function getImageFileNameAttribute() {
+        if ($this->is_multimedia) {
+            return $this->fullsizeFileName;
+        }
+
         return $this->id.'_'.$this->hash.'.'.($this->display_extension ?? $this->extension);
     }
 

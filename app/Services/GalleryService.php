@@ -13,6 +13,9 @@ use App\Models\Gallery\PieceTag;
 use App\Models\Gallery\Program;
 use App\Models\Gallery\Project;
 use App\Models\Gallery\Tag;
+use FFMpeg\Coordinate\TimeCode;
+use FFMpeg\FFMpeg;
+use FFMpeg\FFProbe;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
@@ -328,21 +331,40 @@ class GalleryService extends Service {
                 throw new \Exception('No valid piece found!');
             }
 
+            // Determine whether the file is multimedia (gif/video) or an image
+            // as this determines whether the configured settings are used or not
+            $extension = $data['image']->getClientOriginalExtension();
+            if ($extension = 'gif' || $extension == 'mp4' || $extension == 'webm') {
+                $data['extension'] = $data['image']->getClientOriginalExtension();
+                $data['display_extension'] = config('aldebaran.settings.image_formats.display') ?? 'webp';
+
+                $data['use_cropper'] = 0;
+                $data['is_multimedia'] = 1;
+            } else {
+                $data['extension'] = config('aldebaran.settings.image_formats.full') ?? $data['image']->getClientOriginalExtension();
+                $data['display_extension'] = config('aldebaran.settings.image_formats.display') && config('aldebaran.settings.image_formats.display') != config('aldebaran.settings.image_formats.full') ? config('aldebaran.settings.image_formats.display') : null;
+            }
+
             // Record data for the image
             $image = PieceImage::create([
                 'piece_id'          => $piece->id,
                 'hash'              => randomString(15),
                 'fullsize_hash'     => randomString(15),
-                'extension'         => config('aldebaran.settings.image_formats.full') ?? $data['image']->getClientOriginalExtension(),
+                'extension'         => $data['extension'],
                 'description'       => $data['description'] ?? null,
                 'alt_text'          => $data['alt_text'],
                 'is_primary_image'  => $data['is_primary_image'] ?? 0,
                 'is_visible'        => $data['is_visible'] ?? 0,
                 'data'              => [],
-                'display_extension' => config('aldebaran.settings.image_formats.display') && config('aldebaran.settings.image_formats.display') != config('aldebaran.settings.image_formats.full') ? config('aldebaran.settings.image_formats.display') : null,
+                'display_extension' => $data['display_extension'],
+                'is_multimedia'     => $data['is_multimedia'] ?? 0,
             ]);
 
-            $this->processImage($data, $image);
+            if ($extension = 'gif' || $extension == 'mp4' || $extension == 'webm') {
+                $this->processMultimedia($data, $image);
+            } else {
+                $this->processImage($data, $image);
+            }
             $image->update();
 
             return $this->commitReturn($image);
@@ -376,7 +398,22 @@ class GalleryService extends Service {
             }
 
             if (isset($data['image']) || $data['regenerate_watermark']) {
-                $this->processImage($data, $image, isset($data['image']), $data['regenerate_watermark']);
+                if (isset($data['image'])) {
+                    // If a new file is being uploaded, check if it's an image or multimedia
+                    $extension = $data['image']->getClientOriginalExtension();
+                    if ($extension = 'gif' || $extension == 'mp4' || $extension == 'webm') {
+                        $data['extension'] = $data['image']->getClientOriginalExtension();
+                        $data['is_multimedia'] = 1;
+                        $data['use_cropper'] = 0;
+
+                        $this->processMultimedia($data, $image, isset($data['image']));
+                    } else {
+                        $this->processImage($data, $image, isset($data['image']), $data['regenerate_watermark']);
+                    }
+                } else {
+                    // Otherwise just process the image
+                    $this->processImage($data, $image, isset($data['image']), $data['regenerate_watermark']);
+                }
             }
 
             $image->update([
@@ -410,9 +447,15 @@ class GalleryService extends Service {
             }
 
             // Delete the associated files...
-            unlink($image->imagePath.'/'.$image->thumbnailFileName);
-            unlink($image->imagePath.'/'.$image->imageFileName);
-            unlink($image->imagePath.'/'.$image->fullsizeFileName);
+            if (file_exists($image->imagePath.'/'.$image->thumbnailFileName)) {
+                unlink($image->imagePath.'/'.$image->thumbnailFileName);
+            }
+            if (file_exists($image->imagePath.'/'.$image->imageFileName)) {
+                unlink($image->imagePath.'/'.$image->imageFileName);
+            }
+            if (file_exists($image->imagePath.'/'.$image->fullsizeFileName)) {
+                unlink($image->imagePath.'/'.$image->fullsizeFileName);
+            }
 
             // and then the model itself
             $image->delete();
@@ -1078,6 +1121,76 @@ class GalleryService extends Service {
             'text_opacity'   => $data['text_opacity'] ?? null,
         ];
         $image->update(['data' => $data['data']]);
+
+        return $image;
+    }
+
+    /**
+     * Processes images.
+     *
+     * @param array      $data
+     * @param PieceImage $image
+     * @param bool       $reupload
+     *
+     * @return PieceImage
+     */
+    private function processMultimedia($data, $image, $reupload = false) {
+        // If the file is a reupload, unlink the old file and regenerate the hashes
+        // as well as re-setting the extension.
+        if ($reupload) {
+            // Unlink file and thumbnail images
+            if (file_exists($image->imagePath.'/'.$image->fullsizeFileName)) {
+                unlink($image->imagePath.'/'.$image->fullsizeFileName);
+            }
+            if (file_exists($image->imagePath.'/'.$image->thumbnailFileName)) {
+                unlink($image->imagePath.'/'.$image->thumbnailFileName);
+            }
+
+            $image->update([
+                'hash'              => randomString(15),
+                'fullsize_hash'     => randomString(15),
+                'extension'         => $data['extension'],
+                'display_extension' => config('aldebaran.settings.image_formats.display') ?? 'webp',
+                'is_multimedia'     => 1,
+            ]);
+        }
+
+        // Save the file itself
+        $this->handleImage($data['image'], $image->imagePath, $image->fullsizeFileName);
+
+        // Process thumbnail
+        if ($data['extension'] == 'mp4' || $data['extension'] == 'webm') {
+            // Use FFMpeg to grab a frame from the video
+            $ffmpeg = FFMpeg::create();
+            $video = $ffmpeg->open($image->imagePath.'/'.$image->fullsizeFileName);
+            $video->frame(TimeCode::fromSeconds(3))
+                ->save($image->imagePath.'/'.$image->thumbnailFileName);
+
+            $thumbnail = Image::make($image->imagePath.'/'.$image->thumbnailFileName);
+
+            // Resize and save thumbnail
+            if (config('aldebaran.settings.gallery_arrangement') == 'columns') {
+                $thumbnail->resize(config('aldebaran.settings.thumbnail_width'), null, function ($constraint) {
+                    $constraint->aspectRatio();
+                    $constraint->upsize();
+                });
+            } else {
+                $thumbnail->resize(null, config('aldebaran.settings.thumbnail_height'), function ($constraint) {
+                    $constraint->aspectRatio();
+                    $constraint->upsize();
+                });
+            }
+
+            $thumbnail->save($image->thumbnailPath.'/'.$image->thumbnailFileName, null, config('aldebaran.settings.image_formats.display') ?? 'webp');
+
+            $ffprobe = FFProbe::create();
+            $contentWidth = $ffprobe->streams($image->imagePath.'/'.$image->fullsizeFileName)
+                ->videos()->first()->get('width');
+
+            $image->update(['data' => ['content_width' => $contentWidth]]);
+        } else {
+            $this->processThumbnail($image, $data);
+        }
 
         return $image;
     }

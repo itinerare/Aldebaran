@@ -68,6 +68,7 @@
     <link href="{{ asset('css/bootstrap4-toggle.min.css') }}" rel="stylesheet">
 
     <link defer href="{{ asset('css/lightbox.min.css') }}" rel="stylesheet">
+    <link defer href="{{ asset('css/magnific.css') }}" rel="stylesheet">
     <link defer href="{{ asset('css/bootstrap-colorpicker.min.css') }}" rel="stylesheet">
     <link defer href="{{ asset('css/jquery-ui-timepicker-addon.css') }}" rel="stylesheet">
     <link defer href="{{ asset('css/croppie.css') }}" rel="stylesheet">
