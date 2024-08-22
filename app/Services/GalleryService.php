@@ -339,7 +339,6 @@ class GalleryService extends Service {
                 $data['display_extension'] = config('aldebaran.settings.image_formats.display') ?? 'webp';
 
                 $data['use_cropper'] = 0;
-                $data['is_multimedia'] = 1;
             } else {
                 $data['extension'] = config('aldebaran.settings.image_formats.full') ?? $data['image']->getClientOriginalExtension();
                 $data['display_extension'] = config('aldebaran.settings.image_formats.display') && config('aldebaran.settings.image_formats.display') != config('aldebaran.settings.image_formats.full') ? config('aldebaran.settings.image_formats.display') : null;
@@ -357,7 +356,6 @@ class GalleryService extends Service {
                 'is_visible'        => $data['is_visible'] ?? 0,
                 'data'              => [],
                 'display_extension' => $data['display_extension'],
-                'is_multimedia'     => $data['is_multimedia'] ?? 0,
             ]);
 
             if ($extension = 'gif' || $extension == 'mp4' || $extension == 'webm') {
@@ -403,7 +401,6 @@ class GalleryService extends Service {
                     $extension = $data['image']->getClientOriginalExtension();
                     if ($extension = 'gif' || $extension == 'mp4' || $extension == 'webm') {
                         $data['extension'] = $data['image']->getClientOriginalExtension();
-                        $data['is_multimedia'] = 1;
                         $data['use_cropper'] = 0;
 
                         $this->processMultimedia($data, $image, isset($data['image']));
@@ -1151,7 +1148,6 @@ class GalleryService extends Service {
                 'fullsize_hash'     => randomString(15),
                 'extension'         => $data['extension'],
                 'display_extension' => config('aldebaran.settings.image_formats.display') ?? 'webp',
-                'is_multimedia'     => 1,
             ]);
         }
 

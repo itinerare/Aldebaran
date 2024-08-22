@@ -14,8 +14,7 @@ class PieceImage extends Model {
      * @var array
      */
     protected $fillable = [
-        'piece_id', 'hash', 'fullsize_hash',
-        'extension', 'display_extension', 'is_multimedia',
+        'piece_id', 'hash', 'fullsize_hash', 'extension', 'display_extension',
         'description', 'is_primary_image', 'data', 'is_visible', 'sort', 'alt_text',
     ];
 
@@ -114,6 +113,32 @@ class PieceImage extends Model {
     **********************************************************************************************/
 
     /**
+     * Checks if an image should use multimedia handling.
+     *
+     * @return bool
+     */
+    public function getIsMultimediaAttribute() {
+        if (in_array($this->extension, ['gif', 'mp4', 'webm'])) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Checks if an image is a video.
+     *
+     * @return bool
+     */
+    public function getIsVideoAttribute() {
+        if (in_array($this->extension, ['mp4', 'webm'])) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Gets the file directory containing the model's image.
      *
      * @return string
@@ -128,7 +153,7 @@ class PieceImage extends Model {
      * @return string
      */
     public function getImageFileNameAttribute() {
-        if ($this->is_multimedia) {
+        if ($this->isMultimedia) {
             return $this->fullsizeFileName;
         }
 

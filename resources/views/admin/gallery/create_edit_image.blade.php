@@ -35,8 +35,8 @@
         @if ($image->id)
             <div class="card mb-2" id="existingImage">
                 <div class="card-body text-center">
-                    {{ $image->is_multimedia ? 'Fullsize/' : 'Watermarked/' }}Display:<br />
-                    @if ($image->extension == 'mp4' || $image->extension == 'webm')
+                    {{ $image->isMultimedia ? 'Fullsize/' : 'Watermarked/' }}Display:<br />
+                    @if ($image->isVideo)
                         <video class="img-fluid p-2" style="max-height:60vh;" controls>
                             <source src="{{ url('admin/data/pieces/images/view/' . $image->id . '/display') }}" />
                         </video>
@@ -47,7 +47,7 @@
                     @endif
                 </div>
                 <div class="row">
-                    @if (!$image->is_multimedia)
+                    @if (!$image->isMultimedia)
                         <div class="col-md-6 text-center">
                             Fullsize:<br />
                             <a href="{{ url('admin/data/pieces/images/view/' . $image->id . '/full') }}" data-lightbox="entry" data-title="Fullsize Image">
@@ -55,7 +55,7 @@
                             </a>
                         </div>
                     @endif
-                    <div class="col-md-{{ $image->is_multimedia ? '12' : '6' }} text-center">
+                    <div class="col-md-{{ $image->isMultimedia ? '12' : '6' }} text-center">
                         Thumbnail:<br />
                         <a href="{{ url('admin/data/pieces/images/view/' . $image->id . '/thumb') }}" data-lightbox="entry" data-title="Thumbnail Image">
                             <img class="p-2" src="{{ url('admin/data/pieces/images/view/' . $image->id . '/thumb') }}" style="max-width:100%; max-height:60vh;" alt="Thumbnail view" />
@@ -80,7 +80,7 @@
         </div>
     </div>
 
-    <div id="watermarkOptions" class="{{ $image->extension == 'gif' || $image->extension == 'mp4' || $image->extension == 'webm' ? 'hide' : '' }}">
+    <div id="watermarkOptions" class="{{ $image->isMultimedia ? 'hide' : '' }}">
         <div id="cropperOptions" class="form-group hide">
             {!! Form::checkbox('use_cropper', 1, 1, [
                 'class' => 'form-check-input',

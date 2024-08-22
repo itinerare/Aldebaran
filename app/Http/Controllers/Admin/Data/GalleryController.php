@@ -376,7 +376,7 @@ class GalleryController extends Controller {
                 }
                 break;
             case 'display':
-                if (config('aldebaran.settings.image_formats.display') && config('aldebaran.settings.image_formats.admin_view') && !$image->is_multimedia) {
+                if (config('aldebaran.settings.image_formats.display') && config('aldebaran.settings.image_formats.admin_view') && !$image->isMultimedia) {
                     $output = Image::make($image->imagePath.'/'.$image->imageFileName);
                 } else {
                     $output = $image->imageUrl;

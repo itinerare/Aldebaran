@@ -275,7 +275,7 @@ class GalleryController extends Controller {
      */
     public function getVideo($id) {
         $image = PieceImage::where('id', $id)->visible(Auth::user() ?? null)->first();
-        if (!$image || ($image->extension != 'mp4' && $image->extension != 'webm')) {
+        if (!$image || !$image->isVideo) {
             abort(404);
         }
 

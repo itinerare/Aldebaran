@@ -54,7 +54,7 @@
         <div class="row">
             @foreach ($piece->primaryImages->where('is_visible', 1) as $image)
                 <div class="col-md text-center align-self-center mb-2">
-                    @if ($image->extension == 'mp4' || $image->extension == 'webm')
+                    @if ($image->isVideo)
                         <video class="img-thumbnail img-fluid p-2" style="max-height:60vh;" controls>
                             <source src="{{ $image->imageUrl }}" />
                         </video>
@@ -71,7 +71,7 @@
         <div class="row mb-2">
             @foreach ($piece->otherImages->where('is_visible', 1) as $image)
                 <div class="col-sm text-center align-self-center mb-2">
-                    @if ($image->extension == 'mp4' || $image->extension == 'webm')
+                    @if ($image->isVideo)
                         <div class="content img-thumbnail align-self-center" style="min-height:100px;">
                             <div class="image-badge badge-primary mr-1">
                                 <i class="fas fa-play"></i> Video
