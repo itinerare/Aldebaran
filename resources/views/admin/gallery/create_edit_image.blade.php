@@ -41,7 +41,7 @@
                             <source src="{{ url('admin/data/pieces/images/view/' . $image->id . '/display') }}" />
                         </video>
                     @else
-                        <a href="{{ url('admin/data/pieces/images/view/' . $image->id . '/display') }}" data-lightbox="entry" data-title="Watermarked Image">
+                        <a href="{{ url('admin/data/pieces/images/view/' . $image->id . '/display') }}" class="image-link" title="Watermarked Image">
                             <img class="p-2" src="{{ url('admin/data/pieces/images/view/' . $image->id . '/display') }}" style="max-width:100%; max-height:60vh;" alt="Watermarked view" />
                         </a>
                     @endif
@@ -50,14 +50,14 @@
                     @if (!$image->isMultimedia)
                         <div class="col-md-6 text-center">
                             Fullsize:<br />
-                            <a href="{{ url('admin/data/pieces/images/view/' . $image->id . '/full') }}" data-lightbox="entry" data-title="Fullsize Image">
+                            <a href="{{ url('admin/data/pieces/images/view/' . $image->id . '/full') }}" class="image-link" title="Fullsize Image">
                                 <img class="p-2" src="{{ url('admin/data/pieces/images/view/' . $image->id . '/full') }}" style="max-width:100%; max-height:60vh;" alt="Full-size view" />
                             </a>
                         </div>
                     @endif
                     <div class="col-md-{{ $image->isMultimedia ? '12' : '6' }} text-center">
                         Thumbnail:<br />
-                        <a href="{{ url('admin/data/pieces/images/view/' . $image->id . '/thumb') }}" data-lightbox="entry" data-title="Thumbnail Image">
+                        <a href="{{ url('admin/data/pieces/images/view/' . $image->id . '/thumb') }}" class="image-link" title="Thumbnail Image">
                             <img class="p-2" src="{{ url('admin/data/pieces/images/view/' . $image->id . '/thumb') }}" style="max-width:100%; max-height:60vh;" alt="Thumbnail view" />
                         </a>
                     </div>
@@ -278,6 +278,7 @@
 
 @section('scripts')
     @parent
+    @include('gallery._lightbox_js')
     <script>
         $('.cp').colorpicker();
 
