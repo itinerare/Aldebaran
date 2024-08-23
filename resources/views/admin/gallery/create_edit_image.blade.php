@@ -73,9 +73,9 @@
             {!! Form::label('mainImage', 'Upload File') !!}
             {!! Form::file('image', ['id' => 'mainImage']) !!}
             <small>
-                Files may be PNG, JPEG, WebP, GIF, MP4, or WebM and up to
+                Files may be PNG, JPEG, WebP, {{ config('aldebaran.settings.image_formats.video_support') ? 'GIF, MP4, or WebM' : 'or GIF' }} and up to
                 {{ min((int) ini_get('upload_max_filesize'), (int) ini_get('post_max_size'), '15') }}MB in size.<br />
-                Note that watermarking is not supported for GIF, MP4, or WebM files.
+                Note that watermarking is not supported for {{ config('aldebaran.settings.image_formats.video_support') ? 'GIF, MP4, or WebM' : 'GIF' }} files.
             </small>
         </div>
     </div>

@@ -410,6 +410,11 @@ class GalleryController extends Controller {
      */
     public function postCreateEditImage(Request $request, GalleryService $service, $id = null) {
         $id ? $request->validate(PieceImage::$updateRules) : $request->validate(PieceImage::$createRules);
+
+        if (!config('aldebaran.settings.image_formats.video_support')) {
+            $request->validate(['image' => 'mimes:png,jpg,jpeg,gif']);
+        }
+
         $data = $request->only([
             'image', 'description', 'is_primary_image', 'piece_id', 'alt_text', 'is_visible',
             'x0', 'x1', 'y0', 'y1', 'use_cropper',

@@ -98,6 +98,10 @@ return [
         // What format site images uploaded through the admin panel should be stored in
         // Supports PNG or WebP, cannot be null
         'site_images' => 'webp',
+
+        // Whether or not video (mp4, WebM) support is enabled.
+        // Note that this requires FFMpeg to be installed on the server!
+        'video_support' => 0,
     ],
 
     /*
