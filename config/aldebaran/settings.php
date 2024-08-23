@@ -99,7 +99,7 @@ return [
         // Supports PNG or WebP, cannot be null
         'site_images' => 'webp',
 
-        // Whether or not video (mp4, WebM) support is enabled.
+        // Whether or not video (mp4, WebM) uploads are allowed.
         // Note that this requires FFMpeg to be installed on the server!
         'video_support' => 0,
     ],
