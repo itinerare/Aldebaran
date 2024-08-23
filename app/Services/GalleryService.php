@@ -861,11 +861,17 @@ class GalleryService extends Service {
             $this->handleImage($file['fullsize'], $image->imagePath, $image->fullsizeFileName);
             $this->handleImage($file['image'], $image->imagePath, $image->imageFileName);
             $this->handleImage($file['thumbnail'], $image->imagePath, $image->thumbnailFileName);
-        } elseif (!$create && File::exists($image->imagePath.'/'.$image->thumbnailFileName)) {
+        } elseif (!$create) {
             // Remove test files
-            unlink($image->imagePath.'/'.$image->thumbnailFileName);
-            unlink($image->imagePath.'/'.$image->imageFileName);
-            unlink($image->imagePath.'/'.$image->fullsizeFileName);
+            if (File::exists($image->imagePath.'/'.$image->thumbnailFileName)) {
+                unlink($image->imagePath.'/'.$image->thumbnailFileName);
+            }
+            if (File::exists($image->imagePath.'/'.$image->imageFileName)) {
+                unlink($image->imagePath.'/'.$image->imageFileName);
+            }
+            if (File::exists($image->imagePath.'/'.$image->fullsizeFileName)) {
+                unlink($image->imagePath.'/'.$image->fullsizeFileName);
+            }
         }
 
         return true;
