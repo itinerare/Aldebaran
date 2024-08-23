@@ -7,6 +7,7 @@
 import './bootstrap';
 require('./jquery-ui');
 require('./selectize');
+require('./magnific');
 
 //window.Vue = require('vue');
 

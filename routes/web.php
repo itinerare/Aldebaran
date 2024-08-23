@@ -36,7 +36,9 @@ Route::controller(GalleryController::class)->group(function () {
         Route::get('/', 'getGallery');
         Route::get('pieces/{id}', 'getPiece')
             ->whereNumber('id');
-        Route::get('pieces/{id}.{slug?}', 'getPiece');
+        Route::get('pieces/{id}.{slug?}', 'getPiece')
+            ->whereNumber('id');
+        Route::get('pieces/images/{id}', 'getVideo');
     });
 
     Route::prefix('projects')->group(function () {

@@ -8,6 +8,7 @@ use App\Services\GalleryService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\File;
 use Intervention\Image;
 use Tests\TestCase;
@@ -119,17 +120,29 @@ class DataGalleryPieceImageTest extends TestCase {
      *
      * @dataProvider imageCreateProvider
      *
-     * @param bool $withDescription
-     * @param bool $withAltText
-     * @param bool $isVisible
-     * @param bool $isPrimary
+     * @param string $fileType
+     * @param bool   $withDescription
+     * @param bool   $withAltText
+     * @param bool   $isVisible
+     * @param bool   $isPrimary
+     * @param bool   $expected
      */
-    public function testPostCreateImage($withDescription, $withAltText, $isVisible, $isPrimary) {
+    public function testPostCreateImage($fileType, $withDescription, $withAltText, $isVisible, $isPrimary, $expected) {
+        if (in_array($fileType, ['mp4', 'webm', 'pdf'])) {
+            $file = UploadedFile::fake()->create('test_file.'.$fileType);
+        } else {
+            $file = UploadedFile::fake()->image('test_image.'.$fileType);
+        }
+
+        if (in_array($fileType, ['mp4', 'webm']) && $expected) {
+            Config::set('aldebaran.settings.image_formats.video_support', 1);
+        }
+
         $response = $this
             ->actingAs($this->user)
             ->post('/admin/data/pieces/images/create', [
                 'piece_id'           => $this->piece->id,
-                'image'              => $this->file,
+                'image'              => $file,
                 'description'        => $withDescription ? $this->caption : null,
                 'alt_text'           => $withAltText ? $this->caption : null,
                 'is_visible'         => $isVisible,
@@ -143,47 +156,54 @@ class DataGalleryPieceImageTest extends TestCase {
                 'use_cropper'        => 0,
             ]);
 
-        $image = PieceImage::where('piece_id', $this->piece->id)->whereNotIn('id', [$this->image->id, $this->dataImage->id])->where('is_visible', $isVisible)->where('is_primary_image', $isPrimary)->first();
+        if ($expected) {
+            $image = PieceImage::where('piece_id', $this->piece->id)->whereNotIn('id', [$this->image->id, $this->dataImage->id])->where('is_visible', $isVisible)->where('is_primary_image', $isPrimary)->first();
 
-        $response->assertSessionHasNoErrors();
-        $this->assertDatabaseHas('piece_images', [
-            'description'       => $withDescription ? $this->caption : null,
-            'is_visible'        => $isVisible,
-            'is_primary_image'  => $isPrimary,
-            'extension'         => 'png',
-            'display_extension' => config('aldebaran.settings.image_formats.display', 'png'),
-        ]);
+            $response->assertSessionHasNoErrors();
+            $this->assertDatabaseHas('piece_images', [
+                'description'       => $withDescription ? $this->caption : null,
+                'is_visible'        => $isVisible,
+                'is_primary_image'  => $isPrimary,
+                'extension'         => $fileType,
+                'display_extension' => config('aldebaran.settings.image_formats.display', 'png'),
+            ]);
 
-        // Check that the associated image files are present
-        $this->
-            assertTrue(File::exists($image->imagePath.'/'.$image->fullsizeFilename));
-        $this->
-            assertTrue(File::exists($image->imagePath.'/'.$image->imageFilename));
-        $this->
-            assertTrue(File::exists($image->imagePath.'/'.$image->thumbnailFilename));
+            // Check that the associated image files are present
+            $this->assertTrue(File::exists($image->imagePath.'/'.$image->fullsizeFilename));
+            if (!in_array($fileType, ['mp4', 'webm'])) {
+                $this->assertTrue(File::exists($image->imagePath.'/'.$image->imageFilename));
+            }
+            $this->assertTrue(File::exists($image->imagePath.'/'.$image->thumbnailFilename));
 
-        // Clean up test files
-        $this->service->testImages($image, false);
+            // Clean up test files
+            $this->service->testImages($image, false);
+        } else {
+            $response->assertSessionHasErrors();
+        }
     }
 
     public static function imageCreateProvider() {
         return [
-            'hidden'                          => [0, 0, 0, 0],
-            'hidden, primary'                 => [0, 0, 0, 1],
-            'visible'                         => [0, 0, 1, 0],
-            'visible, primary'                => [0, 0, 1, 1],
-            'alt text, hidden'                => [0, 1, 0, 0],
-            'alt text, primary, hidden'       => [0, 1, 0, 1],
-            'alt text, visible'               => [0, 1, 1, 0],
-            'alt text, primary, visible'      => [0, 1, 1, 1],
-            'desc, hidden'                    => [1, 0, 0, 0],
-            'desc, primary, hidden'           => [1, 0, 0, 1],
-            'desc, visible'                   => [1, 0, 1, 0],
-            'desc, primary, visible'          => [1, 0, 1, 1],
-            'desc, alt text, hidden'          => [1, 1, 0, 0],
-            'desc, alt text, primary, hidden' => [1, 1, 0, 1],
-            'desc, alt text, visible'         => [1, 1, 1, 0],
-            'everything'                      => [1, 1, 1, 1],
+            'hidden'                          => ['png', 0, 0, 0, 0, 1],
+            'hidden, primary'                 => ['png', 0, 0, 0, 1, 1],
+            'visible'                         => ['png', 0, 0, 1, 0, 1],
+            'visible, primary'                => ['png', 0, 0, 1, 1, 1],
+            'alt text, hidden'                => ['png', 0, 1, 0, 0, 1],
+            'alt text, primary, hidden'       => ['png', 0, 1, 0, 1, 1],
+            'alt text, visible'               => ['png', 0, 1, 1, 0, 1],
+            'alt text, primary, visible'      => ['png', 0, 1, 1, 1, 1],
+            'desc, hidden'                    => ['png', 1, 0, 0, 0, 1],
+            'desc, primary, hidden'           => ['png', 1, 0, 0, 1, 1],
+            'desc, visible'                   => ['png', 1, 0, 1, 0, 1],
+            'desc, primary, visible'          => ['png', 1, 0, 1, 1, 1],
+            'desc, alt text, hidden'          => ['png', 1, 1, 0, 0, 1],
+            'desc, alt text, primary, hidden' => ['png', 1, 1, 0, 1, 1],
+            'desc, alt text, visible'         => ['png', 1, 1, 1, 0, 1],
+            'everything'                      => ['png', 1, 1, 1, 1, 1],
+
+            'with gif'                        => ['gif', 0, 0, 1, 0, 1],
+            'with video (disabled)'           => ['mp4', 0, 0, 1, 0, 0],
+            'with invalid file type'          => ['pdf', 0, 0, 1, 0, 0],
         ];
     }
 
@@ -193,13 +213,28 @@ class DataGalleryPieceImageTest extends TestCase {
      *
      * @dataProvider imageEditProvider
      *
-     * @param bool $withData
-     * @param bool $withDescription
-     * @param bool $withAltText
-     * @param bool $isVisible
-     * @param bool $isPrimary
+     * @param bool        $withImage
+     * @param string|null $fileType
+     * @param bool        $withData
+     * @param bool        $withDescription
+     * @param bool        $withAltText
+     * @param bool        $isVisible
+     * @param bool        $isPrimary
+     * @param bool        $expected
      */
-    public function testPostEditImage($withData, $withDescription, $withAltText, $isVisible, $isPrimary) {
+    public function testPostEditImage($withImage, $fileType, $withData, $withDescription, $withAltText, $isVisible, $isPrimary, $expected) {
+        if ($withImage) {
+            if (in_array($fileType, ['mp4', 'webm', 'pdf'])) {
+                $file = UploadedFile::fake()->create('test_file.'.$fileType);
+            } else {
+                $file = UploadedFile::fake()->image('test_image.'.$fileType);
+            }
+
+            if (in_array($fileType, ['mp4', 'webm']) && $expected) {
+                Config::set('aldebaran.settings.image_formats.video_support', 1);
+            }
+        }
+
         $response = $this
             ->actingAs($this->user)
             ->post('/admin/data/pieces/images/edit/'.($withData ? $this->dataImage->id : $this->image->id), [
@@ -207,51 +242,65 @@ class DataGalleryPieceImageTest extends TestCase {
                 'alt_text'         => $withAltText ? $this->caption : null,
                 'is_visible'       => $isVisible,
                 'is_primary_image' => $isPrimary,
-            ]);
+            ] + ($withImage ? [
+                'image'              => $withImage ? $file : null,
+                'watermark_scale'    => '.'.mt_rand(2, 7).'0',
+                'watermark_opacity'  => mt_rand(0, 10).'0',
+                'watermark_position' => 'bottom-right',
+            ] : []));
 
-        $response->assertSessionHasNoErrors();
-        $this->assertDatabaseHas('piece_images', [
-            'id'               => $withData ? $this->dataImage->id : $this->image->id,
-            'description'      => $withDescription ? $this->caption : null,
-            'is_visible'       => $isVisible,
-            'is_primary_image' => $isPrimary,
-        ]);
+        if ($expected) {
+            $response->assertSessionHasNoErrors();
+            $this->assertDatabaseHas('piece_images', [
+                'id'               => $withData ? $this->dataImage->id : $this->image->id,
+                'description'      => $withDescription ? $this->caption : null,
+                'is_visible'       => $isVisible,
+                'is_primary_image' => $isPrimary,
+            ]);
+        } else {
+            $response->assertSessionHasErrors();
+        }
     }
 
     public static function imageEditProvider() {
         return [
-            'hidden'                                => [0, 0, 0, 0, 0],
-            'hidden, primary'                       => [0, 0, 0, 0, 1],
-            'visible'                               => [0, 0, 0, 1, 0],
-            'visible, primary'                      => [0, 0, 0, 1, 1],
-            'alt text, hidden'                      => [0, 0, 1, 0, 0],
-            'alt text, primary'                     => [0, 0, 1, 0, 1],
-            'alt text, visible'                     => [0, 0, 1, 1, 0],
-            'alt text, primary, visible'            => [0, 0, 1, 1, 1],
-            'desc, hidden'                          => [0, 1, 0, 0, 0],
-            'desc, primary, hidden'                 => [0, 1, 0, 0, 1],
-            'desc, visible'                         => [0, 1, 0, 1, 0],
-            'desc, primary, visible'                => [0, 1, 0, 1, 1],
-            'desc, alt text, hidden'                => [0, 1, 1, 0, 0],
-            'desc, alt text, hidden, primary'       => [0, 1, 1, 0, 1],
-            'desc, alt text, visible'               => [0, 1, 1, 1, 0],
-            'desc, alt text, visible, primary'      => [0, 1, 1, 1, 1],
-            'data, hidden'                          => [1, 0, 0, 0, 0],
-            'data, primary, hidden'                 => [1, 0, 0, 0, 1],
-            'data, visible'                         => [1, 0, 0, 1, 0],
-            'data, visible, primary'                => [1, 0, 0, 1, 1],
-            'data, alt text, hidden'                => [1, 0, 1, 0, 0],
-            'data, alt text, primary, hidden'       => [1, 0, 1, 0, 1],
-            'data, alt text, visible'               => [1, 0, 1, 1, 0],
-            'data, alt text, primary, visible'      => [1, 0, 1, 1, 1],
-            'data, desc, hidden'                    => [1, 1, 0, 0, 0],
-            'data, desc, primary, hidden'           => [1, 1, 0, 0, 1],
-            'data, desc, visible'                   => [1, 1, 0, 1, 0],
-            'data, desc, primary, visible'          => [1, 1, 0, 1, 1],
-            'data, desc, alt text, hidden'          => [1, 1, 1, 0, 0],
-            'data, desc, alt text, primary, hidden' => [1, 1, 1, 0, 1],
-            'data, desc, alt text, visible'         => [1, 1, 1, 1, 0],
-            'everything'                            => [1, 1, 1, 1, 1],
+            'with image'                            => [1, 'png', 0, 0, 0, 1, 0, 1],
+            'with gif'                              => [1, 'gif', 0, 0, 0, 1, 0, 1],
+            'with video (disabled)'                 => [1, 'mp4', 0, 0, 0, 1, 0, 0],
+            'with invalid file type'                => [1, 'pdf', 0, 0, 0, 1, 0, 0],
+
+            'hidden'                                => [0, null, 0, 0, 0, 0, 0, 1],
+            'hidden, primary'                       => [0, null, 0, 0, 0, 0, 1, 1],
+            'visible'                               => [0, null, 0, 0, 0, 1, 0, 1],
+            'visible, primary'                      => [0, null, 0, 0, 0, 1, 1, 1],
+            'alt text, hidden'                      => [0, null, 0, 0, 1, 0, 0, 1],
+            'alt text, primary'                     => [0, null, 0, 0, 1, 0, 1, 1],
+            'alt text, visible'                     => [0, null, 0, 0, 1, 1, 0, 1],
+            'alt text, primary, visible'            => [0, null, 0, 0, 1, 1, 1, 1],
+            'desc, hidden'                          => [0, null, 0, 1, 0, 0, 0, 1],
+            'desc, primary, hidden'                 => [0, null, 0, 1, 0, 0, 1, 1],
+            'desc, visible'                         => [0, null, 0, 1, 0, 1, 0, 1],
+            'desc, primary, visible'                => [0, null, 0, 1, 0, 1, 1, 1],
+            'desc, alt text, hidden'                => [0, null, 0, 1, 1, 0, 0, 1],
+            'desc, alt text, hidden, primary'       => [0, null, 0, 1, 1, 0, 1, 1],
+            'desc, alt text, visible'               => [0, null, 0, 1, 1, 1, 0, 1],
+            'desc, alt text, visible, primary'      => [0, null, 0, 1, 1, 1, 1, 1],
+            'data, hidden'                          => [0, null, 1, 0, 0, 0, 0, 1],
+            'data, primary, hidden'                 => [0, null, 1, 0, 0, 0, 1, 1],
+            'data, visible'                         => [0, null, 1, 0, 0, 1, 0, 1],
+            'data, visible, primary'                => [0, null, 1, 0, 0, 1, 1, 1],
+            'data, alt text, hidden'                => [0, null, 1, 0, 1, 0, 0, 1],
+            'data, alt text, primary, hidden'       => [0, null, 1, 0, 1, 0, 1, 1],
+            'data, alt text, visible'               => [0, null, 1, 0, 1, 1, 0, 1],
+            'data, alt text, primary, visible'      => [0, null, 1, 0, 1, 1, 1, 1],
+            'data, desc, hidden'                    => [0, null, 1, 1, 0, 0, 0, 1],
+            'data, desc, primary, hidden'           => [0, null, 1, 1, 0, 0, 1, 1],
+            'data, desc, visible'                   => [0, null, 1, 1, 0, 1, 0, 1],
+            'data, desc, primary, visible'          => [0, null, 1, 1, 0, 1, 1, 1],
+            'data, desc, alt text, hidden'          => [0, null, 1, 1, 1, 0, 0, 1],
+            'data, desc, alt text, primary, hidden' => [0, null, 1, 1, 1, 0, 1, 1],
+            'data, desc, alt text, visible'         => [0, null, 1, 1, 1, 1, 0, 1],
+            'everything'                            => [0, null, 1, 1, 1, 1, 1, 1],
         ];
     }
 

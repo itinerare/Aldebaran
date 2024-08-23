@@ -97,11 +97,10 @@
     {!! Form::close() !!}
 
     @if ($piece->id)
-        <h3>Images</h3>
+        <h3>Images & Videos</h3>
 
         <div class="text-right">
-            <a href="{{ url('admin/data/pieces/images/create/' . $piece->id) }}" class="btn btn-outline-primary mb-2">Add
-                an Image</a>
+            <a href="{{ url('admin/data/pieces/images/create/' . $piece->id) }}" class="btn btn-outline-primary mb-2">Add an Image/Video</a>
         </div>
 
         @if ($piece->images->count())

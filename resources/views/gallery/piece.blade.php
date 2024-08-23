@@ -54,9 +54,15 @@
         <div class="row">
             @foreach ($piece->primaryImages->where('is_visible', 1) as $image)
                 <div class="col-md text-center align-self-center mb-2">
-                    <a href="{{ $image->imageUrl }}" data-lightbox="entry" data-title="{{ isset($image->description) ? $image->description : '' }}">
-                        <img class="img-thumbnail p-2" src="{{ $image->imageUrl }}" style="max-width:100%; max-height:60vh;" alt="{{ $image->alt_text ?? 'Primary image ' . $loop->iteration . ' for ' . $piece->name }}" />
-                    </a>
+                    @if ($image->isVideo)
+                        <video class="img-thumbnail img-fluid p-2" style="max-height:60vh;" controls>
+                            <source src="{{ $image->imageUrl }}" />
+                        </video>
+                    @else
+                        <a href="{{ $image->imageUrl }}" class="image-link" title="{{ $image->description ?? '' }}">
+                            <img class="img-thumbnail img-fluid p-2" src="{{ $image->imageUrl }}" style="max-height:60vh;" alt="{{ $image->alt_text ?? 'Primary image ' . $loop->iteration . ' for ' . $piece->name }}" />
+                        </a>
+                    @endif
                 </div>
                 {!! $loop->odd && $loop->count > 2 ? '<div class="w-100"></div>' : '' !!}
             @endforeach
@@ -65,9 +71,22 @@
         <div class="row mb-2">
             @foreach ($piece->otherImages->where('is_visible', 1) as $image)
                 <div class="col-sm text-center align-self-center mb-2">
-                    <a href="{{ $image->imageUrl }}" data-lightbox="entry" data-title="{{ isset($image->description) ? $image->description : '' }}">
-                        <img class="img-thumbnail p-2" src="{{ $image->thumbnailUrl }}" style="max-width:100%; max-height:60vh;" alt="{{ $image->alt_text ?? 'Thumbnail for secondary image ' . $loop->iteration . ' for ' . $piece->name }}" />
-                    </a>
+                    @if ($image->isVideo)
+                        <div class="content img-thumbnail align-self-center" style="min-height:100px;">
+                            <div class="image-badge badge-primary mr-1">
+                                <i class="fas fa-play"></i> Video
+                            </div>
+                            <a class="video-link" href="{{ url('gallery/pieces/images/' . $image->id) }}">
+                                <div class="text-center align-self-center my-auto">
+                                    <img class="p-2" src="{{ $image->thumbnailUrl }}" style="max-width:100%; max-height:60vh;" alt="{{ $image->alt_text ?? 'Thumbnail for video ' . $loop->iteration . ' for ' . $piece->name }}" />
+                                </div>
+                            </a>
+                        </div>
+                    @else
+                        <a href="{{ $image->imageUrl }}" class="image-link" title="{{ $image->description ?? '' }}">
+                            <img class="img-thumbnail p-2" src="{{ $image->thumbnailUrl }}" style="max-width:100%; max-height:60vh;" alt="{{ $image->alt_text ?? 'Thumbnail for secondary image ' . $loop->iteration . ' for ' . $piece->name }}" />
+                        </a>
+                    @endif
                 </div>
                 {!! $loop->iteration % ($loop->count % 4 == 0 ? 4 : 3) == 0 ? '<div class="w-100"></div>' : '' !!}
             @endforeach
@@ -143,4 +162,9 @@
             </div>
         </div>
     </div>
+@endsection
+
+@section('scripts')
+    @parent
+    @include('gallery._lightbox_js')
 @endsection
