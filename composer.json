@@ -88,5 +88,5 @@
     },
     "minimum-stability": "stable",
     "prefer-stable": true,
-    "version": "3.11.7"
+    "version": "3.12.0"
 }
