@@ -43,7 +43,7 @@
                     <div class="card mb-2" id="existingThumbnail">
                         <div class="card-body text-center">
                             Thumbnail:<br />
-                            <a href="{{ $literature->thumbnailUrl }}" data-lightbox="entry" data-title="Literature Thumbnail">
+                            <a href="{{ $literature->thumbnailUrl }}" class="image-link" title="Literature Thumbnail">
                                 <img class="p-2" src="{{ $literature->thumbnailUrl }}" style="max-width:100%; max-height:60vh;" alt="Thumbnail image" />
                             </a>
                         </div>
@@ -112,6 +112,7 @@
 
 @section('scripts')
     @parent
+    @include('gallery._lightbox_js')
     <script>
         $(document).ready(function() {
             $('.delete-literature-button').on('click', function(e) {

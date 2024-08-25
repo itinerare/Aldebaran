@@ -4,6 +4,36 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [3.12.0](https://code.itinerare.net/itinerare/Aldebaran/compare/v3.11.7...v3.12.0) (2024-08-25)
+
+### Features
+
+* Use magnific for all lightboxes ([8c359e](https://code.itinerare.net/itinerare/Aldebaran/commit/8c359e3210f5b370d8c3491083522d6d85001c90))
+
+##### Pieces
+
+* Add animated GIF, video (mp4, WebM) support ([0a3f45](https://code.itinerare.net/itinerare/Aldebaran/commit/0a3f4553fffe06f4985dc35efc25a5d0f51071c5))
+* Make video support configurable/disabled by default ([0b3345](https://code.itinerare.net/itinerare/Aldebaran/commit/0b3345e583860febcb43b58c313c585fe3a11cc2))
+
+##### Tests
+
+* Update piece image create/edit tests ([739461](https://code.itinerare.net/itinerare/Aldebaran/commit/7394615f08efc202307f496c822c2c8ea2abea22))
+
+### Bug Fixes
+
+
+##### Commissions
+
+* Exempt multimedia from fullsize piece image conversion ([93197c](https://code.itinerare.net/itinerare/Aldebaran/commit/93197c5ed6f4064eed78b603ae7447c5180f2aaf))
+* Preserve quote amount when manually marking complete ([1c15e0](https://code.itinerare.net/itinerare/Aldebaran/commit/1c15e0b5220b0423bbf18b78d9b447f9c4d1631e))
+
+##### Pieces
+
+* Use better multimedia check when creating piece image ([b66f99](https://code.itinerare.net/itinerare/Aldebaran/commit/b66f99759422e12b07fe6c9c84ca5920bdfee87c))
+
+
+---
+
 ## [3.11.7](https://code.itinerare.net/itinerare/Aldebaran/compare/v3.11.6...v3.11.7) (2024-04-07)
 
 ### Bug Fixes

@@ -722,7 +722,7 @@ class CommissionController extends Controller {
      * @return \Illuminate\Http\RedirectResponse
      */
     private function postCompleteQuote($id, Request $request, CommissionManager $service) {
-        if ($service->completeQuote($id, $request->only(['comments']), $request->user())) {
+        if ($service->completeQuote($id, $request->only(['amount', 'comments']), $request->user())) {
             flash('Quote marked complete successfully.')->success();
         } else {
             foreach ($service->errors()->getMessages()['error'] as $error) {

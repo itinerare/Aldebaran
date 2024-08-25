@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Commission\CommissionClass;
 use App\Models\Commission\CommissionType;
 use App\Models\Gallery\Piece;
+use App\Models\Gallery\PieceImage;
 use App\Models\Gallery\PieceTag;
 use App\Models\Gallery\Project;
 use App\Models\Gallery\Tag;
@@ -262,6 +263,24 @@ class GalleryController extends Controller {
             'piece'     => $piece,
             'origin'    => $origin,
             'neighbors' => $neighbors ?? null,
+        ]);
+    }
+
+    /**
+     * Shows the modal video view.
+     *
+     * @param int $id
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getVideo($id) {
+        $image = PieceImage::where('id', $id)->visible(Auth::user() ?? null)->first();
+        if (!$image || !$image->isVideo) {
+            abort(404);
+        }
+
+        return view('gallery._video_view', [
+            'image' => $image,
         ]);
     }
 }
