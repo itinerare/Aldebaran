@@ -24,7 +24,7 @@ jobs:
       run: apt install -y mariadb-client
 
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: https://code.itinerare.net/internal/checkout@v4
 
     - name: Copy .env
       run: php -r "file_exists('.env') || copy('.env.example', '.env');"
