@@ -79,7 +79,6 @@ class SetupAdminUser extends Command {
                 if ($this->confirm('Proceed to change email address and password?')) {
                     $service = new UserService;
                     $service->updateUser([
-                        'id'       => $user->id,
                         'email'    => $email,
                         'password' => $password,
                     ]);
