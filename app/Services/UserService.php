@@ -44,7 +44,7 @@ class UserService extends Service {
     public function updateUser($data) {
         $user = User::find($data['id']);
         unset($data['id']);
-        
+
         if (isset($data['password'])) {
             $data['password'] = Hash::make($data['password']);
         }
