@@ -4,6 +4,18 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [3.12.1](https://code.itinerare.net/itinerare/Aldebaran/compare/v3.12.0...v3.12.1) (2024-09-29)
+
+### Bug Fixes
+
+
+##### Users
+
+* Don't attempt to update user ID when modifying the admin user via command line ([27024b](https://code.itinerare.net/itinerare/Aldebaran/commit/27024b94227b4cf266eb05304fbcdd485676fab5))
+
+
+---
+
 ## [3.12.0](https://code.itinerare.net/itinerare/Aldebaran/compare/v3.11.7...v3.12.0) (2024-08-25)
 
 ### Features
