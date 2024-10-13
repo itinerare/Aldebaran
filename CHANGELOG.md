@@ -4,6 +4,15 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [3.13.0](https://code.itinerare.net/itinerare/Aldebaran/compare/v3.12.1...v3.13.0) (2024-10-13)
+
+### Features
+
+* Add error pages ([81a5c8](https://code.itinerare.net/itinerare/Aldebaran/commit/81a5c88cbf77fa1ecf4b120bc1494c27e3719788))
+
+
+---
+
 ## [3.12.1](https://code.itinerare.net/itinerare/Aldebaran/compare/v3.12.0...v3.12.1) (2024-09-29)
 
 ### Bug Fixes
