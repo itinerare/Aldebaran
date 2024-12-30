@@ -184,9 +184,9 @@ class CommissionInfoTest extends TestCase {
             'user with type with hidden example with literature with thumbnail'     => [[1, 1], 1, [1, 1, 1, [1, 0, 1, 0, 0, 0, [1, 1]]], 200],
 
             // Disabled in favor of manual testing for the moment
-            //'good example with 4 ok examples' => [[1, 1], 1, [1, 1, 1, [1, 1, 0, 0, 4]], 200],
-            //'ok example with 3 good examples' => [[1, 1], 1, [1, 1, 1, [1, 1, 0, 3, 0]], 200],
-            //'ok example with 4 good examples' => [[1, 1], 1, [1, 1, 1, [1, 1, 0, 4, 0]], 200],
+            // 'good example with 4 ok examples' => [[1, 1], 1, [1, 1, 1, [1, 1, 0, 0, 4]], 200],
+            // 'ok example with 3 good examples' => [[1, 1], 1, [1, 1, 1, [1, 1, 0, 3, 0]], 200],
+            // 'ok example with 4 good examples' => [[1, 1], 1, [1, 1, 1, [1, 1, 0, 4, 0]], 200],
         ];
     }
 
@@ -545,7 +545,7 @@ class CommissionInfoTest extends TestCase {
 
     public static function commissionQueueProvider() {
         return [
-            //'with commission' => [[1, 1], 0, null, 200],
+            // 'with commission' => [[1, 1], 0, null, 200],
         ];
     }
 

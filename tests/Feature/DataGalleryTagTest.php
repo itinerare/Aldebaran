@@ -184,8 +184,8 @@ class DataGalleryTagTest extends TestCase {
             'with piece' => [[1, 0], 0],
 
             // JSON searching may not work well in the test environment
-            //'with type'           => [[0, 1], 0],
-            //'with piece and type' => [[1, 1], 0],
+            // 'with type'           => [[0, 1], 0],
+            // 'with piece and type' => [[1, 1], 0],
         ];
     }
 }

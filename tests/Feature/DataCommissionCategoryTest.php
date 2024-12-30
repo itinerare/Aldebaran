@@ -26,7 +26,7 @@ class DataCommissionCategoryTest extends TestCase {
 
         // Generate some test data
         $this->name = $this->faker->unique()->domainWord();
-        //$this->pageName = $this->faker->unique()->domainWord();
+        // $this->pageName = $this->faker->unique()->domainWord();
 
         // Enable commission components
         config(['aldebaran.commissions.enabled' => 1]);

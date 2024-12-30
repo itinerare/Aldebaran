@@ -186,7 +186,7 @@ class DataCommissionClassTest extends TestCase {
             'choose multiple field' => [0, 0, ['multiple', 0, 0, null, null], 1],
 
             // Does not work due to test environment issues:
-            //'remove page' => [1, 0, null, 1],
+            // 'remove page' => [1, 0, null, 1],
         ];
     }
 
