@@ -69,3 +69,18 @@
         </div>
     @endif
 @endforeach
+
+@if ($commission && !$form)
+    @foreach ($commission->data as $key => $data)
+        @if (!in_array($key, array_keys($type->formFields)) && $key != 'tip')
+            <div class="row mb-2">
+                <div class="col-md-4">
+                    <h5>{{ ucfirst($key) }} {!! add_help('This field is no longer included in this commission type\'s form. However, the information is provided for future reference.') !!}</h5>
+                </div>
+                <div class="col-md">
+                    {!! isset($commission->data[$key]) ? nl2br(htmlentities($commission->data[$key])) : '-' !!}
+                </div>
+            </div>
+        @endif
+    @endforeach
+@endif
