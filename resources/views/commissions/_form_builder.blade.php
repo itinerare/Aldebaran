@@ -70,8 +70,8 @@
     @endif
 @endforeach
 
-@if ($commission && !$form)
-    @foreach ($commission->data as $key => $data)
+@if (!$form && $commission->data)
+    @foreach (is_array($commission->data) ? $commission->data : json_decode($commission->data, true) as $key => $data)
         @if (!in_array($key, array_keys($type->formFields)) && $key != 'tip')
             <div class="row mb-2">
                 <div class="col-md-4">
