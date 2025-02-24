@@ -4881,16 +4881,16 @@
         },
         {
             "name": "spatie/laravel-validation-rules",
-            "version": "3.4.1",
+            "version": "3.4.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/laravel-validation-rules.git",
-                "reference": "a99ef782560482b5bd13c0f0ea39e392e19f9bbd"
+                "reference": "6092c22bd78fcd162de839017a51dbb7c7c08891"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/laravel-validation-rules/zipball/a99ef782560482b5bd13c0f0ea39e392e19f9bbd",
-                "reference": "a99ef782560482b5bd13c0f0ea39e392e19f9bbd",
+                "url": "https://api.github.com/repos/spatie/laravel-validation-rules/zipball/6092c22bd78fcd162de839017a51dbb7c7c08891",
+                "reference": "6092c22bd78fcd162de839017a51dbb7c7c08891",
                 "shasum": ""
             },
             "require": {
@@ -4942,7 +4942,7 @@
             ],
             "support": {
                 "issues": "https://github.com/spatie/laravel-validation-rules/issues",
-                "source": "https://github.com/spatie/laravel-validation-rules/tree/3.4.1"
+                "source": "https://github.com/spatie/laravel-validation-rules/tree/3.4.2"
             },
             "funding": [
                 {
@@ -4950,7 +4950,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-02-17T10:19:34+00:00"
+            "time": "2025-02-24T15:00:20+00:00"
         },
         {
             "name": "spatie/temporary-directory",
