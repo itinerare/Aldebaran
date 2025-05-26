@@ -4,6 +4,24 @@
 All notable changes to this project will be documented in this file.
 <!--- END HEADER -->
 
+## [3.13.1](https://code.itinerare.net/itinerare/Aldebaran/compare/v3.13.0...v3.13.1) (2025-05-26)
+
+### Bug Fixes
+
+
+##### Commissions
+
+* Add fallback decode for form data ([6cf8b2](https://code.itinerare.net/itinerare/Aldebaran/commit/6cf8b2ab65fa276c4ec4ce52f255c8c61cde62f9))
+* Add fallback form info display for commissions ([2547a4](https://code.itinerare.net/itinerare/Aldebaran/commit/2547a4784960af9e44629790c4b58589af88a01f))
+
+##### Tests
+
+* Adjust fee calculation test conditions ([4769bc](https://code.itinerare.net/itinerare/Aldebaran/commit/4769bcda53eb8913f128c866aa20404416b98fb7))
+* Revert fee calculation test adjustment ([05c7b4](https://code.itinerare.net/itinerare/Aldebaran/commit/05c7b434cf9af3a6b58d2d64a76093032093f2c7))
+
+
+---
+
 ## [3.13.0](https://code.itinerare.net/itinerare/Aldebaran/compare/v3.12.1...v3.13.0) (2024-10-13)
 
 ### Features
